@@ -1,0 +1,194 @@
+diff -ru wxGTK-2.4.2-orig/src/gtk/menu.cpp wxGTK-2.4.2/src/gtk/menu.cpp
+--- wxGTK-2.4.2-orig/src/gtk/menu.cpp	2003-09-21 07:31:57.000000000 -0400
++++ wxGTK-2.4.2/src/gtk/menu.cpp	2005-03-01 08:29:39.000000000 -0500
+@@ -30,13 +30,13 @@
+ #ifdef __WXGTK20__
+     #include <glib-object.h>
+ 
+-    #define gtk_accel_group_attach(g, o) _gtk_accel_group_attach((g), (o))
+-    #define gtk_accel_group_detach(g, o) _gtk_accel_group_detach((g), (o))
++    #define gtk_accel_group_attach(g, o) gtk_window_add_accel_group((o), (g))
++    #define gtk_accel_group_detach(g, o) gtk_window_remove_accel_group((o), (g))
+     #define gtk_menu_ensure_uline_accel_group(m) gtk_menu_get_accel_group(m)
+ 
+-    #define ACCEL_OBJECT        GObject
++    #define ACCEL_OBJECT        GtkWindow
+     #define ACCEL_OBJECTS(a)    (a)->acceleratables
+-    #define ACCEL_OBJ_CAST(obj) G_OBJECT(obj)
++    #define ACCEL_OBJ_CAST(obj) ((GtkWindow*) obj)
+ #else // GTK+ 1.x
+     #define ACCEL_OBJECT        GtkObject
+     #define ACCEL_OBJECTS(a)    (a)->attach_objects
+@@ -50,8 +50,8 @@
+ extern void wxapp_install_idle_handler();
+ extern bool g_isIdle;
+ 
+-#if GTK_CHECK_VERSION(1, 2, 0) && wxUSE_ACCEL
+-    static wxString GetHotKey( const wxMenuItem& item );
++#if wxUSE_ACCEL
++static wxString GetHotKey( const wxMenuItem& item );
+ #endif
+ 
+ //-----------------------------------------------------------------------------
+@@ -266,8 +266,10 @@
+     while (top_frame->GetParent() && !(top_frame->IsTopLevel()))
+         top_frame = top_frame->GetParent();
+ 
++#ifndef __WXGTK20__
+     /* support for native hot keys */
+     gtk_accel_group_detach( menu->m_accel, ACCEL_OBJ_CAST(top_frame->m_widget) );
++#endif
+ 
+     wxMenuItemList::Node *node = menu->GetMenuItems().GetFirst();
+     while (node)
+@@ -283,7 +285,6 @@
+ {
+     menu->SetInvokingWindow( win );
+ 
+-#if GTK_CHECK_VERSION(1, 2, 1)
+     wxWindow *top_frame = win;
+     while (top_frame->GetParent() && !(top_frame->IsTopLevel()))
+         top_frame = top_frame->GetParent();
+@@ -292,7 +293,6 @@
+     ACCEL_OBJECT *obj = ACCEL_OBJ_CAST(top_frame->m_widget);
+     if ( !g_slist_find( ACCEL_OBJECTS(menu->m_accel), obj ) )
+         gtk_accel_group_attach( menu->m_accel, obj );
+-#endif // GTK+ 1.2.1+
+ 
+     wxMenuItemList::Node *node = menu->GetMenuItems().GetFirst();
+     while (node)
+@@ -307,16 +307,16 @@
+ void wxMenuBar::SetInvokingWindow( wxWindow *win )
+ {
+     m_invokingWindow = win;
+-#if GTK_CHECK_VERSION(1, 2, 1)
+     wxWindow *top_frame = win;
+     while (top_frame->GetParent() && !(top_frame->IsTopLevel()))
+         top_frame = top_frame->GetParent();
+ 
++#ifndef __WXGTK20__
+     /* support for native key accelerators indicated by underscroes */
+     ACCEL_OBJECT *obj = ACCEL_OBJ_CAST(top_frame->m_widget);
+     if ( !g_slist_find( ACCEL_OBJECTS(m_accel), obj ) )
+         gtk_accel_group_attach( m_accel, obj );
+-#endif // GTK+ 1.2.1+
++#endif
+ 
+     wxMenuList::Node *node = m_menus.GetFirst();
+     while (node)
+@@ -330,14 +330,14 @@
+ void wxMenuBar::UnsetInvokingWindow( wxWindow *win )
+ {
+     m_invokingWindow = (wxWindow*) NULL;
+-#if GTK_CHECK_VERSION(1, 2, 1)
+     wxWindow *top_frame = win;
+     while (top_frame->GetParent() && !(top_frame->IsTopLevel()))
+         top_frame = top_frame->GetParent();
+ 
++#ifndef __WXGTK20__
+     /* support for native key accelerators indicated by underscroes */
+     gtk_accel_group_detach( m_accel, ACCEL_OBJ_CAST(top_frame->m_widget) );
+-#endif // GTK+ 1.2.1+
++#endif
+ 
+     wxMenuList::Node *node = m_menus.GetFirst();
+     while (node)
+@@ -363,48 +363,16 @@
+     /* this doesn't have much effect right now */
+     menu->SetTitle( str );
+ 
+-    /* GTK 1.2.0 doesn't have gtk_item_factory_get_item(), but GTK 1.2.1 has. */
+-#if GTK_CHECK_VERSION(1, 2, 1)
+-
+-    wxString buf;
+-    buf << wxT('/') << str.c_str();
+-
+-    /* local buffer in multibyte form */
+-    char cbuf[400];
+-    strcpy(cbuf, wxGTK_CONV(buf) );
+-
+-    GtkItemFactoryEntry entry;
+-    entry.path = (gchar *)cbuf;  // const_cast
+-    entry.accelerator = (gchar*) NULL;
+-    entry.callback = (GtkItemFactoryCallback) NULL;
+-    entry.callback_action = 0;
+-    entry.item_type = (char *)"<Branch>";
+-
+-    gtk_item_factory_create_item( m_factory, &entry, (gpointer) this, 2 );  /* what is 2 ? */
+-    /* in order to get the pointer to the item we need the item text _without_ underscores */
+-    wxString tmp = wxT("<main>/");
+-    const wxChar *pc;
+-    for ( pc = str; *pc != wxT('\0'); pc++ )
+-    {
+-       // contrary to the common sense, we must throw out _all_ underscores,
+-       // (i.e. "Hello__World" => "HelloWorld" and not "Hello_World" as we
+-       // might naively think). IMHO it's a bug in GTK+ (VZ)
+-       while (*pc == wxT('_'))
+-           pc++;
+-       tmp << *pc;
+-    }
+-    menu->m_owner = gtk_item_factory_get_item( m_factory, wxGTK_CONV( tmp ) );
+-    gtk_menu_item_set_submenu( GTK_MENU_ITEM(menu->m_owner), menu->m_menu );
++#ifdef __WXGTK20__
++	menu->m_owner = gtk_menu_item_new_with_mnemonic( wxGTK_CONV( str ) );
+ #else
+-
+     menu->m_owner = gtk_menu_item_new_with_label( wxGTK_CONV( str ) );
++#endif
+     gtk_widget_show( menu->m_owner );
+     gtk_menu_item_set_submenu( GTK_MENU_ITEM(menu->m_owner), menu->m_menu );
+ 
+     gtk_menu_bar_append( GTK_MENU_BAR(m_menubar), menu->m_owner );
+ 
+-#endif
+-
+     gtk_signal_connect( GTK_OBJECT(menu->m_owner), "activate",
+                         GTK_SIGNAL_FUNC(gtk_menu_open_callback),
+                         (gpointer)menu );
+@@ -514,6 +482,8 @@
+     // the ref count to 2 artificially before invoking unparent.
+     gtk_widget_ref( menu->m_menu );
+     gtk_widget_unparent( menu->m_menu );
++	gtk_menu_item_remove_submenu( GTK_MENU_ITEM(menu->m_owner) );
++	gtk_container_remove(GTK_CONTAINER(m_menubar), menu->m_owner);
+ 
+     gtk_widget_destroy( menu->m_owner );
+     delete menu;
+@@ -868,7 +838,7 @@
+             continue;
+         }
+ 
+-#if GTK_CHECK_VERSION(2, 0, 0)
++#ifdef __WXGTK20__
+         if ( *pc == wxT('\\')  )
+         {
+             // GTK 2.0 escapes "xxx/xxx" to "xxx\/xxx"
+@@ -910,7 +880,7 @@
+         else
+             label = GTK_LABEL( GTK_BIN(m_menuItem)->child );
+ 
+-#if GTK_CHECK_VERSION(2, 0, 0)
++#ifdef __WXGTK20__
+         // We have to imitate item_factory_unescape_label here
+         wxString tmp;
+         for (size_t n = 0; n < m_text.Len(); n++)
+diff -ru wxGTK-2.4.2-orig/src/gtk/settings.cpp wxGTK-2.4.2/src/gtk/settings.cpp
+--- wxGTK-2.4.2-orig/src/gtk/settings.cpp	2003-09-21 07:31:57.000000000 -0400
++++ wxGTK-2.4.2/src/gtk/settings.cpp	2005-02-28 12:04:10.000000000 -0500
+@@ -340,9 +340,13 @@
+                 }  
+                 else  
+                 {  
+-                    const gchar *font_name =
+-                        _gtk_rc_context_get_default_font_name(gtk_settings_get_default());
+-                    g_systemFont = new wxFont(wxString::FromAscii(font_name));
++					GtkSettings *settings = gtk_settings_get_default();
++                    const gchar *font_name = NULL;
++					g_object_get( settings, "gtk-font-name", &font_name, NULL );
++					if (!font_name)
++						g_systemFont = new wxFont( 12, wxSWISS, wxNORMAL, wxNORMAL );
++					else
++						g_systemFont = new  wxFont(wxString::FromAscii(font_name));
+                 }  
+                 gtk_widget_destroy( widget );
+ #else

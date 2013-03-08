@@ -1,0 +1,28 @@
+/* XPM */
+static char *find_doc_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 6 1",
+"  c black",
+". c cyan",
+"X c #808080",
+"o c #C0C0C0",
+"O c gray100",
+"+ c None",
+/* pixels */
+"++++++++++++++++",
+"+XXXXXXXX ++++++",
+"+XOOOOOOO  +++++",
+"+XOOOOOOO o ++++",
+"+XOOOOOOO    +++",
+"+XOOOOOOOOOO +++",
+"+XOOOOOOO    +++",
+"+XOOOOOO XooX ++",
+"+XOOOOO X..oXX +",
+"+XOOOOO o.ooXo +",
+"+XOOOOO ooooXo +",
+"+XOOOOO Xoo.XX +",
+"+XOOOOOO XooX  +",
+"+XOOOOOOO       ",
+"+Xoooooooooo +  ",
+"+            ++ "
+};

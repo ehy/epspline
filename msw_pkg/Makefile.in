@@ -1,0 +1,70 @@
+#! /usr/bin/make -f
+# POSIX makefile for epspline MSW installer:
+# make the MSW installer -- not to be invoked as part of
+# normal build, but invoked by hand when MSW binary has been
+# built and all things are ready
+# 1st non-comment, 1st target w/o dependencies or commands:
+.POSIX:
+
+# catalog name: $(NAME).{pot,po,mo}
+NAME = mswinstallername
+APPNAME = appname
+SRC = appname.nsi
+MACS = ../cdata/cdata.m4
+
+# some utilities used in this script:
+# (cp and rm are always forced)
+RM = rm -f
+CP = cp -f
+MV = mv
+GREP = grep -F
+M4 = m4
+MKNSIS = makensis -V4
+MKDIR = mkdir
+
+all: $(NAME)
+	@P="$$(pwd)"; D="$${P##*/}"; echo $@ made in "$$D" ; exit 0
+
+$(NAME) : i18n-sect.in
+	$(M4) $(MACS) i18n-sect.in > i18n-sect
+	$(M4) $(MACS) $(SRC).in > $(SRC)
+	$(MKNSIS) $(SRC)
+	ls -l $@
+
+#  SetOutPath "$INSTDIR\en"
+#  
+#  File "../po/en/appname.mo"
+#
+#  WriteRegStr ${_HK_} "Software\vendorname\appname\appversion\i18n" \
+#	"installed en message catalog" "$INSTDIR\en\appname.mo"
+i18n-sect.in:
+	:> $@; mo="$(APPNAME).mo"; \
+	for f in ../po/*/$$mo ; do \
+		td=$${f%/*}; d=$${td##*/}; \
+		printf '\n  SetOutPath "$$INSTDIR\\%s"\n' "$$d" \
+			>> $@; \
+		printf '\n  File "%s"\n' "$$f" \
+			>> $@; \
+		printf \
+		'\n  WriteRegStr $${_HK_} "Software\\%s\\%s\\%s\\i18n" \\\n' \
+			vendornameS appnameS appversionS \
+			>> $@; \
+		printf \
+		'    "installed %s message catalog" "$$INSTDIR\\%s\\%s"\n' \
+			"$$d" "$$d" "$$mo" \
+			>> $@; \
+		printf '\n' >> $@; \
+	done; ls -l $@
+
+install: $(NAME)
+	$(MV) $(NAME) ../.. && ls -l ../../$(NAME)
+
+uninstall:
+	$(RM) ../../$(NAME)
+
+clean :
+	$(RM) $(NAME) i18n-sect.in i18n-sect
+
+cleanall : clean
+
+distclean: cleanall

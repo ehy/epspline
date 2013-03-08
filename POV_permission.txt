@@ -1,0 +1,100 @@
+In order to draw accurate outlines a very small amount of the POV-Ray
+source code has been used in this program.  This use was made possible by
+the POV-Team kindly making an exception to their license terms.  Understand
+that this does not suggest that POV-Ray code may be reused.  Please read
+and abide by the POV-Ray license.  See 'http://www.povray.org/'.
+
+Here is the POV-Team's reply to my request:
+
+	Return-Path: <teamc@povray.org>
+	Received: from localhost (IDENT:0@localhost [127.0.0.1])
+		by evh.liii.com (8.10.0.Beta10/8.10.0.Beta10) with ESMTP id e379a9I16879
+		for <ehy@localhost>; Fri, 7 Apr 2000 05:36:09 -0400
+	Received: from pop.delphi.com
+		by localhost with POP3 (fetchmail-5.3.0)
+		for ehy@localhost (single-drop); Fri, 07 Apr 2000 05:36:09 -0400 (EDT)
+	Received: from povray.org ([204.213.191.226])
+	 by delphi.com (PMDF V5.1-8 #23839) with ESMTP id
+	 <01JNXPNRCLQ88YE7BP@delphi.com> for ehy@delphi.com; Fri,
+	 7 Apr 2000 01:11:58 EDT
+	Received: (from teamc@localhost) by povray.org (8.9.3/8.9.3) id BAA96618; Fri,
+	 07 Apr 2000 01:11:16 -0400 (EDT envelope-from teamc)
+	Date: Fri, 07 Apr 2000 01:11:16 -0400 (EDT)
+	From: POV-Ray Team Co-ordinator <team-coord@povray.org>
+	Subject: Re: License and code use
+	In-reply-to: <Pine.LNX.4.21.0003280929001.1646-100000@evh.liii.com>
+	To: ehy@delphi.com (Ed Hynan)
+	Cc: team-coord@povray.org
+	Message-id: <200004070511.BAA96618@povray.org>
+	MIME-version: 1.0
+	X-Mailer: ELM [version 2.4ME+ PL54 (25)]
+	Content-type: text/plain; charset=US-ASCII
+	Content-transfer-encoding: 7bit
+
+	> Here's the problem: I have used twenty four lines of code
+	> from POV's prism.c (there is identical code in lathe.c).
+	> Specifically, in the function Compute_Prism() there is a
+	> switch() with cases for linear, quadratic, cubic, and
+	> bezier splines, and each case calculates interpolation
+	> coefficients for a set of points (or UV vectors).
+
+	In this one limited instance we do give permission to use
+	the code you mentioned. This is extremely unusual but in
+	your case we feel an exception is reasonable.
+
+	You need to acknowledge the use of the code in the source
+	and make it entirely clear (to others who may see your use
+	and think that it is thus 'ok' to use our source code) that
+	it is not allowable under normal circumstances.
+
+	thanks,
+
+	-- Chris Cason
+	   POV-Team Co-ordinator
+
+
+Here is the text of my request:
+
+	Hi,
+
+	This is in regard to the POV-Ray license, specifically
+	pertaining to use of the POV-Ray source code.
+
+	I am currently working on a spline editor for POV's
+	prism and lathe objects.  It is at an early stage, but
+	already appears to be potentially useful to POV users.
+	It uses the wxWindows library for its graphical interface,
+	and wxWindows is now using the well known GNU GPL.
+
+	If I decide to make a public release of this spline editor,
+	and I would like to after a little more development, I
+	would like to use the GNU GPL.  (Release as source code
+	only.)
+
+	Here's the problem: I have used twenty four lines of code
+	from POV's prism.c (there is identical code in lathe.c).
+	Specifically, in the function Compute_Prism() there is a
+	switch() with cases for linear, quadratic, cubic, and
+	bezier splines, and each case calculates interpolation
+	coefficients for a set of points (or UV vectors).
+
+	Since the point of my spline editor is to work with
+	outlines that accurately represent the shape of objects
+	that POV will produce, it seemed natural to reuse that
+	code, but I am worried that even these few lines would
+	violate your license.  In the section ``Permitted
+	Modification And Custom Versions'' this prohibition is stated:
+
+	    A "custom version" is defined as a fully functional
+	    version of POV-Ray with all existing features intact.
+	    ANY OTHER USE OF ANY POV-Ray SOURCE CODE IS
+	    EXPRESSLY PROHIBITED. The POV-Team does not license
+	    source code for any use outside POV-Ray. No portion
+	    of the POV-Ray source code may be incorporated into
+	    another program unless it is clearly a custom version
+	    of POV-Ray that includes all of the basic functions of POV-Ray. 
+
+	Is an exception possible?  I am looking forward to your reply.
+
+	TIA,
+	Ed Hynan

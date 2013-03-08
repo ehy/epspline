@@ -1,0 +1,26 @@
+/* XPM */
+static char *Page_Number_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c gray100",
+"o c None",
+/* pixels */
+"ooooo         oo",
+"oooo  XXXXXXX oo",
+"ooo X XXXXXXX oo",
+"oo    X.XX.XX oo",
+"oo XXXX.XX.XX oo",
+"oo XX.......X oo",
+"oo XXX.XX.XXX oo",
+"oo XXX.XX.XXX oo",
+"oo X.......XX oo",
+"oo XX.XX.XXXX oo",
+"oo XX.XX.XXXX oo",
+"oo XXXXXXXXXX oo",
+"oo XXXXXXXXXX oo",
+"oo            oo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

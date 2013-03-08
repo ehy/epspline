@@ -1,0 +1,25 @@
+/* XPM */
+static char *attach_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXX   XXXXXX",
+"XXXXXX XXX XXXXX",
+"XXXXXX X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX X X X XXXXX",
+"XXXX XX XX XXXXX",
+"XXXX. XXX .XXXXX",
+"XXXXX.   .XXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

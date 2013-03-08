@@ -1,0 +1,26 @@
+/* XPM */
+static char *lst2icon_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"..oooooo..oooooo",
+".X.o   o.X.o   o",
+"...ooooo...ooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"..oooooo..oooooo",
+".X.o   o.X.o   o",
+"...ooooo...ooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"..oooooo..oooooo",
+".X.o   o.X.o   o",
+"...ooooo...ooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

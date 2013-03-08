@@ -1,0 +1,27 @@
+/* XPM */
+static char *order_ds_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c navy",
+"X c #800000",
+"o c #808080",
+"O c None",
+/* pixels */
+"OOOOOOOOOOOOOOOO",
+"OOXXXXXXOOOOO OO",
+"OOXOOOXXOOOOO OO",
+"OOOOOXXOOOOOO OO",
+"OOOOXXOOOOOOO OO",
+"OOOXXOOOOOOOO OO",
+"OOXXOOOXOOOOO OO",
+"OOXXXXXXOOOOO OO",
+"OOOOOOOOOOOOO OO",
+"OOOOO.OOOOOOO OO",
+"OOOOo.oOOOOOO OO",
+"OOOO...OOOO     ",
+"OOOo.O.oOOOo   o",
+"OOO.....OOOO   O",
+"OOo.OOO.oOOOo oO",
+"OO...O...OOOO OO"
+};

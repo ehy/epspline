@@ -1,0 +1,25 @@
+/* XPM */
+static char *font_big_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXX XX",
+"XXXXXXX .XXX   X",
+"XXXXXX.  XX     ",
+"XXXXXX   .XXXXXX",
+"XXXXX.    XXXXXX",
+"XXXXX  .  .XXXXX",
+"XXXX. .X   XXXXX",
+"XXXX  XX.  .XXXX",
+"XXX. .XXX   XXXX",
+"XXX  XXXX.  .XXX",
+"XX.          XXX",
+"XX  XXXXXX.  .XX",
+"X. .XXXXXXX   XX",
+"X  XXXXXXXX.  .X",
+"    XXXXXXX     ",
+"XXXXXXXXXXXXXXXX"
+};

@@ -1,0 +1,43 @@
+#! /bin/sh
+#
+# This worked well building wxWidgets 2.8.10 for MSW on MS Vista 32 bit
+# (in Linux kvm virtual machine) with Mingw under its Msys environment.
+#
+
+: ${WXV:=2.8.10}
+
+# mingw gcc says -m64 N.G.
+if false; then
+	BITS=64
+elif false; then
+	BITS=32
+fi
+: ${BITS:=32}
+
+# set optimization or -g
+: ${OPT:="-O3"}
+
+# set install prefix!
+#PREFIX=$HOME/${LOGNAME}_wsys/wx/wx-${WXV}_mingw-msys-$BITS \
+PREFIX=$HOME/${LOGNAME}_wsys/wx-${WXV}_mingw-msys-$BITS \
+
+# this became necessary with a later mingw; had not been previously
+: ${XFL:="-static"}
+
+CF=./configure
+test -f $CF || CF=../configure
+test -f $CF || {
+	echo "cannot find configure script" 1>&2
+	exit 1
+}
+
+echo /bin/sh $CF \
+    --prefix=$PREFIX \
+    --enable-unicode --with-opengl --disable-shared --enable-stl \
+    CFLAGS="$OPT -m${BITS} $XFL" CXXFLAGS="$OPT -m${BITS} $XFL"
+
+exec /bin/sh $CF \
+    --prefix=$PREFIX \
+    --enable-unicode --with-opengl --disable-shared --enable-stl \
+    CFLAGS="$OPT -m${BITS} $XFL" CXXFLAGS="$OPT -m${BITS} $XFL"
+

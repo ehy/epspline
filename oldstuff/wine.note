@@ -1,0 +1,7 @@
+	sysctl -w vm.mmap_min_addr=0
+
+becomes necessary somewhere in the Linux 2.6 kernel line.
+Without it wine might work but complain repeatedly about
+failed mappings starting at address 0  --  which Linux
+has disabled by default to close a security hole.
+

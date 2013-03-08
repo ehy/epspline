@@ -1,0 +1,26 @@
+/* XPM */
+static char *font_wid_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c #808080",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oo.oooooooooo.oo",
+"o..oooooooooo..o",
+".....oooooo.....",
+"o..oooooooooo..o",
+"oo.oooo  oooo.oo",
+"oooooo    oooooo",
+"ooooo  XX  ooooo",
+"oooo  XooX  oooo",
+"ooo  XooooX  ooo",
+"oo            oo",
+"o  XooooooooX  o",
+"    oooooooo    ",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

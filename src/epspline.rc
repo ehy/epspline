@@ -1,0 +1,4 @@
+#include "wx/msw/wx.rc"
+
+epspline ICON "epspline.ico"
+epspline_varsz ICON "epspline_varsz.ico"

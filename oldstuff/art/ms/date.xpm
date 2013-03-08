@@ -1,0 +1,29 @@
+/* XPM */
+static char *date_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 7 1",
+"  c black",
+". c navy",
+"X c #800000",
+"o c #808080",
+"O c #C0C0C0",
+"+ c gray100",
+"@ c None",
+/* pixels */
+"           @@@@@",
+" ......... @@@@@",
+" ....           ",
+" O+O+ ......... ",
+" +oXX ......... ",
+" OXX+ +O+O+O+O+ ",
+" +oXX O+XXXXX+O ",
+" OXX+ +O+O+XXO+ ",
+" +oXX O+O+XXO+O ",
+" O+O+ +O+XXO+O+ ",
+" +    O+OXX+O+O ",
+" O+O+ +O+O+O+O+ ",
+"      O       O ",
+"@@@@@ +O+O+O+O+ ",
+"@@@@@           ",
+"@@@@@@@@@@@@@@@@"
+};

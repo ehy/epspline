@@ -1,0 +1,206 @@
+#! /bin/sh
+#
+# This worked well cross-building wxWidgets 2.8.10 for MSW
+# on Ubuntu 10.04 GNU/Linux host with the Ubuntu Mingw32 packages.
+#
+
+# bash under cygwin is failing longjmps
+THESHELL=/bin/sh
+#THESHELL=/bin/zsh
+SHELL=$THESHELL
+
+# NOTE:
+# both mingw32 and mingw-w64 *may* need the following
+# macro to get printf family functions that can format
+# a long double (e.g. %.18Lg); mingw-w64 distributed
+# with Cygwin 1.7.7 certainly does need it and moreover
+# works only with char and not wide char functions!
+# see http://sourceforge.net/apps/trac/mingw-w64/wiki/printf%20and%20scanf%20family
+XCFL="-D__USE_MINGW_ANSI_STDIO=1"
+
+# one optional argument, expected to cross compile tool filename,
+# e.g. i586-mingw-foo-gcc, from which the toolname stem and arch
+# can be taken
+test X"$1" = X || {
+	# remove directory
+	STEM=${1##*/}
+	# remove tool name e.g. -gcc or -ld
+	STEM=${STEM%-*}
+	# arch is 1st dash separated word
+	ARCH=${STEM%%-*}
+}
+
+# wx version
+# wx 2.8.10 for msw is *NOT* 64 bit clean
+#WXVERS=2.8.10
+# try devel release - no still n.g. 64 bit
+#WXVERS=2.9.4
+#WXVERS=2.9.1
+: ${WXVERS:=2.8.12}
+
+# set install prefix by hand
+# appended with "_${STEM}" below
+: ${PREFIX:=$HOME/wine64/drive_c/${LOGNAME}/evh/wx/wx-${WXVERS}}
+#PREFIX=$HOME/.wine/drive_c/wx-${WXVERS}
+#PREFIX=$HOME/local/wx-${WXVERS}
+
+SYS="$(uname)"
+
+case "$SYS" in
+[Ll]inux* )
+# Ubuntu 10.04 -- adjust for your system
+	# set params if not set from optional arg
+	# for Ubuntu 10.04 arch is i586 or amd64, but amd64 is broken
+	#: ${ARCH:=i586}
+	#: ${STEM:=${ARCH}-mingw32msvc}
+	: ${ARCH:=x86_64}
+	: ${STEM:=${ARCH}-x86_64-w64-mingw32}
+
+	# As of 2.9.1 wxMSW still not 64 bit clean
+	: ${BITS:=64}
+	#BITS=64
+	
+	# need a --build arg
+	BUILDARG=${ARCH}-linux
+
+	# choose optimize level (or -g)
+	: ${OPT:="-O2"}
+
+	# GCC bits option
+	AFL="-m${BITS}"
+	test X = X"$MARCH" || AFL="$AFL -march=$MARCH"
+
+	# extra opts to get this compile to succeed
+	#XOPTS="--disable-whatever"
+	#XOPTS="--without-whatever"
+	;;
+FreeBSD )  # WARNING: only tested on FreeBSD
+	: ${ARCH:=""}
+	: ${STEM:=mingw32}
+
+	# As of 2.9.1 wxMSW still not 64 bit clean
+	: ${BITS:=32}
+	
+	# need a --build arg
+	# this default is likely wrong!
+	: ${BUILDARG:=i386-pc-freebsd}
+
+	# choose optimize level (or -g)
+	: ${OPT:="-O2"}
+
+	# GCC bits option
+	AFL="-m${BITS}"
+	test X = X"$MARCH" || AFL="$AFL -march=$MARCH"
+	;;
+[Cc][Yy][Gg][Ww][Ii][Nn]* )
+# Cygwin
+	# set params if not set from optional arg
+	# for Cygwin arch might be i686 or x86_64, but check your inst!
+	: ${ARCH:=i686}
+	: ${STEM:=${ARCH}-w64-mingw32}
+
+	# As of 2.9.1 wxMSW still not 64 bit clean
+	: ${BITS:=32}
+	#BITS=64
+	
+	# need a --build arg
+	BUILDARG=${ARCH}-cygwin
+
+	# choose optimize level (or -g)
+	: ${OPT:="-O3"}
+
+	# GCC bits option
+	AFL="-m${BITS}"
+	test X = X"$MARCH" || AFL="$AFL -march=$MARCH"
+
+	# extra opts to get this compile to succeed
+	#XOPTS="--disable-whatever"
+	#XOPTS="--without-whatever"
+	;;
+* )
+	# see above to set needed params
+	echo "you must setup parameters!" 1>&2
+	exit 1
+	;;
+esac
+
+CFLAGS="${XCFL} ${OPT} ${AFL} ${STATIC}"
+CXXFLAGS="${XCFL} ${OPT} ${AFL} ${STATIC}"
+LDFLAGS="${STATIC}"
+CXX=${STEM}-g++
+CC=${STEM}-gcc
+CPP=${STEM}-cpp
+WINDRES=${STEM}-windres
+WINDMC=${STEM}-windmc
+AR=${STEM}-ar
+RANLIB=${STEM}-ranlib
+LD=${STEM}-ld
+AS=${STEM}-as
+STRIP=${STEM}-strip
+NM=${STEM}-nm
+DLLTOOL=${STEM}-dlltool
+OBJCOPY=${STEM}-objcopy
+OBJDUMP=${STEM}-objdump
+
+PREFIX=${PREFIX}_${STEM}
+
+: ${CF:=./configure}
+test -r "$CF" || CF=../configure
+test -r "$CF" || {
+	echo "where is configure script?" 1>&2
+	exit 1
+}
+
+time $THESHELL $CF $XOPTS \
+	--prefix="${PREFIX}" \
+	--enable-unicode --disable-shared --enable-stl  \
+	--enable-dataobj --enable-optimise \
+	--with-msw --with-opengl \
+	--target=${STEM} \
+	--host=${STEM} \
+	--build=${BUILDARG} \
+	CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+	LDFLAGS="${LDFLAGS}" \
+	CXX="${CXX}" CC="${CC}" \
+	CPP="${CPP}" WINDRES="${WINDRES}" \
+	AR="${AR}" \
+	RANLIB="${RANLIB}" \
+	LD="${LD}" \
+	AS="${AS}" \
+	STRIP="${STRIP}" \
+	NM="${NM}" \
+	DLLTOOL="${DLLTOOL}" \
+	OBJCOPY="${OBJCOPY}" \
+	OBJDUMP="${OBJDUMP}" \
+|| {
+	STAT=$?
+	echo ${1##*/}: $CF FAILED 1>&2
+	exit $STAT
+}
+
+# Sadly, some fixups may be necessary
+# Unix 98 printf should be available in mingw
+NG=HAVE_UNIX98_PRINTF 
+SH=$(echo ./lib/wx/include/*/wx/setup.h)
+test -f "$SH" || {
+	echo ${1##*/}: cannot find setup.h for fixing 1>&2
+	echo ${1##*/}: got "\"$SH\"" 1>&2
+	echo ${1##*/}: you might want to change "\"$NG\"" macro 1>&2
+	exit 69
+}
+
+#  /* #undef HAVE_UNIX98_PRINTF */
+NGSTR="/* #undef $NG */"
+NGPAT="^.*#[ 	]*undef[ 	]*$NG\>.*$"
+#NGPAT=".*#[[:space:]]*undef[[:space:]]*$NG.*$"
+OK="#define $NG 1"
+grep -E "$NGPAT" $SH && {
+	echo ${1##*/}: changing "$NGSTR" to "$OK" 1>&2
+	sed -e "s/$NGPAT/$OK/" < $SH > ___tmpf.rm
+	cat ___tmpf.rm > $SH
+	rm -f ___tmpf.rm
+}
+#  /* #undef HAVE_UNIX98_PRINTF */
+
+exit 0
+

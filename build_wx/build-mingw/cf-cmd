@@ -1,0 +1,409 @@
+#! /bin/sh
+
+UN=$(uname)
+# typical Debian name pattern for mingw binaries:
+#    i686-w64-mingw32-gcc # 32 bit executable (not output bits)
+#    x86_64-w64-mingw32-gcc # 64 bit executable (not output bits)
+# name pattern used by FreeBSD 9.0 ports:
+#    mingw32-gcc
+# and probably more variation elsewhere
+
+case $UN in
+	Linux )
+		#: ${ARCH:=x86_64}
+		: ${ARCH:=i686}
+		: ${STEM:=${ARCH}-w64-mingw32}
+		;;
+	FreeBSD )  # *NOT* certain this is suitable except FreeBSD
+		: ${ARCH:=""}
+		: ${STEM:=mingw32}
+		;;
+	* )
+		printf '"%s":\n\t%s\n' "$0" \
+		'edit script and set ARCH and STEM per mingw name pattern'
+		exit 1
+		''
+esac
+
+: ${STATIC:="-static"}
+export STATIC
+: ${BITS:=32}
+export ARCH
+export STEM
+export BITS
+: ${WXVERS:=2.8.12}
+export WXVERS
+PREFIX=$HOME/wx/wxMSW-${WXVERS}-inst
+export PREFIX
+: ${OPT:="-O2"}
+export OPT
+time /bin/sh ./wx-configure-cmd-mingw-cross
+
+exit $?
+
+cat >/dev/null <<-"EOF"
+`configure' configures wxWidgets 2.8.12 to adapt to many kinds of systems.
+
+Usage: ../configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+Configuration:
+  -h, --help              display this help and exit
+      --help=short        display options specific to this package
+      --help=recursive    display the short help of all the included packages
+  -V, --version           display version information and exit
+  -q, --quiet, --silent   do not print `checking...' messages
+      --cache-file=FILE   cache test results in FILE [disabled]
+  -C, --config-cache      alias for `--cache-file=config.cache'
+  -n, --no-create         do not create output files
+      --srcdir=DIR        find the sources in DIR [configure dir or `..']
+
+Installation directories:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+			  [/usr/local]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+			  [PREFIX]
+
+By default, `make install' will install all the files in
+`/usr/local/bin', `/usr/local/lib' etc.  You can specify
+an installation prefix other than `/usr/local' using `--prefix',
+for instance `--prefix=$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR           user executables [EPREFIX/bin]
+  --sbindir=DIR          system admin executables [EPREFIX/sbin]
+  --libexecdir=DIR       program executables [EPREFIX/libexec]
+  --datadir=DIR          read-only architecture-independent data [PREFIX/share]
+  --sysconfdir=DIR       read-only single-machine data [PREFIX/etc]
+  --sharedstatedir=DIR   modifiable architecture-independent data [PREFIX/com]
+  --localstatedir=DIR    modifiable single-machine data [PREFIX/var]
+  --libdir=DIR           object code libraries [EPREFIX/lib]
+  --includedir=DIR       C header files [PREFIX/include]
+  --oldincludedir=DIR    C header files for non-gcc [/usr/include]
+  --infodir=DIR          info documentation [PREFIX/info]
+  --mandir=DIR           man documentation [PREFIX/man]
+
+X features:
+  --x-includes=DIR    X include files are in DIR
+  --x-libraries=DIR   X library files are in DIR
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
+
+Optional Features:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-gui            use GUI classes
+  --enable-monolithic     build wxWidgets as single library
+  --enable-plugins        build parts of wxWidgets as loadable components
+  --enable-universal      use wxWidgets GUI controls instead of native ones
+  --enable-nanox          use NanoX
+  --disable-gtk2          use GTK+ 1.2 instead of 2.0
+  --enable-gpe            use GNOME PDA Environment features if possible
+  --enable-shared         create shared library code
+  --enable-optimise       compile without optimisations
+  --enable-debug          same as debug_flag and debug_info
+  --enable-stl            use STL for containers
+  --enable-omf            use OMF object format
+  --enable-debug_flag     set __WXDEBUG__ flag (recommended for developers!)
+  --enable-debug_info     create code with debugging information
+  --enable-debug_gdb      create code with extra GDB debugging information
+  --enable-debug_cntxt    use wxDebugContext
+  --enable-mem_tracing    create code with memory tracing
+  --enable-profile        create code with profiling information
+  --enable-no_rtti        create code without RTTI information
+  --enable-no_exceptions  create code without C++ exceptions handling
+  --enable-permissive     compile code disregarding strict ANSI
+  --enable-no_deps        create code without dependency information
+  --disable-vararg_macros don't use vararg macros, even if they are supported
+  --enable-universal_binary  create Mac PowerPC and Intel Universal binary
+  --enable-compat24       enable wxWidgets 2.4 compatibility
+  --disable-compat26      disable wxWidgets 2.6 compatibility
+  --disable-rpath         disable use of rpath for uninstalled builds
+  --enable-objc_uniquifying enable Objective-C class name uniquifying
+  --enable-abi-incompatible-features Enables features that break ABI compatibility
+  --enable-intl           use internationalization system
+  --enable-config         use wxConfig (and derived) classes
+  --enable-protocols      use wxProtocol and derived classes
+  --enable-ftp            use wxFTP (requires wxProtocol
+  --enable-http           use wxHTTP (requires wxProtocol
+  --enable-fileproto      use wxFileProto class (requires wxProtocol
+  --enable-sockets        use socket/network classes
+  --enable-ole            use OLE classes (Win32 only)
+  --enable-dataobj        use data object classes
+  --enable-ipc            use interprocess communication (wxSocket etc.)
+  --enable-apple_ieee     use the Apple IEEE codec
+  --enable-arcstream      use wxArchive streams
+  --enable-backtrace      use wxStackWalker class for getting backtraces
+  --enable-catch_segvs    catch signals in wxApp::OnFatalException (Unix only)
+  --enable-cmdline        use wxCmdLineParser class
+  --enable-datetime       use wxDateTime class
+  --enable-debugreport    use wxDebugReport class
+  --enable-dialupman      use dialup network classes
+  --enable-dynlib         use wxLibrary class for DLL loading
+  --enable-dynamicloader  use (new) wxDynamicLibrary class
+  --enable-exceptions     build exception-safe library
+  --enable-ffile          use wxFFile class
+  --enable-file           use wxFile class
+  --enable-filesystem     use virtual file systems classes
+  --enable-fontmap        use font encodings conversion classes
+  --enable-fs_archive     use virtual archive filesystems
+  --enable-fs_inet        use virtual HTTP/FTP filesystems
+  --enable-fs_zip         now replaced by fs_archive
+  --enable-geometry       use geometry class
+  --enable-log            use logging system
+  --enable-longlong       use wxLongLong class
+  --enable-mimetype       use wxMimeTypesManager
+  --enable-mslu           use MS Layer for Unicode on Windows 9x (Win32 only)
+  --enable-snglinst       use wxSingleInstanceChecker class
+  --enable-std_iostreams  use standard C++ stream classes
+  --enable-std_string     use standard C++ string classes
+  --enable-stdpaths       use wxStandardPaths class
+  --enable-stopwatch      use wxStopWatch class
+  --enable-streams        use wxStream etc classes
+  --enable-sysoptions     use wxSystemOptions
+  --enable-tarstream      use wxTar streams
+  --enable-textbuf        use wxTextBuffer class
+  --enable-textfile       use wxTextFile class
+  --enable-timer          use wxTimer class
+  --enable-unicode        compile wxString with Unicode support
+  --enable-sound          use wxSound class
+  --enable-mediactrl      use wxMediaCtrl class
+  --enable-gstreamer8     force GStreamer 0.8 instead of 0.10 with the wxMediaCtrl class on unix
+  --enable-printfposparam use wxVsnprintf() which supports positional parameters
+  --enable-zipstream      use wxZip streams
+  --enable-url            use wxURL class
+  --enable-variant        use wxVariant class
+  --enable-protocol       use wxProtocol class
+  --enable-protocol-http  HTTP support in wxProtocol
+  --enable-protocol-ftp   FTP support in wxProtocol
+  --enable-protocol-file  FILE support in wxProtocol
+  --enable-threads        use threads
+  --enable-docview        use document view architecture
+  --enable-help           use help subsystem
+  --enable-mshtmlhelp     use MS HTML Help (win32)
+  --enable-html           use wxHTML sub-library
+  --enable-htmlhelp       use wxHTML-based help
+  --enable-xrc            use XRC resources sub-library
+  --enable-aui            use AUI docking library
+  --enable-constraints    use layout-constraints system
+  --enable-printarch      use printing architecture
+  --enable-mdi            use multiple document interface architecture
+  --enable-mdidoc         use docview architecture with MDI
+  --enable-loggui         use standard GUI logger
+  --enable-logwin         use wxLogWindow
+  --enable-logdialog      use wxLogDialog
+  --enable-webkit         use wxWebKitCtrl (Mac)
+  --enable-richtext       use wxRichTextCtrl
+  --enable-graphics_ctx   use graphics context 2D drawing API
+  --enable-postscript     use wxPostscriptDC device context (default for gtk+)
+  --enable-prologio       not available; see contrib
+  --enable-resources      not available; see contrib
+  --enable-clipboard      use wxClipboard class
+  --enable-dnd            use Drag'n'Drop classes
+  --enable-metafile       use win32 metafiles
+  --enable-controls       use all usual controls
+  --enable-accel          use accelerators
+  --enable-animatectrl    use wxAnimationCtrl class
+  --enable-button         use wxButton class
+  --enable-bmpbutton      use wxBitmapButton class
+  --enable-bmpcombobox    use wxBitmapComboBox class
+  --enable-calendar       use wxCalendarCtrl class
+  --enable-caret          use wxCaret class
+  --enable-checkbox       use wxCheckBox class
+  --enable-checklst       use wxCheckListBox (listbox with checkboxes) class
+  --enable-choice         use wxChoice class
+  --enable-choicebook     use wxChoicebook class
+  --enable-collpane       use wxCollapsiblePane class
+  --enable-colourpicker   use wxColourPickerCtrl class
+  --enable-combobox       use wxComboBox class
+  --enable-comboctrl      use wxComboCtrl class
+  --enable-datepick       use wxDatePickerCtrl class
+  --enable-dirpicker      use wxDirPickerCtrl class
+  --enable-display        use wxDisplay class
+  --enable-detect_sm      use code to detect X11 session manager
+  --enable-filepicker     use wxFilePickerCtrl class
+  --enable-fontpicker     use wxFontPickerCtrl class
+  --enable-gauge          use wxGauge class
+  --enable-grid           use wxGrid class
+  --enable-dataviewctrl   use wxDataViewCtrl class
+  --enable-hyperlink      use wxHyperlinkCtrl class
+  --enable-imaglist       use wxImageList class
+  --enable-listbook       use wxListbook class
+  --enable-listbox        use wxListBox class
+  --enable-listctrl       use wxListCtrl class
+  --enable-notebook       use wxNotebook class
+  --enable-odcombobox     use wxOwnerDrawnComboBox class
+  --enable-radiobox       use wxRadioBox class
+  --enable-radiobtn       use wxRadioButton class
+  --enable-sash           use wxSashWindow class
+  --enable-scrollbar      use wxScrollBar class and scrollable windows
+  --enable-searchctrl     use wxSearchCtrl class
+  --enable-slider         use wxSlider class
+  --enable-spinbtn        use wxSpinButton class
+  --enable-spinctrl       use wxSpinCtrl class
+  --enable-splitter       use wxSplitterWindow class
+  --enable-statbmp        use wxStaticBitmap class
+  --enable-statbox        use wxStaticBox class
+  --enable-statline       use wxStaticLine class
+  --enable-stattext       use wxStaticText class
+  --enable-statusbar      use wxStatusBar class
+  --enable-tabdialog      use wxTabControl class
+  --enable-textctrl       use wxTextCtrl class
+  --enable-togglebtn      use wxToggleButton class
+  --enable-toolbar        use wxToolBar class
+  --enable-tbarnative     use native wxToolBar class
+  --enable-treebook       use wxTreebook class
+  --enable-toolbook       use wxToolbook class
+  --enable-treectrl       use wxTreeCtrl class
+  --enable-tipwindow      use wxTipWindow class
+  --enable-popupwin       use wxPopUpWindow class
+  --enable-commondlg      use all common dialogs
+  --enable-aboutdlg       use wxAboutBox
+  --enable-choicedlg      use wxChoiceDialog
+  --enable-coldlg         use wxColourDialog
+  --enable-filedlg        use wxFileDialog
+  --enable-finddlg        use wxFindReplaceDialog
+  --enable-fontdlg        use wxFontDialog
+  --enable-dirdlg         use wxDirDialog
+  --enable-msgdlg         use wxMessageDialog
+  --enable-numberdlg      use wxNumberEntryDialog
+  --enable-splash         use wxSplashScreen
+  --enable-textdlg        use wxTextDialog
+  --enable-tipdlg         use startup tips
+  --enable-progressdlg    use wxProgressDialog
+  --enable-wizarddlg      use wxWizard
+  --enable-menus          use wxMenu/wxMenuBar/wxMenuItem classes
+  --enable-miniframe      use wxMiniFrame class
+  --enable-tooltips       use wxToolTip class
+  --enable-splines        use spline drawing code
+  --enable-mousewheel     use mousewheel
+  --enable-validators     use wxValidator and derived classes
+  --enable-busyinfo       use wxBusyInfo
+  --enable-joystick       use wxJoystick
+  --enable-metafiles      use wxMetaFile (Win32 only)
+  --enable-dragimage      use wxDragImage
+  --enable-accessibility  enable accessibility support
+  --enable-dccache        cache temporary wxDC objects (Win32 only)
+  --enable-palette        use wxPalette class
+  --enable-image          use wxImage class
+  --enable-gif            use gif images (GIF file format)
+  --enable-pcx            use pcx images (PCX file format)
+  --enable-tga            use tga images (TGA file format)
+  --enable-iff            use iff images (IFF file format)
+  --enable-pnm            use pnm images (PNM file format)
+  --enable-xpm            use xpm images (XPM file format)
+  --enable-icocur         use Windows ICO and CUR formats
+  --enable-official_build official build of wxWidgets (win32 DLL only)
+  --enable-vendor=VENDOR  vendor name (win32 DLL only)
+  --disable-largefile     omit support for large files
+  --disable-gtktest       do not try to compile and run a test GTK+ program
+  --disable-gtktest       Do not try to compile and run a test GTK program
+  --disable-sdltest       Do not try to compile and run a test SDL program
+  --enable-omf            use OMF object format (OS/2)
+  --disable-dependency-tracking
+                          don't use dependency tracking even if the compiler
+                          can
+  --disable-precomp-headers
+                          don't use precompiled headers even if compiler can
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --without-subdirs       don't generate makefiles for samples/demos/...
+  --with-gtk[=VERSION]    use GTK+, VERSION can be 2 (default), 1 or "any"
+  --with-motif            use Motif/Lesstif
+  --with-mac              use Mac OS X
+  --with-cocoa            use Cocoa
+  --with-wine             use Wine
+  --with-msw              use MS-Windows
+  --with-pm               use OS/2 Presentation Manager
+  --with-mgl              use SciTech MGL
+  --with-directfb         use DirectFB
+  --with-microwin         use MicroWindows
+  --with-x11              use X11
+  --with-libpng           use libpng (PNG image format)
+  --with-libjpeg          use libjpeg (JPEG file format)
+  --with-libtiff          use libtiff (TIFF file format)
+  --with-libxpm           use libxpm (XPM file format)
+  --with-libmspack        use libmspack (CHM help files loading)
+  --with-sdl              use SDL for audio on Unix
+  --with-gnomeprint       use GNOME print for printing under GNOME
+  --with-gnomevfs         use GNOME VFS for associating MIME types
+  --with-hildon           use Hildon framework for Nokia 770
+  --with-opengl           use OpenGL (or Mesa)
+  --with-themes=all|list  use only the specified comma-separated list of wxUniversal themes
+  --with-dmalloc          use dmalloc library (http://dmalloc.com/)
+  --with-regex            enable support for wxRegEx class
+  --with-zlib             use zlib for LZW compression
+  --with-odbc             use the IODBC and wxODBC classes
+  --with-expat            enable XML support using expat parser
+  --with-macosx-sdk=PATH  use an OS X SDK at PATH
+  --with-macosx-version-min=VER   build binaries which require at least this OS X version
+  --with-flavour=NAME     specify a name to identify this build
+  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)
+  --with-gtk-exec-prefix=PFX Exec prefix where GTK is installed (optional)
+  --with-x                use the X Window System
+  --with-libiconv-prefix=DIR  search for libiconv in DIR/include and DIR/lib
+  --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
+  --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
+  --with-cppunit-prefix=PFX   Prefix where CppUnit is installed (optional)
+  --with-cppunit-exec-prefix=PFX  Exec prefix where CppUnit is installed (optional)
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  CPPFLAGS    C/C++ preprocessor flags, e.g. -I<include dir> if you have
+              headers in a nonstandard directory <include dir>
+  CPP         C preprocessor
+  CXX         C++ compiler command
+  CXXFLAGS    C++ compiler flags
+  PKG_CONFIG  path to pkg-config utility
+  DIRECTFB_CFLAGS
+              C compiler flags for DIRECTFB, overriding pkg-config
+  DIRECTFB_LIBS
+              linker flags for DIRECTFB, overriding pkg-config
+  PANGOX_CFLAGS
+              C compiler flags for PANGOX, overriding pkg-config
+  PANGOX_LIBS linker flags for PANGOX, overriding pkg-config
+  PANGOFT2_CFLAGS
+              C compiler flags for PANGOFT2, overriding pkg-config
+  PANGOFT2_LIBS
+              linker flags for PANGOFT2, overriding pkg-config
+  PANGOXFT_CFLAGS
+              C compiler flags for PANGOXFT, overriding pkg-config
+  PANGOXFT_LIBS
+              linker flags for PANGOXFT, overriding pkg-config
+  LIBGNOMEPRINTUI_CFLAGS
+              C compiler flags for LIBGNOMEPRINTUI, overriding pkg-config
+  LIBGNOMEPRINTUI_LIBS
+              linker flags for LIBGNOMEPRINTUI, overriding pkg-config
+  GNOMEVFS_CFLAGS
+              C compiler flags for GNOMEVFS, overriding pkg-config
+  GNOMEVFS_LIBS
+              linker flags for GNOMEVFS, overriding pkg-config
+  HILDON_CFLAGS
+              C compiler flags for HILDON, overriding pkg-config
+  HILDON_LIBS linker flags for HILDON, overriding pkg-config
+  CAIRO_CFLAGS
+              C compiler flags for CAIRO, overriding pkg-config
+  CAIRO_LIBS  linker flags for CAIRO, overriding pkg-config
+  GST_CFLAGS  C compiler flags for GST, overriding pkg-config
+  GST_LIBS    linker flags for GST, overriding pkg-config
+
+Use these variables to override the choices made by `configure' or to help
+it to find libraries and programs with nonstandard names/locations.
+
+Report bugs to <wx-dev@lists.wxwidgets.org>.
+EOF
+

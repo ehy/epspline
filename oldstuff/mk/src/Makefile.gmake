@@ -1,0 +1,162 @@
+#! /usr/bin/make -f
+# UNIX makefile for epspline
+
+RM   =  rm
+cp  = cp -f
+#YACC =  yacc
+#YACC =  byacc
+YACC =  bison -y
+#LEX  =  lex
+#LEX  =  flex -l
+LEX  =  flex
+CCLEX=  c++
+#CCLEX=  cc
+LEX_STEM = lex.yy
+#PICFLAGS = -fPIC
+
+CFLAGS = $(CCFLAGS) -D_LINUX=1
+
+#OBJDIR = objects$(EXESUFFIX)
+OBJDIR = .
+SRCDIR = .
+HDRDIR = .
+COMMDIR = .
+GENSRCDIR = ../wxxrc
+
+include objects.mak
+
+all: $(OBJDIR) epspline$(EXESUFFIX)
+
+$(APPLIB) applib:
+	true
+
+$(OBJDIR):
+	test -d $(OBJDIR) || mkdir $(OBJDIR)
+
+.SUFFIXES: .cpp
+
+.cpp.o:
+	`$(CF) --cxx` $(CCFLAGS) -c -o $@ $<
+
+$(OBJDIR)/parser.o: $(SRCDIR)/parser.c $(SRCDIR)/lexer.c
+	$(CCLEX) -c $(CFLAGS) -I. $(PICFLAGS) -o $@ parser.c
+
+$(SRCDIR)/parser.c: $(COMMDIR)/parser.y $(SRCDIR)/lexer.c
+	$(RM) -f y.tab.c
+	$(YACC) $(COMMDIR)/parser.y
+	sed -e "s;$(COMMDIR)/y.tab.c;parser.y;g" < y.tab.c | \
+	sed -e "s/BUFSIZ/5000/g"            | \
+	sed -e "s/YYLMAX 200/YYLMAX 5000/g" | \
+	sed -e "s/yy/EPSIO_yy/g"            | \
+	sed -e "s/input/EPSIO_input/g"      | \
+	sed -e "s/unput/EPSIO_unput/g"      > $(SRCDIR)/parser.c
+
+$(SRCDIR)/lexer.c: $(COMMDIR)/lexer.l
+	$(RM) -f $(LEX_STEM).c
+	$(LEX) $(COMMDIR)/lexer.l
+	sed -e "s;$(COMMDIR)/$(LEX_STEM).c;lexer.l;g" < $(LEX_STEM).c | \
+	sed -e "s/yy/EPSIO_yy/g"            | \
+	sed -e "s/input/EPSIO_input/g"      | \
+	sed -e "s/unput/EPSIO_unput/g"      > $(SRCDIR)/lexer.c
+
+$(HDRDIR)/spline_props.h : $(GENSRCDIR)/spline_props.h
+	$(CP) $(HDRDIR)/spline_props.h $(GENSRCDIR)/spline_props.h
+
+$(HDRDIR)/spline_props.cpp : $(GENSRCDIR)/spline_props.cpp
+	$(CP) $(HDRDIR)/spline_props.cpp $(GENSRCDIR)/spline_props.cpp
+
+# GNU gperf is used to make a hashed set of pov reserved words
+# which have been gathered from pov docs.  These words are in a
+# file, one word per line, named pov_reserved_words.text, gperf's
+# output is pov_reserved_words.cpp (subject to change of course)
+# note that pov_reserved_words.cpp is not compiled alone, it is
+# included in util.cpp
+POV_WORDS_NAM := pov_reserved_words
+POV_WORDS_SRC := $(SRCDIR)/$(POV_WORDS_NAM).text
+POV_WORDS_CPP := $(SRCDIR)/$(POV_WORDS_NAM).cpp
+$(POV_WORDS_CPP) : $(POV_WORDS_SRC)
+	GP=`which gperf` && { $(RM) -f $(POV_WORDS_CPP); \
+	$$GP --output-file=$(POV_WORDS_CPP) --language=C++ \
+	--lookup-function-name=pov_reserved_words_hash \
+	--class-name=pov_reserved_words --seven-bit --compare-lengths \
+	--readonly-tables --enum --includes $(POV_WORDS_SRC) || exit 1; }
+# An additional dependency:
+util.o : $(POV_WORDS_CPP)
+
+# Changes to sources imply possible changes to strings subject to i18n.
+# Only the .pot file is made here; merging, compilation to .mo files
+# is done elsewhere.  The GNU gettext programs are used, but since
+# a user compiling this source might not have them installed this
+# target will not result in failure; only a helpful message.
+# Depend on "$(SRCS) $(HDRS)" but argue "$(SRCDIR)/*.h $(SRCDIR)/*.cpp"
+# to xgettext, since sources macros may include e.g. parser .c files.
+MESSAGES_POT := $(SRCDIR)/epspline.pot
+XGETTEXT     := xgettext
+$(MESSAGES_POT) : $(SRCS) $(HDRS)
+	@echo Invoking $(XGETTEXT) to make $(MESSAGES_POT).
+	@$(XGETTEXT) --output=$(MESSAGES_POT) --debug --add-comments \
+	--keyword=_ --c++ $(SRCDIR)/*.h $(SRCDIR)/*.cpp || \
+	{ echo FAILED to make the i18n template $(MESSAGES_POT); \
+	echo If you care about translations then check that \
+	GNU gettext package is installed; exit 0; }
+
+epspline$(EXESUFFIX):  $(APPLIB) $(OBJECTS) $(MESSAGES_POT)
+	`$(CF) --cxx` $(LDFLAGS) -o $@ $(OBJECTS) $(APPLINK) $(LIBS)
+
+depend dep :
+	rm -f depend
+	`$(CF) --cxx` `$(CF) --cflags` $(CCFLAGS) -MM $(SRCS) | \
+	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > depend
+
+# No capable tools on MSW to make dependency file.  Use Unix tools.
+depend.msw dep.msw :
+	egrep '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < depend | \
+	sed -e 's;^\$$;\?\?&;' \
+	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' \
+	-e 's;\.o\>;\.obj;g' -e 's;/;\\;g' | tr '?' '\n' > depend.msw
+	echo "" >> depend.msw
+	echo "" >> depend.msw
+
+# This target written for ``Exuberant Ctags.'' [new versions]
+# See http://ctags.sourceforge.net
+exuberant-tags : $(SRCS) $(HDRS)
+	ctags --c-types=cdefgmnpstuv-x --excmd=pattern *
+
+# This target written for ``Exuberant Ctags.'' -p no longer recognized,
+# nor --c-types=*+A+C
+# See http://ctags.sourceforge.net
+old-exuberant-tags : $(SRCS) $(HDRS)
+	ctags -p $(SRCDIR) -p $(HDRDIR) --c-types=cdefgmnpstuv-x+A+C \
+	--excmd=pattern *
+
+# This target written for BSD ctags
+tags : $(SRCS) $(HDRS)
+	rm -f tags
+	find $(SRCDIR) \( -name \*.cpp -o -name \*.h \) -print | \
+		xargs ctags -adtw
+
+# This target written for ``Exuberant Ctags.''
+# See http://ctags.sourceforge.net
+TAGS : $(SRCS) $(HDRS)
+	ctags -e -p $(SRCDIR) -p $(HDRDIR) --c-types=cdefgmnpstuv-x+A+C *
+
+# This target for GNU idutils
+ID : $(SRCS) $(HDRS)
+	mkid --prune tmp --output=$@
+
+include depend
+
+install: epspline$(EXESUFFIX)
+	$(INSTALL)  epspline$(EXESUFFIX) $(INSTALLDIR)
+
+
+clean:
+	-$(RM) -f $(OBJDIR)/*.o epspline$(EXESUFFIX) *core
+
+cleangenerated: clean
+	-$(RM) -f $(SRCDIR)/lex.yy.c $(SRCDIR)/y.tab.c \
+	$(SRCDIR)/parser.c $(SRCDIR)/lexer.c \
+	$(POV_WORDS_CPP) $(MESSAGES_POT)
+
+cleanall: clean
+	-$(RM) -f depend .depend tags TAGS ID

@@ -1,0 +1,15 @@
+!*.h *.c *.cpp *.cc *.cxx .gitignore *.sh *.nsi *.pot Makefile README*
+epspline
+*.bak
+bak
+*.geany
+*.o
+*_dbg
+*.exe
+*.zip
+*.mo
+.depend
+depend
+*-working
+.exrc
+.nexrc

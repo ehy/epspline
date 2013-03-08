@@ -1,0 +1,26 @@
+/* XPM */
+static char *lrg_icon_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oo...ooooooooooo",
+"oo.X..oooooooooo",
+"oo.XX.oooooooooo",
+"oo.XX.oooooooooo",
+"oo....oooooooooo",
+"oooooooooooooooo",
+"o      ooo...ooo",
+"oooooooooo.X..oo",
+"oooooooooo.XX.oo",
+"oooooooooo.XX.oo",
+"oooooooooo....oo",
+"oooooooooooooooo",
+"ooooooooo      o",
+"oooooooooooooooo"
+};

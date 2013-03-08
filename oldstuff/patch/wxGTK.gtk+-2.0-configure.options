@@ -1,0 +1,120 @@
+	--enable-gtk2
+	--with-libpng=sys --with-libjpeg=sys 
+	--with-libtiff=sys --with-opengl --with-regex --with-zlib=sys 
+	--enable-shared --enable-soname 
+	--enable-optimise --enable-config 
+	--enable-gif --enable-pcx --enable-iff --enable-pnm 
+	--enable-xpm --enable-icocur
+	--enable-postscript --enable-prologio --enable-resources 
+	--enable-xresources --enable-clipboard --enable-dnd 
+	--enable-treelayout --enable-controls --enable-accel 
+	--enable-button --enable-bmpbutton --enable-calendar 
+	--enable-caret --enable-checkbox --enable-checklst 
+	--enable-choice 
+	--enable-combobox 
+	--enable-gauge 
+	--enable-grid 
+	--enable-newgrid 
+	--enable-imaglist 
+	--enable-listbox 
+	--enable-listctrl 
+	--enable-notebook 
+	--enable-propsheet 
+	--enable-radiobox 
+	--enable-radiobtn 
+	--enable-sash 
+	--enable-scrollbar 
+	--enable-slider 
+	--enable-spinbtn 
+	--enable-spinctrl 
+	--enable-splitter 
+	--enable-statbmp 
+	--enable-statbox 
+	--enable-statline 
+	--enable-stattext 
+	--enable-statusbar 
+	--enable-tabdialog 
+	--enable-textctrl 
+	--enable-togglebtn 
+	--enable-toolbar 
+	--enable-tbarnative 
+	--enable-tbarsmpl 
+	--enable-treectrl 
+	--enable-tipwindow 
+	--enable-popupwin 
+	--enable-commondlg 
+	--enable-choicedlg 
+	--enable-coldlg 
+	--enable-filedlg 
+	--enable-finddlg 
+	--enable-fontdlg 
+	--enable-dirdlg 
+	--enable-msgdlg 
+	--enable-numberdlg 
+	--enable-splash 
+	--enable-textdlg 
+	--enable-tipdlg 
+	--enable-progressdlg 
+	--enable-wizarddlg 
+	--enable-menus 
+	--enable-miniframe 
+	--enable-tooltips 
+	--enable-splines 
+	--enable-validators 
+	--enable-busyinfo 
+	--enable-joystick 
+	--enable-dragimage 
+	--enable-palette 
+	--enable-image 
+	--enable-intl 
+	--enable-config 
+	--enable-protocols 
+	--enable-ftp 
+	--enable-http 
+	--enable-fileproto 
+	--enable-sockets 
+	--enable-dataobj 
+	--enable-ipc 
+	--enable-cmdline 
+	--enable-datetime 
+	--enable-timedate 
+	--enable-stopwatch 
+	--enable-dialupman 
+	--enable-timer 
+	--enable-fraction 
+	--enable-dynamicloader 
+	--enable-longlong 
+	--enable-geometry 
+	--enable-log 
+	--enable-streams 
+	--enable-file 
+	--enable-ffile 
+	--enable-textbuf 
+	--enable-textfile 
+	--enable-fontmap 
+	--enable-wxprintfv 
+	--enable-std_iostreams  
+	--enable-filesystem 
+	--enable-fs_inet        
+	--enable-fs_zip         
+	--enable-zipstream 
+	--enable-snglinst 
+	--enable-mimetype 
+	--enable-sysoptions 
+	--enable-url 
+	--enable-protocol 
+	--enable-protocol 
+	--enable-protocol 
+	--enable-protocol 
+	--enable-threads 
+	--enable-docview 
+	--enable-help 
+	--enable-html 
+	--enable-htmlhelp 
+	--enable-constraints 
+	--enable-printarch 
+	--enable-mdi 
+	--enable-loggui 
+	--enable-logwin 
+	--enable-logdialog 
+

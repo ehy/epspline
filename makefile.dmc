@@ -1,0 +1,48 @@
+
+
+# Digital Mars C++ makefile
+
+MAKE = make
+
+#WXWIN=C:\Users\evh\wx\wxMSW-2.8.10
+WXWIN=C:\Users\evh\wx\wxWidgets-2.8.12
+WXDIR=$(WXWIN)
+
+FINAL = 1
+
+# NOTE: wx 2.8.10 binary exits with error if
+# library is built as debug version
+# but application has -DNDEBUG=1
+#DEFS = -DHAVE_OLD_POVRAY -DNDEBUG=1
+#DEFS = -DNDEBUG=1
+DEFS = -D__WXDEBUG__
+
+DEFAULTTYPE=static
+
+# The meat is in src/makefile.dmc
+SRCDIR=.\src
+INCLUDES = -I. -I..
+
+all: $(DEFAULTTYPE)
+
+static:
+	cd $(SRCDIR)
+	$(MAKE) -f makefile.dmc $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=0 WXUSINGDLL=0 DEFS="$(DEFS)" INCLUDES="$(INCLUDES)"
+	@echo $(MAKE) $@ succeeded
+
+dll:
+	cd $(SRCDIR)
+	$(MAKE) -f makefile.dmc $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=1 WXUSINGDLL=1 DEFS="$(DEFS)" INCLUDES="$(INCLUDES)"
+	@echo $(MAKE) $@ succeeded
+
+dep depend depend.msw :
+	cd $(SRCDIR)
+	$(MAKE) -f makefile.dmc $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=0 WXUSINGDLL=0 DEFS="$(DEFS)" INCLUDES="$(INCLUDES)"
+
+clean:
+	cd $(SRCDIR)
+	$(MAKE) -f makefile.dmc WXWIN=$(WXWIN) WXDIR=$(WXDIR) clean
+	@echo $(MAKE) $@ succeeded

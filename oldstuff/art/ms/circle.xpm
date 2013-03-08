@@ -1,0 +1,25 @@
+/* XPM */
+static char *circle_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c navy",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXX....XXX",
+"XXXXXXXXX...XXXX",
+"XXX..XXXX....XXX",
+"XXX..XXXX.X..XXX",
+"XX..XXXXXXXX..XX",
+"XX..XXXXXXXX..XX",
+"XX..XXXXXXXX..XX",
+"XX..XXXXXXXX..XX",
+"XXX..XXXXXX..XXX",
+"XXX...XXXX...XXX",
+"XXXX........XXXX",
+"XXXXXX....XXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

@@ -1,0 +1,30 @@
+/* XPM */
+static char *JOB116_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 8 1",
+"  c black",
+". c #008000",
+"X c green",
+"o c #808000",
+"O c #808080",
+"+ c #C0C0C0",
+"@ c gray100",
+"# c None",
+/* pixels */
+"################",
+"##            # ",
+"## @@@@@@@@@@O.X",
+"## @@@@@@@@@@.X ",
+"## @O@@@@@@@.X #",
+"## @OO@@@@@.X O#",
+"## @O+O@@@.X.OO#",
+"## @O++O@@ O@OO#",
+"## @O+ +O+@@@OO#",
+"## @O+OO+O@@@O #",
+"## @O+OOO+O@@OO ",
+"              + ",
+" ++++++++++++o+O",
+" OOOOOOOOOOOO + ",
+"## ++++++++++O+ ",
+"## OOOOOOOOOO  #"
+};

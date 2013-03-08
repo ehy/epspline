@@ -1,0 +1,26 @@
+/* XPM */
+static char *find_arr_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c #808080",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"ooo  o  oooooooo",
+"ooo  o  oooooooo",
+"oo X   X ooooooo",
+"o         oooooo",
+"o o  o o  oooooo",
+"o X  o X  oooooo",
+"o   ooo   oooooo",
+"o   ooo   oooooo",
+"oooooooooooooooo",
+"ooooooooooooo.oo",
+"ooooooooooooo..o",
+"oooo.o.o.o......",
+"ooooooooooooo..o",
+"ooooooooooooo.oo",
+"oooooooooooooooo"
+};

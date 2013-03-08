@@ -1,0 +1,26 @@
+/* XPM */
+static char *toupper_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c #808080",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooo...ooooooooo",
+"ooo.ooo.oo.ooooo",
+"oo.ooooo...ooooo",
+"oo.ooooo...ooooo",
+"ooooooo....ooooo",
+"oooooooooooooooo",
+"oo  ooooooo oooo",
+"o oo oooooX Xooo",
+"oo   ooooo X ooo",
+"o oo ooooX o Xoo",
+"o oo oooo XoX oo",
+"oo  o ooX     Xo",
+"oooooooo ooooo o",
+"ooooooo   ooo   ",
+"oooooooooooooooo"
+};

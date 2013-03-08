@@ -1,0 +1,174 @@
+% Epspline Program Documentation: Runtime Help
+% Ed Hynan -- Dec 31, 2012
+
+% NOTES:
+%	htlatex can be invoked as
+%		htlatex epspline.tex "html,index=2,4,sec-filename,charset=UTF-8"
+%	and the output is nice, but the output if iso-8859-1, so html must
+%	be post-processed with iconv -f iso-8859-1 -t UTF-8 for proper display
+%	in browsers; but presently I don't know how well the wxWidgets viewer
+%	handles charsets, so leave out ,charset=UTF-8 until further testing.
+%
+
+% TIPS, from something used as a starter:
+% WARNING!  Do not type any of the following 10 characters except as directed:
+%                &   $   #   %   _   {   }   ^   ~   \
+
+%Double quotes are typed like this: ``quoted text''.
+%Single quotes are typed like this: `single-quoted text'.
+%
+%Long dashes are typed as three dash characters---like this.
+%
+%Emphasized text is typed like this: \emph{this is emphasized}.
+%Bold       text is typed like this: \textbf{this is bold}.
+
+%Remember, don't type the 10 special characters (such as dollar sign and
+%backslash) except as directed!  The following seven are printed by
+%typing a backslash in front of them:  \$  \&  \#  \%  \_  \{  and  \}.
+%The manual tells how to make other symbols.
+
+
+%\documentclass[hypertex]{article}% Your input file must contain these two lines
+%\documentclass[hypertex]{report}% Your input file must contain these two lines
+%\documentclass[hypertex,11pt,onecolumn,letterpaper]{report}%
+% Mar 4 2013: removed hypertex driver from documentclass - had been
+% there harmlessly (but probably wrongly) since 2005; but, recent
+% hyperref package from texlive is choking on it.
+\documentclass[11pt,onecolumn,letterpaper]{report}%
+	\usepackage{apphelpdoc}%
+\begin{document}
+
+% hide numbers for front matter:
+\pagestyle{empty}
+
+%%\ifpdf
+% \ifMKwx is defined in apphelpdoc.sty, dependent on buildsel.sty:
+% tests if making html for wxWidgets help viewer.
+\ifelseWX{
+	% htlatex making html 3.2, which is used for wx help, doesn't 
+	% handle \foo within \title, \chapter, etc.. -- puts the
+	% remainder of line in <p></p> above <title>!
+	\title{Epspline: An Editor for POV-Ray Prism and Lathe Objects}
+}{
+	\title{\dtypkgu: An Editor for \dtypov{} Prism and Lathe Objects}
+}% \ifelseWX
+\author{\thisauthor}
+\date{\docreldate}
+\maketitle
+
+% Coded comment follows 'WX%': string of fields separated by '|', 
+% as follows:
+%	F1== logical level: 0==N.G., 1==book, 2==chapter, 3==section, etc.
+%	F2== name, or label; if "" than take left of 'WX%', between { and }
+%	F3== 32 bit integer identifier : generated incrementally if empty*
+%	F4== name for cpp macro, e.g. IDI_$F4; generated if empty
+%	F5== name of output file; if "" then override file<->title map
+%	*Note on F3: IDs incr from low numbers, so make explicit #s high
+
+% coded comment for title page
+%WX%1|Title Page|999999999|TitlePage|epspline.html
+
+% coded comment for Doc License page
+%WoffX%1|Document License|999999998|DocumentLicensePage|
+\ifMKhtml
+	\clearpage
+\else
+	\cleardoublepage
+\fi
+{\parindent 0in
+ Copyright \copyright\ \doccpyyear\ \thisauthor.
+ Permission is granted to copy, distribute and/or modify this document
+ under the terms of the GNU Free Documentation License, Version 1.2
+ or any later version published by the Free Software Foundation;
+ with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+ A copy of the license is included within the chapter
+ entitled ``Licenses''
+ in the section entitled ``GNU Free Documentation License''.}
+\ifMKhtml
+	\clearpage
+\else
+	\cleardoublepage
+\fi
+
+% unhide numbers for contents:
+\pagestyle{plain}
+% roman numbers for contents:
+\pagenumbering{roman}
+
+\tableofcontents
+% coded comment for table of contents
+%WX%1|Contents|1000000000|HelpTOC|
+
+\ifMKhtml
+	\clearpage
+\else
+	\cleardoublepage
+\fi
+
+% unhide numbers for contents:
+\pagestyle{headings}
+% arabaic numbers for main:
+\pagenumbering{arabic}
+
+% 1st chapter, Introduction
+\input{ch_introduction}%WX%2|Introduction|1000000||
+
+% 2nd chapter, on the program
+%
+%WX%2|<R>Epspline.*: Prism and Lathe Editor|301000||
+\chapter{\dtypkgu{}: Prism and Lathe Editor}
+
+\section{Usage}%WX%3||303000||
+
+\IXpkgu{} is an interactive program with a
+graphical interface. Interaction is primarily by use of a mouse
+(or any pointing device from which the windowing system delivers
+`mouse' events to software).
+
+
+\subsection{Overview}%WX%4||403000||
+\subsection{Mouse and Key}%WX%4||404000||
+% no coded comment for subsubsection
+\subsubsection{Operations}%xxxWX%5||501000||
+\subsection{Usage Table}%WX%4||405000||
+
+
+\chapter{Licenses}%WX%2||202000||
+% GNU doc license
+\include{gpl_as_section}%WX%3|GNU General Public License||GPL3_Section|
+\include{gpl-2.0_as_section}%WX%3|GNU General Public License Version 2||GPL2_Section|
+\include{fdl_as_section}%WX%3|GNU Free Documentation License||FDL_Section|
+
+
+%% bibliography
+%%WX%1|Bibliography|9000000000||
+%\ifMKhtml
+	%\clearpage
+%\else
+	%\cleardoublepage
+	%\phantomsection
+	%% why is this needed for pdf, but not htlatex (makes duplicate)?
+	%\addcontentsline{toc}{chapter}{Bibliography}
+%\fi
+%\begin{thebibliography}{99}
+	%\bibitem{bib-1}
+		%Bib Item 1.
+	%\bibitem{bib-2}
+		%Bib Item 2.
+%\end{thebibliography}
+
+
+% index
+%WX%1|Index|2000000000||
+\ifMKhtml
+	\clearpage
+\else
+	\cleardoublepage
+	\phantomsection
+	% why is this needed for pdf, but not htlatex (makes duplicate)?
+	\addcontentsline{toc}{chapter}{Index}
+\fi
+\printindex
+
+\end{document}                 % The input file ends with this command.
+

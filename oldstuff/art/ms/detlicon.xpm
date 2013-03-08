@@ -1,0 +1,25 @@
+/* XPM */
+static char *detlicon_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c navy",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXX    X   X   ",
+"XXXXXXXXXXXXXXXX",
+"X...............",
+"XXXXXXXXXXXXXXXX",
+"X.XX    X   X   ",
+"XXXXXXXXXXXXXXXX",
+"X.XX    X   X   ",
+"XXXXXXXXXXXXXXXX",
+"X.XX    X   X   ",
+"XXXXXXXXXXXXXXXX",
+"X.XX    X   X   ",
+"XXXXXXXXXXXXXXXX",
+"X.XX    X   X   ",
+"XXXXXXXXXXXXXXXX"
+};

@@ -1,0 +1,8 @@
+NAME         "epspline"
+DESCRIPTION  'POVRay spline object drawing wxWindows application'
+EXETYPE      NT
+SUBSYSTEM    WINDOWS,4.0
+CODE         EXECUTE READ
+DATA         READ WRITE
+HEAPSIZE     1048576,4096
+STACKSIZE    1048576,4096

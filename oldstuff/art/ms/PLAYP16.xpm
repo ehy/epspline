@@ -1,0 +1,26 @@
+/* XPM */
+static char *PLAYP16_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c green",
+"X c cyan",
+"o c None",
+/* pixels */
+"oooooooooooXoooo",
+"oo  oooooooXXooo",
+"oo . oooXXXXXXoo",
+"oo .. oooooXXooo",
+"oo ... ooooXoooo",
+"oo .... oooooooo",
+"oo ..... ooooooo",
+"oo ...... oooooo",
+"oo ..... ooooooo",
+"oo .... oooooooo",
+"oo ... ooooooooo",
+"oo .. oooooooooo",
+"oo . ooooooooooo",
+"oo  oooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

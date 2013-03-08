@@ -1,0 +1,271 @@
+#! /usr/bin/make -f
+#
+# Makefile.mingw: for building with mingw with MSYS
+# under MS system, or mingw cross-compilation system
+# installed on a Unix-like system.
+# Hopefully it will be sufficient to edit a few macros
+# for either case (but either type environment might
+# vary a great deal).
+#
+# Note: these makefiles invoke `wx-config --cxx` for
+# the compiler, and `wx-config --utility=wxrc` for
+# the wxrc utility.
+#
+# MS, mingw+MSYS:
+# It is assumed wxWidgets had been built with mingw/MSYS
+# using configure --prefix=/no-spaces/dir, and that
+# wx-config and wxrc are in $(--prefix)/bin..
+#
+# Unix, cross-compile:
+# It is assumed that cross compiled wxMSW is installed under
+# a user directory -- in fact under $(HOME)/.wine/drive_c --
+# and that wine is installed and working, because it will be
+# necessary for the wxrc program (which is used in building this
+# program). If wine does not work on your system, then the wxrc
+# from a native wxWidgets installation is likely to work but
+# you will have to find out (change src/Makefile.mingw `$(WXRC)`).
+#
+
+# do NOT change these
+PROG  = epspline
+PROG1 = $(PROG).exe
+MAKEFILE = Makefile.mingw
+
+# obviously change this to be correct:
+#WXVERSION ?= 2.8.10
+WXVERSION ?= 2.9.4
+#WXVERSION ?= 2.9.1
+
+# this might be a good idea -- for the wx build too
+CFLAGS += -static
+CXXFLAGS += -static
+
+# other options
+#CXXFLAGS += -fpermissive -Woverloaded-virtual -Wnon-virtual-dtor
+CXXFLAGS += -Woverloaded-virtual -Wnon-virtual-dtor
+
+# w/o NDEBUG the wx ASSERT macors are active, releae or debug build
+CFLAGS += -DNDEBUG=1
+CXXFLAGS += -DNDEBUG=1
+
+# The following section with the GNUish tests must be edited AT LEAST
+# to ensure that paths assigned to macros are suitable for your system,
+# because such paths are not standard either under MSW or under a
+# cross compilation environment
+# GNU make is assumed; if that assumption is wrong remove the
+# tests and make sure the macros values are OK; it will also be
+# necessary to edit src/Makefile.mingw $(SRC_XRC) : $${*}.xrc
+# and probably expand it to targets for each unit in $(SRC_XRC)
+# (because a GNU make oddity ".SECONDEXPANSION:" is used).
+
+# The MSYS environment provided with Mingw32 for MSW has a uname command:
+UNAME = $(shell uname)
+SYS = $(findstring MINGW, $(UNAME))
+
+# Are we under MSYS under MSW?
+ifeq "$(SYS)" "MINGW"
+# Yes, we are.
+
+MSYS = MINGW
+
+# As of 10-2010 mingw is without 64 bit build support
+# (and wxMSW up to 2.9.1 is not 64 bit clean, as discovered
+# attempting 64 bit build w/ Cygwin/mingw-w64).
+BITS ?= 32
+#BITS=64
+
+# this define is necessary at least with mingw
+# available with Cygwin
+XCFL = -D__USE_MINGW_ANSI_STDIO=1 -DNEED_RAND_R=1
+
+# CHECK THIS PATH! Where is wx mingw32 build installed?
+WXCFGPREFIX = $(HOME)/$(LOGNAME)_wsys/wx/wx-$(WXVERSION)_mingw-inst
+#WXCFGPREFIX = $(HOME)/$(LOGNAME)_wsys/wx-$(WXVERSION)_mingw-msys-$(BITS)
+WXBINPREFIX = $(WXCFGPREFIX)/bin
+
+# PATH must lead to wx-config and wxrc
+OPATH = $(PATH)
+$(eval PATH=$(WXBINPREFIX):$(OPATH))
+export PATH
+#$(shell "echo PATH set to $(PATH)")
+
+# CHECK THIS PATH!
+# where to put the program file, and how to put it there
+#INSTALLDIR = $(WXBINPREFIX)
+INSTALLDIR = $(HOME)/$(LOGNAME)_wsys/bin
+
+# mingw DLL must be installed with EXE (if not already)
+# it should have been installed with Mingw32 in /mingw/bin
+# (as visible under Msys, not MSW)
+# make sure this is correct . . .
+# [UPDATE: no longer exists with latest mingw; uname -a gives
+# MINGW32_NT-6.1 HOST 1.0.15(0.47/3/2) 2010-07-06 22:04 i686 Msys]
+MINGWDLL = 
+# ... but earlier versions need it:
+#MINGWDLL = /mingw/bin/mingwm10.dll
+
+# we need this minwg32 program for MSW program resource compilation
+WINDRES = windres
+# End MINGW block
+
+# else we are cross compiling, not under mingw32/msys . . .
+else
+# . . . but with cross compiler (probably mingw32 or mingw_w64)
+# under Cygwin, Linux, whatever
+
+# SET THIS! name stem of cross compile tools; varies widely,
+# e.g. "{i686,x86_64)-w64-mingw32 (cygwin), i586-mingw32msvc (Ubuntu),
+# try 'ls /usr/bin/*mingw*' 
+#TOOLNAME ?= x86_64-w64-mingw32
+TOOLNAME ?= i686-w64-mingw32
+#TOOLNAME ?= i586-mingw32msvc
+TOOLPFX = $(TOOLNAME)-
+export TOOLPFX
+
+DIRSUFFIX = $(TOOLNAME)
+#DIRSUFFIX = i586-mingw32msvc
+
+# this define is necessary at least with mingw
+# available with Cygwin
+XCFL = -D__USE_MINGW_ANSI_STDIO=1 -DNEED_RAND_R=1
+
+# CHECK THIS PATH! Where has wx been installed?
+#WXCFGPREFIX = $(HOME)/$(LOGNAME)_wsys/wx/wx-$(WXVERSION)_mingw-inst
+#WXCFGPREFIX = $(HOME)/.wine/drive_c/wx-$(WXVERSION)_$(TOOLNAME)
+WXCFGPREFIX = $(HOME)/.wine/drive_c/wx-$(WXVERSION)_$(DIRSUFFIX)
+WXBINPREFIX = $(WXCFGPREFIX)/bin
+
+# mingw package on Ubuntu installs this with some tools with
+# unqualified names (ld, strip, etc.); might not be standard
+#CROSSBIN = /usr/$(TOOLNAME)/bin
+CROSSBIN =
+
+# PATH must lead to wx-config and wxrc, and to mingw cross-tools
+OPATH = $(PATH)
+#$(eval PATH=$(CROSSBIN):$(WXBINPREFIX):$(OPATH))
+$(eval PATH=$(WXBINPREFIX):$(OPATH))
+export PATH
+
+# where to put the program file, and how to put it there
+# CHECK THIS PATH!
+#INSTALLDIR = $(HOME)/bin
+INSTALLDIR = $(HOME)/.wine/drive_c/bin
+
+# mingw DLL must be installed with EXE (if not already)
+# it should have been copied to wx install directory (--prefix)
+# so that the wxrc program will work:
+# make sure this is correct . . .
+# UPDATE: latest versions of mingw no longer need this :-)
+#MINGWDLL = $(WXBINPREFIX)/mingwm10.dll
+MINGWDLL =
+
+# we need this minwg32 program for MSW program resource compilation
+WINDRES = $(TOOLNAME)-windres
+# End cross-compile block
+
+# endif ifeq "$(SYS)" "MINGW"
+endif
+
+
+# how to put the program file
+# install without -o or -g (assuming current user if cross compiling;
+# assuming nothing unsr MSW), and avoid -s because install command of
+# a cross compile host probably doesn't understand the binary format,
+# but both MSYS and cross-mingw have a strip command
+INSTALL = install -c -m 755 $(PROG1) $(MINGWDLL) $(INSTALLDIR) && \
+	$(TOOLPFX)strip $(INSTALLDIR)/$(PROG1)
+
+
+# OKAY - finished with mingw specifics - the remainder is this project
+
+#APPLIBDIR=./classes
+SRCDIR=./src
+INCLUDES = -I. -I..
+
+# extra flags that might have been added above
+CXXFLAGS += $(XCFL)
+CFLAGS += $(XCFL)
+
+# Without this macro single-thread version is built
+CXXFLAGS += -DAPP_USE_THREADS=1
+CFLAGS += -DAPP_USE_THREADS=1
+# Note -O$N is an example; change for your system. Be wary
+# of floating point optimizations: e.g. gcc -ffast-math
+# breaks the Mandelbrot set code.
+#CXXFLAGS += -O5
+#CFLAGS += -O5
+
+# conversions in strops.cpp may optionally exclude
+# (unsigned) long long, and long double -- if you don't
+# have or want them then define this non-zero
+#CXXFLAGS += -DLONGER_TYPES_UNSUPPORTED=1
+#CFLAGS += -DLONGER_TYPES_UNSUPPORTED=1
+
+# do you have strtoll, strtoull, strtold?
+# =1 is yes, =0 is no (note some platforms have them but
+# only allow them for some compilers, e.g. OpenSolaris
+# wants c99 for HUGE_VALL [but has strtold for CC])
+CXXFLAGS += -DHAVE_STRTOLL=1 -DHAVE_STRTOULL=1 -DHAVE_STRTOLD=1
+CFLAGS += -DHAVE_STRTOLL=1 -DHAVE_STRTOULL=1 -DHAVE_STRTOLD=1
+
+# as of wxWidgets 2.8.10 there is no wxString::ToLongDouble();
+# change this to =1 when that changes.
+CXXFLAGS += -DHAVE_WXSTRING_TOLONGDOUBLE=0
+CFLAGS += -DHAVE_WXSTRING_TOLONGDOUBLE=0
+
+# The *.xpm files cause warning spam:
+CXXFLAGS += -Wall -Wno-write-strings
+CFLAGS += -Wall -Wno-write-strings
+
+
+all: $(PROG1)
+
+$(PROG1) : lib
+	cd $(SRCDIR) && \
+	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)"  \
+	INCLUDES="$(INCLUDES)" INSTALL="$(INSTALL)" \
+        WINDRES="$(WINDRES)" MSYS=$(MSYS)
+
+lib:
+#	cd $(APPLIBDIR) && \
+#	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+#	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)"  \
+#	INCLUDES="$(INCLUDES)" INSTALL="$(INSTALL)" MSYS=$(MSYS)
+
+install: $(PROG1)
+	cd $(SRCDIR) && \
+	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)"  \
+	INCLUDES="$(INCLUDES)" INSTALL="$(INSTALL)" MSYS=$(MSYS) $@
+
+dep depend depend.msw :
+	cd $(SRCDIR) && \
+	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)"  \
+	INCLUDES="$(INCLUDES)" INSTALL="$(INSTALL)" MSYS=$(MSYS) $@
+
+clean: libclean srcclean
+
+cleanall: libcleanall srccleanall
+
+srcclean:
+	cd $(SRCDIR) && \
+	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)" MSYS=$(MSYS) clean
+
+libclean:
+#	cd $(APPLIBDIR) && \
+#	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+#	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)" MSYS=$(MSYS) clean
+
+srccleanall:
+	cd $(SRCDIR) && \
+	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)" MSYS=$(MSYS) cleanall
+
+libcleanall:
+#	cd $(APPLIBDIR) && \
+#	$(MAKE) -f $(MAKEFILE) MAKEFILE="$(MAKEFILE)" \
+#	CXXFLAGS="$(CXXFLAGS)" CFLAGS="$(CFLAGS)" MSYS=$(MSYS) cleanall
+

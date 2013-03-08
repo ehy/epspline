@@ -1,0 +1,91 @@
+#! /usr/bin/make -f
+# UNIX makefile for epspline
+
+DIRS=src
+
+# The i18n system should be in a working state in this
+# program; whether or not a translation is available
+# for the current locale, the program should know the
+# l10n install directory for system it's running on.
+L10_INSTALL_DIR ?= -DL10N_INSTALL_PATH=\\\"/usr/local/share/locale\\\"
+DEFINES := $(DEFINES) $(L10_INSTALL_DIR)
+
+YDEBUG = -g -DDEBUG=1
+NDEBUG = -DNDEBUG=1
+DEBUG = $(NDEBUG)
+GUI = -Dwx_x=1
+
+# Feb  7 2009: -Wno-write-strings
+# Hate to disable warnings, but recent gcc (4.x) is
+# spamming deprecated conversion warnings from the wx* headers;
+# so be it.
+WARN = -Wall -Wno-write-strings
+
+#FINAL = 0
+FINAL = 1
+
+#EXESUFFIX=_dbg
+EXESUFFIX=
+
+LFL=
+
+INCLUDES = -I. -I..
+#CFL=$(DEBUG) $(INCLUDES) $(DEFINES)
+CFL=$(INCLUDES) $(DEBUG) $(OPT) $(CXXFLAGS) $(DEFINES)
+#LFL=-Wl,-S
+
+#CF = wxgtk-2.4-config
+#CF = wxgtk2-2.4-config
+#CF = wxmotif-2.4-config
+#CF = wxx11univ-2.4-config
+#CF = wx-config --version=2.6
+CF = wx-config
+
+CCFLAGS = $(WARN) $(CFL) $(GUI)
+LDFLAGS = $(LFL)
+
+all parser.c lexer.c: $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS) $(NDEBUG)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" LIBS="`$(CF) --libs`" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+
+$(DIRS):
+	for d in $(DIRS) ; do \
+		test -d $$d || mkdir $$d ; \
+	done
+
+Release: all
+
+Debug: $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS) $(YDEBUG)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" LIBS="`$(CF) --libs`" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+INSTALL= install -c -s -m 555 -o 0 -g 0
+INSTALLDIR = /usr/local/bin
+install: all
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) $(MAKEFLAGS) \
+		INSTALL="$(INSTALL)" INSTALLDIR="$(INSTALLDIR)" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+
+clean cleanall depend dep depend.msw dep.msw exuberant-tags tags TAGS ID : $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
+	done
+
+cleanRelease cleanDebug: cleanall

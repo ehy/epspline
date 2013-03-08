@@ -1,0 +1,44 @@
+
+
+start: 
+Wed Oct 20 21:12:48 CUT 2010
+
+section mingw-w64 - particularly under Cygwin
+
+build of wx (2.9.1) with x86_64-w74-mingw does not produce
+working wxrc program; not fully static, dll linkage failure.
+After installing wx build, chdir to util/wxrc and remake
+the program with a command such as:
+
+    % (PATH=$WXPREFIX/bin:$PATH; `wx-config --cxx` `wx-config --cxxflags` -static -o wxrc-2.9 wxrc.cpp `wx-config --libs`)
+
+with WXPREFIX being the wxWidgets configure --prefix, and 2.9
+being the wxWidgets major.minor version (check, of course,
+that that naming convention holds -- presently wxrc.exe is
+a synbolic link pointing to wxrc-N.N). Install the new version
+over the old in $WXPREFIX/bin.
+
+It gets worse.  The above was tried first before discovering
+the need for -D__USE_MINGW_ANSI_STDIO=1 (to get at least char
+formatting long double), and that build also lacked
+'#define HAVE_UNIX98_PRINTF 1' from the configure script.
+I do not know which of those (if either) caused the problem,
+but after coercing both, and remaking wxrc again as above,
+a working wxrc emerged (almost).  Built without those macros
+defined as 1, the wxrc program ran but produced wrong C++
+source: defined sizeof an array had the characters 'zu'
+rather than an unsigned integer suggesting a printf-type
+formatting error.  Again, with those macros set wxrc worked.
+And there is one last problem with it.  This wxrc will not
+produce text on standard output ("console"), probably
+because it was generated as a "GUI" executable.  (System
+behavior like that is nonsense and I don't want to figure
+it out.)  Regardless if its quiet nature, wxrc produced
+the expected C++ source.
+
+If possible it might be easier to use some other wxrc that is
+known to work.  The confusing story above was told hoping to
+be helpful.  You might be more or less successful.  See
+
+  http://sourceforge.net/apps/trac/mingw-w64/wiki/printf%20and%20scanf%20family
+

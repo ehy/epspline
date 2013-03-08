@@ -1,0 +1,28 @@
+/* XPM */
+static char *table_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 6 1",
+"  c black",
+". c navy",
+"X c #808080",
+"o c #C0C0C0",
+"O c gray100",
+"+ c None",
+/* pixels */
+"XXXXXXXXXXXXXXX ",
+"X.............. ",
+"X.............. ",
+"XOOoOOoOOoOOoOO ",
+"XOOoOOoOOoOOoOO ",
+"Xoooooooooooooo ",
+"XOOoOOoOOoOOoOO ",
+"XOOoOOoOOoOOoOO ",
+"Xoooooooooooooo ",
+"XOOoOOoOOoOOoOO ",
+"XOOoOOoOOoOOoOO ",
+"Xoooooooooooooo ",
+"XOOoOOoOOoOOoOO ",
+"XOOoOOoOOoOOoOO ",
+"                ",
+"++++++++++++++++"
+};

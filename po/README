@@ -1,0 +1,18 @@
+This directory is 'po' in the source release of epspline.
+
+The epspline program is prepared to use the wxWidgets i18n
+support.  This directory contains the message catalog template
+'epspline.pot', and miscellaneous other files including the
+directory 'en_US', and the Makefile.
+
+The Makefile is written to work with directories named for
+each locale (rather than *.po files named for each locale),
+and file 'epspline.po' in the locale-named directories.
+The compiled machine objects are written in those directories,
+and the install target tests each directory for epspline.mo,
+and if it is a regular file, installs it in:
+
+  $(DATAPREFIX)/share/locale/<locale-named directory>/LC_MESSAGES
+
+See the Makefile for details.
+

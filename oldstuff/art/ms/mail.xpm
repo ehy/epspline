@@ -1,0 +1,26 @@
+/* XPM */
+static char *mail_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c yellow",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+" o o            ",
+"ooooo  .X.X.X.  ",
+" o o  . .X.X. . ",
+"ooooo X. .X. .X ",
+" o o  . . . . . ",
+"ooooo  .X. .X.  ",
+" o o  .X.X.X.X. ",
+"ooooo           ",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

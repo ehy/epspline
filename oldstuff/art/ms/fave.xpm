@@ -1,0 +1,27 @@
+/* XPM */
+static char *fave_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c navy",
+"X c yellow",
+"o c gray100",
+"O c None",
+/* pixels */
+"OOOOOOOOOOOOOOOO",
+"OOOOOOOOOOOOOOOO",
+"OOO     OOOOOOOO",
+"OO XoXoX OOOOOOO",
+"O              O",
+"O oXoXoXoXoXoXo ",
+"O XoXoXo.oXoXoX ",
+"O oXoX.X.X.XoXo ",
+"O XoXoX...XoXoX ",
+"O oXo...o...oXo ",
+"O XoXoX...XoXoX ",
+"O oXoX.X.X.XoXo ",
+"O XoXoXo.oXoXoX ",
+"O oXoXoXoXoXoXo ",
+"O               ",
+"OOOOOOOOOOOOOOOO"
+};

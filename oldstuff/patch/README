@@ -1,0 +1,58 @@
+This directory contains:
+
+README
+	This.
+
+wxGTK.gtk+-2.0-configure.options
+	This file contains the GNU configure options that I use
+	for the wxGTK that the program is developed with.  Many
+	of the stated options are defaults.
+
+	At least the options pertaining to prologio and wxProperty*
+	are necessary for the program.
+
+wx-sc7.patch
+	This patch file contains my changes to wxWidgets 2.4.2 to
+	get the (at least static) library built with the old
+	Symantec C/C++ 7.5 dev. tools (smake, sc, link) under
+	MS*.  The patch also contains the setup necessities (~=
+	the GNU options noted above).
+
+	I expect the changes will be harmless with other compilers,
+	but I can't be certain of that.  The patch might be useful
+	(but incomplete?) with the Digital Mars tools (just a guess).
+
+	Also note that to compile with SC 7.x a useful copy of the
+	old SGI Standard Template Library must be installed (under
+	\SC\include\stl).  Other STL might work; I don't know.
+
+	*(Not really under MS; rather under Wine under Slackware.)
+
+wxGTK_gtk.patch
+	You might need this for wxGTK-2.4.2 with gtk+-2x (Unix-like
+	systems), depending on the tools used to build gtk+-2.
+
+	Simply: there are symbols in gtk that are meant to be local
+	(i.e. not visible to library users).  The gtk build process uses
+	a GNU libtool option (with regexp arg.) to hide those symbols.
+	wxGTK-2.4.2 did use those local symbols, and was successful
+	in that error because the libtool option was ineffective in
+	old libtool versions (the symbols remained accessible).  The
+	error becomes apparent if gtk+-2 is linked with a newer libtool,
+	because the symbol-hiding option is fixed.  The wxGTK library
+	will build and so will wxGTK programs, but runtime linkage
+	will fail (expected symbols truly hidden).
+
+	WARNING -- USE AT YOUR OWN RISK!  I simply took changes from
+	a development version of wxGTK in public CVS and applied the
+	changes to wxGTK-2.4.2, BUT I am not the right person to do
+	this because I am not familiar with either wxGTK internals or
+	GTK!  My changes merely seem to me to be OK, and all I will say
+	for the patch is that it seems to work and not cause trouble
+	for me with this program and a few others.  If you use the
+	patch you do so on your own with acceptance that I (Ed Hynan)
+	DO NOT ACCEPT _ANY_ RESPONSIBILITY for it or the results of
+	using it AT ALL!  If you do not agree to that, then do not
+	use it.  You have been warned.
+
+-- EH -- Thu Aug 18 14:17:19 UTC 2005

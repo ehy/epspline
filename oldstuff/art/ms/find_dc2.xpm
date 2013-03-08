@@ -1,0 +1,27 @@
+/* XPM */
+static char *find_dc2_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c cyan",
+"X c #808080",
+"o c gray100",
+"O c None",
+/* pixels */
+"OOOOOOX   XOOOOO",
+"OOOOO  OOO  OOOO",
+"OOOO  OOOOOX OOO",
+"OOOX       O XOO",
+"O   .o.ooo OO OO",
+"O o o    o OO OO",
+"O o .o.o.o OO OO",
+"O oX .   o O XOO",
+"O oo Xoooo X OOO",
+"O ooo  ooo    OO",
+"O ooooX   XO   O",
+"O ooooooo OOO   ",
+"O ooooooo OOOO  ",
+"O ooooooo OOOOO ",
+"O         OOOOOO",
+"OOOOOOOOOOOOOOOO"
+};

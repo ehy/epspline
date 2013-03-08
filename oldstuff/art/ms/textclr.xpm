@@ -1,0 +1,27 @@
+/* XPM */
+static char *textclr_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c navy",
+"X c red",
+"o c #808080",
+"O c None",
+/* pixels */
+"OOOOOO.OOOOOOOOO",
+"OOOOOo.oOOOOOOOO",
+"OOOOO...OOOOOOOO",
+"OOOOo...oOOOOOOO",
+"OOOO..O..OOOOOOO",
+"OOOo.Oo..oOOOOOO",
+"OOO.......OOOOOO",
+"OOo.OOOO..oOOOOO",
+"OO..OOOOo..OOOOO",
+"Oo.OOOOOo..oOOOO",
+"....OOO......OOO",
+"OOOOOOOOOOOOOOOO",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

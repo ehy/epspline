@@ -1,0 +1,94 @@
+#! /usr/bin/make -f
+# BSD 4.4 makefile for epspline
+
+DIRS=src
+
+DEBUG = -g -DDEBUG=1
+OPT = -ffast-math -DNDEBUG=1
+#OPT386 = -mmmx -mno-sse -mno-sse2 -mno-sse3
+#OPT386 = -mmmx -msse -mno-sse2 -mno-sse3
+#OPT386 = -mmmx -m3dnow -mno-sse -mno-sse2 -mno-sse3
+OPT += $(OPT386)
+GUI = -Dwx_x=1
+
+# The i18n system should be in a working state in this
+# program; whether or not a translation is available
+# for the current locale, the program should know the
+# l10n install directory for system it's running on.
+L10_INSTALL_DIR ?= -DL10N_INSTALL_PATH=\\\"/usr/local/share/locale\\\"
+DEFINES := $(DEFINES) $(L10_INSTALL_DIR)
+
+WARN = -Wall
+# Feb  7 2009: -Wno-write-strings
+# Hate to disable warnings, but recent gcc (4.x) is
+# spamming deprecated conversion warnings from the wx* headers;
+# so be it.
+# OpenBSD: also, strict-aliasing spam
+WARN += -Wno-write-strings -Wno-strict-aliasing
+
+FINAL ?= 1
+
+.ifndef EXESUFFIX
+.if $(FINAL) == 0
+EXESUFFIX=_dbg
+.else
+EXESUFFIX=
+.endif
+.endif
+
+INCLUDES = -I. -I..
+.if $(FINAL) == 0
+CFL=$(CXXFLAGS) $(INCLUDES) $(DEBUG) $(DEFINES)
+LFL=
+.else
+CFL=$(CXXFLAGS) $(INCLUDES) $(OPT) $(DEFINES)
+LFL=-Wl,-S
+.endif
+
+.ifndef CF
+#CF = wxgtk-2.4-config
+#CF = wxgtk2-2.4-config
+#CF = wxmotif-2.4-config
+#CF = wxx11univ-2.4-config
+#CF = wx-config --version=2.6
+CF = wx-config
+.endif
+
+MKFILE=Makefile.BSD
+
+CCFLAGS = $(WARN) $(CFL) $(GUI)
+LDFLAGS = $(LFL)
+
+
+all parser.c lexer.c: $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f $(MKFILE) $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" LIBS="`$(CF) --libs`" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+
+$(DIRS):
+	for d in $(DIRS) ; do \
+		test -d $$d || mkdir $$d ; \
+	done
+
+INSTALL= install -c -s -m 555 -o 0 -g 0
+INSTALLDIR = /usr/local/bin
+install: all
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f $(MKFILE) $(MAKEFLAGS) \
+		INSTALL="$(INSTALL)" INSTALLDIR="$(INSTALLDIR)" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+clean cleanall depend dep depend.msw dep.msw exuberant-tags tags TAGS ID : $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f $(MKFILE) $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
+	done
+

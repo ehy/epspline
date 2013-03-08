@@ -1,0 +1,25 @@
+/* XPM */
+static char *para_bul_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c navy",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"X...XXXXXXXXXXXX",
+"X...XX         X",
+"X...XXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"X...XXXXXXXXXXXX",
+"X...XX         X",
+"X...XXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"X...XXXXXXXXXXXX",
+"X...XX         X",
+"X...XXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

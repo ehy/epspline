@@ -1,0 +1,26 @@
+/* XPM */
+static char *fontDialog_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c blue",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooXXooooo",
+"ooooooooXXXooooo",
+"oooooooXXXXooooo",
+"ooooooXXoXXo..oo",
+"oooooXXooXX...oo",
+"ooooXXXXXX....oo",
+"oooXXoooo..o..oo",
+"ooXXoooo..oo..oo",
+"XXXXXoo.......oo",
+"oooooo..oooo..oo",
+"ooooo..ooooo..oo",
+"ooo.....ooo....o",
+"oooooooooooooooo",
+"ooo............o",
+"oooooooooooooooo"
+};

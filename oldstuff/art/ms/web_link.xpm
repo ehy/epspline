@@ -1,0 +1,31 @@
+/* XPM */
+static char *web_link_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 9 1",
+"  c black",
+". c navy",
+"X c blue",
+"o c #008000",
+"O c #008080",
+"+ c #808080",
+"@ c #C0C0C0",
+"# c gray100",
+"$ c None",
+/* pixels */
+"$$$++++++$$$$$$$",
+"$$++O@ooo $$$$$$",
+"$+#@#ooooo $$$$$",
+"++X#@XXXXoo+$$$$",
+"+X@oo.ooXoo $$$$",
+"+Xooooo.O.o $$$$",
+"+XXooooooXX $$$$",
+"+XXXXooooOX $$$$",
+"+.XXXooooX.+$$$$",
+"$ XXX    .    $$",
+"$$ . @#@# #@#@ $",
+"$$$ @         @ ",
+"$$$ # + @@@ + # ",
+"$$$ @         @ ",
+"$$$$ @#@# #@#@ $",
+"$$$$$    $    $$"
+};

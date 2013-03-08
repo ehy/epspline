@@ -1,0 +1,44 @@
+
+
+# Symantec C++ 7.[25] makefile
+
+!ifndef FINAL
+FINAL=1
+!endif
+
+!ifndef WXWIN
+WXWIN=C:\wxWindows.2.4.2\wx2
+!endif
+WXDIR=$(WXWIN)
+
+DEFS=-DHAVE_OLD_POVRAY
+
+DEFAULTTYPE=static
+
+# The meat is in src/makefile.sc7
+SRCDIR=.\src
+INCLUDES = -I. -I..
+
+all: $(DEFAULTTYPE)
+
+static:
+	cd $(SRCDIR)
+	$(MAKE) -fmakefile.sc7 $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=0 WXUSINGDLL=0 DEFS=$(DEFS) INCLUDES="$(INCLUDES)"
+	@echo $(MAKE) $@ succeeded
+
+dll:
+	cd $(SRCDIR)
+	$(MAKE) -fmakefile.sc7 $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=1 WXUSINGDLL=1 DEFS=$(DEFS) INCLUDES="$(INCLUDES)"
+	@echo $(MAKE) $@ succeeded
+
+dep depend depend.msw :
+	cd $(SRCDIR)
+	$(MAKE) -fmakefile.sc7 $@ WXWIN=$(WXWIN) WXDIR=$(WXDIR) FINAL=$(FINAL) \
+		DLL=0 WXUSINGDLL=0 DEFS=$(DEFS) INCLUDES="$(INCLUDES)"
+
+clean:
+	cd $(SRCDIR)
+	$(MAKE) -fmakefile.sc7 WXWIN=$(WXWIN) WXDIR=$(WXDIR) clean
+	@echo $(MAKE) $@ succeeded

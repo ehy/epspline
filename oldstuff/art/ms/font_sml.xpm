@@ -1,0 +1,25 @@
+/* XPM */
+static char *font_sml_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c #808080",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXX     X",
+"XXXXXXXXXXX   XX",
+"XXXXXXXXXXXX XXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXX XXXXXXXXX",
+"XXXXX. .XXXXXXXX",
+"XXXXX   XXXXXXXX",
+"XXXX. X .XXXXXXX",
+"XXXX     XXXXXXX",
+"XXX. XXX .XXXXXX",
+"XXX   X   XXXXXX",
+"XXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXX"
+};

@@ -1,0 +1,74 @@
+# Symantec C++ makefile
+
+!ifndef WXDIR
+!error "WXDIR not defined"
+!endif
+
+include $(WXDIR)\src\makesc.env
+CFLAGS=$(CFLAGS) $(DEFS) $(INCLUDES) -IC:\sc\include\stl
+
+OBJDIR = .
+SRCDIR = .
+HDRDIR = .
+
+HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
+	$(HDRDIR)/cfg.h $(HDRDIR)/splines.h \
+	$(HDRDIR)/stdcc.h $(HDRDIR)/util.h $(HDRDIR)/epspline.h \
+	$(HDRDIR)/wxutil.h $(HDRDIR)/a_tabwnd.h $(HDRDIR)/a_tabpage.h \
+	$(HDRDIR)/a_zoomdlg.h $(HDRDIR)/a_spintextdlg.h \
+	$(HDRDIR)/a_textctldlg.h \
+	$(HDRDIR)/a_aboutbox.h \
+	$(HDRDIR)/spline_props.h \
+	$(HDRDIR)/wxexio.h
+
+SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
+	$(SRCDIR)/splines.cpp $(SRCDIR)/splineprops.cpp $(SRCDIR)/util.cpp \
+	$(SRCDIR)/a_frame.cpp $(SRCDIR)/a_ruler.cpp $(SRCDIR)/povdemo.cpp \
+	$(SRCDIR)/a_tabwnd.cpp $(SRCDIR)/a_tabpage.cpp \
+	$(SRCDIR)/a_zoomdlg.cpp $(SRCDIR)/a_spintextdlg.cpp \
+	$(SRCDIR)/a_textctldlg.cpp \
+	$(SRCDIR)/a_aboutbox.cpp \
+	$(SRCDIR)/spline_props.cpp \
+	$(SRCDIR)/wxexio.cpp
+
+OBJECTS = $(OBJDIR)/epspline.obj $(OBJDIR)/io.obj $(OBJDIR)/a_canvas.obj \
+	$(OBJDIR)/splines.obj $(OBJDIR)/splineprops.obj $(OBJDIR)/util.obj \
+	$(OBJDIR)/a_frame.obj $(OBJDIR)/a_ruler.obj $(OBJDIR)/povdemo.obj \
+	$(OBJDIR)/a_tabwnd.obj $(OBJDIR)/a_tabpage.obj $(OBJDIR)/a_zoomdlg.obj \
+	$(OBJDIR)/a_textctldlg.obj \
+	$(OBJDIR)/a_spintextdlg.obj \
+	$(OBJDIR)/a_aboutbox.obj \
+	$(OBJDIR)/spline_props.obj \
+	$(OBJDIR)/wxexio.obj
+
+PARSER_SRC = $(SRCDIR)/ms_parse.c
+LEXER_SRC  = $(SRCDIR)/ms_lexer.c
+PARSER_OBJ = $(OBJDIR)/parser.obj
+
+all static : $(OBJDIR) epspline.exe
+
+# Not parser.obj because that alway get built by the .c.obj rule in makesc.env!
+# These args (-cpp) are nec. since parser.c includes C++ headers.
+parser: $(PARSER_SRC) $(LEXER_SRC)
+	$(CC) $(CFLAGS) $(OPTIONS) -Jm -cpp $(INCLUDE) -DUSE_DEFINE -o$(PARSER_OBJ) -c $(PARSER_SRC)
+
+epspline.exe : $(OBJECTS) parser epspline.def epspline.res
+	$(CC) $(LDFLAGS) -o$@ $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res $(LIBS)
+	@echo Done making $@
+
+$(OBJDIR) :
+	-mkdir $@
+
+include depend.msw
+
+# This target does not work.  Use Unix tools.
+dep depend depend.msw :
+	makedep -s -i $(OBJDIR) $(SOURCES) > depend.msw
+
+
+clean :
+	-del $(OBJDIR)/*.obj
+	-del epspline.exe
+	-del *.res
+	-del *.map
+	-del *.rws

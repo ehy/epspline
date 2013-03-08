@@ -1,0 +1,215 @@
+\ProvidesPackage{apphelpdoc}
+	% this buildselect is a generated switch-type file: see Makefile
+	\usepackage{buildselect}
+
+	% conditions from buildselect.sty, which is written by the
+	% Makefile rules:
+	% true if making for wxWidgets help: html 3.x (htlatex arg 3.2)
+	\newif\ifMKwx
+		\ifnum\SELbuild=1
+			\MKwxtrue
+		\else
+			\MKwxfalse
+		\fi
+	% true if making for 'real' browser: html 4.x (htlatex arg unspec.)
+	\newif\ifMKwww
+		\ifnum\SELbuild=2
+			\MKwwwtrue
+		\else
+			\MKwwwfalse
+		\fi
+	% true if making pdf
+	\newif\ifMKpdf
+		\ifnum\SELbuild=4
+			\MKpdftrue
+		\else
+			\MKpdffalse
+		\fi
+	% true if making dvi
+	\newif\ifMKdvi
+		\ifnum\SELbuild=3
+			\MKdvitrue
+		\else
+			\MKdvifalse
+		\fi
+	% true if making html
+	\newif\ifMKhtml
+		\ifMKwx
+			\MKhtmltrue
+		\else
+			\ifMKwww
+				\MKhtmltrue
+			\else
+				\MKhtmlfalse
+			\fi
+		\fi
+	\newcommand{\ifelseHTML}[2]{
+		\ifMKhtml
+			#1
+		\else
+			#2
+		\fi
+	}
+
+	% since there might be several bits that differ for the
+	% wxWidgets help view, simplified conditionals might help
+	\newcommand{\ifelseWX}[2]{
+		\ifMKwx
+			#1
+		\else
+			#2
+		\fi
+	}
+	\newcommand{\ifnotWX}[1]{
+		\ifMKwx
+		\else
+			#1
+		\fi
+	}
+	\newcommand{\ifWX}[1]{
+		\ifMKwx
+			#1
+		\else
+		\fi
+	}
+	
+	% pkg ifpdf provides conditional test for pdflatex compilation
+	% or elsewise -- the comment following \use... might work if
+	% the package is not installed.
+	\usepackage{ifpdf}
+	%\newif\ifpdf
+	%	\ifx\pdfoutput\undefined
+	%		\pdffalse
+	%	\else
+	%		\ifnum\pdfoutput=1
+	%			\pdftrue
+	%		\else
+	%			\pdffalse
+	%		\fi
+	%	\fi
+
+	\usepackage[english]{babel} %language selection
+	\usepackage{makeidx}
+	% use fontenc only if necessary -- Latin1 8 bit characters?
+	% Yes, w/o this chars like e-acute cannot be properly copied
+	% from Adobe acroread and pasted into terminal.
+	\usepackage[T1]{fontenc}
+	% should pslatex appear before or after fontenc? are both needed?
+	\usepackage{pslatex}
+	\usepackage{epigraph}
+	\usepackage{graphicx}
+	\DeclareGraphicsExtensions{.png,.jpg}
+	\usepackage{hyperref}
+	\hypersetup{pageanchor,
+		hyperindex,
+		backref,
+		colorlinks}
+		%,
+		%citecolor=grey,
+		%filecolor=red,
+		%linkcolor=blue,
+		%urlcolor=green}% maybe later opts
+	\ifMKhtml
+	\else
+		\usepackage[all]{hypcap}
+	\fi
+
+	\brokenpenalty=1000
+	\clubpenalty=1000
+	\widowpenalty=1000
+
+	\pagenumbering{alph}
+	\pagestyle{headings}
+	\makeindex
+
+	\def\thisauthor{Ed Hynan}
+	\def\doccpyyear{2013}
+	\def\docreldate{March 3, 2013}
+	
+	% defs for non text items such as images
+	\ifMKhtml
+		\def\ImgIntroA{chisel0-400x300.png}
+	\else
+		\def\ImgIntroA{chisel0-800x600.png}
+	\fi
+	\def\ImgIntroB{chisel_edit_0.png}
+
+	% command/mark wrappers for flexibility:
+	%
+	% add index entry
+	\newcommand{\inIDX}[1]{\index{#1}}
+	% help some conditionals for tex4ht, such as \mbox
+	\newcommand{\commandnada}[1]{#1}
+
+	% Some definitions; e.g. to be used like
+	% macros to help source maintenance.
+	% Use prefix (1st few chars) 'dty', suggesting
+	% 'document typeset' (silly, but consider the namespace).
+	\def\dtythispkgname{epspline}
+	\def\dtythispkgnameu{Epspline}
+	\def\dtypovraypkgname{POV-Ray}
+	\def\dtybezieru{B\'{e}zier}
+	\def\dtybezierl{b\'{e}zier}
+
+	% 1) typeset name of a software package or program
+	\ifMKhtml
+		% \textsf might not be distinct in a web browser
+		\newcommand{\dtypkgset}[1]{\textbf {#1}}
+		% tex4ht does not like \mbox{}!
+		% 2) typeset this package name, lower and upper. Distinct font.
+		\def\dtypkg{\dtypkgset{\dtythispkgname}}
+		\def\dtypkgu{\dtypkgset{\dtythispkgnameu}}
+		% 3) typeset POV-Ray; it is used a lot. Emphasized.
+		\def\dtypov{\emph{\dtypovraypkgname}}
+		% Bezier emphasized
+		\def\dtybeziu{\commandnada{\emph{\dtybezieru}}}
+		\def\dtybezil{\commandnada{\emph{\dtybezierl}}}
+		% Bezier normal
+		\def\dtybeznu{\commandnada{\dtybezieru}}
+		\def\dtybeznl{\commandnada{\dtybezierl}}
+	\else
+		\newcommand{\dtypkgset}[1]{\textsf {#1}}
+		% tex4ht does not like \mbox{}!
+		% 2) typeset this package name, lower and upper. Distinct font.
+		\def\dtypkg{\mbox{\dtypkgset{\dtythispkgname}}}
+		\def\dtypkgu{\mbox{\dtypkgset{\dtythispkgnameu}}}
+		% 3) typeset POV-Ray; it is used a lot. Emphasized.
+		\def\dtypov{\mbox{\emph{\dtypovraypkgname}}}
+		% Bezier emphasized
+		\def\dtybeziu{\mbox{\emph{\dtybezieru}}}
+		\def\dtybezil{\mbox{\emph{\dtybezierl}}}
+		% Bezier normal
+		\def\dtybeznu{\mbox{\dtybezieru}}
+		\def\dtybeznl{\mbox{\dtybezierl}}
+	\fi
+
+	% typeset terms with index entries:
+	%
+	% set arg inline and in index
+	\newcommand{\IXarg}[1]{#1\inIDX{#1}}
+	% set new (hence emph) term and index it (w/o emph)
+	\newcommand{\IXnewterm}[1]{\emph{#1}\inIDX{#1}}
+	% package name w/ index entry
+	\newcommand{\IXpkg}{\dtypkg\inIDX{\dtypkg}}
+	\newcommand{\IXpkgu}{\dtypkgu\inIDX{\dtypkg}}
+	% POV-Ray name w/ index entry
+	\newcommand{\IXpov}{\dtypov\inIDX{\dtypov}}
+	% frequent use: [Bb]ezier, w/ & w/o emph
+	\newcommand{\IXBeze}{\dtybeziu\inIDX{\dtybezil}}
+	\newcommand{\IXbeze}{\IXarg{\dtybezil}}
+	\newcommand{\IXBezn}{\dtybeznu\inIDX{\dtybeznl}}
+	\newcommand{\IXbezn}{\IXarg{\dtybeznl}}
+	% frequent use: [Cc]ubic (use \IXnewterm 1st use per chapter)
+	\newcommand{\IXCubic}{Cubic\inIDX{cubic}}
+	\newcommand{\IXcubic}{\IXarg{cubic}}
+	% frequent use: [Qq]uadratic (use \IXnewterm 1st use per chapter)
+	\newcommand{\IXQuadratic}{Quadratic\inIDX{quadratic}}
+	\newcommand{\IXquadratic}{\IXarg{quadratic}}
+	% frequent use: [Ll]inear (use \IXnewterm 1st use per chapter)
+	\newcommand{\IXLinear}{Linear\inIDX{linear}}
+	\newcommand{\IXlinear}{\IXarg{linear}}
+	% frequent use: [Ss]pline (use \IXnewterm 1st use per chapter)
+	\newcommand{\IXSpline}{Spline\inIDX{spline}}
+	\newcommand{\IXspline}{\IXarg{spline}}
+	%
+

@@ -1,0 +1,89 @@
+#! /bin/make -f
+# UNIX makefile for epspline
+
+DIRS=src
+
+DEBUG = -g -DDEBUG=1
+OPT = -ffast-math -DNDEBUG=1
+GUI = -Dwx_x=1
+
+WARN = -Wall
+# Feb  7 2009: -Wno-write-strings
+# Hate to disable warnings, but recent gcc (4.x) is
+# spamming deprecated conversion warnings from the wx* headers;
+# so be it.
+WARN += -Wno-write-strings
+
+ifndef FINAL
+FINAL = 1
+endif
+
+ifndef EXESUFFIX
+ifeq ($(FINAL), 0)
+EXESUFFIX=_dbg
+else
+EXESUFFIX=
+endif
+endif
+
+INCLUDES = -I. -I..
+ifeq ($(FINAL), 0)
+CFL=$(DEBUG) $(INCLUDES) $(DEFINES)
+LFL=
+else
+CFL=$(CXXFLAGS) $(INCLUDES) $(OPT) $(DEFINES)
+LFL=-Wl,-rpath=/usr/local/lib
+#LFL=-Wl,-S
+endif
+
+ifndef CF
+#CF = wxgtk-2.4-config
+#CF = wxgtk2-2.4-config
+#CF = wxmotif-2.4-config
+#CF = wxx11univ-2.4-config
+#CF = wx-config --version=2.6
+#CF = wx-config --version=2.8
+# Seen in Ubuntu 8.10 package: default toolkit
+# is not GUI but base!
+#CF = wx-config --toolkit=gtk2 --version=2.6
+#CF = wx-config --toolkit=gtk2 --version=2.8
+#CF = wx-config --toolkit=gtk2
+CF = wx-config
+endif
+
+CCFLAGS = $(WARN) $(CFL) $(GUI)
+LDFLAGS = $(LFL)
+
+all parser.c lexer.c: $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f Makefile.opensol.GCC $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+
+$(DIRS):
+	for d in $(DIRS) ; do \
+		test -d $$d || mkdir $$d ; \
+	done
+
+INSTALL= ginstall -c -s -m 555 -o 0 -g 0
+INSTALLDIR = /usr/local/bin
+
+install: all
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f Makefile.opensol.GCC $(MAKEFLAGS) \
+		INSTALL="$(INSTALL)" INSTALLDIR="$(INSTALLDIR)" $@ ) ; \
+	done
+	@echo "Succeeded making in $(DIRS)"
+
+clean cleanall depend dep depend.msw dep.msw extags exuberant-tags tags TAGS ID : $(DIRS)
+	for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f Makefile.opensol.GCC $(MAKEFLAGS) \
+		CCFLAGS="`$(CF) --cxxflags` $(CCFLAGS)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
+	done
+

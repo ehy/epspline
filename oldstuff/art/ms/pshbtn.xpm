@@ -1,0 +1,26 @@
+/* XPM */
+static char *pshbtn_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c #808080",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"ooXXXXXXXXXXX oo",
+"ooXooooooooo. oo",
+"ooXooooooooo. oo",
+"ooXooooooooo. oo",
+"ooXooooooooo. oo",
+"ooXooooooooo. oo",
+"ooX.......... oo",
+"oo            oo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

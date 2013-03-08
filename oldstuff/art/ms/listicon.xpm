@@ -1,0 +1,26 @@
+/* XPM */
+static char *listicon_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"o..ooooooooooooo",
+"o.X.o   oooooooo",
+"o...oooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooo..oooooo",
+"oooooooo.X.o   o",
+"oooooooo...ooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"ooo..ooooooooooo",
+"ooo.X.o   oooooo",
+"ooo...oooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo"
+};

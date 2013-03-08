@@ -1,0 +1,495 @@
+diff -r -u -N wxWindows-2.4.2-orig/include/wx/filename.h wxWindows-2.4.2-sc7/include/wx/filename.h
+--- wxWindows-2.4.2-orig/include/wx/filename.h	2003-04-25 11:22:20.000000000 -0400
++++ wxWindows-2.4.2-sc7/include/wx/filename.h	2005-03-30 10:19:43.000000000 -0500
+@@ -394,7 +394,7 @@
+         { return GetPath(withSep ? wxPATH_GET_SEPARATOR : 0, format); }
+ 
+     wxString GetPathWithSep(wxPathFormat format = wxPATH_NATIVE ) const
+-        { return GetPath(wxPATH_GET_SEPARATOR, format); }
++        { return GetPath((int)wxPATH_GET_SEPARATOR, format); }/*cast: __SC__ ambiguity*/
+ 
+ private:
+     // the drive/volume/device specification (always empty for Unix)
+diff -r -u -N wxWindows-2.4.2-orig/include/wx/msw/bitmap.h wxWindows-2.4.2-sc7/include/wx/msw/bitmap.h
+--- wxWindows-2.4.2-orig/include/wx/msw/bitmap.h	2001-10-01 00:06:38.000000000 -0400
++++ wxWindows-2.4.2-sc7/include/wx/msw/bitmap.h	2005-03-30 09:59:50.000000000 -0500
+@@ -83,7 +83,9 @@
+ 
+     // Initialize with XPM data
+     wxBitmap(const char **data) { CreateFromXpm(data); }
++#ifndef __SC__
+     wxBitmap(char **data) { CreateFromXpm((const char **)data); }
++#endif
+ 
+     // Load a file or resource
+     wxBitmap(const wxString& name, wxBitmapType type = wxBITMAP_TYPE_BMP_RESOURCE);
+diff -r -u -N wxWindows-2.4.2-orig/include/wx/msw/icon.h wxWindows-2.4.2-sc7/include/wx/msw/icon.h
+--- wxWindows-2.4.2-orig/include/wx/msw/icon.h	2000-02-02 01:52:06.000000000 -0500
++++ wxWindows-2.4.2-sc7/include/wx/msw/icon.h	2005-03-30 10:01:01.000000000 -0500
+@@ -71,7 +71,9 @@
+     wxIcon(const char bits[], int width, int height);
+         // from XPM data
+     wxIcon(const char **data) { CreateIconFromXpm(data); }
++#ifndef __SC__
+     wxIcon(char **data) { CreateIconFromXpm((const char **)data); }
++#endif
+         // from resource/file
+     wxIcon(const wxString& name,
+            long type = wxBITMAP_TYPE_ICO_RESOURCE,
+diff -r -u -N wxWindows-2.4.2-orig/include/wx/msw/setup.h wxWindows-2.4.2-sc7/include/wx/msw/setup.h
+--- wxWindows-2.4.2-orig/include/wx/msw/setup.h	2003-06-05 16:50:28.000000000 -0400
++++ wxWindows-2.4.2-sc7/include/wx/msw/setup.h	2005-03-30 13:02:05.000000000 -0500
+@@ -79,7 +79,7 @@
+ // Default is 1
+ //
+ // Recommended setting: 0 (the new calculations are more correct!)
+-#define wxDIALOG_UNIT_COMPATIBILITY   1
++#define wxDIALOG_UNIT_COMPATIBILITY   0
+ 
+ // ----------------------------------------------------------------------------
+ // debugging settings
+@@ -573,7 +573,7 @@
+ #define wxUSE_NEW_GRID     1
+ 
+ // wxProperty[Value/Form/List] classes, used by Dialog Editor
+-#define wxUSE_PROPSHEET    0
++#define wxUSE_PROPSHEET    1
+ 
+ // ----------------------------------------------------------------------------
+ // Miscellaneous GUI stuff
+@@ -779,7 +779,7 @@
+ // Default is 0.
+ //
+ // Recommended setting: 1 if you intend to use OpenGL, 0 otherwise
+-#define wxUSE_GLCANVAS       0
++#define wxUSE_GLCANVAS       1
+ 
+ // wxTreeLayout class
+ #define wxUSE_TREELAYOUT     1
+@@ -858,10 +858,10 @@
+                                 // under MSW.
+ 
+ // use wxExpr (a.k.a. PrologIO)
+-#define wxUSE_PROLOGIO          0
++#define wxUSE_PROLOGIO          1
+ 
+ // Use .wxr resource mechanism (requires PrologIO library)
+-#define wxUSE_WX_RESOURCES      0
++#define wxUSE_WX_RESOURCES      1
+ 
+ #define wxUSE_MOUSEWHEEL        1
+                                 // Include mouse wheel support
+@@ -871,10 +871,10 @@
+ // ----------------------------------------------------------------------------
+ 
+ // Set to 1 for PostScript device context.
+-#define wxUSE_POSTSCRIPT  0
++#define wxUSE_POSTSCRIPT  1
+ 
+ // Set to 1 to use font metric files in GetTextExtent
+-#define wxUSE_AFM_FOR_POSTSCRIPT 0
++#define wxUSE_AFM_FOR_POSTSCRIPT 1
+ 
+ // Set to 0 to disable PostScript print/preview architecture code under Windows
+ // (just use Windows printing).
+diff -r -u -N wxWindows-2.4.2-orig/include/wx/msw/setup0.h wxWindows-2.4.2-sc7/include/wx/msw/setup0.h
+--- wxWindows-2.4.2-orig/include/wx/msw/setup0.h	2003-06-05 16:50:28.000000000 -0400
++++ wxWindows-2.4.2-sc7/include/wx/msw/setup0.h	2005-03-30 13:01:04.000000000 -0500
+@@ -79,7 +79,7 @@
+ // Default is 1
+ //
+ // Recommended setting: 0 (the new calculations are more correct!)
+-#define wxDIALOG_UNIT_COMPATIBILITY   1
++#define wxDIALOG_UNIT_COMPATIBILITY   0
+ 
+ // ----------------------------------------------------------------------------
+ // debugging settings
+@@ -573,7 +573,7 @@
+ #define wxUSE_NEW_GRID     1
+ 
+ // wxProperty[Value/Form/List] classes, used by Dialog Editor
+-#define wxUSE_PROPSHEET    0
++#define wxUSE_PROPSHEET    1
+ 
+ // ----------------------------------------------------------------------------
+ // Miscellaneous GUI stuff
+@@ -779,7 +779,7 @@
+ // Default is 0.
+ //
+ // Recommended setting: 1 if you intend to use OpenGL, 0 otherwise
+-#define wxUSE_GLCANVAS       0
++#define wxUSE_GLCANVAS       1
+ 
+ // wxTreeLayout class
+ #define wxUSE_TREELAYOUT     1
+@@ -858,10 +858,10 @@
+                                 // under MSW.
+ 
+ // use wxExpr (a.k.a. PrologIO)
+-#define wxUSE_PROLOGIO          0
++#define wxUSE_PROLOGIO          1
+ 
+ // Use .wxr resource mechanism (requires PrologIO library)
+-#define wxUSE_WX_RESOURCES      0
++#define wxUSE_WX_RESOURCES      1
+ 
+ #define wxUSE_MOUSEWHEEL        1
+                                 // Include mouse wheel support
+@@ -871,10 +871,10 @@
+ // ----------------------------------------------------------------------------
+ 
+ // Set to 1 for PostScript device context.
+-#define wxUSE_POSTSCRIPT  0
++#define wxUSE_POSTSCRIPT  1
+ 
+ // Set to 1 to use font metric files in GetTextExtent
+-#define wxUSE_AFM_FOR_POSTSCRIPT 0
++#define wxUSE_AFM_FOR_POSTSCRIPT 1
+ 
+ // Set to 0 to disable PostScript print/preview architecture code under Windows
+ // (just use Windows printing).
+diff -r -u -N wxWindows-2.4.2-orig/src/common/datetime.cpp wxWindows-2.4.2-sc7/src/common/datetime.cpp
+--- wxWindows-2.4.2-orig/src/common/datetime.cpp	2003-04-06 16:39:36.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/common/datetime.cpp	2005-03-30 10:11:01.000000000 -0500
+@@ -3524,7 +3524,11 @@
+         size_t len = timeString.length();
+         if ( timeString.CmpNoCase(wxString(time, len)) == 0 )
+         {
++#ifdef __SC__
++            Set(stdTimes[n].hour, (wxDateTime::Month)0, 0);
++#else
+             Set(stdTimes[n].hour, 0, 0);
++#endif
+ 
+             return time + len;
+         }
+diff -r -u -N wxWindows-2.4.2-orig/src/common/dosyacc.c wxWindows-2.4.2-sc7/src/common/dosyacc.c
+--- wxWindows-2.4.2-orig/src/common/dosyacc.c	2003-05-21 19:50:30.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/common/dosyacc.c	2005-03-30 16:04:58.000000000 -0500
+@@ -219,7 +219,7 @@
+ #define yystacksize YYSTACKSIZE
+ #line 118 "parser.y"
+ 
+-#ifdef IDE_INVOKED
++#if defined(IDE_INVOKED) || defined(__SC__)
+ #include "../common/doslex.c"
+ #else
+ #include "../common/lex_yy.c"
+diff -r -u -N wxWindows-2.4.2-orig/src/common/filename.cpp wxWindows-2.4.2-sc7/src/common/filename.cpp
+--- wxWindows-2.4.2-orig/src/common/filename.cpp	2003-08-25 15:24:12.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/common/filename.cpp	2005-03-30 10:25:15.000000000 -0500
+@@ -1266,8 +1266,8 @@
+ wxString wxFileName::GetFullPath( wxPathFormat format ) const
+ {
+     // we already have a function to get the path
+-    wxString fullpath = GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR,
+-                                format);
++    wxString fullpath = GetPath((int)(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR),
++                                format);/*cast: __SC__ ambiguity*/
+ 
+     // now just add the file name and extension to it
+     fullpath += GetFullName();
+@@ -1716,8 +1716,8 @@
+ 
+         // we should pass the path without the trailing separator to
+         // wxGetDirectoryTimes()
+-        ok = wxGetDirectoryTimes(GetPath(wxPATH_GET_VOLUME),
+-                                 &ftAccess, &ftCreate, &ftWrite);
++        ok = wxGetDirectoryTimes(GetPath((int)wxPATH_GET_VOLUME),
++                                 &ftAccess, &ftCreate, &ftWrite);/*cast: __SC__ ambiguity*/
+     }
+     else // file
+     {
+diff -r -u -N wxWindows-2.4.2-orig/src/common/timercmn.cpp wxWindows-2.4.2-sc7/src/common/timercmn.cpp
+--- wxWindows-2.4.2-orig/src/common/timercmn.cpp	2003-04-06 15:41:58.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/common/timercmn.cpp	2005-03-30 11:01:09.000000000 -0500
+@@ -380,7 +380,11 @@
+     // If your platform/compiler needs to use two different functions
+     // to get ms resolution, please do NOT just shut off these warnings,
+     // drop me a line instead at <guille@iies.es>
+-    #warning "Possible clock skew bug in wxGetLocalTimeMillis()!"
++    #if defined(__SC__)
++    #pragma message("Possible clock skew bug in wxGetLocalTimeMillis()!")
++    #else
++    /*#warning "Possible clock skew bug in wxGetLocalTimeMillis()!"*/
++    #endif
+ 
+     SYSTEMTIME st;
+     ::GetLocalTime(&st);
+@@ -390,12 +394,12 @@
+     // do NOT just shut off these warnings, drop me a line instead at
+     // <guille@iies.es>
+ 
+-    #if defined(__VISUALC__) || defined (__WATCOMC__)
++    #if defined(__VISUALC__) || defined(__SC__) || defined (__WATCOMC__)
+         #pragma message("wxStopWatch will be up to second resolution!")
+     #elif defined(__BORLANDC__)
+         #pragma message "wxStopWatch will be up to second resolution!"
+     #else
+-        #warning "wxStopWatch will be up to second resolution!"
++        /*#warning "wxStopWatch will be up to second resolution!"*/
+     #endif // compiler
+ #endif
+ 
+diff -r -u -N wxWindows-2.4.2-orig/src/jpeg/jconfig.h wxWindows-2.4.2-sc7/src/jpeg/jconfig.h
+--- wxWindows-2.4.2-orig/src/jpeg/jconfig.h	2000-07-15 21:50:30.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/jpeg/jconfig.h	2005-03-30 10:36:30.000000000 -0500
+@@ -2,7 +2,7 @@
+  * to make it work with configure?
+  */
+ 
+-#if defined(_MSC_VER) || defined(__BORLANDC__)
++#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__SC__)
+ #include "jconfig.vc"
+ #else
+ 
+diff -r -u -N wxWindows-2.4.2-orig/src/jpeg/jconfig.vc wxWindows-2.4.2-sc7/src/jpeg/jconfig.vc
+--- wxWindows-2.4.2-orig/src/jpeg/jconfig.vc	1999-05-09 16:48:20.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/jpeg/jconfig.vc	2005-03-30 10:43:41.000000000 -0500
+@@ -16,7 +16,7 @@
+ #undef INCOMPLETE_TYPES_BROKEN
+ 
+ /* Define "boolean" as unsigned char, not int, per Windows custom */
+-#ifndef __RPCNDR_H__		/* don't conflict if rpcndr.h already read */
++#if !defined(__RPCNDR_H__) || defined(__SC__)		/* don't conflict if rpcndr.h already read */
+ typedef unsigned char boolean;
+ #endif
+ #define HAVE_BOOLEAN		/* prevent jmorecfg.h from redefining it */
+diff -r -u -N wxWindows-2.4.2-orig/src/makefile.sc wxWindows-2.4.2-sc7/src/makefile.sc
+--- wxWindows-2.4.2-orig/src/makefile.sc	1969-12-31 19:00:00.000000000 -0500
++++ wxWindows-2.4.2-sc7/src/makefile.sc	2005-03-30 09:28:51.000000000 -0500
+@@ -0,0 +1,35 @@
++#
++# File:		makefile.nt
++# Author:	Julian Smart
++# Created:	1997
++# Updated:	
++# Copyright:	(c) 1997, Julian Smart
++#
++# "%W% %G%"
++#
++# Makefile : Builds wxWindows library wx.lib for SC++ (32-bit)
++# Arguments:
++#
++# FINAL=1 argument to smake to build version with no debugging info.
++# dll builds a library (wxdll.lib) suitable for creating DLLs
++#    * Note that the dll target is experimental - see docs/dll.txt.
++#
++!include <makesc.env>
++
++THISDIR=$(WXWIN)\src
++
++all:
++    cd msw
++    smake -f makefile.sc
++    cd $(THISDIR)
++
++clean:
++    cd msw
++    smake -f makefile.sc clean
++    cd $(THISDIR)
++
++cleanall:
++    cd msw
++    smake -f makefile.sc cleanall
++    cd $(THISDIR)
++
+diff -r -u -N wxWindows-2.4.2-orig/src/makelib.sc wxWindows-2.4.2-sc7/src/makelib.sc
+--- wxWindows-2.4.2-orig/src/makelib.sc	2003-08-14 13:06:24.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/makelib.sc	2005-03-30 12:02:45.000000000 -0500
+@@ -13,7 +13,7 @@
+ all:  $(LIBTARGET) 
+ 
+ $(LIBTARGET): $(OBJECTS)
+-    lib -c $(LIBTARGET) $(OBJECTS)
++	lib /PAGESIZE:512 $(LIBTARGET) y $(OBJECTS), nul
+ 
+ 
+ clean: 
+diff -r -u -N wxWindows-2.4.2-orig/src/makesc.env wxWindows-2.4.2-sc7/src/makesc.env
+--- wxWindows-2.4.2-orig/src/makesc.env	2003-09-14 20:10:32.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/makesc.env	2005-03-30 14:59:51.000000000 -0500
+@@ -3,17 +3,22 @@
+ SC_SUFFIX=_sc
+ 
+ ####WXDIR = $(WXWIN)
+-WXOUTDIR=$(WXDIR)\d_mars
++#WXOUTDIR=$(WXDIR)\d_mars
++WXOUTDIR=$(WXDIR)\sc7
+ INCDIR = $(WXDIR)\include
+ CONTRIBINCDIR = $(WXDIR)\contrib\include
+ MSWINCDIR = $(WXDIR)\include\wx\msw
+ ARCHINCDIR = $(WXDIR)\lib\$(SC_SUFFIX)
+ LIBDIR = $(WXDIR)\lib
+-WXLIB = wx$(SC_SUFFIX).lib
+-WINSOCKLIB = wsock32$(SC_SUFFIX)
+-SHELLLIB = shell32$(SC_SUFFIX)
+-WINMMLIB =winmm32$(SC_SUFFIX)
+-SUPPORTLIBS = png$(SC_SUFFIX) tiff$(SC_SUFFIX) jpeg$(SC_SUFFIX) zlib$(SC_SUFFIX) $(SHELLLIB) $(WINSOCKLIB) $(WINMMLIB)
++WXLIB = $(WXDIR)\lib\wx$(SC_SUFFIX).lib
++WINLIBS=kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib \
++ comctl32.lib odbc32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib
++PNGLIB = $(WXDIR)\lib\png$(SC_SUFFIX).lib
++TIFFLIB = $(WXDIR)\lib\tiff$(SC_SUFFIX).lib
++JPEGLIB = $(WXDIR)\lib\jpeg$(SC_SUFFIX).lib
++ZLIBLIB = $(WXDIR)\lib\zlib$(SC_SUFFIX).lib
++REGEXLIB= $(WXDIR)\lib\regex$(SC_SUFFIX).lib
++SUPPORTLIBS = $(PNGLIB) $(TIFFLIB) $(JPEGLIB) $(ZLIBLIB) $(REGEXLIB) $(WINLIBS)
+ 
+ SRCSUFF = cpp
+ OBJSUFF = obj
+@@ -24,22 +29,29 @@
+ 
+ # default values
+ 
+-CC=dmc
++#CC=dmc
++CC=sc
+ RC=rcc
+ 
+ # WIN32 settings
+ # -H ... fix to use directory
+ ##CFLAGS = -o -mn -W -H -D__NT__ -DWIN32 -D__WIN32__ -D__WIN95__ -D__WINDOWS__ -D__WXMSW__ -D__SC__ -D__WXDEBUG__ $(EXTRACPPFLAGS)
+-CFLAGS = -mn -D_WINDOWS -6 -a8 -Nc -c -H -HD$(WXOUTDIR) -HO- -DWXMSW -D__WIN32__ -D__WIN95__ -D__WXDEBUG__ $(EXTRACPPFLAGS)
+-CPPFLAGS = -cpp -Ae -Ar
++#CFLAGS = -mn -D_WINDOWS -6 -a8 -Nc -c -H -HD$(WXOUTDIR) -HO- -DWXMSW -D__WIN32__ -D__WIN95__ -D__WXDEBUG__ $(EXTRACPPFLAGS)
++CFLAGS = -o+space -o-cnp -ff -g -5 -mn -Aa -Ab -p -XD -Nc -WA \
++         -a8 -c -H -HD$(WXOUTDIR) -HO- \
++         -D__NT__ -DWIN32 -D__WIN32__ \
++         -D_WINDOWS -DWXMSW -D__WIN95__ \
++         -D__DIGITALMARS__=7.5 \
++         -D__WINDOWS__ -D__WXMSW__ $(EXTRACPPFLAGS)
++CPPFLAGS = -cpp -Ae -Ar -D__RTTI__=1
+ 
+ LINKER = link
+ # possible bug with putting d on any extralibs if we have debug and release versions one day
+-LDFLAGS = $(EXTRALDFLAGS)
+-LIBS=$(WXLIB) $(EXTRALIBS) $(SUPPORTLIBS) advapi32 comctl32 comdlg32 ctl3d32 gc  gdi32 kernel32 ole32 oleaut32 snn user32 uuid 
++LDFLAGS = -L/A:512/NT/NOI $(EXTRALDFLAGS)
++LIBS=$(WXLIB) $(EXTRALIBS) $(SUPPORTLIBS) 
+ 
+ 
+-.$(SRCSUFF).obj:
++.cpp.obj:
+ 	*$(CC) -c $(CPPFLAGS) $(CFLAGS) $(INCLUDE) $(OPTIONS) $< -o$@
+ 
+ # -Jm: relaxed type checking only for .C files
+diff -r -u -N wxWindows-2.4.2-orig/src/msw/checklst.cpp wxWindows-2.4.2-sc7/src/msw/checklst.cpp
+--- wxWindows-2.4.2-orig/src/msw/checklst.cpp	2003-08-25 15:24:30.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/msw/checklst.cpp	2005-03-30 11:18:04.000000000 -0500
+@@ -152,7 +152,7 @@
+       HBITMAP hbmpOld = (HBITMAP)SelectObject(hdcMem, hbmpCheck);
+ 
+       // then draw a check mark into it
+-#if defined(__WIN32__) && !defined(__SYMANTEC__)
++#if defined(__WIN32__) /* && !defined(__SYMANTEC__) too old! */
+       RECT rect;
+       rect.left   = 0;
+       rect.top    = 0;
+diff -r -u -N wxWindows-2.4.2-orig/src/msw/makefile.sc wxWindows-2.4.2-sc7/src/msw/makefile.sc
+--- wxWindows-2.4.2-orig/src/msw/makefile.sc	2003-09-14 20:10:36.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/msw/makefile.sc	2005-03-30 16:02:26.000000000 -0500
+@@ -86,6 +86,7 @@
+ 		$(COMMDIR)\dobjcmn.obj \
+ 		$(COMMDIR)\docmdi.obj \
+ 		$(COMMDIR)\docview.obj \
++		$(COMMDIR)\dosyacc.obj \
+ 		$(COMMDIR)\dseldlg.obj \
+ 		$(COMMDIR)\dynarray.obj \
+ 		$(COMMDIR)\dynlib.obj \
+@@ -338,9 +339,7 @@
+ 
+ #build our own copies of missing libraries
+ MAKELIBS:
+-      implib  /s $(LIBDIR)\$(SHELLLIB) $(LIBDIR)\$(SC_SUFFIX)\$(SHELLLIB).def
+-      implib  /s $(LIBDIR)\$(WINSOCKLIB) $(LIBDIR)\$(SC_SUFFIX)\$(WINSOCKLIB).def
+-      implib  /s $(LIBDIR)\$(WINMMLIB) $(LIBDIR)\$(SC_SUFFIX)\$(WINMMLIB).def
++      echo implib not necessary
+ 
+ $(LIBTARGET): $(OBJECTS)
+ 	-del $(LIBTARGET)
+@@ -359,7 +358,7 @@
+         -del $(LIBTARGET)
+ 
+ PCH: $(INCDIR)\wx\wxprec.h
+-        dmc $(CPPFLAGS) $(CFLAGS) $(INCLUDE) -HF$(WXOUTDIR)\wxprec.SYM -o$(WXOUTDIR)\wxprec.PCO $(INCDIR)\wx\wxprec.h
++        $(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDE) -HF$(WXOUTDIR)\wxprec.SYM -o$(WXOUTDIR)\wxprec.PCO $(INCDIR)\wx\wxprec.h
+ 
+ clean_pch:
+         del $(WXOUTDIR)\*.sym
+@@ -367,34 +366,34 @@
+ 
+ 
+ png:   
+-        make -f $(WXDIR)\src\png\makefile.sc FINAL=$(FINAL)
++        smake -f $(WXDIR)\src\png\makefile.sc FINAL=$(FINAL)
+ 
+ clean_png:
+-        make -f $(WXDIR)\src\png\makefile.sc clean
++        smake -f $(WXDIR)\src\png\makefile.sc clean
+ 
+ zlib:   
+-        make -f $(WXDIR)\src\zlib\makefile.sc FINAL=$(FINAL) 
++        smake -f $(WXDIR)\src\zlib\makefile.sc FINAL=$(FINAL) 
+ 
+ clean_zlib:
+-        make -f $(WXDIR)\src\zlib\makefile.sc clean
++        smake -f $(WXDIR)\src\zlib\makefile.sc clean
+ 
+ jpeg:   
+-        make -f $(WXDIR)\src\jpeg\makefile.sc FINAL=$(FINAL)
++        smake -f $(WXDIR)\src\jpeg\makefile.sc FINAL=$(FINAL)
+ 
+ clean_jpeg:
+-        make -f $(WXDIR)\src\jpeg\makefile.sc clean
++        smake -f $(WXDIR)\src\jpeg\makefile.sc clean
+ 
+ regex:  
+-        make -f $(WXDIR)\src\regex\makefile.sc FINAL=$(FINAL) 
++        smake -f $(WXDIR)\src\regex\makefile.sc FINAL=$(FINAL) 
+ 
+ clean_regex:
+-        make -f $(WXDIR)\src\regex\makefile.sc clean
++        smake -f $(WXDIR)\src\regex\makefile.sc clean
+ 
+ tiff:  
+-        make -f $(WXDIR)\src\tiff\makefile.sc FINAL=$(FINAL) 
++        smake -f $(WXDIR)\src\tiff\makefile.sc FINAL=$(FINAL) 
+ 
+ clean_tiff:
+-        make -f $(WXDIR)\src\tiff\makefile.sc clean
++        smake -f $(WXDIR)\src\tiff\makefile.sc clean
+ 
+ MFTYPE=sc
+ self : $(WXWIN)\distrib\msw\tmake\filelist.txt $(WXWIN)\distrib\msw\tmake\$(MFTYPE).t
+diff -r -u -N wxWindows-2.4.2-orig/src/tiff/tiffcomp.h wxWindows-2.4.2-sc7/src/tiff/tiffcomp.h
+--- wxWindows-2.4.2-orig/src/tiff/tiffcomp.h	2003-08-25 15:24:40.000000000 -0400
++++ wxWindows-2.4.2-sc7/src/tiff/tiffcomp.h	2005-03-30 12:31:56.000000000 -0500
+@@ -56,13 +56,15 @@
+ #include <math.h>
+ #endif
+ 
+-#if defined (__SC__) && !defined (__DMC__)
++#if defined (__SC__) && !defined (__DMC__) && !defined(__DIGITALMARS__)
+     #define __SYMANTEC__
++#else
++    #undef __SYMANTEC__
+ #endif
+ 
+ #include <stdio.h>
+ 
+-#if defined(__PPCC__) || defined(__SYMANTEC__) || defined(__MRC__)
++#if defined(__PPCC__) || defined(__MRC__) /* || defined(__SYMANTEC__) too old! */
+ #include <types.h>
+ #elif !defined(__MWERKS__) && !defined(THINK_C) && !defined(__acornriscos) && !defined(applec)
+ #include <sys/types.h>
+@@ -137,7 +139,8 @@
+  * stack (when coerced by the compiler).
+  */
+ /* Note: on MacPowerPC "extended" is undefined. So only use it for 68K-Macs */
+-#if defined(__SYMANTEC__) || defined(THINK_C)
++/* #if defined(__SYMANTEC__) Symantec too old! __SC__! || defined(THINK_C)*/
++#if defined(THINK_C)
+ typedef extended dblparam_t;
+ #else
+ typedef double dblparam_t;

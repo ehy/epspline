@@ -1,0 +1,29 @@
+/* XPM */
+static char *helpbubble_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 7 1",
+"  c black",
+". c navy",
+"X c yellow",
+"o c #808080",
+"O c #C0C0C0",
+"+ c gray100",
+"@ c None",
+/* pixels */
+"@@@           @@",
+"@@ +++X+++X+++ @",
+"@@ +X+++X+++X+ o",
+"@@ +++O....O++ o",
+"@@ +X+..XO..X+ o",
+"@@ +++.o++..++ o",
+"@@ +X+++Xo.oX+ o",
+"@@ +++X+o.O+++ o",
+"@@ +X+++.o++X+ o",
+"@@ +++X+++X+++ o",
+"@@ +X+++..++X+ o",
+"@@ +++X+X+X+++ o",
+"@@@       ++  o@",
+"@@@@oooooo X o@@",
+"@@@@@@@@@@@  @@@",
+"@@@@@@@@@@@@ @@@"
+};

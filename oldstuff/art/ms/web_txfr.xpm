@@ -1,0 +1,32 @@
+/* XPM */
+static char *web_txfr_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 10 1",
+"  c black",
+". c navy",
+"X c blue",
+"o c #008000",
+"O c #008080",
+"+ c cyan",
+"@ c #808080",
+"# c #C0C0C0",
+"$ c gray100",
+"% c None",
+/* pixels */
+"%%%@@@@@@%%%%%%%",
+"%%@@O#ooo %% %%%",
+"%@$#$ooooo %  %%",
+"@@X$#XXX     + %",
+"@X#oo.oo ++++++ ",
+"@Xooooo. ++++++ ",
+"@XXooooo     + %",
+"@XXXXooooOX@  %%",
+"@.XXXoo oX.@ %%%",
+"% XXXo  X. %%%%%",
+"%% .X +     %%%%",
+"%%%@ ++++++ %%%%",
+"%%%% ++++++ %%%%",
+"%%%%% +     %%%%",
+"%%%%%%  %%%%%%%%",
+"%%%%%%% %%%%%%%%"
+};

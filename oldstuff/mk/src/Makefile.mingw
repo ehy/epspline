@@ -1,0 +1,138 @@
+#! /bin/make -f
+
+PROG  = epspline
+PROG1 = $(PROG).exe
+
+RM   =  rm
+cp  = cp -f
+#YACC =  yacc
+#YACC =  byacc
+YACC =  bison -y
+#LEX  =  lex
+#LEX  =  flex -l
+LEX  =  flex
+#CCLEX=  c++
+#CCLEX=  cc
+LEX_STEM = lex.yy
+#PICFLAGS = -fPIC
+
+# for parser, lexer: also pertains to mingw for MSW (should be changed)
+XCFLAGS = -D_LINUX=1
+#XCFLAGS =
+
+CXX = wx-config --cxx --static=yes $(WXVERSIONOPT)
+CC = wx-config --cc --static=yes $(WXVERSIONOPT)
+CCFL = wx-config --cxxflags --static=yes $(WXVERSIONOPT)
+CPPFL = wx-config --cppflags --static=yes $(WXVERSIONOPT)
+WXLIBS = wx-config --libs --static=yes $(WXVERSIONOPT)
+
+CCLEX = $(CXX)
+#CCLEX = $(CC)
+
+# some cygwin dist x86_86-w64-mingw32 built wxrc fail to
+# run - dll dependency problem - alternative might be needed
+WXRC = wx-config --utility=wxrc $(WXVERSIONOPT)
+# echo because target invokes with ``
+#WXRC = echo $(HOME)/wx/wxMSW-2.8.10/utils/wxrc/dmc_mswd/wxrc.exe
+#WXRC = echo $(HOME)/wx/wxMSW-2.8.10/utils/wxrc/dmc_mswd/wxrc.exe
+
+OBJDIR = .
+HDRDIR = $(OBJDIR)
+SRCDIR = $(OBJDIR)
+COMMDIR = $(OBJDIR)
+
+#APPLIBDIR = ../classes
+#APPLIB = $(APPLIBDIR)/libappex.a
+#APPLINK= -L $(APPLIBDIR) -lappex
+
+include $(OBJDIR)/objects.mak
+
+#SYM_XRC = inp2dlg MDataDlg main_rc
+#XML_XRC = inp2dlg.xrc MDataDlg.xrc main_rc.xrc
+#SRC_XRC = inp2dlg.cpp MDataDlg.cpp main_rc.cpp
+#OBJ_XRC = inp2dlg.o MDataDlg.o main_rc.o
+
+APPDEF = -Dwx_msw=1
+
+all: $(OBJDIR) $(OBJDIR)/$(PROG1)
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+#$(APPLIB):
+#	cd $(APPLIBDIR) && $(MAKE)
+
+.SUFFIXES: .cpp .o
+.cpp.o:
+	`$(CXX)` -c $(INCLUDES) $(APPDEF) `$(CCFL)` $(CXXFLAGS) -o $@ $<
+
+#$(OBJDIR)/epspline.o: epspline.cpp epspline.h epspline.ids epspline.xbm epspline.xpm
+$(OBJDIR)/epspline.o: epspline.cpp epspline.h epspline.rc epspline.def
+
+
+$(OBJDIR)/$(PROG1):  $(APPLIB) $(OBJECTS) $(OBJ_XRC) $(OBJDIR)/$(PROG).res
+	`$(CXX)` `$(CCFL)` $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(OBJ_XRC) $(OBJDIR)/$(PROG).res $(APPLINK) `$(WXLIBS)` $(LDLIBS)
+
+
+$(OBJDIR)/$(PROG).res:  $(PROG).rc
+	$(WINDRES) --output-format=coff `$(CPPFL)` $(PROG).rc $(OBJDIR)/$(PROG).res
+
+.SUFFIXES: .xrc .cpp
+# hack; why not provide $* expansion in dependencies/prerequisites?
+.SECONDEXPANSION:
+$(SRC_XRC) : $${*}.xrc
+	`$(WXRC)` -v -c -n LoadRes_$* -o $@ $<
+
+
+ifeq (, $(MSYS))
+# MinGW Shell environment has NONE of bison, yacc, flex, lex --
+# use the pre-made file files for MSW tools (dmc uses these)
+$(OBJDIR)/parser.o: $(SRCDIR)/parser.c $(SRCDIR)/lexer.c
+	`$(CCLEX)` -c $(CFLAGS) $(XCFLAGS) `$(CPPFL)` -I. $(PICFLAGS) -o $@ parser.c
+
+$(SRCDIR)/parser.c: $(COMMDIR)/parser.y $(SRCDIR)/lexer.c
+	$(RM) -f y.tab.c
+	$(YACC) $(COMMDIR)/parser.y
+	sed -e "s;$(COMMDIR)/y.tab.c;parser.y;g" < y.tab.c | \
+	sed -e "s/BUFSIZ/5000/g"            | \
+	sed -e "s/YYLMAX 200/YYLMAX 5000/g" | \
+	sed -e "s/yy/EPSIO_yy/g"            | \
+	sed -e "s/input/EPSIO_input/g"      | \
+	sed -e "s/unput/EPSIO_unput/g"      > $(SRCDIR)/parser.c
+
+$(SRCDIR)/lexer.c: $(COMMDIR)/lexer.l
+	$(RM) -f $(LEX_STEM).c
+	$(LEX) $(COMMDIR)/lexer.l
+	sed -e "s;$(COMMDIR)/$(LEX_STEM).c;lexer.l;g" < $(LEX_STEM).c | \
+	sed -e "s/yy/EPSIO_yy/g"            | \
+	sed -e "s/input/EPSIO_input/g"      | \
+	sed -e "s/unput/EPSIO_unput/g"      > $(SRCDIR)/lexer.c
+
+# else MSYS
+else
+
+PARSER_SRC = $(SRCDIR)/ms_parse.c
+LEXER_SRC  = $(SRCDIR)/ms_lexer.c
+PARSER_OBJ = $(OBJDIR)/parser.o
+
+# Not parser.obj because that alway get built by the .c.obj rule in makesc.env!
+# These args (-cpp) are nec. since parser.c includes C++ headers.
+$(PARSER_OBJ): $(PARSER_SRC) $(LEXER_SRC)
+	`$(CCLEX)` -c $(CFLAGS) $(XCFLAGS) $(INCLUDES) $(APPDEF) `$(CCFL)` $(PICFLAGS) -o $@ $(PARSER_SRC)
+
+
+# endif MSYS
+endif
+ 
+install: all
+	$(INSTALL)
+
+clean:
+	-rm -f $(OBJDIR)/*.o $(OBJDIR)/$(PROG1) $(OBJDIR)/$(PROG).res
+
+cleangenerated:
+	-rm -f $(SRC_XRC)
+
+cleanall: clean cleangenerated
+#	cd $(APPLIBDIR) && $(MAKE) cleanall
+

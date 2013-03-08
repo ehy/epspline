@@ -1,0 +1,25 @@
+/* XPM */
+static char *resize_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c black",
+". c blue",
+"X c None",
+/* pixels */
+"XXXXXX.XXXX.XX.X",
+"XXXXXX.XXXXX.X.X",
+"XXXXXX.X.......X",
+"XXXXXX.XXXXX.X.X",
+"XXXXXX.XXXX.XX.X",
+"XXXXXXXXXXXXXXXX",
+".....X.X.X.X.X.X",
+"XXXXXXXXXXXXXXXX",
+"XX.XXX.XXXXXXX.X",
+"XX.XXXXXXXXXXXXX",
+"XX.XXX.XXXXXXX.X",
+".X.X.XXXXXXXXXXX",
+"X...XX.XXXXXXX.X",
+"XX.XXXXXXXXXXXXX",
+".....X.X.X.X.X.X",
+"XXXXXXXXXXXXXXXX"
+};

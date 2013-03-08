@@ -1,0 +1,26 @@
+/* XPM */
+static char *spellchk_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"  c black",
+". c navy",
+"X c gray100",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooooooooo",
+"ooo oo  ooo  ooo",
+"oo o o o o ooooo",
+"oo   o  oo oooo.",
+"oo o o o o ooo.X",
+"oo o o  ooo  .Xo",
+"oooooooooooo.Xoo",
+"ooooooooooo.Xooo",
+"oooooooooo.Xoooo",
+"ooo.Xoooo.Xooooo",
+"oo...Xoo..Xooooo",
+"ooo...X..Xoooooo",
+"oooo....Xooooooo",
+"ooooo...Xooooooo",
+"oooooo.Xoooooooo"
+};

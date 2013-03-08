@@ -1,0 +1,29 @@
+/* XPM */
+static char *paste_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 7 1",
+"  c black",
+". c navy",
+"X c #808000",
+"o c yellow",
+"O c #808080",
+"+ c gray100",
+"@ c None",
+/* pixels */
+"@@@@@@@@@@@@@@@@",
+"@@@@@@    @@@@@@",
+"@@     oo     @@",
+"@ OXO o  o XOX @",
+"@ XO @@@@@@ XO @",
+"@ OX        OX @",
+"@ XOXOXOXOXOXO @",
+"@ OXOXO....... @",
+"@ XOXOX.+++++..@",
+"@ OXOXO.+++++.+.",
+"@ XOXOX.+...+...",
+"@ OXOXO.+++++++.",
+"@ XOXOX.+.....+.",
+"@@     .+++++++.",
+"@@@@@@@.........",
+"@@@@@@@@@@@@@@@@"
+};

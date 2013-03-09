@@ -6,7 +6,6 @@ bak
 *.o
 *_dbg
 *.exe
-*.zip
 *.mo
 .depend
 depend

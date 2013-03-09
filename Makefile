@@ -258,7 +258,8 @@ distclean: distclean_po distclean_examples distclean_doc
 # temp directory.
 # Also will make zip file (in addition to tar.gz, not instead) if
 # "$(MKZIP)" is not empty.
-EXCLFILES = epspline.geany helpview 3rd_pty oldstuff
+EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
+	examples-working
 dist archive distarchive: distclean
 	mkdir ../EXCL_TEMPD
 	for f in $(EXCLFILES) ; do \

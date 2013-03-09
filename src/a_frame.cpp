@@ -127,8 +127,15 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	MenuOpts = new wxMenu; // now called "Tools"
 	menuHelp = new wxMenu;
 
+	// stock menu strings are not working in wx 2.6
 #if ! wxCHECK_VERSION(2, 8, 0)
 #	define  GetItemLabelText GetLabel
+#	undef  USE_NONSTOCK_MENU_STRINGS
+#	define USE_NONSTOCK_MENU_STRINGS 1
+#endif
+	// stock menu strings are not working in MSW;
+	// assuming they only work in wxGTK 2
+#if ! defined(__WXGTK20__)
 #	undef  USE_NONSTOCK_MENU_STRINGS
 #	define USE_NONSTOCK_MENU_STRINGS 1
 #endif

@@ -54,9 +54,9 @@
 #define IDS_OntheHopeThattheProgramisUseful		"On the Hope That the Program is Useful"
 #define IDF_OntheHopeThattheProgramisUseful		"epsplinesu3.html"
 
-#define IDI_PrismandLatheEditor		301000
-#define IDS_PrismandLatheEditor		"Prism and Lathe Editor"
-#define IDF_PrismandLatheEditor		"epsplinech2.html"
+#define IDI_EpsplinePrismandLatheEditor		301000
+#define IDS_EpsplinePrismandLatheEditor		"Epspline: Prism and Lathe Editor"
+#define IDF_EpsplinePrismandLatheEditor		"epsplinech2.html"
 
 #define IDI_Usage		303000
 #define IDS_Usage		"Usage"
@@ -162,13 +162,9 @@
 #define IDS_ADDENDUMHowtousethisLicenseforyourdocuments		"ADDENDUM: How to use this License for your documents"
 #define IDF_ADDENDUMHowtousethisLicenseforyourdocuments		"epsplinesu24.html"
 
-#define IDI_Bibliography		9000000000
-#define IDS_Bibliography		"Bibliography"
-#define IDF_Bibliography		"epsplineli2.html"
-
 #define IDI_Index		2000000000
 #define IDS_Index		"Index"
-#define IDF_Index		"epsplineli3.html"
+#define IDF_Index		"epsplineli2.html"
 
 
 #endif /* _epspline_helpids_INCLUDED */

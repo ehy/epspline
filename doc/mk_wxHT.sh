@@ -146,11 +146,15 @@ mk_fmap () {
 	done
 }
 
+# Get a filename name from the file<-->name map.
+# Can contain both pretty title string and search regex separated
+# by '<R>' as in "Hi: I'm a Pretty Title<r>Hi.*: I'm a .*".
+# (The regex is needed if the html might have tags: <b>Hi</b>: I'm ....)
 get_fmap () {
 	# accept '<r>' at head of pattern to signify it is a regex
 	case "$1" in
-		\<[rR]\>* )
-			SPAT="${1#*\>}"
+		*\<R\>* )
+			SPAT="${1#*\<R\>}"
 			;;
 		* )
 			SPAT=$(echo "$1" | \
@@ -287,13 +291,15 @@ feed | grep -F "$GPAT" | while read -r L; do
 	# built from the html files
 	yankhead FN RGT '|'
 	test X"$FN" = X && {
-		FN=$(get_fmap "$NM") || {
+		FN="$(get_fmap "$NM")" || {
 			e2 "cannot find or make filename"
 			e2 "FOUND field 5 is \"$ID\""
 			e2 "unexpected line is \"$L\""
 			continue; }
 	}
 	dbg "FN is \"$FN\""
+	# Now done w/ NM; strip any regex
+	NM="${NM%\<R\>*}"
 	# check for file; failure not fatal
 	test -f "$FN" || e2 "FILE NOT FOUND: \"$FN\""
 	# with new and improved file name map, retain name making

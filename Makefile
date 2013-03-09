@@ -281,4 +281,6 @@ dist archive distarchive: distclean
 		exit 0; } ; ) || \
 	{ echo FAILED making "$$TF" in $@; exit 1; }
 	for f in ../EXCL_TEMPD/* ; do $(MV) "$$f" . ; done
+	{ test -d ../EXCL_TEMPD/.git && \
+		for f in ../EXCL_TEMPD/.??* ; do $(MV) "$$f" . ; done; true; }
 	rmdir ../EXCL_TEMPD

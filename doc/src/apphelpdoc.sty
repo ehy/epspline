@@ -117,6 +117,9 @@
 	\brokenpenalty=1000
 	\clubpenalty=1000
 	\widowpenalty=1000
+	% hyphenation . . .
+	% off for all upper-case
+	\uchyph=0
 
 	\pagenumbering{alph}
 	\pagestyle{headings}
@@ -146,7 +149,9 @@
 	% Use prefix (1st few chars) 'dty', suggesting
 	% 'document typeset' (silly, but consider the namespace).
 	\def\dtythispkgname{epspline}
+	\hyphenation{epspline}
 	\def\dtythispkgnameu{Epspline}
+	\hyphenation{Epspline}
 	\def\dtypovraypkgname{POV-Ray}
 	\def\dtybezieru{B\'{e}zier}
 	\def\dtybezierl{b\'{e}zier}

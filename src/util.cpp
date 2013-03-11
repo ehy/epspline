@@ -496,3 +496,16 @@ bool check_identifier(wxString& word)
 
 	return true;
 }
+
+#if 0 && (defined(__DMC__) || defined (__SC__) && defined(__WXMSW__))
+// Sadly, this is needed for dmc due to missing lround
+// definition -- see comment in util.h
+// Update: changed to a define in lround as a macro, to save the call.
+extern "C" {
+long lround(double v)
+{
+	return LRINT(v);
+}
+} // end extern "C"
+#endif // #if defined(__DMC__) || defined (__SC__) && defined(__WXMSW__)
+

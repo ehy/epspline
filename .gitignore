@@ -1,5 +1,7 @@
 !*.h *.c *.cpp *.cc *.cxx .gitignore *.sh *.nsi *.pot Makefile README*
 epspline
+uninstall/*
+*.pot
 *.bak
 bak
 *.geany

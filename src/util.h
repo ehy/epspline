@@ -230,10 +230,18 @@ int gettmpfd(char* buf, size_t len);
 #endif
 
 #if LROUND_UNAVAILABLE
+#	if defined(__DMC__) || defined (__SC__) && defined(__WXMSW__)
+// Bummer: dmc will not use a C++ template definition of lround() --
+// it is prototyped in math.h, but it is not defined in C-library.
+// The compiler prefers the specific proto it has seen over the
+// template here, but of course link fails on missing definition.
+#		define lround(v)	LRINT(v)
+#	else
 template<typename fT> inline long lround(fT v)
 {
 	return LRINT(v);
 }
+#	endif
 #endif
 
 inline int irint(double d) {

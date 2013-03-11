@@ -8,11 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-02 06:33-0500\n"
+"POT-Creation-Date: 2013-03-09 12:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -30,7 +29,7 @@ msgstr ""
 msgid "&OK"
 msgstr ""
 
-#: a_aboutbox.cpp:76 a_frame.cpp:752
+#: a_aboutbox.cpp:76 a_frame.cpp:759
 msgid "About "
 msgstr ""
 
@@ -106,7 +105,7 @@ msgstr ""
 msgid "Set next object as a POV lathe, or convert selected curve"
 msgstr ""
 
-#: a_canvas.cpp:202 a_frame.cpp:367
+#: a_canvas.cpp:202 a_frame.cpp:374
 msgid "Save"
 msgstr ""
 
@@ -162,7 +161,7 @@ msgstr ""
 msgid "Move object down"
 msgstr ""
 
-#: a_canvas.cpp:217 a_frame.cpp:234
+#: a_canvas.cpp:217 a_frame.cpp:241
 msgid "Move selected object down in stacking order"
 msgstr ""
 
@@ -170,7 +169,7 @@ msgstr ""
 msgid "Move object up"
 msgstr ""
 
-#: a_canvas.cpp:219 a_frame.cpp:236
+#: a_canvas.cpp:219 a_frame.cpp:243
 msgid "Move selected object up in stacking order"
 msgstr ""
 
@@ -268,362 +267,362 @@ msgstr ""
 msgid "Failed exporting to %s : %s"
 msgstr ""
 
-#: a_frame.cpp:185
+#: a_frame.cpp:192
 msgid "&Save\tCtrl-S"
 msgstr ""
 
-#: a_frame.cpp:185
+#: a_frame.cpp:192
 msgid "Save to current file"
 msgstr ""
 
-#: a_frame.cpp:187
+#: a_frame.cpp:194
 msgid "Save &As"
 msgstr ""
 
-#: a_frame.cpp:187
+#: a_frame.cpp:194
 msgid "Save to a new file"
 msgstr ""
 
-#: a_frame.cpp:189
+#: a_frame.cpp:196
 msgid "Open &New Tab"
 msgstr ""
 
-#: a_frame.cpp:189
+#: a_frame.cpp:196
 msgid "Open a new tab to create new file"
 msgstr ""
 
-#: a_frame.cpp:191
+#: a_frame.cpp:198
 msgid "Open He&re"
 msgstr ""
 
-#: a_frame.cpp:191
+#: a_frame.cpp:198
 msgid "Load file into this tab"
 msgstr ""
 
-#: a_frame.cpp:193
+#: a_frame.cpp:200
 msgid "&Open\tCtrl-O"
 msgstr ""
 
-#: a_frame.cpp:193
+#: a_frame.cpp:200
 msgid "Load file in a new tab"
 msgstr ""
 
-#: a_frame.cpp:195
+#: a_frame.cpp:202
 msgid "&Close\tCtrl-W"
 msgstr ""
 
-#: a_frame.cpp:195
+#: a_frame.cpp:202
 msgid "Close current file"
 msgstr ""
 
-#: a_frame.cpp:197
+#: a_frame.cpp:204
 msgid "Close Ta&b"
 msgstr ""
 
-#: a_frame.cpp:197
+#: a_frame.cpp:204
 msgid "Close current tab"
 msgstr ""
 
-#: a_frame.cpp:199
+#: a_frame.cpp:206
 msgid "&Export\tCtrl-E"
 msgstr ""
 
-#: a_frame.cpp:199
+#: a_frame.cpp:206
 msgid "Export to POV-Ray include file"
 msgstr ""
 
-#: a_frame.cpp:201
+#: a_frame.cpp:208
 msgid "Expor&t As"
 msgstr ""
 
-#: a_frame.cpp:201
+#: a_frame.cpp:208
 msgid "Export to a new POV-Ray include file"
 msgstr ""
 
-#: a_frame.cpp:204
+#: a_frame.cpp:211
 msgid "&Quit\tCtrl-Q"
 msgstr ""
 
-#: a_frame.cpp:204 a_frame.cpp:284
+#: a_frame.cpp:211 a_frame.cpp:291
 msgid "Quit this program"
 msgstr ""
 
-#: a_frame.cpp:208
+#: a_frame.cpp:215
 msgid "&Undo\tCtrl-Z"
 msgstr ""
 
-#: a_frame.cpp:208 a_frame.cpp:315
+#: a_frame.cpp:215 a_frame.cpp:322
 msgid "Undo last change"
 msgstr ""
 
-#: a_frame.cpp:209
+#: a_frame.cpp:216
 msgid "Ctrl-Z"
 msgstr ""
 
-#: a_frame.cpp:211
+#: a_frame.cpp:218
 msgid "&Redo\tCtrl-R"
 msgstr ""
 
-#: a_frame.cpp:211 a_frame.cpp:319
+#: a_frame.cpp:218 a_frame.cpp:326
 msgid "Redo undone change"
 msgstr ""
 
-#: a_frame.cpp:212
+#: a_frame.cpp:219
 msgid "Ctrl-R"
 msgstr ""
 
-#: a_frame.cpp:215
+#: a_frame.cpp:222
 msgid "&Copy\tCtrl-C"
 msgstr ""
 
-#: a_frame.cpp:215 a_frame.cpp:306
+#: a_frame.cpp:222 a_frame.cpp:313
 msgid "Copy selected curve"
 msgstr ""
 
-#: a_frame.cpp:219
+#: a_frame.cpp:226
 msgid "Cu&t\tCtrl-T"
 msgstr ""
 
-#: a_frame.cpp:219 a_frame.cpp:310
+#: a_frame.cpp:226 a_frame.cpp:317
 msgid "Cut selected curve"
 msgstr ""
 
-#: a_frame.cpp:221
+#: a_frame.cpp:228
 msgid "&Delete\tCtrl-X"
 msgstr ""
 
-#: a_frame.cpp:221
+#: a_frame.cpp:228
 msgid "Delete selected curve"
 msgstr ""
 
-#: a_frame.cpp:223
+#: a_frame.cpp:230
 msgid "&Paste\tCtrl-V"
 msgstr ""
 
-#: a_frame.cpp:223 a_frame.cpp:302
+#: a_frame.cpp:230 a_frame.cpp:309
 msgid "Put copied curve"
 msgstr ""
 
-#: a_frame.cpp:225
+#: a_frame.cpp:232
 msgid "Copy Global"
 msgstr ""
 
-#: a_frame.cpp:225
+#: a_frame.cpp:232
 msgid "Copy selected curve globally"
 msgstr ""
 
-#: a_frame.cpp:229
+#: a_frame.cpp:236
 msgid "Cut Global"
 msgstr ""
 
-#: a_frame.cpp:229
+#: a_frame.cpp:236
 msgid "Cut selected curve globally"
 msgstr ""
 
-#: a_frame.cpp:231
+#: a_frame.cpp:238
 msgid "Paste Global"
 msgstr ""
 
-#: a_frame.cpp:231
+#: a_frame.cpp:238
 msgid "Put globally copied curve"
 msgstr ""
 
-#: a_frame.cpp:234 a_frame.cpp:373
+#: a_frame.cpp:241 a_frame.cpp:380
 msgid "Move Down"
 msgstr ""
 
-#: a_frame.cpp:236 a_frame.cpp:374
+#: a_frame.cpp:243 a_frame.cpp:381
 msgid "Move Up"
 msgstr ""
 
-#: a_frame.cpp:240
+#: a_frame.cpp:247
 msgid "&Set Scale"
 msgstr ""
 
-#: a_frame.cpp:240
+#: a_frame.cpp:247
 msgid "Set scale of view"
 msgstr ""
 
-#: a_frame.cpp:242
+#: a_frame.cpp:249
 msgid "&Cycle Scale"
 msgstr ""
 
-#: a_frame.cpp:243 a_frame.cpp:328
+#: a_frame.cpp:250 a_frame.cpp:335
 msgid "Cycle through normal, large, and small scale of view"
 msgstr ""
 
-#: a_frame.cpp:245
+#: a_frame.cpp:252
 msgid "&Toggle Quick Drawing"
 msgstr ""
 
-#: a_frame.cpp:246
+#: a_frame.cpp:253
 msgid "Toggle drawing type between slow and pretty or fast and ugly"
 msgstr ""
 
-#: a_frame.cpp:248
+#: a_frame.cpp:255
 msgid "Save Visable To File"
 msgstr ""
 
-#: a_frame.cpp:249
+#: a_frame.cpp:256
 msgid "Save the visible drawing area to a raster image file"
 msgstr ""
 
-#: a_frame.cpp:253
+#: a_frame.cpp:260
 msgid "&Help\tCtrl-H"
 msgstr ""
 
-#: a_frame.cpp:253 a_frame.cpp:381
+#: a_frame.cpp:260 a_frame.cpp:388
 msgid "Show application help"
 msgstr ""
 
-#: a_frame.cpp:256
+#: a_frame.cpp:263
 msgid "&Preview"
 msgstr ""
 
-#: a_frame.cpp:257
+#: a_frame.cpp:264
 msgid "Run POV-Ray on a test file with the current curves"
 msgstr ""
 
-#: a_frame.cpp:260
+#: a_frame.cpp:267
 msgid "&About"
 msgstr ""
 
-#: a_frame.cpp:260
+#: a_frame.cpp:267
 msgid "Show about dialog"
 msgstr ""
 
-#: a_frame.cpp:264
+#: a_frame.cpp:271
 msgid "&File"
 msgstr ""
 
-#: a_frame.cpp:265
+#: a_frame.cpp:272
 msgid "&Edit"
 msgstr ""
 
-#: a_frame.cpp:266
+#: a_frame.cpp:273
 msgid "&Tools"
 msgstr ""
 
-#: a_frame.cpp:267
+#: a_frame.cpp:274
 msgid "&Help"
 msgstr ""
 
-#: a_frame.cpp:283 a_frame.cpp:284
+#: a_frame.cpp:290 a_frame.cpp:291
 msgid "Exit"
 msgstr ""
 
-#: a_frame.cpp:288 a_frame.cpp:289
+#: a_frame.cpp:295 a_frame.cpp:296
 msgid "New Tab"
 msgstr ""
 
-#: a_frame.cpp:289
+#: a_frame.cpp:296
 msgid "Open a new tab"
 msgstr ""
 
-#: a_frame.cpp:292 a_frame.cpp:293
+#: a_frame.cpp:299 a_frame.cpp:300
 msgid "Open Curves"
 msgstr ""
 
-#: a_frame.cpp:293
+#: a_frame.cpp:300
 msgid "Load curves from file in a new tab"
 msgstr ""
 
-#: a_frame.cpp:296 a_frame.cpp:297
+#: a_frame.cpp:303 a_frame.cpp:304
 msgid "Save Curves"
 msgstr ""
 
-#: a_frame.cpp:297
+#: a_frame.cpp:304
 msgid "Save curves to file"
 msgstr ""
 
-#: a_frame.cpp:301 a_frame.cpp:302
+#: a_frame.cpp:308 a_frame.cpp:309
 msgid "Paste Curve"
 msgstr ""
 
-#: a_frame.cpp:305 a_frame.cpp:306
+#: a_frame.cpp:312 a_frame.cpp:313
 msgid "Copy Curve"
 msgstr ""
 
-#: a_frame.cpp:309 a_frame.cpp:310
+#: a_frame.cpp:316 a_frame.cpp:317
 msgid "Cut Curve"
 msgstr ""
 
-#: a_frame.cpp:314 a_frame.cpp:315
+#: a_frame.cpp:321 a_frame.cpp:322
 msgid "Undo Change"
 msgstr ""
 
-#: a_frame.cpp:318 a_frame.cpp:319
+#: a_frame.cpp:325 a_frame.cpp:326
 msgid "Redo Change"
 msgstr ""
 
 #. tb->AddTool(SetUserScale, _("Set Scale"), *bm, wxNullBitmap, wxITEM_NORMAL
 #. , _("Set Scale"), _("Set Scale of View"));
-#: a_frame.cpp:325 a_frame.cpp:327 a_frame.cpp:379
+#: a_frame.cpp:332 a_frame.cpp:334 a_frame.cpp:386
 msgid "Cycle Scale"
 msgstr ""
 
-#: a_frame.cpp:331 a_frame.cpp:333
+#: a_frame.cpp:338 a_frame.cpp:340
 msgid "Demo Curves"
 msgstr ""
 
-#: a_frame.cpp:334
+#: a_frame.cpp:341
 msgid "Run Povray on a test file with the current curves"
 msgstr ""
 
-#: a_frame.cpp:338 a_frame.cpp:339
+#: a_frame.cpp:345 a_frame.cpp:346
 msgid "Print"
 msgstr ""
 
-#: a_frame.cpp:339
+#: a_frame.cpp:346
 msgid "Print Objects"
 msgstr ""
 
-#: a_frame.cpp:344 a_frame.cpp:345
+#: a_frame.cpp:351 a_frame.cpp:352
 msgid "Help"
 msgstr ""
 
-#: a_frame.cpp:345
+#: a_frame.cpp:352
 msgid "Application help"
 msgstr ""
 
-#: a_frame.cpp:363
+#: a_frame.cpp:370
 msgid "Quit"
 msgstr ""
 
-#: a_frame.cpp:365
+#: a_frame.cpp:372
 msgid "Open New Tab"
 msgstr ""
 
-#: a_frame.cpp:366
+#: a_frame.cpp:373
 msgid "Open"
 msgstr ""
 
-#: a_frame.cpp:369
+#: a_frame.cpp:376
 msgid "Paste"
 msgstr ""
 
-#: a_frame.cpp:370
+#: a_frame.cpp:377
 msgid "Copy"
 msgstr ""
 
-#: a_frame.cpp:371
+#: a_frame.cpp:378
 msgid "Cut"
 msgstr ""
 
-#: a_frame.cpp:376
+#: a_frame.cpp:383
 msgid "Undo"
 msgstr ""
 
-#: a_frame.cpp:377
+#: a_frame.cpp:384
 msgid "Redo"
 msgstr ""
 
-#: a_frame.cpp:380
+#: a_frame.cpp:387
 msgid "Preview"
 msgstr ""
 
 #. temp string
-#: a_frame.cpp:399
+#: a_frame.cpp:406
 #, possible-c-format
 msgid "Welcome to \"%s\""
 msgstr ""
@@ -635,43 +634,43 @@ msgstr ""
 #. * word; but of course you may use words if that is more
 #. * sensible, and will not be confused with a file-name.
 #.
-#: a_frame.cpp:461
+#: a_frame.cpp:468
 msgid "[--]"
 msgstr ""
 
-#: a_frame.cpp:644
+#: a_frame.cpp:651
 msgid ":  "
 msgstr ""
 
-#: a_frame.cpp:691
+#: a_frame.cpp:698
 msgid "There are unsaved changes to \n"
 msgstr ""
 
-#: a_frame.cpp:692
+#: a_frame.cpp:699
 msgid ""
 "\n"
 "Do you want to save the data?"
 msgstr ""
 
-#: a_frame.cpp:695
+#: a_frame.cpp:702
 msgid ""
 "\n"
 "(Select Cancel to continue.)"
 msgstr ""
 
-#: a_frame.cpp:697
+#: a_frame.cpp:704
 msgid ": save?"
 msgstr ""
 
-#: a_frame.cpp:918
+#: a_frame.cpp:925
 msgid "The help documents were not loaded successfully."
 msgstr ""
 
-#: a_frame.cpp:919
+#: a_frame.cpp:926
 msgid "Help Is Not Available"
 msgstr ""
 
-#: a_frame.cpp:943
+#: a_frame.cpp:950
 msgid ": "
 msgstr ""
 

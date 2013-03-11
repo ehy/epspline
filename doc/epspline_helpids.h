@@ -84,15 +84,15 @@
 
 #define IDI_PREAMBLE		96
 #define IDS_PREAMBLE		"PREAMBLE"
-#define IDF_PREAMBLE		"epsplinesu7.html"
+#define IDF_PREAMBLE		"epsplineli2.html"
 
 #define IDI_TERMSANDCONDITIONS		112
 #define IDS_TERMSANDCONDITIONS		"TERMS AND CONDITIONS"
-#define IDF_TERMSANDCONDITIONS		"epsplinesu8.html"
+#define IDF_TERMSANDCONDITIONS		"epsplineli3.html"
 
 #define IDI_APPLYTHESETERMSTOYOURNEWPROGRAMS		128
 #define IDS_APPLYTHESETERMSTOYOURNEWPROGRAMS		"APPLY THESE TERMS TO YOUR NEW PROGRAMS"
-#define IDF_APPLYTHESETERMSTOYOURNEWPROGRAMS		"epsplinesu9.html"
+#define IDF_APPLYTHESETERMSTOYOURNEWPROGRAMS		"epsplineli4.html"
 
 #define IDI_GPL2_Section		144
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
@@ -100,15 +100,15 @@
 
 #define IDI_PreambleGPLv2		160
 #define IDS_PreambleGPLv2		"Preamble (GPL v.2)"
-#define IDF_PreambleGPLv2		"epsplinesu10.html"
+#define IDF_PreambleGPLv2		"epsplineli5.html"
 
 #define IDI_TermsandConditionsForCopyingDistributionandModification		176
 #define IDS_TermsandConditionsForCopyingDistributionandModification		"Terms and Conditions For Copying, Distribution and Modification"
-#define IDF_TermsandConditionsForCopyingDistributionandModification		"epsplinesu11.html"
+#define IDF_TermsandConditionsForCopyingDistributionandModification		"epsplineli6.html"
 
 #define IDI_HowtoApplyTheseTermstoYourNewPrograms		192
 #define IDS_HowtoApplyTheseTermstoYourNewPrograms		"How to Apply These Terms to Your New Programs"
-#define IDF_HowtoApplyTheseTermstoYourNewPrograms		"epsplinesu12.html"
+#define IDF_HowtoApplyTheseTermstoYourNewPrograms		"epsplineli7.html"
 
 #define IDI_FDL_Section		208
 #define IDS_FDL_Section		"GNU Free Documentation License"
@@ -116,55 +116,55 @@
 
 #define IDI_Preamble		224
 #define IDS_Preamble		"Preamble"
-#define IDF_Preamble		"epsplinesu10.html"
+#define IDF_Preamble		"epsplineli5.html"
 
 #define IDI_1APPLICABILITYANDDEFINITIONS		240
 #define IDS_1APPLICABILITYANDDEFINITIONS		"1. APPLICABILITY AND DEFINITIONS"
-#define IDF_1APPLICABILITYANDDEFINITIONS		"epsplinesu14.html"
+#define IDF_1APPLICABILITYANDDEFINITIONS		"epsplineli9.html"
 
 #define IDI_2VERBATIMCOPYING		256
 #define IDS_2VERBATIMCOPYING		"2. VERBATIM COPYING"
-#define IDF_2VERBATIMCOPYING		"epsplinesu15.html"
+#define IDF_2VERBATIMCOPYING		"epsplineli10.html"
 
 #define IDI_3COPYINGINQUANTITY		272
 #define IDS_3COPYINGINQUANTITY		"3. COPYING IN QUANTITY"
-#define IDF_3COPYINGINQUANTITY		"epsplinesu16.html"
+#define IDF_3COPYINGINQUANTITY		"epsplineli11.html"
 
 #define IDI_4MODIFICATIONS		288
 #define IDS_4MODIFICATIONS		"4. MODIFICATIONS"
-#define IDF_4MODIFICATIONS		"epsplinesu17.html"
+#define IDF_4MODIFICATIONS		"epsplineli12.html"
 
 #define IDI_5COMBININGDOCUMENTS		304
 #define IDS_5COMBININGDOCUMENTS		"5. COMBINING DOCUMENTS"
-#define IDF_5COMBININGDOCUMENTS		"epsplinesu18.html"
+#define IDF_5COMBININGDOCUMENTS		"epsplineli13.html"
 
 #define IDI_6COLLECTIONSOFDOCUMENTS		320
 #define IDS_6COLLECTIONSOFDOCUMENTS		"6. COLLECTIONS OF DOCUMENTS"
-#define IDF_6COLLECTIONSOFDOCUMENTS		"epsplinesu19.html"
+#define IDF_6COLLECTIONSOFDOCUMENTS		"epsplineli14.html"
 
 #define IDI_7AGGREGATIONWITHINDEPENDENTWORKS		336
 #define IDS_7AGGREGATIONWITHINDEPENDENTWORKS		"7. AGGREGATION WITH INDEPENDENT WORKS"
-#define IDF_7AGGREGATIONWITHINDEPENDENTWORKS		"epsplinesu20.html"
+#define IDF_7AGGREGATIONWITHINDEPENDENTWORKS		"epsplineli15.html"
 
 #define IDI_8TRANSLATION		352
 #define IDS_8TRANSLATION		"8. TRANSLATION"
-#define IDF_8TRANSLATION		"epsplinesu21.html"
+#define IDF_8TRANSLATION		"epsplineli16.html"
 
 #define IDI_9TERMINATION		368
 #define IDS_9TERMINATION		"9. TERMINATION"
-#define IDF_9TERMINATION		"epsplinesu22.html"
+#define IDF_9TERMINATION		"epsplineli17.html"
 
 #define IDI_10FUTUREREVISIONSOFTHISLICENSE		384
 #define IDS_10FUTUREREVISIONSOFTHISLICENSE		"10. FUTURE REVISIONS OF THIS LICENSE"
-#define IDF_10FUTUREREVISIONSOFTHISLICENSE		"epsplinesu23.html"
+#define IDF_10FUTUREREVISIONSOFTHISLICENSE		"epsplineli18.html"
 
 #define IDI_ADDENDUMHowtousethisLicenseforyourdocuments		400
 #define IDS_ADDENDUMHowtousethisLicenseforyourdocuments		"ADDENDUM: How to use this License for your documents"
-#define IDF_ADDENDUMHowtousethisLicenseforyourdocuments		"epsplinesu24.html"
+#define IDF_ADDENDUMHowtousethisLicenseforyourdocuments		"epsplineli19.html"
 
 #define IDI_Index		2000000000
 #define IDS_Index		"Index"
-#define IDF_Index		"epsplineli2.html"
+#define IDF_Index		"epsplineli20.html"
 
 
 #endif /* _epspline_helpids_INCLUDED */

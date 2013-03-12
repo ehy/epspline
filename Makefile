@@ -193,8 +193,36 @@ uninst_setup:
 XDG_INST_ICON = xdg-icon-resource
 XDG_INST_MENU = xdg-desktop-menu
 install_xdg:
+	@echo Installing XDG desktop items: menu entry, icons
+	@XII=$$(which $(XDG_INST_ICON)) && XIM=$$(which $(XDG_INST_MENU)) \
+	|| { echo cannot find $(XDG_INST_ICON) or $(XDG_INST_MENU); \
+		echo will not do xdg icon and menu item install; exit 0; } ; \
+	ARGS="install --noupdate --novendor --size"; \
+	for s in 16 24 32 48 64; do \
+		I="art/epspline_$${s}x$${s}.png"; test -f "$$I" || \
+			{ echo icon "$$I" is missing; continue; } ; \
+		$$XII $$ARGS $$s "$$I" epspline || \
+			{ echo failed installing icon size $$s; true; } ; \
+	done; \
+	$$XII forceupdate; \
+	I="epspline.desktop"; test -f "$$I" || exit 0; \
+	$$XIM install --novendor "$$I" || \
+	{ echo failed to install "$$I"; true; }
 
 uninstall_xdg:
+	@echo Uninstalling XDG desktop items: menu entry, icons
+	@XII=$$(which $(XDG_INST_ICON)) && XIM=$$(which $(XDG_INST_MENU)) \
+	|| { echo cannot find $(XDG_INST_ICON) or $(XDG_INST_MENU); \
+		echo will not do xdg icon and menu item uninstall; exit 0; } ; \
+	I="epspline.desktop"; \
+	$$XIM uninstall "$$I" || \
+	{ echo failed to uninstall "$$I"; true; } ; \
+	ARGS="uninstall --noupdate --size"; \
+	for s in 16 24 32 48 64; do \
+		$$XII $$ARGS $$s epspline || \
+			{ echo failed uninstalling icon size $$s; true; } ; \
+	done; \
+	$$XII forceupdate || true
 
 
 # make, or install or clean, the translation message catalogs

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.0.4.2
+Type=Application
+Name=Epspline
+Comment=Epspline Prism and Lathe Editor
+TryExec=epspline
+Exec=epspline %F
+Icon=epspline
+MimeType=application/x-epspline;application/pse
+

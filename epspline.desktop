@@ -6,5 +6,5 @@ Comment=Epspline Prism and Lathe Editor
 TryExec=epspline
 Exec=epspline %F
 Icon=epspline
-MimeType=application/x-epspline;application/pse
-
+MimeType=application/x-epspline;application/pse;
+Categories=Graphics;Utility;

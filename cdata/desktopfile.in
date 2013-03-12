@@ -6,5 +6,5 @@ Comment=progprettyname
 TryExec=appname
 Exec=appname %F
 Icon=appname
-MimeType=application/x-appname;application/genFileExtND
-
+MimeType=application/x-appname;application/genFileExtND;
+Categories=Graphics;Utility;

@@ -181,6 +181,22 @@ uninst_setup:
 		test -f "$$f" || :>"$$f" ; \
 	done
 
+# One (un)install task is handled in this top makefile:
+# the (now conventional) .desktop file, and icons.
+# This *must* be done with commands that know the
+# setup and how to install these items.  Therefore,
+# this rule proceeds only if the expected commands
+# are found by the shell.
+# This target should not yield a failure status; it
+# can print warnings but should not prevent the
+# rest of the installation.
+XDG_INST_ICON = xdg-icon-resource
+XDG_INST_MENU = xdg-desktop-menu
+install_xdg:
+
+uninstall_xdg:
+
+
 # make, or install or clean, the translation message catalogs
 # this target always exits success in case current system
 # does not have msgfmt program (or any other error) and it
@@ -212,7 +228,7 @@ install_doc uninstall_doc clean_doc cleanall_doc distclean_doc:
 # Note that install depends on prog, not all.  This intentionally
 # avoids the po target.  If target all had not already been
 # visited, the catalogs will not be installed.
-install: prog install_po install_examples install_doc
+install: prog install_po install_examples install_doc install_xdg
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		INSTALLCMD="$(INSTALLCMD)" INSTALLOPTS="$(INSTALLOPTS)" \
@@ -220,7 +236,7 @@ install: prog install_po install_examples install_doc
 	done
 	@echo "Succeeded install in $(DIRS)"
 
-uninstall: uninstall_po uninstall_examples uninstall_doc
+uninstall: uninstall_po uninstall_examples uninstall_doc uninstall_xdg
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		INSTALLCMD="$(INSTALLCMD)" INSTALLOPTS="$(INSTALLOPTS)" \

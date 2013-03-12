@@ -9,6 +9,7 @@ CAT = cat
 RM = rm -f
 CP = cp -f
 MV = mv
+MKDIR = mkdir
 
 DIRS=src
 # this MUST change if src/Makefile is renamed
@@ -86,9 +87,26 @@ LIBS = `$(CF) --libs`
 # mingw only: MSW binary resource compiler
 MSWRCC = `$(CF) --rescomp`
 
+# For each Makefile that installs something, uninstall
+# data is saved in dir $(UNINSTALLER_ROOT), in file
+# $${dir}$(UNINSTALLER_BASE); it's desirable that these
+# files *not* be owned by priviliged account that is used
+# to install, so that user may (re)move this source. So,
+# try to ensure they exists at 1st make, which hopefully
+# occurs w/o privilege, and during install data is *redirected*
+# into extant files, which should not change ownership.
+# The target for this setup is 'uninst_setup' ('prog' depends).
+UNINSTALLER_ROOT = uninstall
+UNINSTALLER_BASE = _uninstall-list
+UNINSTALLER_DIRS = doc po examples src
+
+
+#
+# Targets:
+#
 all: prog po examples doc
 
-prog: depend
+prog: uninst_setup depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
 		CXX="$(CXX)" \
@@ -153,6 +171,15 @@ Debug: depend
 
 junko:
 	@echo loaded
+
+# one-time make uninstall data containers: see
+# comment by UNINSTALLER_ROOT assignment
+uninst_setup:
+	@test -d $(UNINSTALLER_ROOT) || $(MKDIR) $(UNINSTALLER_ROOT)
+	@for t in $(UNINSTALLER_DIRS); do \
+		f="$(UNINSTALLER_ROOT)/$${t}$(UNINSTALLER_BASE)" ; \
+		test -f "$$f" || :>"$$f" ; \
+	done
 
 # make, or install or clean, the translation message catalogs
 # this target always exits success in case current system

@@ -14,6 +14,9 @@ VER = ../version.sh
 VERIN = ./version.sh.in
 MKM = ../msw_pkg/Makefile
 MKMIN = ../msw_pkg/Makefile.in
+# Xorg desktop file
+XDFIN = ./desktopfile.in
+XDF = ../epspline.desktop
 
 # some utilities used in this script:
 # (cp and rm are always forced)
@@ -23,21 +26,25 @@ MV = mv
 M4 = m4
 MKDIR = mkdir
 
-all: $(HDR) $(VER) $(MKM)
+all: $(HDR) $(VER) $(XDF) $(MKM)
 	@P="$$(pwd)"; D="$${P##*/}"; echo $@ made in "$$D" ; exit 0
 
 force:
 	touch $(MACS) && $(MAKE) all
 
-$(HDR) : $(MACS)
+$(HDR) : $(MACS) $(HDRIN)
 	$(M4) $(MACS) $(HDRIN) > $@
 	ls -l $@
 
-$(VER) : $(MACS)
+$(VER) : $(MACS) $(VERIN)
 	$(M4) $(MACS) $(VERIN) > $@
 	ls -l $@
 
-$(MKM) : $(MACS)
+$(XDF) : $(MACS) $(XDFIN)
+	$(M4) $(MACS) $(XDFIN) > $@
+	ls -l $@
+
+$(MKM) : $(MACS) $(MKMIN)
 	$(M4) $(MACS) $(MKMIN) > $@
 	ls -l $@
 

@@ -982,6 +982,20 @@ A_Frame::Open_FileArray(const wxArrayString& af)
 		}
 	}
 
+	// Wow, this is still needed w/ wx 2.8!
+	#ifdef __WXMSW__
+	if ( ret ) {
+		// 'doze version doesn't layout new tabs
+		// until sized.  sheesh.  This causes
+		// a slight flash, but it has to be.
+		wxSize s(GetSize());
+		s.x -= 1;
+		SetSize(s);
+		s.x += 1;
+		SetSize(s);
+	}
+	#endif
+
 	return ret;
 }
 

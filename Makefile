@@ -192,17 +192,24 @@ uninst_setup:
 # rest of the installation.
 XDG_INST_ICON = xdg-icon-resource
 XDG_INST_MENU = xdg-desktop-menu
+XDG_INST_MIME = xdg-mime
 install_xdg:
 	@echo Installing XDG desktop items: menu entry, icons
 	@XII=$$(which $(XDG_INST_ICON)) && XIM=$$(which $(XDG_INST_MENU)) \
+	&& XMM=$$(which $(XDG_INST_MIME)) \
 	|| { echo cannot find $(XDG_INST_ICON) or $(XDG_INST_MENU); \
 		echo will not do xdg icon and menu item install; exit 0; } ; \
+	$$XMM install --novendor epspline.xdgmime.xml || \
+		{ echo failed to install xdg mime xml; true; } ; \
 	ARGS="install --noupdate --novendor --size"; \
 	for s in 16 24 32 48 64; do \
 		I="art/epspline_$${s}x$${s}.png"; test -f "$$I" || \
 			{ echo icon "$$I" is missing; continue; } ; \
 		$$XII $$ARGS $$s "$$I" epspline || \
 			{ echo failed installing icon size $$s; true; } ; \
+		$$XII install --context mimetypes --size $$s \
+			"$$I" application-x-epspline || \
+			{ echo failed to install xdg mime context $$s; true; } ; \
 	done; \
 	$$XII forceupdate; \
 	I="epspline.desktop"; test -f "$$I" || exit 0; \
@@ -212,6 +219,7 @@ install_xdg:
 uninstall_xdg:
 	@echo Uninstalling XDG desktop items: menu entry, icons
 	@XII=$$(which $(XDG_INST_ICON)) && XIM=$$(which $(XDG_INST_MENU)) \
+	&& XMM=$$(which $(XDG_INST_MIME)) \
 	|| { echo cannot find $(XDG_INST_ICON) or $(XDG_INST_MENU); \
 		echo will not do xdg icon and menu item uninstall; exit 0; } ; \
 	I="epspline.desktop"; \
@@ -219,9 +227,15 @@ uninstall_xdg:
 	{ echo failed to uninstall "$$I"; true; } ; \
 	ARGS="uninstall --noupdate --size"; \
 	for s in 16 24 32 48 64; do \
+		I="art/epspline_$${s}x$${s}.png"; \
+		$$XII uninstall --context mimetypes --size $$s \
+			application-x-epspline || \
+			{ echo failed to install xdg mime context $$s; true; } ; \
 		$$XII $$ARGS $$s epspline || \
 			{ echo failed uninstalling icon size $$s; true; } ; \
 	done; \
+	$$XMM uninstall epspline.xdgmime.xml || \
+		{ echo failed to uninstall xdg mime xml; true; } ; \
 	$$XII forceupdate || true
 
 

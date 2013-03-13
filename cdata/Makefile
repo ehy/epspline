@@ -15,6 +15,8 @@ VERIN = ./version.sh.in
 MKM = ../msw_pkg/Makefile
 MKMIN = ../msw_pkg/Makefile.in
 # Xorg desktop file
+XDMIN = ./desktopmime.in
+XDM = ../epspline.xdgmime.xml
 XDFIN = ./desktopfile.in
 XDF = ../epspline.desktop
 
@@ -26,7 +28,7 @@ MV = mv
 M4 = m4
 MKDIR = mkdir
 
-all: $(HDR) $(VER) $(XDF) $(MKM)
+all: $(HDR) $(VER) $(XDM) $(XDF) $(MKM)
 	@P="$$(pwd)"; D="$${P##*/}"; echo $@ made in "$$D" ; exit 0
 
 force:
@@ -38,6 +40,10 @@ $(HDR) : $(MACS) $(HDRIN)
 
 $(VER) : $(MACS) $(VERIN)
 	$(M4) $(MACS) $(VERIN) > $@
+	ls -l $@
+
+$(XDM) : $(MACS) $(XDMIN)
+	$(M4) $(MACS) $(XDMIN) > $@
 	ls -l $@
 
 $(XDF) : $(MACS) $(XDFIN)

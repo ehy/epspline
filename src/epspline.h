@@ -68,6 +68,7 @@ public:
 		return wxString(wxT(""));
 	}
 	unsigned GetNumFiles() const { return FileArgs.GetCount(); }
+	const wxArrayString& GetFileArray() const { return FileArgs; }
 
 	wxMBConv* GetAppMBConv() { return app_mbconv; }
 	const wxMBConv* GetAppMBConv() const { return app_mbconv; }

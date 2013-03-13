@@ -8,6 +8,7 @@
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #include "wx/frame.h"
+#include "wx/dnd.h"
 #endif // WX_PRECOMP
 
 #include "epspline.h"
@@ -130,11 +131,11 @@ enum {
 };
 #endif
 
-// Main frame
-class A_Frame : public wxFrame {
+// Main window; and, file drop target
+class A_Frame : public wxFrame, private wxFileDropTarget {
 public:
 	A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size);
-	~A_Frame();
+	virtual ~A_Frame();
 
 	void OnQuit(wxCloseEvent& event);
 	void OnAbout(wxCommandEvent& event);
@@ -144,6 +145,10 @@ public:
 	void SetTitlePrefix(const wxString& pre);
 	bool SelectColour(wxColour& c);
 	void PrepareDC(wxDC& dc);
+
+	// Open files in new tabs and return count successfully opened.
+	// used internally, but public as it may be used externally.
+	unsigned Open_FileArray(const wxArrayString& af);
 
 	// ErrorBox is obvious, but ``titletail'' should be short,
 	// As it is appended to app title string.
@@ -262,6 +267,27 @@ protected:
 	A_Tabpage* GetNumPage(unsigned num);
 	void      GetAllPagePtrs(std::vector<A_Tabpage*>& v);
 private:
+	// An internal class to be a file drop target
+	class a_frame_filedroptarget : public wxFileDropTarget {
+		A_Frame* af;
+		a_frame_filedroptarget();
+	public:
+		a_frame_filedroptarget(A_Frame* fr) : af(fr) {}
+		// file drop target virtual override
+		virtual bool
+		OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+	};
+	a_frame_filedroptarget* droptarget;
+	// a_frame_filedroptarget::OnDropFiles() will call
+	// A_Frame::OnDropFiles(), which we want private,
+	// so the class must be a friend
+	friend class a_frame_filedroptarget;
+	// file drop target, for our drop-target's virtual override
+	// of the same name (which just calls this)
+	virtual bool
+	OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+
+	// WX macro to setup event handling
 	DECLARE_EVENT_TABLE()
 };
 

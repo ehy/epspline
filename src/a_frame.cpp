@@ -118,6 +118,7 @@ END_EVENT_TABLE()
 
 A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
        : wxFrame((wxFrame*)NULL, -1, title, pos, size)
+       , droptarget(new a_frame_filedroptarget(this))
 {
 	// set the frame icon
 	SetIcon(wxICON(epspline));
@@ -425,7 +426,6 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 			aadraw = true;
 		}
 	}
-	//enableSaveClientImage(aadraw);
 
 	tabwnd = new A_Tabwnd(this, TabWindowID
 		, wxDefaultPosition, wxDefaultSize
@@ -443,45 +443,34 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	SetSizer(szrMain);
 	SetAutoLayout(true);
 
-	unsigned i = 0, n = wxGetApp().GetNumFiles();
-	do {
-		wxString fil;
-		wxString tn;
-
-		if ( n ) {
-			fil = wxGetApp().GetFileArg(i);
-#if wxCHECK_VERSION(2, 4, 0)
-			wxFileName fn(fil);
-			tn = fn.GetFullName();
-#else
-			tn = ::wxFileNameFromPath(fil);
-#endif
-		} else {
-			fil = wxT("");
-			/* TRANSLATORS: this string is meant for a (interface) tab
-			 * that does not have a file associated with it; if it
-			 * had a file the file name would be displayed.
-			 * This string is symbolic, or suggestive, not a
-			 * word; but of course you may use words if that is more
-			 * sensible, and will not be confused with a file-name.
-			 */
-			tn = _("[--]");
-		}
-
-		A_Tabpage* page = NewPage(tn);
-
-		if ( n && page )
-			page->GetCanvas()->Open(fil);
-	} while ( ++i < n );
+	unsigned nopen = wxGetApp().GetNumFiles();
+	if ( nopen > 0 ) {
+		nopen = Open_FileArray(wxGetApp().GetFileArray());
+	}
+	if ( nopen == 0 ) {
+		/* TRANSLATORS: this string is meant for an interface tab
+		 * that does not have a file associated with it. If it
+		 * had a file, the file name would be displayed.
+		 * This string is symbolic, or suggestive; it is not a
+		 * word (but, of course, you may use words if that is more
+		 * sensible, and will not be confused with a file-name).
+		 */
+		NewPage(_("[--]"));
+	}
 
 	tabwnd->SetSelection(0);
 	tabwnd->UpdateCurPageText();
 	GetCurPage()->GetCanvas()->SetActive(true);
 	GetCurPage()->GetCanvas()->UpdateStatusBar();
+	
+	// put drop target (from our internal class) in place
+	SetDropTarget(droptarget);
 }
 
 A_Frame::~A_Frame()
 {
+	// Do not delete: segfault; the wx lib takes it over.
+	//delete droptarget;
 }
 
 A_Tabpage*
@@ -965,3 +954,63 @@ A_Frame::SelectColour(wxColour& c)
 	return false;
 }
 
+// return number successfully opened
+unsigned
+A_Frame::Open_FileArray(const wxArrayString& af)
+{
+	unsigned ret = 0, n = af.GetCount();
+	for ( unsigned i = 0; i < n; i++ ) {
+		wxString fil(af[i]);
+		wxString tn;
+
+#if wxCHECK_VERSION(2, 4, 0)
+		wxFileName fn(fil);
+		tn = fn.GetFullName();
+#else
+		tn = ::wxFileNameFromPath(fil);
+#endif
+
+		A_Tabpage* page = NewPage(tn);
+
+		if ( page ) {
+			page->GetCanvas()->Open(fil);
+			if ( ! (page->GetCanvas()->GetCurFileName()).IsEmpty() ) {
+				ret++;
+			} else {
+				tabwnd->DeletePage(tabwnd->GetPageCount() - 1);
+			}
+		}
+	}
+
+	return ret;
+}
+
+// file drop target called by internal derived class
+bool
+A_Frame::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& afn)
+{
+	if ( ! tabwnd->GetScreenRect().Contains(int(x), int(y)) ) {
+		return false;
+	}
+
+	if ( Open_FileArray(afn) == 0 ) {
+		return false;
+	}
+
+	unsigned n = tabwnd->GetPageCount() - 1;
+	tabwnd->SetSelection(n);
+	tabwnd->UpdateCurPageText();
+	GetCurPage()->GetCanvas()->SetActive(true);
+	GetCurPage()->GetCanvas()->UpdateStatusBar();
+
+	return true;
+}
+
+// file drop target virtual override of A_Frame internal class
+bool
+A_Frame::a_frame_filedroptarget::OnDropFiles(
+	wxCoord x, wxCoord y,
+	const wxArrayString& afn)
+{
+	return af->OnDropFiles(x, y, afn);
+}

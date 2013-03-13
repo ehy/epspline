@@ -444,7 +444,7 @@ AnApp::GetDisplayHost() const
 // NOTE the possible need for -lX11 arg to linker: it
 // is not necessary on Ubuntu or *BSD (possibly not with
 // any GNU ld[?]), but it is needed on OpenSolaris with
-// the SunStudio tools, and probably many others.
+// the SunStudio tools, and probably others.
 extern "C" const char* XDisplayName(const char*);
 #endif
 

@@ -118,7 +118,6 @@ END_EVENT_TABLE()
 
 A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
        : wxFrame((wxFrame*)NULL, -1, title, pos, size)
-       , droptarget(new a_frame_filedroptarget(this))
 {
 	// set the frame icon
 	SetIcon(wxICON(epspline));
@@ -464,7 +463,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	GetCurPage()->GetCanvas()->UpdateStatusBar();
 	
 	// put drop target (from our internal class) in place
-	SetDropTarget(droptarget);
+	SetDropTarget(new a_frame_filedroptarget(this));
 }
 
 A_Frame::~A_Frame()

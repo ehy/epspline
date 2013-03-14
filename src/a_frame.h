@@ -269,19 +269,19 @@ protected:
 private:
 	// An internal class to be a file drop target
 	class a_frame_filedroptarget : public wxFileDropTarget {
+		friend class A_Frame;
 		A_Frame* af;
-		a_frame_filedroptarget();
-	public:
+		a_frame_filedroptarget(); // no definition of default
 		a_frame_filedroptarget(A_Frame* fr) : af(fr) {}
 		// file drop target virtual override
 		virtual bool
 		OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 	};
-	a_frame_filedroptarget* droptarget;
 	// a_frame_filedroptarget::OnDropFiles() will call
 	// A_Frame::OnDropFiles(), which we want private,
-	// so the class must be a friend
-	friend class a_frame_filedroptarget;
+	// so the method must be a friend
+	friend bool a_frame_filedroptarget::OnDropFiles
+		(wxCoord x, wxCoord y, const wxArrayString& filenames);
 	// file drop target, for our drop-target's virtual override
 	// of the same name (which just calls this)
 	virtual bool

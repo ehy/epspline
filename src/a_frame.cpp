@@ -1003,9 +1003,15 @@ A_Frame::Open_FileArray(const wxArrayString& af)
 bool
 A_Frame::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& afn)
 {
+#	if wxCHECK_VERSION(2, 8, 0)
 	if ( ! tabwnd->GetScreenRect().Contains(int(x), int(y)) ) {
 		return false;
 	}
+#	else
+	if ( ! InRect(tabwnd->GetRect(), wxPoint(int(x), int(y))) ) {
+		return false;
+	}
+#	endif
 
 	if ( Open_FileArray(afn) == 0 ) {
 		return false;

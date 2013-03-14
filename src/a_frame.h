@@ -265,7 +265,7 @@ protected:
 	A_Tabpage* NewPage(wxString title);
 	A_Tabpage* GetCurPage();
 	A_Tabpage* GetNumPage(unsigned num);
-	unsigned  GetPageNum(const A_Tabpage* p);
+	unsigned   GetPageNum(const A_Tabpage* p);
 	void       GetAllPagePtrs(std::vector<A_Tabpage*>& v);
 private:
 	// An internal class to be a file drop target
@@ -275,18 +275,18 @@ private:
 		a_frame_filedroptarget(); // no definition of default
 		a_frame_filedroptarget(A_Frame* fr) : af(fr) {}
 		// file drop target virtual override
-		virtual bool
-		OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+		virtual bool OnDropFiles(
+			wxCoord x, wxCoord y, const wxArrayString& filenames);
 	};
 	// a_frame_filedroptarget::OnDropFiles() will call
 	// A_Frame::OnDropFiles(), which we want private,
 	// so the method must be a friend
-	friend bool a_frame_filedroptarget::OnDropFiles
-		(wxCoord x, wxCoord y, const wxArrayString& filenames);
+	friend bool a_frame_filedroptarget::OnDropFiles(
+		wxCoord x, wxCoord y, const wxArrayString& filenames);
 	// file drop target, for our drop-target's virtual override
 	// of the same name (which just calls this)
-	virtual bool
-	OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+	virtual bool OnDropFiles(
+		wxCoord x, wxCoord y, const wxArrayString& filenames);
 
 	// WX macro to setup event handling
 	DECLARE_EVENT_TABLE()

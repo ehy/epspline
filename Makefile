@@ -270,13 +270,19 @@ install_doc uninstall_doc clean_doc cleanall_doc distclean_doc:
 # Note that install depends on prog, not all.  This intentionally
 # avoids the po target.  If target all had not already been
 # visited, the catalogs will not be installed.
-install: prog install_po install_examples install_doc install_xdg
+install_base: prog install_po install_examples install_doc
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		INSTALLCMD="$(INSTALLCMD)" INSTALLOPTS="$(INSTALLOPTS)" \
-		INSTALLDIR="$(INSTALLDIR)" $@ ) ; \
+		INSTALLDIR="$(INSTALLDIR)" install ) ; \
 	done
-	@echo "Succeeded install in $(DIRS)"
+	@echo "Succeeded $@ in $(DIRS)"
+
+# Split install into install base -- all but install_xdg --
+# and install whole thing.  To avoids repeated xdg stuff
+# during development.
+install: install_base install_xdg
+	@echo "Succeeded $@ in $(DIRS)"
 
 uninstall: uninstall_po uninstall_examples uninstall_doc uninstall_xdg
 	@for d in $(DIRS) ; do \

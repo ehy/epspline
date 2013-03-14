@@ -659,6 +659,20 @@ A_Frame::GetAllPagePtrs(std::vector<A_Tabpage*>& v)
 	}
 }
 
+unsigned
+A_Frame::GetPageNum(const A_Tabpage* p)
+{
+	unsigned cnt = tabwnd->GetPageCount();
+	
+	for ( unsigned i = 0; i < cnt; i++ ) {
+		if ( p == GetNumPage(i) ) {
+			return i;
+		}
+	}
+
+	return std::numeric_limits<unsigned>::max();
+}
+
 void
 A_Frame::OnQuit(wxCloseEvent& e)
 {
@@ -958,7 +972,40 @@ unsigned
 A_Frame::Open_FileArray(const wxArrayString& af)
 {
 	unsigned ret = 0, n = af.GetCount();
-	for ( unsigned i = 0; i < n; i++ ) {
+
+	// Special case: the current tab is empty and has
+	// no file name, and we're given exactly one filename,
+	// assume the intent is to open that file in the
+	// current tab.
+	if ( n == 1 ) {
+		if ( A_Tabpage* page = GetCurPage() ) {
+			wxString nm = page->GetCanvas()->GetCurFileName();
+			if ( nm.IsEmpty() ) {
+				if ( ! page->GetCanvas()->IsDirty() ) {
+					// if not "dirty", and has no filename, then
+					// user cannot have started editing on the
+					// tab's canvas because the only way the dirty-
+					// flag would be cleared (excepting 'undo')
+					// is by saving the changes, implying a name.
+					page->GetCanvas()->Open(af[0]);
+					nm = page->GetCanvas()->GetCurFileName();
+					if ( nm.IsEmpty() ) {
+						// open failure; setting n = 0 passes next loop
+						n = 0;
+					} else {
+						// success
+						tabwnd->UpdateCurPageText();
+						page->GetCanvas()->SetActive(true);
+						page->GetCanvas()->UpdateStatusBar();
+						ret = 1;
+					}
+				}
+			}
+		}
+	}
+
+	// Note counter init from ret
+	for ( unsigned i = ret; i < n; i++ ) {
 		wxString fil(af[i]);
 		wxString tn;
 
@@ -972,11 +1019,15 @@ A_Frame::Open_FileArray(const wxArrayString& af)
 		A_Tabpage* page = NewPage(tn);
 
 		if ( page ) {
+			unsigned pn = GetPageNum(page);
 			page->GetCanvas()->Open(fil);
 			if ( ! (page->GetCanvas()->GetCurFileName()).IsEmpty() ) {
+				// name not empty, open succeeded
+				tabwnd->SetSelection(pn);
 				ret++;
 			} else {
-				tabwnd->DeletePage(tabwnd->GetPageCount() - 1);
+				// name is empty, open failed
+				tabwnd->DeletePage(pn);
 			}
 		}
 	}
@@ -1016,8 +1067,6 @@ A_Frame::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& afn)
 		return false;
 	}
 
-	unsigned n = tabwnd->GetPageCount() - 1;
-	tabwnd->SetSelection(n);
 	tabwnd->UpdateCurPageText();
 	GetCurPage()->GetCanvas()->SetActive(true);
 	GetCurPage()->GetCanvas()->UpdateStatusBar();

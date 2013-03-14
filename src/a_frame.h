@@ -265,7 +265,8 @@ protected:
 	A_Tabpage* NewPage(wxString title);
 	A_Tabpage* GetCurPage();
 	A_Tabpage* GetNumPage(unsigned num);
-	void      GetAllPagePtrs(std::vector<A_Tabpage*>& v);
+	unsigned  GetPageNum(const A_Tabpage* p);
+	void       GetAllPagePtrs(std::vector<A_Tabpage*>& v);
 private:
 	// An internal class to be a file drop target
 	class a_frame_filedroptarget : public wxFileDropTarget {

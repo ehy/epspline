@@ -1004,7 +1004,7 @@ bool
 A_Frame::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& afn)
 {
 #	if wxCHECK_VERSION(2, 8, 0)
-	if ( ! tabwnd->GetScreenRect().Contains(int(x), int(y)) ) {
+	if ( ! tabwnd->GetRect().Contains(int(x), int(y)) ) {
 		return false;
 	}
 #	else

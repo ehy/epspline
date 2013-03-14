@@ -67,7 +67,7 @@ template < class C > inline void clear(C & c)
 #      include <stdexcept>
 #      include <utility>
 #      include <memory>
-#      include <locale>
+#      include <limits>
 #      include <cstdio>
 #      include <cstdlib>
 #      include <cstring>

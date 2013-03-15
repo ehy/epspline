@@ -22,16 +22,26 @@
 // A_Tabwnd
 //
 
-BEGIN_EVENT_TABLE(A_Tabwnd, wxNotebook)
+#if USE_AUI_NOTEBOOK
+BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
+	EVT_AUINOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
+	//EVT_AUINOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
+END_EVENT_TABLE()
+#else
+BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
 	EVT_NOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
 	//EVT_NOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
 END_EVENT_TABLE()
-
+#endif
 
 A_Tabwnd::A_Tabwnd(A_Frame* parent, wxWindowID id
-	, const wxPoint& pos, const wxSize& size
-	, long style, const wxString& name)
-       : wxNotebook(parent, id, pos, size, style, name)
+	, const wxPoint& pos, const wxSize& size, long style)
+       : NoteBook_type(parent, id, pos, size, style
+#if USE_AUI_NOTEBOOK
+       )
+#else
+       , wxT("main_notebook"))
+#endif
        , owner(parent)
 {
 }
@@ -41,8 +51,13 @@ A_Tabwnd::~A_Tabwnd()
 }
 
 bool
-A_Tabwnd::AddPage(wxNotebookPage* page, const wxString& text
-		, bool select, int imageId)
+A_Tabwnd::AddPage(TABWND_PAGE_T* page, const wxString& text
+		, bool select,
+#if USE_AUI_NOTEBOOK
+		int /*imageId*/)
+#else
+		int imageId)
+#endif
 {
 	int s = GetSelection();
 	if ( s >= 0 ) {
@@ -55,7 +70,11 @@ A_Tabwnd::AddPage(wxNotebookPage* page, const wxString& text
 			t->GetCanvas()->SetActive(false);
 	}
 
+#if USE_AUI_NOTEBOOK
+	return wxAuiNotebook::AddPage(page, text, select);
+#else
 	return wxNotebook::AddPage(page, text, select, imageId);
+#endif
 }
 
 void
@@ -83,7 +102,7 @@ A_Tabwnd::UpdateCurPageText()
 }
 
 void
-A_Tabwnd::OnPageChanged(wxNotebookEvent& e)
+A_Tabwnd::OnPageChanged(TABWND_EVENT_T& e)
 {
 	A_Tabpage* t = 0;
 	int nold = e.GetOldSelection(), nnew = e.GetSelection();
@@ -129,7 +148,7 @@ A_Tabwnd::OnPageChanged(wxNotebookEvent& e)
 
 #if 0
 void
-A_Tabwnd::OnPageChanging(wxNotebookEvent& e)
+A_Tabwnd::OnPageChanging(TABWND_EVENT_T& e)
 {
 	e.Skip();
 }

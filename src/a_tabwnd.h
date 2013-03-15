@@ -6,8 +6,11 @@
 
 #include "wx/wx.h"
 
-#ifndef NO_AUI_NOTEBOOK
-#	define USE_AUI_NOTEBOOK 1
+// no aui in wx 2.6
+#if wxCHECK_VERSION(2, 8, 0)
+#	ifndef NO_AUI_NOTEBOOK
+#		define USE_AUI_NOTEBOOK 1
+#	endif
 #endif
 
 #if USE_AUI_NOTEBOOK

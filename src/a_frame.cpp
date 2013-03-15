@@ -435,8 +435,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	// derives from wxAuiTabArt; see wx/aui/auibook.h
 	//tabwnd->SetArtProvider(new wxAuiSimpleTabArt); // prefer default
 #	else
-		, wxRAISED_BORDER
-		, wxT("tabwindow"));
+		, wxRAISED_BORDER);
 #	endif
 
 	tabwnd->SetAutoLayout(true);

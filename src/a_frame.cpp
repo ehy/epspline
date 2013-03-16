@@ -391,6 +391,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	tb->Realize();
 
 	// create a status bar
+#	if OLD_STATBAR_SET
 #if defined(__WXMSW__)
 	wxStatusBar* sb = CreateStatusBar(4, wxST_SIZEGRIP);
 #else
@@ -402,6 +403,12 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	int swid[4] = {-1, -1 , -1, -1};
 #endif
 	sb->SetStatusWidths(4, swid);
+#	else
+	wxStatusBar* sb = CreateStatusBar(3, 0);
+	int swid[3] = {-3, -1 , -1};
+	sb->SetStatusWidths(3, swid);
+#	endif
+
 	wxString ts; // temp string
 	ts.Printf(_("Welcome to \"%s\""),
 		(const wxChar*)wxGetApp().GetAppTitle().c_str());

@@ -376,16 +376,38 @@ A_Canvas::IdleUpdate()
 void
 A_Canvas::UpdateStatusBar()
 {
+#	if OLD_STATBAR_SET
 	wxString ss(wxT(""));
 	ss.Printf(_("scale: %u%% x, %u%% y"), xscale, yscale);
 	a_frame->SetStatusText(ss, 2);
 	ss = IsDirty() ? _("modified") : _("not modified");
 	a_frame->SetStatusText(ss, 3);
+#	else
+	wxString s, t;
+	if ( IsDirty() ) {
+		/* TRANSLATORS: this symbol (*) indicates that the
+		 * file has changes that have not been saved.  Change
+		 * it if it is confusing, but the string must be
+		 * very short because it is displayed in a small
+		 * status-bar field, with other text. A space, or
+		 * something equivalent, is need at the end because
+		 * text is appended.
+		 */
+		s += _("* ");
+	}
+	/* TRANSLATORS: these two numbers are the scale of
+	 * the view on each of the two axes.  Change 'x' and 'y'
+	 * if they are confusing, but the strings must be
+	 * very short because they are displayed in a small
+	 * status-bar field, with other text.
+	 */
+	t.Printf(_("%u%% x, %u%% y"), xscale, yscale);
+	a_frame->SetStatusText(s + t, 2);
+#	endif
 	if ( D->sel ) {
 		a_frame->SetStatusText(D->sel->GetDescription(), 0);
 	} else {
-		ss = wxT("");
-		a_frame->SetStatusText(ss, 0);
+		a_frame->SetStatusText(wxString(wxT("")), 0);
 	}
 }
 
@@ -933,7 +955,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 	long y = pos.y = dc.DeviceToLogicalY(pos.y);
 
 	wxString str;
-	str.Printf(_("mouse: %ld, %ld"), x, y);
+	str.Printf(_("x,y: %ld, %ld"), x, y);
 	a_frame->SetStatusText(str, 1);
  
 	if ( CheckGuide(dc, event) ) {

@@ -217,10 +217,10 @@ SplineBase::GetDescription() const
 	if ( splinet == linear ) {
 		if ( objt == prism ) {
 			if ( sweept == conic ) {
-				sw.Printf(_(", linear prism, conic sweep %f, %f"),
+				sw.Printf(_(", linear prism, conic sweep %g, %g"),
 					sweep_min, sweep_max);
 			} else {
-				sw.Printf(_(", linear prism, linear sweep %f, %f"),
+				sw.Printf(_(", linear prism, linear sweep %g, %g"),
 					sweep_min, sweep_max);
 			}
 		} else if ( objt == lathe ) {
@@ -231,10 +231,10 @@ SplineBase::GetDescription() const
 	} else if ( splinet == quadratic ) {
 		if ( objt == prism ) {
 			if ( sweept == conic ) {
-				sw.Printf(_(", quadratic prism, conic sweep %f, %f"),
+				sw.Printf(_(", quadratic prism, conic sweep %g, %g"),
 					sweep_min, sweep_max);
 			} else {
-				sw.Printf(_(", quadratic prism, linear sweep %f, %f"),
+				sw.Printf(_(", quadratic prism, linear sweep %g, %g"),
 					sweep_min, sweep_max);
 			}
 		} else if ( objt == lathe ) {
@@ -245,10 +245,10 @@ SplineBase::GetDescription() const
 	} else if ( splinet == cubic ) {
 		if ( objt == prism ) {
 			if ( sweept == conic ) {
-				sw.Printf(_(", cubic prism, conic sweep %f, %f"),
+				sw.Printf(_(", cubic prism, conic sweep %g, %g"),
 					sweep_min, sweep_max);
 			} else {
-				sw.Printf(_(", cubic prism, linear sweep %f, %f"),
+				sw.Printf(_(", cubic prism, linear sweep %g, %g"),
 					sweep_min, sweep_max);
 			}
 		} else if ( objt == lathe ) {
@@ -259,10 +259,10 @@ SplineBase::GetDescription() const
 	} else if ( splinet == bezier ) {
 		if ( objt == prism ) {
 			if ( sweept == conic ) {
-				sw.Printf(_(", bezier prism, conic sweep %f, %f"),
+				sw.Printf(_(", bezier prism, conic sweep %g, %g"),
 					sweep_min, sweep_max);
 			} else {
-				sw.Printf(_(", bezier prism, linear sweep %f, %f"),
+				sw.Printf(_(", bezier prism, linear sweep %g, %g"),
 					sweep_min, sweep_max);
 			}
 		} else if ( objt == lathe ) {

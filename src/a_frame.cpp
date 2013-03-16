@@ -407,16 +407,16 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		(const wxChar*)wxGetApp().GetAppTitle().c_str());
 	SetStatusText(ts);
 
-	m_mapMode = wxMM_TEXT;
-	m_xUserScale = 1.0;
-	m_yUserScale = 1.0;
-	m_xLogicalOrigin = 0;
-	m_yLogicalOrigin = 0;
-	m_xAxisReversed = m_yAxisReversed = FALSE;
-	m_backgroundMode = wxSOLID;
+	// TODO (since originally copying from example app)
+	mapMode = wxMM_TEXT;
+	xUserScale = 1.0;
+	yUserScale = 1.0;
+	xLogicalOrigin = 0;
+	yLogicalOrigin = 0;
+	xAxisReversed = yAxisReversed = FALSE;
 
 	// canvas uses this bool to draw either pretty and slow
-	// anit-aliased lines, or quick and ugly lines with wxDC::Draw...
+	// anti-aliased lines, or quick and ugly lines with wxDC::Draw...
 	aadraw = wxGetApp().IsDisplayLocal();
 	if ( const char* p = std::getenv("EPSPLINE_QUICK_CANVAS") ) {	
 		if ( ! std::strcmp(p, "1") || ! std::strcmp(p, "true") ) {
@@ -475,8 +475,6 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 
 A_Frame::~A_Frame()
 {
-	// Do not delete: segfault; the wx lib takes it over.
-	//delete droptarget;
 }
 
 A_Tabpage*
@@ -784,7 +782,11 @@ A_Frame::OnOption(wxCommandEvent& event)
 			if ( NewPage(wxT("[--]")) ) {
 				tabwnd->SetSelection(
 					tabwnd->GetPageCount() - 1);
-				#ifdef __WXMSW__
+				// Argh! after this hack being MSW-only for sooo long,
+				// it has appeared (intermittently) under GTK with
+				// the wx 2.9.4 (devel); only when using AUI notebook,
+				// and DND'ing many files. Just make it unconditional.
+				#if 1 || defined(__WXMSW__)
 				// 'doze version doesn't layout new tabs
 				// until sized.  sheesh.  This causes
 				// a slight flash, but it has to be.
@@ -809,7 +811,11 @@ A_Frame::OnOption(wxCommandEvent& event)
 				} else
 					tabwnd->SetSelection(
 						tabwnd->GetPageCount() - 1);
-				#ifdef __WXMSW__
+				// Argh! after this hack being MSW-only for sooo long,
+				// it has appeared (intermittently) under GTK with
+				// the wx 2.9.4 (devel); only when using AUI notebook,
+				// and DND'ing many files. Just make it unconditional.
+				#if 1 || defined(__WXMSW__)
 				// 'doze version doesn't layout new tabs
 				// until sized.  sheesh.  This causes
 				// a slight flash, but it has to be.
@@ -947,10 +953,10 @@ A_Frame::OnOption(wxCommandEvent& event)
 void
 A_Frame::PrepareDC(wxDC& dc)
 {
-	dc.SetMapMode( m_mapMode );
-	dc.SetUserScale( m_xUserScale, m_yUserScale );
-	dc.SetLogicalOrigin( m_xLogicalOrigin, m_yLogicalOrigin );
-	dc.SetAxisOrientation( !m_xAxisReversed, m_yAxisReversed );
+	dc.SetMapMode( mapMode );
+	dc.SetUserScale( xUserScale, yUserScale );
+	dc.SetLogicalOrigin( xLogicalOrigin, yLogicalOrigin );
+	dc.SetAxisOrientation( !xAxisReversed, yAxisReversed );
 }
 
 void
@@ -1039,8 +1045,12 @@ A_Frame::Open_FileArray(const wxArrayString& af)
 		}
 	}
 
+	// Argh! after this hack being MSW-only for sooo long,
+	// it has appeared (intermittently) under GTK with
+	// the wx 2.9.4 (devel); only when using AUI notebook,
+	// and DND'ing many files. Just make it unconditional.
+	#if 1 || defined(__WXMSW__)
 	// Wow, this is still needed w/ wx 2.8!
-	#ifdef __WXMSW__
 	if ( ret ) {
 		// 'doze version doesn't layout new tabs
 		// until sized.  sheesh.  This causes

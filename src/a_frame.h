@@ -239,22 +239,15 @@ public:
 
 // Sheesh!
 #	if wxCHECK_VERSION(2, 9, 0)
-	int         m_backgroundMode;
-	wxMappingMode         m_mapMode;
+	wxMappingMode         mapMode;
 #	else
-	int         m_backgroundMode;
-	int         m_mapMode;
+	int         mapMode;
 #	endif
-
-	double      m_xUserScale;
-	double      m_yUserScale;
-	int         m_xLogicalOrigin;
-	int         m_yLogicalOrigin;
-	bool        m_xAxisReversed,
-	m_yAxisReversed;
-	wxColour    m_colourForeground,    // these are _text_ colours
-	m_colourBackground;
-	wxBrush     m_backgroundBrush;
+	double      xUserScale;
+	double      yUserScale;
+	int         xLogicalOrigin;
+	int         yLogicalOrigin;
+	bool        xAxisReversed, yAxisReversed;
 
 protected:
 	A_Tabwnd*   tabwnd;

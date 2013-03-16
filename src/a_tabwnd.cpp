@@ -22,26 +22,19 @@
 // A_Tabwnd
 //
 
-#if USE_AUI_NOTEBOOK
 BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
+#if USE_AUI_NOTEBOOK
 	EVT_AUINOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
 	//EVT_AUINOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
-END_EVENT_TABLE()
 #else
-BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
 	EVT_NOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
 	//EVT_NOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
-END_EVENT_TABLE()
 #endif
+END_EVENT_TABLE()
 
 A_Tabwnd::A_Tabwnd(A_Frame* parent, wxWindowID id
 	, const wxPoint& pos, const wxSize& size, long style)
-       : NoteBook_type(parent, id, pos, size, style
-#if USE_AUI_NOTEBOOK
-       )
-#else
-       , wxT("main_notebook"))
-#endif
+       : NoteBook_type(parent, id, pos, size, style)
        , owner(parent)
 {
 }

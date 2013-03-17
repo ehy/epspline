@@ -146,9 +146,12 @@ public:
 	bool SelectColour(wxColour& c);
 	void PrepareDC(wxDC& dc);
 
+	// Menu/Toolbar stuff:
 	// Open files in new tabs and return count successfully opened.
 	// used internally, but public as it may be used externally.
 	unsigned Open_FileArray(const wxArrayString& af);
+	// Close a tab iff a check with its canvas allows it.
+	bool CloseTabIffCanvasAllows(int tabnum);
 
 	// ErrorBox is obvious, but ``titletail'' should be short,
 	// As it is appended to app title string.
@@ -265,6 +268,7 @@ protected:
 	A_Tabpage* GetNumPage(unsigned num);
 	unsigned   GetPageNum(const A_Tabpage* p);
 	void       GetAllPagePtrs(std::vector<A_Tabpage*>& v);
+
 private:
 	// An internal class to be a file drop target
 	class a_frame_filedroptarget : public wxFileDropTarget {

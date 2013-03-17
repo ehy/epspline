@@ -951,6 +951,43 @@ A_Frame::OnOption(wxCommandEvent& event)
 	canvas->Refresh();
 }
 
+bool
+A_Frame::CloseTabIffCanvasAllows(int tabnum)
+{
+	if ( tabnum < 0 ) {
+		return false;
+	}
+
+	A_Canvas* canvas = 0;
+	A_Tabpage* t = GetNumPage(unsigned(tabnum));
+	if ( t != 0 ) {
+		canvas = t->GetCanvas();
+	} else {
+		return false;
+	}
+
+	if ( canvas == 0 ) {
+		return false;
+	}
+	
+	if ( canvas->CloseOpt() ) {
+		tabwnd->DeletePage(tabnum);
+		if ( (t = GetCurPage()) != 0 ) {
+			if ( (canvas = t->GetCanvas()) == 0 ) {
+				return true;
+			}
+			canvas->SetActive(true);
+			canvas->IdleUpdate();
+			canvas->UpdateStatusBar();
+			StatusBarAntiClobberHack();
+		}
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
 // This unfortunate hack can be called just *after* a
 // menu or toolbar event handler has made a change in
 // the same status bar pane used by the menu/tb help.

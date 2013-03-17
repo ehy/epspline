@@ -21,11 +21,24 @@
 
 // A_Tabwnd
 //
+#	if wxCHECK_VERSION(2, 9, 0)
+#	define EVT_HACK_AUI_RANGE(id1, id2, event, func) \
+    wx__DECLARE_EVT2(event, id1, id2, wxAuiNotebookEventHandler(func))
+#	endif
 
 BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
 #if USE_AUI_NOTEBOOK
 	EVT_AUINOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
 	//EVT_AUINOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
+#	if wxCHECK_VERSION(2, 9, 0)
+    EVT_HACK_AUI_RANGE(wxAuiBaseTabCtrlId, wxAuiBaseTabCtrlId+500,
+                      wxEVT_COMMAND_AUINOTEBOOK_BUTTON,
+                      A_Tabwnd::OnButton)
+#	else
+    EVT_COMMAND_RANGE(wxAuiBaseTabCtrlId, wxAuiBaseTabCtrlId+500,
+                      wxEVT_COMMAND_AUINOTEBOOK_BUTTON,
+                      A_Tabwnd::OnButton)
+#	endif
 #else
 	EVT_NOTEBOOK_PAGE_CHANGED  (TabWindowID, A_Tabwnd::OnPageChanged)
 	//EVT_NOTEBOOK_PAGE_CHANGING (TabWindowID, A_Tabwnd::OnPageChanging)
@@ -144,5 +157,31 @@ void
 A_Tabwnd::OnPageChanging(TABWND_EVENT_T& e)
 {
 	e.Skip();
+}
+#endif
+
+#if USE_AUI_NOTEBOOK
+void
+#	if wxCHECK_VERSION(2, 9, 0)
+A_Tabwnd::OnButton(wxAuiNotebookEvent& evt)
+{
+#	else
+A_Tabwnd::OnButton(wxCommandEvent& e)
+{
+	wxAuiNotebookEvent& evt = (wxAuiNotebookEvent&)e;
+#	endif
+
+	int button_id = evt.GetInt();
+	if ( button_id == wxAUI_BUTTON_CLOSE ) {
+		int npage = evt.GetSelection();
+		owner->CloseTabIffCanvasAllows(npage);
+		return;
+	}
+
+#	if wxCHECK_VERSION(2, 9, 0)
+	wxAuiNotebook::OnTabButton(evt);
+#	else
+	wxAuiNotebook::OnTabButton(e);
+#	endif
 }
 #endif

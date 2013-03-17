@@ -18,6 +18,12 @@
 	typedef	wxAuiNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxAuiNotebookEvent
 #	define	TABWND_PAGE_T	wxWindow
+#		if wxCHECK_VERSION(2, 9, 0)
+#	define	TABWND_CMD_EVENT_T	wxAuiNotebookEvent
+#		else
+#	define	TABWND_CMD_EVENT_T	wxCommandEvent
+#		endif
+	const int wxAuiBaseTabCtrlId = 5380;
 #else
 #	include "wx/notebook.h"
 	typedef	wxNotebook	NoteBook_type;
@@ -35,7 +41,7 @@
 // fordecl
 class A_Frame;
 
-static const int TabWindowID = 1777;
+const int TabWindowID = 1777;
 
 // Main frame
 class A_Tabwnd : public NoteBook_type {
@@ -48,6 +54,9 @@ public:
 
 	void OnPageChanged(TABWND_EVENT_T& e);
 	//void OnPageChanging(TABWND_EVENT_T& e);
+#	if USE_AUI_NOTEBOOK
+	void OnButton(TABWND_CMD_EVENT_T& e);
+#	endif
 
 	bool AddPage(TABWND_PAGE_T* page
 		, const wxString& text

@@ -155,6 +155,8 @@ public:
 	void     ErrorBox(const wxString& msg, const wxString& titletail =
 			 _("Error")) const;
 
+	// Menu/Toolbar stuff:
+	// {en,dis}able helpers
 	void enableExportCurves(bool b) {menuFile->Enable(ExportCurves, b);}
 	void enableExportAsCurves(bool b)
 		{menuFile->Enable(ExportAsCurves, b);}
@@ -236,6 +238,9 @@ public:
 		GetToolBar()->EnableTool(HelpDemo, b);
 	}
 	void enableHelpAbout(bool b) {menuHelp->Enable(HelpAbout, b);}
+	// A hack to work-around bug in long help display in status bar.
+	// See comments in the method definition.
+	void StatusBarAntiClobberHack();
 
 // Sheesh!
 #	if wxCHECK_VERSION(2, 9, 0)

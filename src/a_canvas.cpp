@@ -376,14 +376,14 @@ A_Canvas::IdleUpdate()
 void
 A_Canvas::UpdateStatusBar()
 {
+	wxString s;
 #	if OLD_STATBAR_SET
-	wxString ss(wxT(""));
-	ss.Printf(_("scale: %u%% x, %u%% y"), xscale, yscale);
-	a_frame->SetStatusText(ss, 2);
-	ss = IsDirty() ? _("modified") : _("not modified");
-	a_frame->SetStatusText(ss, 3);
+	s.Printf(_("scale: %u%% x, %u%% y"), xscale, yscale);
+	a_frame->SetStatusText(s, 2);
+	s = IsDirty() ? _("modified") : _("not modified");
+	a_frame->SetStatusText(s, 3);
 #	else
-	wxString s, t;
+	wxString t;
 	if ( IsDirty() ) {
 		/* TRANSLATORS: this symbol (*) indicates that the
 		 * file has changes that have not been saved.  Change
@@ -404,11 +404,14 @@ A_Canvas::UpdateStatusBar()
 	t.Printf(_("%u%% x, %u%% y"), xscale, yscale);
 	a_frame->SetStatusText(s + t, 2);
 #	endif
+
 	if ( D->sel ) {
-		a_frame->SetStatusText(D->sel->GetDescription(), 0);
+		s = D->sel->GetDescription();
 	} else {
-		a_frame->SetStatusText(wxString(wxT("")), 0);
+		s = wxT("");
 	}
+
+	a_frame->SetStatusText(s, 0);
 }
 
 void
@@ -1978,6 +1981,7 @@ A_Canvas::clipPaste()
 	D->sel = CopyObj(clip);
 	D->lst.push_front(D->sel);
 	Refresh();
+	UpdateStatusBar();
 }
 
 void
@@ -1990,6 +1994,7 @@ A_Canvas::clipPasteGlobal()
 	D->sel = CopyObj(clip_global);
 	D->lst.push_front(D->sel);
 	Refresh();
+	UpdateStatusBar();
 }
 
 void
@@ -2004,6 +2009,7 @@ A_Canvas::DelSel()
 	D->selpt = 0;
 	D->sel = 0;
 	Refresh();
+	UpdateStatusBar();
 }
 
 void
@@ -2031,8 +2037,8 @@ A_Canvas::DoSetScale()
 			hrule->SetScalePercent(xscale);
 		if ( vrule )
 			vrule->SetScalePercent(yscale);
-		UpdateStatusBar();
 		Refresh();
+		UpdateStatusBar();
 	}
 }
 
@@ -2055,8 +2061,8 @@ A_Canvas::DoCycleScale()
 		hrule->SetScalePercent(xscale);
 	if ( vrule )
 		vrule->SetScalePercent(yscale);
-	UpdateStatusBar();
 	Refresh();
+	UpdateStatusBar();
 }
 
 bool

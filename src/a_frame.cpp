@@ -92,21 +92,6 @@
 #endif
 #endif  // #if  INCLUDE_APPDIST_ICONS
 
-#if 0
-// Art provider for main toolbar
-class toolbar_art : public wxArtProvider {
-protected:
-	virtual wxBitmap CreateBitmap(const wxArtID& id, 
-						const wxArtClient& client,
-						const wxSize size)
-	{
-		return wxNullBitmap;
-	}
-
-};
-wxArtProvider::Push(new toolbar_art);
-#endif
-
 // A_Frame
 //
 
@@ -878,6 +863,7 @@ A_Frame::OnOption(wxCommandEvent& event)
 					canvas->SetActive(true);
 					canvas->IdleUpdate();
 					canvas->UpdateStatusBar();
+					StatusBarAntiClobberHack();
 				} else
 					return;
 			}
@@ -886,44 +872,52 @@ A_Frame::OnOption(wxCommandEvent& event)
 			if ( canvas->CloseOpt() )
 				tabwnd->UpdateCurPageText();
 			break;
-		case EdRedo:
-			canvas->Redo();
-			break;
 		case EdMoveDown:
 			canvas->MoveDown();
 			break;
 		case EdMoveUp:
 			canvas->MoveUp();
 			break;
+		case EdRedo:
+			canvas->Redo();
+			StatusBarAntiClobberHack();
+			break;
 		case EdUndo:
 			canvas->Undo();
-			break;
+			StatusBarAntiClobberHack();
 		case EdCopy:
 			canvas->clipCopy();
 			break;
 		case EdCut:
 			canvas->clipCut();
+			StatusBarAntiClobberHack();
 			break;
 		case EdPaste:
 			canvas->clipPaste();
+			StatusBarAntiClobberHack();
 			break;
 		case EdCopyGlobal:
 			canvas->clipCopyGlobal();
 			break;
 		case EdCutGlobal:
 			canvas->clipCutGlobal();
+			StatusBarAntiClobberHack();
 			break;
 		case EdPasteGlobal:
 			canvas->clipPasteGlobal();
+			StatusBarAntiClobberHack();
 			break;
 		case EdDel:
 			canvas->DelSel();
+			StatusBarAntiClobberHack();
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();
+			StatusBarAntiClobberHack();
 			break;
 		case CycleUserScale:
 			canvas->DoCycleScale();
+			StatusBarAntiClobberHack();
 			break;
 		case Toggle_AA_Lines:
 			{
@@ -955,6 +949,28 @@ A_Frame::OnOption(wxCommandEvent& event)
 	}
 
 	canvas->Refresh();
+}
+
+// This unfortunate hack can be called just *after* a
+// menu or toolbar event handler has made a change in
+// the same status bar pane used by the menu/tb help.
+// This hack is bad because wxFrameBase::m_oldStatusText
+// is undocument, and it, or the method using it (DoGiveHelp()),
+// might change with any version. But there seems no other way . . . .
+void
+A_Frame::StatusBarAntiClobberHack()
+{
+	// Hack needed so that Menu/Toolbar event handler,
+	// such as Undo/Redo, can update
+	// status-bar, because toolbar always clobbers
+	// the updated text when it replaces saved text.
+	if ( wxStatusBar* sb = GetStatusBar() ) {
+		int pane = GetStatusBarPane();
+		wxString s = sb->GetStatusText(pane);
+		// set current text as saved text;
+		// now it's clobbered with itself
+		wxFrameBase::m_oldStatusText = s;
+	}
 }
 
 void

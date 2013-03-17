@@ -403,6 +403,10 @@ const wxChar pov_chars_OK[] =
 wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_");
 // number if wxChars in above
 const size_t pov_chars_OK_count = A_SIZE(pov_chars_OK) - 1;
+// This string is the 1st-char prohibited set for POV-Ray IDs
+const wxChar pov_char0_NG[] = wxT("0123456789");
+// number if wxChars in above
+const size_t pov_char0_NG_count = A_SIZE(pov_char0_NG) - 1;
 
 // Take a wxString reference that is meant as (or to be included in)
 // a POV-Ray identifier and 'sanitise' it against pov_chars_OK[] (above)
@@ -417,6 +421,14 @@ bool sanitise_for_pov(wxString& str)
 		if ( s_ok.Find(str[p]) == wxNOT_FOUND ) {
 			str[p] = wxT('_');
 			changes = true;
+		}
+	}
+	for ( size_t p = 0; p < pov_char0_NG_count; p++ ) {
+		if ( str[0] == pov_char0_NG[p] ) {
+			wxString t(wxT('_'));
+			str = t + str;
+			changes = true;
+			break;
 		}
 	}
 	return changes;

@@ -461,8 +461,10 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	GetCurPage()->GetCanvas()->SetActive(true);
 	GetCurPage()->GetCanvas()->UpdateStatusBar();
 	
+#	if wxUSE_DRAG_AND_DROP
 	// put drop target (from our internal class) in place
 	SetDropTarget(new a_frame_filedroptarget(this));
+#	endif // wxUSE_DRAG_AND_DROP
 }
 
 A_Frame::~A_Frame()
@@ -1126,6 +1128,7 @@ A_Frame::Open_FileArray(const wxArrayString& af)
 	return ret;
 }
 
+#	if wxUSE_DRAG_AND_DROP
 // file drop target called by internal derived class
 bool
 A_Frame::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& afn)
@@ -1159,3 +1162,4 @@ A_Frame::a_frame_filedroptarget::OnDropFiles(
 {
 	return af->OnDropFiles(x, y, afn);
 }
+#	endif // wxUSE_DRAG_AND_DROP

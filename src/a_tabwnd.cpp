@@ -21,10 +21,13 @@
 
 // A_Tabwnd
 //
+#if USE_AUI_NOTEBOOK
 #	if wxCHECK_VERSION(2, 9, 0)
+// This is defined in auibook.cpp as EVT_AUI_RANGE -- add 'HACK_' here.
 #	define EVT_HACK_AUI_RANGE(id1, id2, event, func) \
     wx__DECLARE_EVT2(event, id1, id2, wxAuiNotebookEventHandler(func))
 #	endif
+#endif
 
 BEGIN_EVENT_TABLE(A_Tabwnd, NoteBook_type)
 #if USE_AUI_NOTEBOOK

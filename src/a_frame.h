@@ -132,7 +132,7 @@ enum {
 #endif
 
 // Main window; and, file drop target
-class A_Frame : public wxFrame, private wxFileDropTarget {
+class A_Frame : public wxFrame {
 public:
 	A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size);
 	virtual ~A_Frame();
@@ -270,6 +270,7 @@ protected:
 	void       GetAllPagePtrs(std::vector<A_Tabpage*>& v);
 
 private:
+#	if wxUSE_DRAG_AND_DROP
 	// An internal class to be a file drop target
 	class a_frame_filedroptarget : public wxFileDropTarget {
 		friend class A_Frame;
@@ -289,6 +290,7 @@ private:
 	// of the same name (which just calls this)
 	virtual bool OnDropFiles(
 		wxCoord x, wxCoord y, const wxArrayString& filenames);
+#	endif // wxUSE_DRAG_AND_DROP
 
 	// WX macro to setup event handling
 	DECLARE_EVENT_TABLE()

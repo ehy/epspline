@@ -144,8 +144,8 @@ A_BUFDCCanvas::A_BUFDCCanvas(
 //#if defined(__WXMAC__) || defined(__WXGTK20__) || defined(__WXDFB__)
 //#	ifdef __WXGTK20__
 #	if defined(__WXMAC__) || defined(__WXGTK20__) || \
-		defined(__WXDFB__) || defined(__WXMSW__) \
-		|| 1 // Just call it and hope for reports if compilation fails
+		defined(__WXDFB__) || defined(__WXMSW__)
+		// Hope for reports if compilation fails
 	SetDoubleBuffered(false);
 #	endif
 

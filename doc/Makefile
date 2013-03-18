@@ -122,6 +122,8 @@ $(WXDOCF): $(INPALL)
 		$(UNZIP) $(UZPARGS) $@ )
 	$(RM) $@
 	$(CP) $(TEMPDHL)/$@ .
+	$(CMP) ./$(WXHEADER) ../src/$(WXHEADER) || \
+		$(CP) ./$(WXHEADER) ../src
 
 
 HWBSEL	=	$(SELFMTBASE) '\def\SELbuild{2}'

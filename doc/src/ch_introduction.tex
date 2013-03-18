@@ -42,18 +42,22 @@ interaction of the light and the objects in space that it encounters
 The result of this method can be very impressive, and with its
 long history of active development \IXpov{} does it very well.
 
-The user of a ray-tracing program must describe the objects in space
+The user of a ray-tracing program must describe objects in space
 and their attributes. For that purpose \IXpov{} provides a
 \IXnewterm{scene description language}, or `\IXarg{SDL}.'
 The \IXarg{SDL}
 allows users to describe objects in numerous ways, all of which
-are explained in detail and with examples in \IXpov{}'s
+are explained in detail, with examples, in \IXpov{}'s
 excellent \href{http://www.povray.org/documentation/}{documentation}
 (\url{http://www.povray.org/documentation/}).
 Many of the objects that can be defined in the \IXarg{SDL} are easily
-edited (i.e., written) by hand, but some types of objects
+edited (i.e., written or composed) by hand, but some types of objects
 are more suited to generation by an interactive program that
-allows visual editing and feedback. \IXpov{} is not interactive;
+provides visual editing and feedback. \IXpov{} is not
+interactive\footnote{The version of \IXpov{} for the
+Microsoft Windows platform includes an interactive text editor and
+some extra features, but the actual ray tracer still works
+with prepared input non-interactively.},
 it works with prepared input files. Fortunately, there are several
 third-party programs available for interactively editing
 \IXpov{} \IXarg{SDL} objects. Such programs typically

@@ -104,7 +104,7 @@ UNINSTALLER_DIRS = doc po examples src
 #
 # Targets:
 #
-all: prog po examples doc
+all: doc prog po examples
 
 prog: uninst_setup depend
 	@for d in $(DIRS) ; do \

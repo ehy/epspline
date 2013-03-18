@@ -971,7 +971,7 @@ A_Frame::CloseTabIffCanvasAllows(int tabnum)
 	// clicked, it should be (better be) button on current page.
 	A_Canvas* canvas = 0;
 	A_Tabpage* t = GetCurPage();
-	tabnum = (int)GetPageNum(t);
+	if ( t ) tabnum = (int)GetPageNum(t);
 #	endif
 	if ( t != 0 ) {
 		canvas = t->GetCanvas();

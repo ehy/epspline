@@ -956,12 +956,23 @@ A_Frame::OnOption(wxCommandEvent& event)
 bool
 A_Frame::CloseTabIffCanvasAllows(int tabnum)
 {
+	// Ouch. Found that the tab number from the AUI
+	// wxAuiNotebookEvent (wx 2.9) can be one-off; possibly
+	// only after dragging a change in tab order.
+#	if 0
 	if ( tabnum < 0 ) {
 		return false;
 	}
 
 	A_Canvas* canvas = 0;
 	A_Tabpage* t = GetNumPage(unsigned(tabnum));
+#	else
+	// ... so, rely on GetCurPage() -- when close button is
+	// clicked, it should be (better be) button on current page.
+	A_Canvas* canvas = 0;
+	A_Tabpage* t = GetCurPage();
+	tabnum = (int)GetPageNum(t);
+#	endif
 	if ( t != 0 ) {
 		canvas = t->GetCanvas();
 	} else {

@@ -434,6 +434,29 @@ bool sanitise_for_pov(wxString& str)
 	return changes;
 }
 
+// Uses sanitise_for_pov, and if changes were made, prompts user
+// with a dialog to say if they are acceptible.
+// Like sanitise_for_pov the argument is modified.
+// If sanitise_for_pov made changes, the return from the
+// prompt dialog is returned: wxYES, or wxNO, or wxCANCEL.
+// If no change was made return is wxYES, whic, IAC, means OK.
+int sanitise_with_prompt(wxString& str)
+{
+	if ( sanitise_for_pov(str) ) {
+		wxString t = _("Identifier Altered For POV-Ray");
+		wxString m = _("The ID word you provided has been altered\n");
+		m += _("because it contained characters that cannot\n");
+		m += _("be used in an identifier in POV-Ray.\n\n");
+		m += _("This is the new ID word: \"");
+		m += str + _("\"\n\nIs that word acceptable?");
+		
+		return wxMessageBox(m, t,
+			wxYES_NO | wxCANCEL | wxICON_QUESTION);
+	}
+
+	return wxYES;
+}
+
 // This checks its argument against the set of POV-Ray reserved words,
 // as found in the v. 3.6 html documentation.  Those words are all
 // in ASCII.
@@ -469,7 +492,8 @@ bool check_identifier(const char* word, size_t len)
 // This version will prompt for a new string if need be, check the
 // new string, and if OK assign it to the wxString refered to by "word"
 // and return true, or if the user cancels then return false.
-// Recurse as necessary
+// Recurse as necessary.
+// May modify 'word' even if false is returned.
 bool check_identifier(wxString& word)
 {
 	if ( ! check_identifier(wxs2ch(word), word.length()) ) {
@@ -485,27 +509,46 @@ bool check_identifier(wxString& word)
 		}
 		
 		w2.Trim(true); w2.Trim(false);
-		if ( sanitise_for_pov(w2) ) {
-			t = _("Identifier Altered For POV-Ray");
-			m = _("The ID word you provided has been altered\n");
-			m += _("because it contained characters that cannot\n");
-			m += _("be used in an identifier in POV-Ray.\n\n");
-			m += _("This is the new ID word: \"");
-			m += w2 + _("\"\n\nIs that word acceptable?");
-			
-			int r = wxMessageBox(m, t,
-				wxYES_NO | wxCANCEL | wxICON_QUESTION);
-			if ( r == wxNO ) {
-				return check_identifier(word);
-			} else if ( r == wxCANCEL ) {
-				return false;
-			}
+		int r = sanitise_with_prompt(w2);
+		if ( r == wxYES ) {
+			word = w2;
+		} else if ( r == wxCANCEL ) {
+			return false;
 		}
 		
-		word = w2;
 		return check_identifier(word);
 	}
 
-	return true;
+	wxString w2;
+	int r;
+	do {
+		r = sanitise_with_prompt(w2 = word);
+		if ( r == wxYES ) {
+			if ( w2 == word ) {
+				return true;
+			}
+			break;
+		} else if ( r == wxCANCEL ) {
+			return false;
+		}
+
+		// user selected 'no', get new word
+		wxString t(_("New Identifier Needed"));
+		wxString m(_("The suggested identifier \""));
+		m += w2;
+		m += _("\" was rejected.\nPlease provide a new word.");
+		wxBell();
+
+		w2 = wxGetTextFromUser(m, t, w2);
+		// if user cancels the return is empty string ""
+		if ( w2.length() == 0 ) {
+			return false;
+		}
+
+		break;
+	} while ( false );
+
+	word = w2;
+	return check_identifier(word);
 }
 

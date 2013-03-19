@@ -1,0 +1,25 @@
+[March '13 (!)]
+
+In the `README' regarding the Makefiles, POSIX compliance to
+a practical degree is asserted.  The reference to ``POSIX'' is
+vague because online access to the documents is irregular.  It
+might be that different versions have been used at different
+times, because when attempting to find the documents at the
+Open Group site, hoops must be jumped through.  I usually forget
+how to jump the hoops, and will generally take what I can get.
+(I _have_ heard of bookmarks.  What are they?)
+
+In any case, the last document used has the following title:
+
+    The Open Group Base Specifications Issue 6
+    IEEE Std 1003.1, 2004 Edition
+    Copyright © 2001-2004 The IEEE and The Open Group
+
+(Note that in the above there is a UTF-8 copyright [(C)] symbol,
+which might not appear correctly if your viewer is not UTF-8 savvy.
+If necessary, interpret visual noise as the copyright symbol.)
+
+The URL for the document is:
+
+    http://pubs.opengroup.org/onlinepubs/009695399/
+

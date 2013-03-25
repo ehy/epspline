@@ -25,20 +25,22 @@ A: That's the Law of Spline Demand.
 \section{The Software}%WX%3|||SoftwareIntroSection|
 \IXpkgu{} is a simple, single-purpose program that might
 be helpful to users of the \IXpov{} program.
-To introduce \IXpkg{} a brief introduction to \IXpov{} is necessary.
+For those not already familiar with \IXpov{},
+a brief introduction to \IXpov{} follows in the next section,
+and the section following that will introduce \IXpkg.
 
 	%WX%4|Brief Introduction to POV-Ray<R>Brief[ 	][ 	]*Introduction[ 	][ 	]*to[ 	].*POV-Ray||POVRayIntroSection|
 	\subsection{Brief Introduction to \dtypov}
 \IXpov{} is a \IXnewterm{ray-tracing} program with a long history.
 Ray-tracing is a method for rendering
-graphical images with a model of \IXnewterm{optics}.
+graphical images with a model of optics.
 Put simply, the user describes objects in space, a viewing position,
 and sources of light. The program `traces' the path of a ray of
 light from the view, among the objects in space, and back to the sources
 of light. The method is repeated for each pixel of the image that
 is being generated, and the pixels are colored according to the
-interaction of the light and the objects in space that it encounters
-(as seen from the view defined by the user).
+interaction of the light and the objects in space that it encounters,
+as seen from the view position defined by the user.
 The result of this method can be very impressive, and with its
 long history of active development \IXpov{} does it very well.
 
@@ -49,7 +51,7 @@ The \IXarg{SDL}
 allows users to describe objects in numerous ways, all of which
 are explained in detail, with examples, in \IXpov{}'s
 excellent \href{http://www.povray.org/documentation/}{documentation}
-(\url{http://www.povray.org/documentation/}).
+at \url{http://www.povray.org/documentation/}.
 Many of the objects that can be defined in the \IXarg{SDL} are easily
 edited (i.e., written or composed) by hand, but some types of objects
 are more suited to generation by an interactive program that
@@ -66,8 +68,8 @@ that the the user will then refer to and arrange in a main scene file.
 
 \IXpov{} is available cost-free as source code---and
 ready-to--run binaries for some platforms---at
-\IXpov's \href{http://www.povray.org/}{web site}
-(\url{http://www.povray.org/}).
+\IXpov's \href{http://www.povray.org/}{web site}:
+\url{http://www.povray.org/}.
 \footnote{Please note that, although the source code is available,
 it is \emph{not} re-distributable in the manner allowed
 by \emph{free software} or \emph{open source} licenses.
@@ -87,12 +89,17 @@ at \url{http://www.povray.org/distribution-license.html}.}
 	%WX%4|Introducing Epspline<R>Introducing .*Epspline||EpsplineIntroSection|
 	\subsection{Introducing \dtypkgu}
 Two of the object types that may be defined in \IXpov's
-\IXarg{SDL} are the `prism' and the `lathe,' and they are
-the ``single-purpose'' of \IXpkg.
-Figure~\ref{fig:pov_image_Intro_0} is a sample scene
-composed mostly of \IXpov's prism and lathe objects
-(there is also a `plane' to provide a background, and of course
-light sources and a `camera', which is the point-of--view).
+\IXarg{SDL} are the `prism' and the `lathe,' and
+the purpose of \IXpkg{} is to provide a graphical,
+interactive editor of those objects. The prism and lathe
+objects are based on interpolated curves, often called
+\IXnewterm{spline} curves. These curves are defined by
+the method of interpolation and \IXnewterm{control points}.
+Several sets of control points can be grouped together, and
+if done well, can compose complex, and \emph{scalable},
+shapes.
+The shapes of the characters on this page are, almost certainly,
+defined by spline curves in a computer typeface, or `font.'
 
 \begin{figure}[htb]
 \centering
@@ -101,64 +108,94 @@ light sources and a `camera', which is the point-of--view).
 \label{fig:bezier_linked_control_points}
 \end{figure}
 
-In the \IXpov{} scene description
-language these objects are introduced
-with the key words ``lathe'' and ``prism''.
-The \IXpov{} documentation
-describes these, and includes an example of creating such an object
-by hand by carefully placing the control points.  The simplest of these
-objects may well be manageable by hand, but if the object is not
-simple it might have hundreds, even thousands, of control points.
-It would be difficult to create and maintain such an object by hand,
-and surely there few people who can visualize the resulting curve's
-path.  Therefore an interactive graphical editor for such curves
-should be a preferable approach to the use of these objects in a
-\IXpov{} scene.
+\IXpov{} renders spline curves as three dimensional objects.
+Figure~\ref{fig:pov_image_Intro_0} is a sample scene
+composed mostly of \IXpov's prism and lathe objects
+(there is also a `plane' to provide a background, and of course
+light sources and a `camera', which is the point-of--view).
+The objects arranged in space
+are chisels. The handles and ferrules of the chisels are
+\IXpov{} lathes, and the blades and decorative imprints
+on the handles are prisms.
 
-The executable file of this program, if installed on your system,
-will probably probably have the file name \IXpkg{}, which
-might be remembered as `edit povray spline'. On some systems the
-file might require a dot-suffix, e.\ g.\ `\dtythispkgname.exe'. (The
-suffix might not be necessary for command invocation.) In this document
-the program might be referred to variously as ``\dtythispkgname'',
-``the program'', ``the editor'', or ``the spline editor''.
+The difference between the prism and lathe is that
+with the former the curve is extruded in the $y$-direction,
+and with the latter it is rotated around the $y$-axis.
+Making either of these objects in the \IXpov{} \IXarg{SDL}
+is similar: the control points necessary to define the
+basic curves are placed, as text, in a description of
+the object along with other attributes such as texture.
+That can be done by hand in a text editor for a small
+number of simple objects, but numerous complex objects
+would be difficult with hand editing, and
+without graphical feedback.
 
-The program was begun in late 1999 as a typical `scratch one's own itch'
-project with no thought of development beyond addressing a specific
-need at the time. It soon became apparent that a little more
-development was warranted, and soon after that that it might be
-useful to others if developed sufficiently for public distribution.
-Unfortunately, circumstances arrived which prevented further attention
-to this program (and most other spare-time endeavors). Only recently
-(early 2005) has the program regained the attention it had seemed to
-deserve.
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\linewidth]{\ImgIntroC}
+\caption{\IXpov{} preview of the chisel parts.}
+\label{fig:chisel_edit_preview_1}
+\end{figure}
+
+\IXpkgu{} lets the user place control points with the
+\IXnewterm{mouse} in sequence to create a shape.
+Existing shapes can be edited in several ways, and also
+duplicated, deleted, or transformed.
+Figure~\ref{fig:bezier_linked_control_points}
+shows a \IXarg{\dtybezil} spline being edited with the mouse.
+The cyan colored square is a \IXnewterm{selected} control
+point. The cyan colored circles are control points
+associated with the selected point and may be moved along with
+it. The red colored circles show control point
+positions when they are not selected. The shapes visible
+in Figure~\ref{fig:bezier_linked_control_points} were
+used for the imprint on the chisel handles in
+Figure~\ref{fig:pov_image_Intro_0}. The truth about
+the selected control point, the cyan colored square, is
+that it is two control points with the same coordinates,
+and they belong to neighboring curves (which might be
+called segments if it is easier to think of the whole
+shape as one curve). This mode of editing should be easier
+than simply placing numbers in a text editor.
+
+\IXpkgu{} saves the prism and lathe data in its own type
+of file rather than \IXpov{} \IXarg{SDL}.
+To use the objects in a \IXpov{} scene they
+must be \IXnewterm{exported} to an \IXarg{SDL} file that will be
+\IXarg{included} by another \IXarg{SDL} file. While
+working with \IXpkg{} the current file's objects can
+be previewed. \IXpov{} is invoked for this with a simple
+\IXarg{SDL} file that is deleted when \IXpov{} is closed.
+Figure~\ref{fig:chisel_edit_preview_1}
+shows the sample chisel parts in a \IXpov{} preview. Some
+of the shapes seen in the preview are not visible in
+the scene, but are used for
+\IXnewterm{solid contructive geometry} for features
+such as the sharp end of the blade and the tang inserted
+in the handle.
 
 
-\section{At The Time of This Writing}%WX%3||||
+\section{Requirements and Status}%WX%3||||
 
-It is mid-March 2005. The spline editor will soon be ready for
-an initial public release on the Internet. The first release will
-certainly be in the alpha development stage, but it is already
-useful (to the author in any case), and has not been observed to
-crash, or to corrupt files or the system, to cause large scale
-malfunctions of the electrical power delivery system,
-or any such catastrophe.
-
-
-\subsection{On the Hope That the Program is Useful}%WX%4||402000||
-
-Distribution will be done only for the possibility that the program
-might prove useful. The author makes no claim that the program will
-suit any purpose, and does not claim that the program will perform
-properly or that it will not cause damage to your system, your life,
-or the world at large. Proper legal disclaimers may be found in
-the software license that is include in the distribution package.
-Needles to say (the author hopes), the software would not have been
-distributed if catastrophic failure seemed likely.
-
-One motivation for public distribution is that interested persons ---
-users --- will return suggestions and even code patches as a
-contribution to the further improvement of the program. Please note
-that stating this hope does not constitute a commitment to continued
-development or maintenance of the program.
+\IXpkgu{} uses a software library called \IXnewterm{wxWidgets}
+(formerly called \emph{wxWindows}), which provides the window
+interface, and event model. \emph{wxWindows} features
+portability across several computer platforms. Currently,
+\IXpkg{} can be built for, and has been tested on, the
+X Window System with the GTK2 toolkit on several
+Unix-like systems,\footnote{
+\emph{OpenBSD}, \emph{NetBSD}, \emph{FreeBSD},
+\emph{OpenSolaris}, \emph{OpenIndiana}, and
+\emph{Debian} and \emph{Ubuntu} \emph{GNU/Linux}.
+}
+and Microsoft Windows.\footnote{
+The \emph{Vista} and \emph{7} releases have been tested.
+The binaries are built with the \emph{MinGW} tools, and
+the the cost-free \emph{DMC} tools have been used too,
+and as of this writing, will still build the code against
+\emph{wxWidgets} 2.8.
+}
+Other platforms that are supported by \emph{wxWidgets} have
+not been tested, and more work would certainly be needed to
+build \IXpkg{} on those platforms.
 

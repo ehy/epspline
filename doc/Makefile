@@ -23,9 +23,9 @@ MKDIR	= mkdir -p
 
 MKHT 	=	htlatex
 # MKHTARG is to make html for wxHtmlHelp viewer
-MKHTARG =	"html,info,3.2,index=2,4"
+MKHTARG =	"html,info,3.2,index=2,3"
 # MKHWARG is to make html for 'real' up-to-date web browser viewer
-MKHWARG =	"html,info,index=2,4,sec-filename"
+MKHWARG =	"html,info,index=2,3,sec-filename"
 ZIP		=	zip
 ZIPARGS	=	-9
 UNZIP	=	unzip

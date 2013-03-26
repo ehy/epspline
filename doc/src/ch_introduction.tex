@@ -22,7 +22,7 @@ A: That's the Law of Spline Demand.
 \fi % \ifMKwx
 
 % Introduction opening section
-\section{The Software}%WX%3|||SoftwareIntroSection|
+\section{Purpose}%WX%3|||SoftwareIntroSection|
 \IXpkgu{} is a simple, single-purpose program that might
 be helpful to users of the \IXpov{} program.
 For those not already familiar with \IXpov{},
@@ -66,8 +66,8 @@ third-party programs available for interactively editing
 produce \IXarg{include} files with object definitions
 that the the user will then refer to and arrange in a main scene file.
 
-\IXpov{} is available cost-free as source code---and
-ready-to--run binaries for some platforms---at
+\IXpov{} is available cost-free as source code, and
+ready-to--run binaries for some platforms, at
 \IXpov's \href{http://www.povray.org/}{web site}:
 \url{http://www.povray.org/}.
 \footnote{Please note that, although the source code is available,
@@ -89,11 +89,12 @@ at \url{http://www.povray.org/distribution-license.html}.}
 	%WX%4|Introducing Epspline<R>Introducing .*Epspline||EpsplineIntroSection|
 	\subsection{Introducing \dtypkgu}
 Two of the object types that may be defined in \IXpov's
-\IXarg{SDL} are the `prism' and the `lathe,' and
-the purpose of \IXpkg{} is to provide a graphical,
+\IXarg{scene description language} (\IXarg{SDL})
+are the `prism' and the `lathe.'
+The purpose of \IXpkg{} is to provide a graphical,
 interactive editor of those objects. The prism and lathe
 objects are based on interpolated curves, often called
-\IXnewterm{spline} curves. These curves are defined by
+\IXnewterm{spline} curves. Suc curves are defined by
 the method of interpolation and \IXnewterm{control points}.
 Several sets of control points can be grouped together, and
 if done well, can compose complex, and \emph{scalable},
@@ -197,5 +198,7 @@ and as of this writing, will still build the code against
 }
 Other platforms that are supported by \emph{wxWidgets} have
 not been tested, and more work would certainly be needed to
-build \IXpkg{} on those platforms.
+build \IXpkg{} on those platforms. \IXpkgu{} has been
+tested with \emph{wxWidgets} versions 2.6, 2.8, and the
+development version 2.9.
 

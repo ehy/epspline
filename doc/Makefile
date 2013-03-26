@@ -3,7 +3,7 @@
 # 1st non-comment, 1st target w/o dependencies or commands:
 .POSIX:
 
-# catalog name: $(NAME).{pot,po,mo}
+# name
 NAME = epspline
 
 # Maintain this file in the install target

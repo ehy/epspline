@@ -1,16 +1,82 @@
 \chapter{Using \dtypkgu{}}
 
-\section{Usage}%WX%3||303000||
+	\section{The Interface Window}%WX%3||||
+	The elements of the \IXarg{interface} presented by \IXpkg{}
+	are arranged in a manner that has been typical in
+	windowing systems for many years, and will probably
+	seem familiar to most users. Most elements are common,
+	but a few are specific to \IXpkg{}. A few are similar
+	to common elements in most windowed applications,
+	but with some differences in behavior.
 
-\IXpkgu{} is an interactive program with a
-graphical interface. Interaction is primarily by use of a mouse
-(or any pointing device from which the windowing system delivers
-`mouse' events to software).
+	The main groups of \IXarg{interface} elements are
+	discussed briefly, from the top down in order of appearance,
+	in the following subsections.
+		\subsection{The Menu Bar}%WX%4||||
+		The \IXarg{menu} ``bar'' consists of the labels, arranged
+		horizontally, nearest the top of the window. Each
+		label can be selected with the \IXarg{mouse} and
+		will produce a small rectangular window, the
+		\IXnewterm{menu}, with selectable labels, or
+		\emph{items}.
+		
+		Selecting a \IXarg{menu} item invokes an action
+		such as saving or closing data. When an item does not
+		make sense for the current state of the data, it
+		cannot be selected, and this is indicated by showing the
+		label ``greyed,'' or dimmed, in appearance.
+		
+		Many of the \IXarg{menu} labels have additional text
+		near the right-side edge, such as ``Ctrl+S.''  These
+		indicate combinations of keys that will invoke the
+		action associated with the \IXarg{menu} item without
+		selecting the \IXarg{menu} with the mouse.
+			\subsubsection{The File Menu}%xxxWX%5||501000||
+			This \IXarg{menu} provides items that generally
+			apply to the current data, or ``file.''
+				\begin{table}[htbp]
+				\centering
+				\textsf{
+				\begin{tabular}[c]{ | l | l || p{5.33cm} | }
+				\hline
+				\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
+				\hline \hline
+				Save & Ctrl+S & save data with current name\\ \hline
+				Save As & --- & save data with a new name\\ \hline
+				New & Ctrl+N & create a tab for new data\\ \hline
+				Open Here & --- & open (load) file data in current tab\\ \hline
+				Open & Ctrl+O & open (load) file data in a new tab\\ \hline
+				Close & Ctrl+W & close the data (file), leave tab\\ \hline
+				Close Tab & --- & close the data (file), close tab\\ \hline
+				Export & Ctrl+E & save the data as \IXpov{} \IXarg{SDL}\\ \hline
+				Export As & --- & save as \IXarg{SDL} with a new name\\ \hline
+				\hline
+				Quit & Ctrl+Q & quit the \textrm{\dtythispkgname{}} program\\
+				\hline
+				\end{tabular}
+				}%\textsf
+				\caption{The Items of the File Menu}
+				\label{tab:File_menu}
+				\end{table}
+			
+		\subsection{The Tool Bar}%WX%4||||
+		The \IXnewterm{tool} bar is similar to the \IXarg{menu}
+		bar.
+		\subsection{The Editing Area}%WX%4||||
+		\subsection{The Status Bar}%WX%4||||
+
+	\section{Creating and Editing}%WX%3||||
+
+	\section{Tips}%WX%3||||
 
 
-\subsection{Overview}%WX%4||403000||
-\subsection{Mouse and Key}%WX%4||404000||
-% no coded comment for subsubsection
-\subsubsection{Operations}%xxxWX%5||501000||
-\subsection{Usage Table}%WX%4||405000||
-
+%\IXpkgu{} is an interactive program with a
+%graphical interface. Interaction is primarily by use of a mouse
+%(or any pointing device from which the windowing system delivers
+%`mouse' events to software).
+%\subsection{Overview}%WX%4||403000||
+%\subsection{Mouse and Key}%WX%4||404000||
+%% no coded comment for subsubsection
+%\subsubsection{Operations}%xxxWX%5||501000||
+%\subsection{Usage Table}%WX%4||405000||
+%

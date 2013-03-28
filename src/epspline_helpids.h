@@ -50,11 +50,11 @@
 #define IDS_TheMainWindowInterface		"The Main Window Interface"
 #define IDF_TheMainWindowInterface		"epsplinese3.html"
 
-#define IDI_CreatingandEditing		176
+#define IDI_CreatingandEditing		192
 #define IDS_CreatingandEditing		"Creating and Editing"
 #define IDF_CreatingandEditing		"epsplinese4.html"
 
-#define IDI_Tips		192
+#define IDI_Tips		208
 #define IDS_Tips		"Tips"
 #define IDF_Tips		"epsplinese5.html"
 
@@ -62,15 +62,15 @@
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		256
+#define IDI_GPL3_Section		272
 #define IDS_GPL3_Section		"GNU General Public License"
 #define IDF_GPL3_Section		"epsplinese6.html"
 
-#define IDI_GPL2_Section		320
+#define IDI_GPL2_Section		336
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
 #define IDF_GPL2_Section		"epsplinese7.html"
 
-#define IDI_FDL_Section		384
+#define IDI_FDL_Section		400
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese8.html"
 

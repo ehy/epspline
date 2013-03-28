@@ -46,9 +46,9 @@
 #define IDS_UsingEpspline		"Using Epspline"
 #define IDF_UsingEpspline		"epsplinech2.html"
 
-#define IDI_TheInterfaceWindow		80
-#define IDS_TheInterfaceWindow		"The Interface Window"
-#define IDF_TheInterfaceWindow		"epsplinese3.html"
+#define IDI_TheMainWindowInterface		80
+#define IDS_TheMainWindowInterface		"The Main Window Interface"
+#define IDF_TheMainWindowInterface		"epsplinese3.html"
 
 #define IDI_CreatingandEditing		176
 #define IDS_CreatingandEditing		"Creating and Editing"

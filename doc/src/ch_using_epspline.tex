@@ -1,13 +1,13 @@
 \chapter{Using \dtypkgu{}}
 
-	\section{The Interface Window}%WX%3||||
+	\section{The Main Window Interface}%WX%3||||
 	The elements of the \IXarg{interface} presented by \IXpkg{}
-	are arranged in a manner that has been typical in
+	have an arrangement that has been common in
 	windowing systems for many years, and will probably
-	seem familiar to most users. Most elements are common,
+	seem familiar to most users. Most individual elements are common,
 	but a few are specific to \IXpkg{}. A few are similar
 	to common elements in most windowed applications,
-	but with some differences in behavior.
+	but with some difference in behavior.
 
 	The main groups of \IXarg{interface} elements are
 	discussed briefly, from the top down in order of appearance,
@@ -26,8 +26,8 @@
 		cannot be selected, and this is indicated by showing the
 		label ``greyed,'' or dimmed, in appearance.
 		
-		Many of the \IXarg{menu} labels have additional text
-		near the right-side edge, such as ``Ctrl+S.''  These
+		Many of the \IXarg{menu} labels have additional text,
+		usually near the right-side edge, such as ``Ctrl+S.''  These
 		indicate combinations of keys that will invoke the
 		action associated with the \IXarg{menu} item without
 		selecting the \IXarg{menu} with the mouse. These
@@ -35,13 +35,14 @@
 		
 		In the following subsections on the menus, the \IXarg{menu}
 		items are presented in tables with short descriptions of
-		the associated actions. Only the items that differ from
+		the associated actions. Items that differ from
 		common use or are unique to \IXpkg{} are described in
-		more detail. Also, the accelerator keys that are shown
+		more detail following the table.
+		Also, note that the accelerator keys that are shown
 		may differ from those seen in a running instance of
 		\IXpkg{}. The current windowing \IXarg{toolkit} or environment
-		might have preferred accelerators for some common \IXarg{menu}
-		items, in which case \IXpkg{} might use the preference.
+		might provide accelerators for some common \IXarg{menu}
+		items, and \IXpkg{} might use them.
 
 			\subsubsection{The File Menu}%xxxWX%5||||
 			This \IXarg{menu} provides items that generally
@@ -76,7 +77,7 @@
 			  \item[New] The action is to create a new tab in the
 			  tabbed interface, without contents, suitable for
 			  creating a new work. Alternatively, a file can be opened
-			  in the empty tab with ``Open Here.''
+			  in the new empty tab with ``Open Here.''
 			  \item[Open Here] Open a file and load the data into
 			  the current tab. If the tab contains data with
 			  unsaved changes the user will be asked whether to
@@ -189,10 +190,10 @@
 			\hline
 			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
 			\hline \hline
-			Set Scale & --- & show a dialog to set arbitrary scale of drawing\\ \hline
-			Cycle Scale & --- & cycle scale of drawing through normal, large, and small\\ \hline
+			Set Scale & --- & show a dialog to set arbitrary scale of display\\ \hline
+			Cycle Scale & --- & cycle scale of display through normal, large, and small\\ \hline
 			Toggle Quick Drawing & --- & switch between anti-aliased, and not, outlines\\ \hline
-			Save Visible to File & --- & save the visible part of drawing area to image file\\ \hline
+			Save Visible to File & --- & save the visible part of drawing area to an image file\\ \hline
 			\end{tabular}
 			}%\textsf
 			\caption{The Items of the Tools Menu}
@@ -234,8 +235,8 @@
 			  which is a large chunk of data, transferred to the display.
 			  With ``quick drawing'' the \IXarg{API} line drawing
 			  is accomplished with small data transfers, and will
-			  be quicker, and probably usable, but less accurate
-			  in appearance.
+			  be quicker, and probably usable (but less accurate
+			  in appearance).
 			  \item[Save Visible to File] The part of the drawing area
 			  that is visible within the \emph{scrolled} window can
 			  be saved to a raster image file. This is (the remains
@@ -255,11 +256,14 @@
 			if it is \emph{localhost}, the default will be switched
 			to ``quick'' (not anti-aliased) drawing, on the obvious
 			assumption that the display is remote (or remote-like).
+			Of course, the user may still select
+			``Toggle Quick Drawing'' and decide whether performance
+			with ant-aliasing is acceptable.
 			
 			\subsubsection{The Help Menu}%xxxWX%5||||
 			This \IXarg{menu} appears in most windowing system
 			applications, and provides items that might
-			be helpful in some manner.
+			be helpful in some way.
 
 			\begin{table}[htbp]
 			\centering
@@ -312,7 +316,8 @@
 			and might prompt the user with several dialog windows
 			too (and might even play a little music). It is a nice
 			tool for developing \IXpov{} images, but it is a little
-			awkward when used for a simple preview. Nevertheless,
+			awkward when used for a simple preview by another
+			program. Nevertheless,
 			the preview remains useful. The Microsoft Windows version
 			of \IXpov{} is quit with a menu or button; not a click.
 			The same caveat about quiting \IXpkg{} with
@@ -360,9 +365,22 @@
 			  ``Help'' \IXarg{menu}.
 			\end{description}
 			
-			Depending on the current platform, it might be possible
-			to grab the \IXarg{tool} bar and drag it off the
-			main window, and, of course, back onto the window.
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUsingA}
+		\caption{\dtythispkgnameu{}'s tool bar.}
+		\label{fig:tool_bar_1}
+		\end{figure}
+
+		Figure~\ref{fig:tool_bar_1} shows the \IXarg{tool}
+		bar with its buttons. The icons shown are from a
+		\IXnewterm{desktop} \emph{theme}, and may be
+		different for each theme, in the \IXarg{GTK2} version
+		of \IXpkg{}. In other versions a set of icons included
+		with \IXarg{\emph{wxWidgets}} is used.
+		Depending on the current platform, it might be possible
+		to grab the \IXarg{tool} bar and drag it off the
+		main window, and, of course, back onto the window.
 
 
 		\subsection{The Tab Selection Area}%WX%4||||
@@ -416,19 +434,18 @@
 
 		\subsection{The Status Bar}%WX%4||||
 		The \IXnewterm{status} bar is at the bottom of
-		the main window. It accepts no input, it exists
-		to provide information only.
+		the main window. It accepts no input; it exists
+		only to provide information.
 		
 		The \IXarg{status}
 		bar has three sections, or ``panes.'' The left, and
 		longest, pane shows details about a selected object,
 		such as its name and type, and if it is a prism, the
 		type and extent of its \IXnewterm{sweep}. The left
-		pane also shows, temporarily, help messages associated
+		pane also shows temporary help messages associated
 		with \IXarg{tool} bar or \IXarg{menu} items. Such help
 		messages are shown when the mouse is over the item, and
 		any original text is restored when the mouse leaves.
-
 		The pane in the middle shows the coordinates of the
 		mouse pointer (the pointer's active spot). The right
 		pane shows the scale at which the drawing area is displayed.

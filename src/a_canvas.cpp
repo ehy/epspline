@@ -2193,7 +2193,7 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 	// dots at control points -- which was wanted for debugging
 	// -- generally the the decorations should be included,
 	// so disable use of im_main (unless passed in p)
-	if ( false && p == 0 && query_AA() ) {
+	if ( true && p == 0 && query_AA() ) {
 		p = im_main;
 	}
 
@@ -2919,20 +2919,13 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	wxColour grc  // grid color
 	)
 {
-	// note rows are not padded, so for images w/o
-	// alpha the row size in bytes is width * 3, and
-	// presumably with alpha there is one additional byte
-	// per pixel, but the docs are not thoroughly explicit
-	// about the layout.
-	// UPDATE: Ooops! wxImage does not include alpha in 
+	// wxImage does not include alpha in 
 	// 4-component pixels as I had assumed, but in separate
-	// memory -- this actually simplifies things since alpha
-	// is not used here (but would be a complication if it
-	// was used).
+	// memory
 	//bool alph = im.HasAlpha();
 	int imw = im.GetWidth();
 	int imh = im.GetHeight();
-	// no, never 4, see above at Ooops!
+	// no, never 4, see above
 	//int pixlen = alph ? 4 : 3;
 	int pixlen = 3;
 	int rowlen = imw * pixlen;
@@ -2947,22 +2940,10 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	
 	// device x, y
 	int X, Y, W, H;
-	CalcScrolledPosition(r.x, r.y, &X, &Y);
+	X = r.x;
+	Y = r.y;
 	W = r.width;
 	H = r.height;
-	
-	// setup extents
-	int rY = r.y;
-	int rYmax = rY + r.height;
-	if ( rY > rYmax ) {
-		swap_vals(rY, rYmax);
-	}
-
-	int rX = r.x;
-	int rXmax = rX + r.width;
-	if ( rX > rXmax ) {
-		swap_vals(rX, rXmax);
-	}
 
 	// image is drawn with padding to work around a bug that leaves
 	// garbage in the 1st row or column -- I think the bug is in wx
@@ -2970,13 +2951,6 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	W += bgpad2;
 	Y -= bgpad;
 	H += bgpad2;
-
-#	if 1
-	rX    -= bgpad;
-	rXmax += bgpad2;
-	rY    -= bgpad;
-	rYmax += bgpad2;
-#	endif
 
 	// write bg color
 	cR = bg.Red();
@@ -2988,26 +2962,12 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	unsigned char* rp = pd;
 	for ( int j = 0; j < imh; j++ ) {
 		unsigned char* p = rp;
-		// keep the alpha test out of the per-pixel loop
-		// one test per row should be OK
-#if 0
-		if ( alph ) {
-			for ( int i = 0; i < imw; i++ ) {
-				p[iR] = cR; p[iG] = cG; p[iB] = cB;//wrong p[iA] = cA;
-				p += pixlen;
-			}
-		} else {
-			for ( int i = 0; i < imw; i++ ) {
-				p[iR] = cR; p[iG] = cG; p[iB] = cB;
-				p += pixlen;
-			}
-		}
-#else
+
 		for ( int i = 0; i < imw; i++ ) {
 			p[iR] = cR; p[iG] = cG; p[iB] = cB;
 			p += pixlen;
 		}
-#endif
+
 		rp += rowlen;
 	}
 
@@ -3021,45 +2981,33 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 #		endif
 		int xs = wid;
 		int ys = wid;
+		int xsm = X % xs;
+		int ysm = Y % ys;
 
-		for ( int offs = rX - rX % xs; offs < rXmax; offs += xs ) {
-			int roffs = offs - rX;
-			if ( roffs < 0 )
+		for ( int offs = -xsm; offs < imw; offs += xs ) {
+			if ( offs < 0 )
 				continue;
-			if ( roffs >= W )
-				break;
 			//orig. dc code: im.DrawLine(offs, r.y, offs, r.y + H);
-			int i = std::max(0, Y);
-			unsigned char* p = pd + pixlen * roffs;
-			for ( p += (rowlen * i); i < std::min(imh, H); i++ ) {
+			int i = 0;
+			unsigned char* p = pd + pixlen * offs;
+			for ( p += (rowlen * i); i < imh; i++ ) {
 				p[iR] = cR;
 				p[iG] = cG;
 				p[iB] = cB;
-#if 0
-				if ( alph )
-					p[iA] = cA;
-#endif
 				p += rowlen;
 			}
 		}
 	
-		for ( int offs = rY - rY % ys; offs < rYmax; offs += ys ) {
-			int roffs = offs - rY;
-			if ( roffs < 0 )
+		for ( int offs = -ysm; offs < imh; offs += ys ) {
+			if ( offs < 0 )
 				continue;
-			if ( roffs >= H )
-				break;
 			//orig. dc code: im.DrawLine(r.x, offs, r.x + W, offs);
-			int i = std::max(0, X);
-			unsigned char* p = pd + rowlen * roffs;
-			for ( p += (pixlen * i); i < std::min(imw, W); i++) {
+			int i = 0;
+			unsigned char* p = pd + rowlen * offs;
+			for ( p += (pixlen * i); i < imw; i++) {
 				p[iR] = cR;
 				p[iG] = cG;
 				p[iB] = cB;
-#if 0
-				if ( alph )
-					p[iA] = cA;
-#endif
 				p += pixlen;
 			}
 		}
@@ -3072,50 +3020,36 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 #	if wxCHECK_VERSION(2, 8, 0)
 	cA = rlc.Alpha();
 #	endif
-	guidestore::iterator i, e;
+	guidestore::iterator b, e;
 	int offs;
 
-	i = hguides.begin(); e = hguides.end();
-	while ( i != e ) {
-		offs = *i++;
-		if ( offs >= rY && offs < rYmax ) {
-			int roffs = (offs - rY) % imh;
-			if ( roffs < 0 )
-				continue;
+	b = hguides.begin(); e = hguides.end();
+	while ( b != e ) {
+		offs = *b++ - Y;
+		if ( offs >= 0 && offs < imh ) {
 			//orig. dc code: im.DrawLine(r.x, offs, r.x + W, offs);
-			int i = std::max(0, X);
-			unsigned char* p = pd + rowlen * roffs;
-			for ( p += (pixlen * i); i < std::min(imw, W); i++) {
+			int i = 0;
+			unsigned char* p = pd + rowlen * offs;
+			for ( p += (pixlen * i); i < imw; i++) {
 				p[iR] = cR;
 				p[iG] = cG;
 				p[iB] = cB;
-#if 0
-				if ( alph )
-					p[iA] = cA;
-#endif
 				p += pixlen;
 			}
 		}
 	}
 
-	i = vguides.begin(); e = vguides.end();
-	while ( i != e ) {
-		offs = *i++;
-		if ( offs >= rX && offs < rXmax ) {
-			int roffs = (offs - rX) % imw;
-			if ( roffs < 0 )
-				continue;
+	b = vguides.begin(); e = vguides.end();
+	while ( b != e ) {
+		offs = *b++ - X;
+		if ( offs >= 0 && offs < imw ) {
 			//orig. dc code: im.DrawLine(offs, r.y, offs, r.y + H);
-			int i = std::max(0, Y);
-			unsigned char* p = pd + pixlen * roffs;
-			for ( p += (rowlen * i); i < std::min(imh, H); i++ ) {
+			int i = 0;
+			unsigned char* p = pd + pixlen * offs;
+			for ( p += (rowlen * i); i < imh; i++ ) {
 				p[iR] = cR;
 				p[iG] = cG;
 				p[iB] = cB;
-#if 0
-				if ( alph )
-					p[iA] = cA;
-#endif
 				p += rowlen;
 			}
 		}

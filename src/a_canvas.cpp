@@ -964,8 +964,10 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 	if ( CheckGuide(dc, event) ) {
 		return;
 	}
+	
+	bool snap = event.ShiftDown();
 
-	if ( !movingsel && !event.ShiftDown() )
+	if ( !movingsel && snap )
 		GuideSnap(pos);
 
 	if ( event.LeftIsDown() && event.Dragging() ) {
@@ -1046,7 +1048,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 			wxRect r(*D->sel->BBox());
 			wxRect r2(r);
 
-			if ( !event.ShiftDown() && GuideSnap(r2) ) {
+			if ( snap && GuideSnap(r2) ) {
 				if ( r2.x != r.x ) {
 					dx = r2.x - r.x;
 					pos.x = pt_mousedown.x + dx;
@@ -2193,7 +2195,7 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 	// dots at control points -- which was wanted for debugging
 	// -- generally the the decorations should be included,
 	// so disable use of im_main (unless passed in p)
-	if ( true && p == 0 && query_AA() ) {
+	if ( false && p == 0 && query_AA() ) {
 		p = im_main;
 	}
 

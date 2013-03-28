@@ -46,25 +46,33 @@
 #define IDS_UsingEpspline		"Using Epspline"
 #define IDF_UsingEpspline		"epsplinech2.html"
 
-#define IDI_Usage		303000
-#define IDS_Usage		"Usage"
-#define IDF_Usage		"epsplinese3.html"
+#define IDI_TheInterfaceWindow		80
+#define IDS_TheInterfaceWindow		"The Interface Window"
+#define IDF_TheInterfaceWindow		"epsplinese3.html"
+
+#define IDI_CreatingandEditing		176
+#define IDS_CreatingandEditing		"Creating and Editing"
+#define IDF_CreatingandEditing		"epsplinese4.html"
+
+#define IDI_Tips		192
+#define IDS_Tips		"Tips"
+#define IDF_Tips		"epsplinese5.html"
 
 #define IDI_Licenses		202000
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		80
+#define IDI_GPL3_Section		256
 #define IDS_GPL3_Section		"GNU General Public License"
-#define IDF_GPL3_Section		"epsplinese4.html"
+#define IDF_GPL3_Section		"epsplinese6.html"
 
-#define IDI_GPL2_Section		144
+#define IDI_GPL2_Section		320
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
-#define IDF_GPL2_Section		"epsplinese5.html"
+#define IDF_GPL2_Section		"epsplinese7.html"
 
-#define IDI_FDL_Section		208
+#define IDI_FDL_Section		384
 #define IDS_FDL_Section		"GNU Free Documentation License"
-#define IDF_FDL_Section		"epsplinese6.html"
+#define IDF_FDL_Section		"epsplinese8.html"
 
 #define IDI_Index		2000000000
 #define IDS_Index		"Index"

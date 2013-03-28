@@ -246,23 +246,6 @@
 			  size.
 			\end{description}
 			
-			Note on scaling: the scaling described above works
-			nicely with the Microsoft Windows build (excepting the
-			lossage at small scales, which is common to all),
-			even when running under \IXnewterm{Wine} on
-			\IXarg{\emph{GNU/Linux}}.
-			Unfortunately, with the \emph{GTK2} builds of
-			\IXarg{\emph{wxWidgets}} in versions 2.6 and 2.8,
-			the display at scales other than 100\% is very slow,
-			but \emph{only} with anti-aliased drawing. This is
-			an inefficiency in the scaling of raster image data.
-			Users of the \emph{GTK2} build might still find scaling
-			useful if combined with ``quick drawing'' (see the
-			``Toggle Quick Drawing'' item above). With the
-			2.9 development version of \IXarg{\emph{wxWidgets}},
-			the scaling of anti-aliased drawing (i.e., raster
-			data) seems as fast as the Microsoft Windows build.
-			
 			Note on ``Toggle Quick Drawing'': above, it was said
 			that anti-aliased drawing is the default. There is an
 			exception under the \IXarg{\emph{X Window System}},
@@ -333,17 +316,125 @@
 			the preview remains useful. The Microsoft Windows version
 			of \IXpov{} is quit with a menu or button; not a click.
 			The same caveat about quiting \IXpkg{} with
-			a child \IXpov{} instance running applies,
-			and might be stressed
-			more strongly, since under Microsoft Windows temporary
-			directories (usually per-user) don't seem to be cleaned
-			on reboot, and accumulations might build.
+			a child \IXpov{} instance running applies.
+
 
 		\subsection{The Tool Bar}%WX%4||||
-		The \IXnewterm{tool} bar is similar to the \IXarg{menu}
-		bar.
-		\subsection{The Editing Area}%WX%4||||
+		The \IXnewterm{tool} bar just below the \IXarg{menu}
+		bar. It is a row of buttons with icons that can be
+		clicked to invoke actions. Each action available on
+		the \IXarg{tool} bar is equivalent to a \IXarg{menu} item
+		action. Naturally, the \IXarg{tool} bar will be more
+		convenient while working than the equivalent \IXarg{menu}
+		items. From left to right, the \IXarg{tool} bar
+		items are:
+
+			\begin{description}
+			  \item[Quit] Same as ``Quit'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Open New Tab] Same as ``New'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Open] Same as ``Open'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Save] Same as ``Save'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Paste] Same as ``Paste'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Copy] Same as ``Copy'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Cut] Same as ``Cut'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Move Down] Same as ``Down'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Move Up] Same as ``Up'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Undo] Same as ``Undo'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Redo] Same as ``Redo'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Cycle Scale] Same as ``Cycle Scale'' in the
+			  ``Tools'' \IXarg{menu}.
+			  \item[Preview] Same as ``Preview'' in the
+			  ``Help'' \IXarg{menu}.
+			  \item[Show Application Help] Same as ``Help'' in the
+			  ``Help'' \IXarg{menu}.
+			\end{description}
+			
+			Depending on the current platform, it might be possible
+			to grab the \IXarg{tool} bar and drag it off the
+			main window, and, of course, back onto the window.
+
+
+		\subsection{The Tab Selection Area}%WX%4||||
+		The \IXnewterm{tab} area is between the \IXarg{tool}
+		bar and the \IXarg{drawing area}. There may be one or
+		several \IXarg{tabs} present. \IXpkgu{} uses tabs to
+		allow holding several sets of data, or files, open at
+		once. Each \IXarg{tab} functions like a button: when
+		the tab is clicked the associated data is brought to the
+		front (i.e., shown). Each tab has a label with the name
+		of its file, or symbolic text meant to suggest that the
+		data has not been saved to a file yet (or the tab is empty).
+		
+		As of \IXarg{\emph{wxWidgets}} version 2.8 two forms
+		of tabs are available: a simple type available in previous
+		versions, and a new type with more features. The simple
+		type does not provide a close button on the \IXarg{tabs},
+		and the order cannot be rearranged. The new type does
+		provide for close buttons, and a \IXarg{tab} can be
+		dragged with the mouse to a new position among the others.
+		The new type also provides for a button at the right
+		side of the \IXarg{tab} area, which produces a \IXarg{menu}
+		of the available tabs for direct selection; this is
+		convenient when there are many \IXarg{tabs} and some
+		cannot be seen due to lack of space.
+		
+		\IXpkgu{} uses the new type of \IXarg{tabs} by default
+		(except when built with \IXarg{\emph{wxWidgets}} 2.6).
+		There is little reason to use the simple type, and to
+		do so requires setting a condition when the program is
+		built from source (which is left as an exercise for those
+		so inclined).
+		
+
+		\subsection{The Drawing Area and Canvas}%WX%4||||
+		This is where the work is done. At the top and
+		to the left are graduated scales, and as the mouse
+		is moved in the \IXnewterm{drawing} area a thin line
+		is drawn on the scales to help locate the mouse active
+		point with precision. To the right and at the bottom
+		are scroll bars to move the visible part of the
+		\IXarg{drawing} area.
+		
+		The `real' drawing area will be called the
+		\IXnewterm{canvas}.
+		The \IXarg{canvas} has a white background with a grid
+		of thin blue lines. This is meant to suggest physical
+		\IXnewterm{graphing paper}. (In the future there
+		may be an option to disable the grid; there is none now).
+
+
 		\subsection{The Status Bar}%WX%4||||
+		The \IXnewterm{status} bar is at the bottom of
+		the main window. It accepts no input, it exists
+		to provide information only.
+		
+		The \IXarg{status}
+		bar has three sections, or ``panes.'' The left, and
+		longest, pane shows details about a selected object,
+		such as its name and type, and if it is a prism, the
+		type and extent of its \IXnewterm{sweep}. The left
+		pane also shows, temporarily, help messages associated
+		with \IXarg{tool} bar or \IXarg{menu} items. Such help
+		messages are shown when the mouse is over the item, and
+		any original text is restored when the mouse leaves.
+
+		The pane in the middle shows the coordinates of the
+		mouse pointer (the pointer's active spot). The right
+		pane shows the scale at which the drawing area is displayed.
+		Also, if there are unsaved changes to the data, the
+		right pane will show an asterisk.
+
 
 	\section{Creating and Editing}%WX%3||||
 

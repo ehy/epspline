@@ -887,6 +887,7 @@ A_Frame::OnOption(wxCommandEvent& event)
 		case EdUndo:
 			canvas->Undo();
 			StatusBarAntiClobberHack();
+			break;
 		case EdCopy:
 			canvas->clipCopy();
 			break;

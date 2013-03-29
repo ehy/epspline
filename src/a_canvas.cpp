@@ -2218,7 +2218,7 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		wxClientDC cdc(const_cast<A_Canvas*>(this));
 		mdc.Blit(0, 0, x, y, &cdc, 0, 0, wxCOPY, false);
 
-#		if 1
+#		if 1 // possibly temporary; it's mostly for working on docs
 		wxPen pn(*wxBLACK, 6);
 		mdc.SetPen(pn);
 		mdc.DrawLine(0, 0, x, 0);

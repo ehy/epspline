@@ -2217,7 +2217,16 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		// way to be concerned with)
 		wxClientDC cdc(const_cast<A_Canvas*>(this));
 		mdc.Blit(0, 0, x, y, &cdc, 0, 0, wxCOPY, false);
-		
+
+#		if 1
+		wxPen pn(*wxBLACK, 6);
+		mdc.SetPen(pn);
+		mdc.DrawLine(0, 0, x, 0);
+		mdc.DrawLine(x, 0, x, y);
+		mdc.DrawLine(x, y, 0, y);
+		mdc.DrawLine(0, y, 0, 0);
+#		endif
+
 #		if wxCHECK_VERSION(2, 8, 0)
 		mdc.SelectObjectAsSource(wxNullBitmap);
 #		else  // wxCHECK_VERSION(2, 8, 0)
@@ -2237,6 +2246,9 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 	wxString f = wxFileSelector(_("Save As File . . .")
 		, D->sSdir, seed, wxT("")
 		, seed
+#		if 1
+		+ p->GetImageExtWildcard()
+#		else
 		+ _("PNG files (*.png)|*.png")
 		+ _("|PNM (PPM) files (*.pnm)|*.pnm")
 		+ _("|BMP files (*.bmp)|*.bmp")
@@ -2244,6 +2256,7 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		+ _("|TIFF files (*.tif)|*.tif")
 		+ _("|XPM files (*.xpm)|*.xpm")
 		+ _("|PCX files (*.pcx)|*.pcx")
+#		endif
 		, wxSAVE | wxOVERWRITE_PROMPT,
 		const_cast<A_Frame*>(a_frame));
 

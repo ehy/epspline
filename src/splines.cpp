@@ -406,6 +406,14 @@ SplineBase::PtInRect(const wxPoint& p) const
 	return InRect(*BBox(), p);
 }
 
+bool
+SplineBase::PtInRect(const wxPoint& p, unsigned pad) const
+{
+	wxRect t(*BBox());
+	t.Inflate(pad);
+	return InRect(t, p);
+}
+
 int
 SplineBase::PointIndex(const SplinePoint& pt, int dtol) const
 {

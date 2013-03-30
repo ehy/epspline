@@ -1202,7 +1202,8 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 		if ( creating && D->cur ) { // editing curve, new point
 			D->cur->push_back(pt_mousedown);
 		} else if ( D->sel ) { // (de)select
-			if ( D->sel->PtInRect(pt_mousedown) ) { // (de)select point
+			if ( D->sel->PtInRect(pt_mousedown, refresh_pad) ) {
+				// (de)select point
 				SplineBase::iterator i =
 					D->sel->PointIndexIt(pt_mousedown);
 				if ( i != D->sel->end() )

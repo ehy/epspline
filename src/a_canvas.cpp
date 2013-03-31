@@ -334,8 +334,12 @@ A_Canvas::IdleUpdate()
 	enableCloseCurves(D->sSname != wxT("") || D->lst.size() > 0);
 
 	bool dirty = IsDirty();
+#	if 1
+	enable_save(dirty);
+#	else
 	if ( D->sSname != wxT("") || !dirty )
 		enable_save(dirty);
+#	endif
 	// Enable Export() if there's a name and >0 objects.
 	// A dirty flag would need to be distinct from the
 	// data file's dirty flag, and it's not worth it.
@@ -1198,7 +1202,8 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 		if ( creating && D->cur ) { // editing curve, new point
 			D->cur->push_back(pt_mousedown);
 		} else if ( D->sel ) { // (de)select
-			if ( D->sel->PtInRect(pt_mousedown) ) { // (de)select point
+			if ( D->sel->PtInRect(pt_mousedown, refresh_pad) ) {
+				// (de)select point
 				SplineBase::iterator i =
 					D->sel->PointIndexIt(pt_mousedown);
 				if ( i != D->sel->end() )
@@ -2219,12 +2224,14 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		mdc.Blit(0, 0, x, y, &cdc, 0, 0, wxCOPY, false);
 
 #		if 1 // possibly temporary; it's mostly for working on docs
+		const wxPen& pnsave = mdc.GetPen();
 		wxPen pn(*wxBLACK, 6);
 		mdc.SetPen(pn);
 		mdc.DrawLine(0, 0, x, 0);
 		mdc.DrawLine(x, 0, x, y);
 		mdc.DrawLine(x, y, 0, y);
 		mdc.DrawLine(0, y, 0, 0);
+		mdc.SetPen(pnsave);
 #		endif
 
 #		if wxCHECK_VERSION(2, 8, 0)
@@ -2286,6 +2293,9 @@ A_Canvas::SaveAs()
 	if ( d.ShowModal() == wxID_OK ) {
 		wxString tn = d.GetFilename();
 		if ( tn != wxT("") ) {
+			if ( tn.AfterLast(wxT('.')) != wxT("pse") ) {
+				tn += wxT(".pse");
+			}
 			wxString on(D->sSname), od(D->sSdir);
 			D->sSdir = d.GetDirectory();
 			D->sSname = tn;
@@ -2322,10 +2332,10 @@ A_Canvas::Save()
 	errno = 0;
 	if ( !WriteData(t, D->lst, hguides, vguides) ) {
 		int e = errno;
-		wxString msg;
+		wxString msg(_("Failed saving to \""));
+		
+		msg += t + _("\" : ") + ch2wxs(strerror(e));
 
-		msg.Printf(_("Failed saving to %s : %s"), t.c_str()
-			, strerror(e));
 		ErrorBox(msg);
 		D->sSname = wxT("");
 	} else {

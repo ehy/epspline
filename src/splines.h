@@ -182,6 +182,7 @@ public:
 	}
 
 	virtual bool PtInRect(const wxPoint& p) const;
+	virtual bool PtInRect(const wxPoint& p, unsigned pad) const;
 
 	virtual bool Okay() const;
 	virtual SplineBase* CopySelf() const = 0;

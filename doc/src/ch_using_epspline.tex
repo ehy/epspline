@@ -47,7 +47,7 @@
 		cannot be selected, and this is indicated by showing the
 		label ``greyed,'' or dimmed, in appearance.
 		
-		Many of the \IXarg{menu} labels have additional text,
+		Many of the \IXarg{menu} item labels have additional text,
 		usually near the right-side edge, such as ``Ctrl+S.''  These
 		indicate combinations of keys that will invoke the
 		action associated with the \IXarg{menu} item without
@@ -475,9 +475,141 @@
 
 
 	\section{Creating and Editing}%WX%3||||
+	Working with \IXpkg{} is working with \IXarg{spline} curves.
+	\IXarg{Spline} curves are common to many programs of
+	several types, such as `drawing' programs and typeface
+	editors. Of course, any such program must design a
+	means of using an input device, usually a \IXnewterm{mouse},
+	to place splines on the drawing area. Programs meant
+	for drawing might devise powerful and intuitive mouse
+	interactions that focus on a graphical result.
+	\IXpkgu{} does not. In \IXpkg{}, placing spline
+	objects on the drawing area is meant to follow the
+	\IXpov{} \href{http://www.povray.org/}{documentation}
+	on
+	\href{http://www.povray.org/documentation/view/3.6.1/281/}{lathe}
+	and
+	\href{http://www.povray.org/documentation/view/3.6.1/282/}{prism}
+	objects.
 
+	As mentioned previously, there is an important difference
+	in the ways \IXpov{} will render prisms and lathes.
+	The prism is extended (like ``extrusion'') along the
+	$y$-axis. Therefore, the spline object for the prism
+	is drawn parallel to the $x$-$z$ plane in three-dimensional space.
+	The lathe is rotated \emph{around} the $y$-axis. So, its
+	curve is drawn parallel to the $y$-axis. Put another way,
+	when editing with \IXpkg{}, if the object is a prism
+	then the user's \IXnewterm{view} is parallel to the
+	$y$-axis, and perpendicular to the $x$-$z$ plane. If the
+	object is a lathe, the view is perpendicular to the $y$-axis
+	(a plane is irrelevant since the lathe is rotated).
+	
+	Editing with \IXpkg{}, the user may mix prism and lathe
+	objects in the same file, but should remember that the
+	\emph{view} of each type is different. When generating
+	temporary \IXarg{SDL} for the \IXpov{} preview \IXpkg{}
+	adds a \IXnewterm{rotate} transform to the prism objects
+	so that the preview will be more useful. \IXpkgu{} does
+	not rotate objects in \IXarg{SDL} exported for
+	inclusion in the user's scene, so the user must add
+	rotations as necessary.
+	
+	The coordinate system of the \IXarg{drawing area} in \IXpkg{}
+	is, frankly, simply the most convenient for the programming
+	of \IXpkg{}. The graduated scales beside the drawing area
+	will make it clear that the vertical axis increases
+	in the down direction. This is corrected easily using
+	transforms available in the \IXarg{SDL}, and will be discussed
+	in the subsection ``Necessary Transforms.''
+
+	Hopefully, the following subsections will be clear enough
+	to get started, and to soon begin realizing ideas. Where
+	this document is insufficient, the \IXpov{}
+	\href{http://www.povray.org/}{documentation} should help,
+	since it is helpful to understand how \IXpov{} handles the
+	prism and the lathe.
+	Although the following subsections are not written as a
+	step-by--step tutorial, it should be possible
+	(and it is suggested) to follow along with a running
+	instance of \IXpkg{}.
 
 		\subsection{Starting a New File}%WX%4||||
+		Start \IXpkg{} without file arguments on the
+		commandline, and the main window will open with
+		one tab. The drawing area (the area with the grid
+		of light blue lines) is ready, but note that it
+		doesn't respond to a (primary) mouse click alone. To start
+		a new spline, press and hold the \IXnewterm{shift}
+		key and click a suitable point with the primary
+		mouse button. For practice, a ``suitable'' point
+		might be anywhere. A small red-filled circle should
+		appear at the point of the mouse click, and that is
+		the first control point. Release the shift key to
+		continue placing control points. Another shift+click
+		before completing at least one spline \IXnewterm{segment}
+		will cancel, and the control points placed so far will be
+		removed. (Recall from the ``Introduction'' chapter
+		that the spline objects are really several splines
+		taken together as a ``path''; from here on ``segment''
+		will refer to one spline part of the whole spline object.)
+		Once at least one segment segment is complete, another
+		shift click will stop editing (placing more points).
+		It will be clear that at least one segment is complete
+		when a curve is drawn between some of the control points.
+		
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgFirstTwoPt}
+		\caption{First two control points starting a cubic spline.}
+		\label{fig:first_two_points}
+		\end{figure}
+		
+		Figure~\ref{fig:first_two_points} shows the start of a
+		spline object before a segment is complete, and
+		Figure~\ref{fig:first_curve_between} shows the first
+		curve appear after two more control points have completed
+		a segment. The object in the figures is a \IXnewterm{cubic}
+		spline; the necessary control points differ among the
+		four available spline types.
+		
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgFirstSeg}
+		\caption{Curve appears between control points of a cubic spline.}
+		\label{fig:first_curve_between}
+		\end{figure}
+
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedCubic}
+		\caption{Cubic spline, not closed.}
+		\label{fig:first_cubic_unclosed}
+		\end{figure}
+
+		Figure~\ref{fig:first_cubic_unclosed} shows the spline
+		object nearly complete. At this point, another shift+click
+		has terminated editing. \IXpov{} would reject the object
+		as it is because the curve is not closed.
+
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgClosedCubic}
+		\caption{Cubic spline, closed and complete.}
+		\label{fig:first_cubic_closed}
+		\end{figure}
+		
+		In Figure~\ref{fig:first_cubic_closed} the object has
+		been selected with a click. The selected state state is
+		indicated by the dotted rectangle (on some platforms the
+		rectangle might be dashed). With the whole objected
+		selected, a control point at an open end was selected,
+		indicated by the cyan square, and moved to coincide
+		with the other open end control point. Now that it
+		is properly closed, \IXpov{} will render the object.
+
+
+		\subsection{refresh_pad}%WX%4||||
 
 	\section{Tips}%WX%3||||
 

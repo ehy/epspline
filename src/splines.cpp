@@ -406,6 +406,14 @@ SplineBase::PtInRect(const wxPoint& p) const
 	return InRect(*BBox(), p);
 }
 
+bool
+SplineBase::PtInRect(const wxPoint& p, unsigned pad) const
+{
+	wxRect t(*BBox());
+	t.Inflate(pad);
+	return InRect(t, p);
+}
+
 int
 SplineBase::PointIndex(const SplinePoint& pt, int dtol) const
 {
@@ -2203,8 +2211,16 @@ BezierSpline::MovePoint(SplinePoint& pt, double xoff, double yoff)
 			if ( it[e1] == E0 )
 				break;
 		if ( t < 0 ) {
+#			if 1
+			//fprintf(stderr, "unclosed bezier\n");
+			it[index].x += xoff;
+			it[index].y += yoff;
+			SetDirty();
+			return true;
+#			else
 			//fprintf(stderr, "unclosed bezier\n");
 			return false;
+#			endif
 		}
 	}
 	c1 = (mod & 2 ? e1 + 1 : e1 - 1);

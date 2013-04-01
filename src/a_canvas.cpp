@@ -1945,7 +1945,8 @@ A_Canvas::MoveDown()
 	j = D->lst.end();
 	k = find(i, j, D->sel);
 
-	if ( k == j ) return;
+	if ( k == j ) return; // not found
+	if ( k == --j ) return; // already last
 	PushUndo();
 
 	// Redo, as D now points to new DataState object!
@@ -1953,17 +1954,12 @@ A_Canvas::MoveDown()
 	j = D->lst.end();
 	k = find(i, j, D->sel);
 
-	if ( k == j ) return;
+	if ( k == j ) return; // not found
+	if ( k == --j ) return; // already last
 
-	if ( k == --j ) {
-		D->lst.pop_back();
-		D->lst.push_front(D->sel);
-	} else {
-		j = k;
-		++j;
-		*k = *j;
-		*j = D->sel;
-	}
+	j = k; ++j;
+	iter_swap(k, j);
+	D->sel = *j;
 
 	Refresh();
 }
@@ -1978,7 +1974,9 @@ A_Canvas::MoveUp()
 	j = D->lst.end();
 	k = find(i, j, D->sel);
 
-	if ( k == j ) return;
+	if ( k == j ) return; // not found
+	i = D->lst.begin();
+	if ( k == i ) return; // already first
 	PushUndo();
 
 	// Redo, as D now points to new DataState object!
@@ -1986,17 +1984,13 @@ A_Canvas::MoveUp()
 	j = D->lst.end();
 	k = find(i, j, D->sel);
 
-	if ( k == j ) return;
+	if ( k == j ) return; // not found
+	i = D->lst.begin();
+	if ( k == i ) return; // already first
 
-	if ( k == i ) {
-		D->lst.pop_front();
-		D->lst.push_back(D->sel);
-	} else {
-		j = k;
-		--j;
-		*k = *j;
-		*j = D->sel;
-	}
+	j = k; --j;
+	iter_swap(j, k);
+	D->sel = *j;
 
 	Refresh();
 }

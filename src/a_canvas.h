@@ -141,6 +141,11 @@ protected:
 		SweepTypes    sweept;
 		bool          dirty;
 
+		// horz., vert. guides.
+		typedef std::vector<int>  guidestore;
+		guidestore   hguides, vguides; // containers
+		int*          hgcur, * vgcur;   // current one
+
 		bool IsDirty()         const { return dirty; }
 		void SetDirty(bool b = true) { dirty = b; }
 		void SetClean()              { SetDirty(false); }
@@ -372,11 +377,16 @@ protected:
 	// for drawing background into image, for anti-aliases lines
 	// see DrawGridOnRast, OnPaint
 	wxImage*		im_main;
+	// data re. horz. & vert. guides:
 	wxColour     guidecolor;
 	wxPen        guidepen;
+	// container typedef and members moved in to DataState
+	// where they belong.
+#	if 0
 	typedef std::vector<int>  guidestore;
 	guidestore   hguides, vguides; // containers
 	int*         hgcur, * vgcur;   // current one
+#	endif
 	int          guidetol;         // tolerance for guide snapping
 	bool         guidesnap;        // do or do not snap
 	// Scale for dc
@@ -388,6 +398,7 @@ protected:
 	bool         GuideSnap(wxPoint& p, bool& bx, bool& by);
 	bool         GuideSnap(wxRect& r);
 
+	// helpers for tool/menu bars
 	void enableExportCurves(bool b);
 	void enableExportAsCurves(bool b);
 	void enableSaveCurves(bool b);

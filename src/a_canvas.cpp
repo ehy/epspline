@@ -160,6 +160,7 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	, a_frame(parent), a_tabpg(realparent), aa_draw(aa)
 	, hrule(0), vrule(0)
 	, pt_mousedown(INT_MIN, INT_MIN)
+	, D(new DataState)
 	, creating(false), movingsel(false)
 	, movingpoint(false), movingtrans(false), movingtransctr(false)
 	, transforming(false), scaling(false)
@@ -171,10 +172,9 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	, scaleconstrain(0), shearconstrain(0), rotateconstrain(0.0)
 	, im_main(0) // allocated just before use
 	, guidecolor(0xFF, 0, 0x40), guidepen(guidecolor, 1, wxSOLID)
-	, hgcur(0), vgcur(0), guidetol(5), guidesnap(true)
+	, guidetol(5), guidesnap(true)
 	, xscale(100), yscale(100)
 {
-	D = new DataState;
 	arrowcursor = new wxCursor(wxCURSOR_ARROW);
 	scalecursor = new wxCursor(wxCURSOR_SIZING);
 	shearcursor = new wxCursor(wxCURSOR_SIZENWSE);
@@ -623,16 +623,26 @@ A_Canvas::RefreshObjBox(data_type_ptr o, wxDC* dc)
 bool
 A_Canvas::PickupGuide(wxDC& dc, wxMouseEvent& ev)
 {
+	if ( !D ) {
+		return false;
+	}
+	
+	int*& hgcur = D->hgcur;
+	DataState::guidestore& hguides = D->hguides;
+	int*& vgcur = D->vgcur;
+	DataState::guidestore& vguides = D->vguides;
+
 	int x, y;
 	x = dc.DeviceToLogicalX(ev.m_x);
 	y = dc.DeviceToLogicalY(ev.m_y);
 
-	guidestore::iterator i, e;
+	DataState::guidestore::iterator i, e;
 
 	i = hguides.begin(), e = hguides.end();
 	i = std::find(i, e, y);
 	if ( i != e ) {
 		hgcur = &*i;
+		PushUndo();
 		return true;
 	}
 
@@ -640,6 +650,7 @@ A_Canvas::PickupGuide(wxDC& dc, wxMouseEvent& ev)
 	i = std::find(i, e, x);
 	if ( i != e ) {
 		vgcur = &*i;
+		PushUndo();
 		return true;
 	}
 
@@ -761,7 +772,16 @@ A_Canvas::GuideSnap(wxRect& r)
 bool
 A_Canvas::GuideSnap(wxPoint& p, bool& bx, bool& by)
 {
-	if ( !guidesnap ) return false;
+	if ( !guidesnap ) {
+		return false;
+	}
+
+	if ( !D ) {
+		return false;
+	}
+	
+	DataState::guidestore& hguides = D->hguides;
+	DataState::guidestore& vguides = D->vguides;
 
 	int x = p.x, y = p.y;
 	bool r = false;
@@ -769,7 +789,7 @@ A_Canvas::GuideSnap(wxPoint& p, bool& bx, bool& by)
 
 	bx = by = false;
 
-	guidestore::iterator i, e;
+	DataState::guidestore::iterator i, e;
 	i = hguides.begin(); e = hguides.end();
 	while ( i != e ) {
 		int n = *i++;
@@ -815,6 +835,13 @@ A_Canvas::GuideSnap(wxPoint& p)
 bool
 A_Canvas::CheckGuide(wxDC& dc, wxMouseEvent& e)
 {
+	if ( !D ) {
+		return false;
+	}
+	
+	int*& hgcur = D->hgcur;
+	int*& vgcur = D->vgcur;
+
 	if ( !hgcur && !vgcur )
 		return false;
 
@@ -856,7 +883,9 @@ A_Canvas::OnMouseEnter(wxMouseEvent& event)
 {
 	event.Skip();
 
-	if ( !event.m_shiftDown ) return;
+	if ( !event.m_shiftDown ) {
+		return;
+	}
 
 	#if USE_wxBufferedDC
 	wxClientDC clidc(this);
@@ -869,6 +898,14 @@ A_Canvas::OnMouseEnter(wxMouseEvent& event)
 	#endif
 
 	if ( in_rulehdlr && hrule && hrule->GetMLDown() ) {
+		PushUndo();
+		if ( !D ) {
+			return;
+		}
+		
+		int*& hgcur = D->hgcur;
+		DataState::guidestore& hguides = D->hguides;
+	
 		hrule->ClearMLDown();
 
 		int n = dc.DeviceToLogicalY(event.m_y);
@@ -885,6 +922,14 @@ A_Canvas::OnMouseEnter(wxMouseEvent& event)
 		Refresh(true, &r);
 	}
 	if ( in_rulehdlr && vrule && vrule->GetMLDown() ) {
+		PushUndo();
+		if ( !D ) {
+			return;
+		}
+		
+		int*& vgcur = D->vgcur;
+		DataState::guidestore& vguides = D->vguides;
+	
 		vrule->ClearMLDown();
 
 		int n = dc.DeviceToLogicalX(event.m_x);
@@ -906,6 +951,15 @@ void
 A_Canvas::OnMouseLeave(wxMouseEvent& event)
 {
 	event.Skip();
+
+	if ( !D ) {
+		return;
+	}
+	
+	int*& hgcur = D->hgcur;
+	DataState::guidestore& hguides = D->hguides;
+	int*& vgcur = D->vgcur;
+	DataState::guidestore& vguides = D->vguides;
 
 	if ( /*in_rulehdlr &&*/ hgcur ) {
 		int w, h;
@@ -1086,6 +1140,13 @@ void
 A_Canvas::OnMouseLUp(wxMouseEvent& event)
 {
 	event.Skip();
+
+	if ( !D ) {
+		return;
+	}
+	
+	int*& hgcur = D->hgcur;
+	int*& vgcur = D->vgcur;
 
 	#if USE_wxBufferedDC
 	wxClientDC clidc(this);
@@ -1837,6 +1898,7 @@ A_Canvas::PushUndo()
 	if ( !D ) return;
 
 	DataState* t = new DataState(*D);
+	D->hgcur = D->vgcur = 0; // don't save guide grab
 	ustack.push(D);
 	D = t;
 	SetDirty();  // PushUndo implies a change.
@@ -2090,8 +2152,11 @@ A_Canvas::CloseOpt(bool force)
 	delete t;
 	ustack.flush();
 	rstack.flush();
+	// guides moved into DataState
+#	if 0
 	clear(hguides);
 	clear(vguides);
+#	endif
 #if wxCHECK_VERSION(2, 8, 0)
 	m_parent->SetLabel(wxGetApp().GetAppTitle());
 #else
@@ -2160,7 +2225,8 @@ A_Canvas::Open(wxString filename)
 #endif
 
 		DataState* tmp = new DataState;
-		guidestore th, tv;
+		DataState::guidestore& th = tmp->hguides;
+		DataState::guidestore& tv = tmp->vguides;
 		if ( ReadData(filename, tmp->lst, th, tv) > 0 ) {
 			DataState* t2 = D;
 			D = tmp;
@@ -2170,9 +2236,11 @@ A_Canvas::Open(wxString filename)
 			wxGetApp().SetLastDlgDir(td);
 			ustack.flush();
 			rstack.flush();
+#			if 0 // moved into DataState
 			clear(hguides); clear(vguides);
 			copy(th.begin(), th.end(), back_inserter(hguides));
 			copy(tv.begin(), tv.end(), back_inserter(vguides));
+#			endif
 			a_frame->SetTitlePrefix(tn);
 			Refresh();
 		} else {
@@ -2328,7 +2396,7 @@ A_Canvas::Save()
 
 	wxString t = GetCurFullpath();
 	errno = 0;
-	if ( !WriteData(t, D->lst, hguides, vguides) ) {
+	if ( !WriteData(t, D->lst, D->hguides, D->vguides) ) {
 		int e = errno;
 		wxString msg(_("Failed saving to \""));
 		
@@ -2718,8 +2786,15 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 		}
 	}
 
+	if ( !D ) {
+		return;
+	}
+	
+	DataState::guidestore& hguides = D->hguides;
+	DataState::guidestore& vguides = D->vguides;
+
 	dc.SetPen(guidepen);
-	guidestore::iterator i, e;
+	DataState::guidestore::iterator i, e;
 	int offs;
 
 	i = hguides.begin(); e = hguides.end();
@@ -3043,7 +3118,13 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 #	if wxCHECK_VERSION(2, 8, 0)
 	cA = rlc.Alpha();
 #	endif
-	guidestore::iterator b, e;
+	if ( !D ) {
+		return;
+	}
+	
+	DataState::guidestore& hguides = D->hguides;
+	DataState::guidestore& vguides = D->vguides;
+	DataState::guidestore::iterator b, e;
 	int offs;
 
 	b = hguides.begin(); e = hguides.end();
@@ -3190,6 +3271,7 @@ A_Canvas::DataState::DataState()
 	, cur(0), sel(0), selpt(0)
 	, objt(prism), splinet(cubic), sweept(slinear)
 	, dirty(false)
+	, hgcur(0), vgcur(0)
 {
 }
 
@@ -3242,6 +3324,33 @@ A_Canvas::DataState::operator = (const A_Canvas::DataState& o)
 				int i = p->PointIndex(*o.selpt, 0);
 				if ( i >= 0 )
 					selpt = &((*t)[i]);
+			}
+		}
+	}
+
+	clear(hguides);
+	hguides.reserve(o.hguides.size());
+	std::copy(o.hguides.begin(), o.hguides.end(),
+		std::back_inserter(hguides));
+	clear(vguides);
+	vguides.reserve(o.vguides.size());
+	std::copy(o.vguides.begin(), o.vguides.end(),
+		std::back_inserter(vguides));
+
+	hgcur = vgcur = 0;
+	if ( o.hgcur ) {
+		for ( unsigned i = 0; i < o.hguides.size(); i++ ) {
+			if ( o.hguides[i] == *o.hgcur ) {
+				hgcur = &hguides[i];
+				break;
+			}
+		}
+	}
+	if ( o.vgcur ) {
+		for ( unsigned i = 0; i < o.vguides.size(); i++ ) {
+			if ( o.vguides[i] == *o.vgcur ) {
+				vgcur = &vguides[i];
+				break;
 			}
 		}
 	}

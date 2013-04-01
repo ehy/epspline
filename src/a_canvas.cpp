@@ -71,7 +71,7 @@ int    A_Canvas::shearconstrainval  = TRANSFORM_SHEAR_CONTRAINT;
 double A_Canvas::rotateconstrainval = TRANSFORM_ROTATE_CONTRAINT;
 // SunStudio CC is broken re. templates: See this URL:
 // http://technopark02.blogspot.com/2005/05/behavior-of-sun-c-compiler-while.html
-#if ! defined(__SUNPRO_CC) || 1
+#if ! defined(__SUNPRO_CC)
 A_Canvas::undo_stack::size_type	A_Canvas::undo_size = 
 	A_Canvas::undo_stack::default_size;
 #else

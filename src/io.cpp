@@ -6,6 +6,7 @@
 // for setting "C" locale in a block
 #include "clocnumeric.h"
 
+#include <cerrno>
 #ifdef __WXMSW__
 #include <float.h>  // for FLT_MIN
 #else
@@ -150,15 +151,18 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	wxExioDatabase db;
 
 	if ( !db.Read(fname) ) {
+		int e = errno;
 		fprintf(stderr, "Failed reading %s\n", wxs2fn(fname));
-		return 0;
+		errno = e;
+		return -1;
 	}
 	db.BeginFind();
 
 	wxExio* pe = db.FindClauseByFunctor(wxT("FileData"));
 	if ( !pe ) {
 		fprintf(stderr, "Failed on %s\n", wxs2ch(fname));
-		return 0;
+		errno = EINVAL;
+		return -1;
 	}
 
 	long fvers = 0L;

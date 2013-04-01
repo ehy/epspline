@@ -28,6 +28,7 @@
     #pragma implementation
 #endif
 
+#include <cerrno>
 #ifdef __WXMSW__ // this condition is old, for Symantec C++ 7.[56]
 #include <float.h>  // for DBL_MAX
 #else
@@ -2227,7 +2228,7 @@ A_Canvas::Open(wxString filename)
 		DataState* tmp = new DataState;
 		DataState::guidestore& th = tmp->hguides;
 		DataState::guidestore& tv = tmp->vguides;
-		if ( ReadData(filename, tmp->lst, th, tv) > 0 ) {
+		if ( ReadData(filename, tmp->lst, th, tv) >= 0 ) {
 			DataState* t2 = D;
 			D = tmp;
 			tmp = t2;
@@ -2246,7 +2247,12 @@ A_Canvas::Open(wxString filename)
 		} else {
 			wxString msg;
 
-			msg.Printf(_("Failed reading %s"), filename.c_str());
+			msg.Printf(_("Failed reading \"%s\""), filename.c_str());
+			if ( errno ) {
+				wxString es = ch2wxs(std::strerror(errno));
+				msg += _(" : ");
+				msg += es;
+			}
 			ErrorBox(msg);
 		}
 
@@ -2388,7 +2394,10 @@ A_Canvas::SaveAs()
 void
 A_Canvas::Save()
 {
-	if ( !D->lst.size() ) return;
+	if ( !D->lst.size() && !D->hguides.size() && !D->vguides.size() ) {
+		return;
+	}
+	
 	if ( D->sSname == wxT("") ) {
 		SaveAs();
 		return;

@@ -5,6 +5,77 @@
 #ifndef ( INCLUDED_lamp_pse_inc )
 #declare INCLUDED_lamp_pse_inc = 1;
 
+#declare LampGlobe_width = 630.000000;
+#declare LampGlobe_height = 1267.516373;
+#declare LampGlobe_left = -315.000000;
+#declare LampGlobe_right = 315.000000;
+#declare LampGlobe_top = 7.530864;
+#declare LampGlobe_bottom = 1275.047237;
+#declare LampGlobe_max_extent = max(LampGlobe_width, LampGlobe_height);
+
+#declare LampGlobe_NORMAL_TRANSFORM = transform {
+  translate <0, -LampGlobe_top - LampGlobe_height / 2, 0>
+  scale (1 / LampGlobe_max_extent)
+  scale <1, -1, 1>
+}
+
+#declare LampGlobe =
+lathe { bezier_spline
+  48
+  , <315.000000, 802.000000>
+  , <315.000000, 1002.000000>
+  , <190.000000, 1052.000000>
+  , <190.000000, 1177.000000>
+  , <190.000000, 1177.000000>
+  , <190.000000, 1195.000000>
+  , <190.000000, 1208.000000>
+  , <190.000000, 1221.000000>
+  , <190.000000, 1221.000000>
+  , <190.000000, 1284.000000>
+  , <201.000000, 1274.000000>
+  , <137.000000, 1275.000000>
+  , <137.000000, 1275.000000>
+  , <137.000000, 1235.000000>
+  , <157.000000, 1284.000000>
+  , <175.000000, 1230.000000>
+  , <175.000000, 1230.000000>
+  , <175.000000, 1215.000000>
+  , <175.000000, 1208.000000>
+  , <175.000000, 1202.000000>
+  , <175.000000, 1202.000000>
+  , <175.000000, 1193.000000>
+  , <175.000000, 1184.071070>
+  , <175.000000, 1177.000000>
+  , <175.000000, 1177.000000>
+  , <175.000000, 1052.000000>
+  , <300.000000, 1002.000000>
+  , <300.000000, 802.000000>
+  , <300.000000, 802.000000>
+  , <300.000000, 602.000000>
+  , <125.000000, 300.000000>
+  , <125.000000, 175.000000>
+  , <125.000000, 175.000000>
+  , <125.000000, 94.000000>
+  , <175.000000, 48.000000>
+  , <175.000000, 30.000000>
+  , <175.000000, 30.000000>
+  , <125.000000, 0.000000>
+  , <243.000000, 0.000000>
+  , <190.000000, 30.000000>
+  , <190.000000, 30.000000>
+  , <190.000000, 49.000000>
+  , <140.000000, 103.000000>
+  , <139.000000, 175.000000>
+  , <139.000000, 175.000000>
+  , <137.264056, 299.987945>
+  , <315.000000, 602.000000>
+  , <315.000000, 802.000000>
+#ifdef ( LampGlobe_USE_NORMAL_TRANSFORM )
+  transform { LampGlobe_NORMAL_TRANSFORM }
+#end
+  texture { LampGlobeTexture }
+}
+
 #declare LampKnobShaft_width = 32.000000;
 #declare LampKnobShaft_height = 235.000000;
 #declare LampKnobShaft_left = -16.000000;
@@ -33,12 +104,12 @@ lathe { linear_spline
   texture { LampKnobTexture }
 }
 
-#declare LampFlame_width = 228.878787;
-#declare LampFlame_height = 289.928771;
-#declare LampFlame_left = -114.501822;
-#declare LampFlame_right = 114.376966;
-#declare LampFlame_top = 955.000000;
-#declare LampFlame_bottom = 1244.928771;
+#declare LampFlame_width = 228.933865;
+#declare LampFlame_height = 289.933997;
+#declare LampFlame_left = -114.546575;
+#declare LampFlame_right = 114.387290;
+#declare LampFlame_top = 954.999040;
+#declare LampFlame_bottom = 1244.933037;
 #declare LampFlame_max_extent = max(LampFlame_width, LampFlame_height);
 
 #declare LampFlame_NORMAL_TRANSFORM = transform {
@@ -102,83 +173,12 @@ lathe { linear_spline
   texture { LampKnobTexture }
 }
 
-#declare LampGlobe_width = 630.000000;
-#declare LampGlobe_height = 1272.798000;
-#declare LampGlobe_left = -315.000000;
-#declare LampGlobe_right = 315.000000;
-#declare LampGlobe_top = 0.250000;
-#declare LampGlobe_bottom = 1273.048000;
-#declare LampGlobe_max_extent = max(LampGlobe_width, LampGlobe_height);
-
-#declare LampGlobe_NORMAL_TRANSFORM = transform {
-  translate <0, -LampGlobe_top - LampGlobe_height / 2, 0>
-  scale (1 / LampGlobe_max_extent)
-  scale <1, -1, 1>
-}
-
-#declare LampGlobe =
-lathe { bezier_spline
-  48
-  , <315.000000, 800.000000>
-  , <315.000000, 1000.000000>
-  , <190.000000, 1050.000000>
-  , <190.000000, 1175.000000>
-  , <190.000000, 1175.000000>
-  , <190.000000, 1193.000000>
-  , <190.000000, 1206.000000>
-  , <190.000000, 1219.000000>
-  , <190.000000, 1219.000000>
-  , <190.000000, 1282.000000>
-  , <201.000000, 1272.000000>
-  , <137.000000, 1273.000000>
-  , <137.000000, 1273.000000>
-  , <137.000000, 1233.000000>
-  , <157.000000, 1282.000000>
-  , <175.000000, 1228.000000>
-  , <175.000000, 1228.000000>
-  , <175.000000, 1213.000000>
-  , <175.000000, 1206.000000>
-  , <175.000000, 1200.000000>
-  , <175.000000, 1200.000000>
-  , <175.000000, 1191.000000>
-  , <175.000000, 1182.071070>
-  , <175.000000, 1175.000000>
-  , <175.000000, 1175.000000>
-  , <175.000000, 1050.000000>
-  , <300.000000, 1000.000000>
-  , <300.000000, 800.000000>
-  , <300.000000, 800.000000>
-  , <300.000000, 600.000000>
-  , <175.000000, 550.000000>
-  , <175.000000, 425.000000>
-  , <175.000000, 425.000000>
-  , <175.000000, 405.973700>
-  , <175.000000, 382.000000>
-  , <175.000000, 7.000000>
-  , <175.000000, 7.000000>
-  , <164.000000, -2.000000>
-  , <200.000000, -2.000000>
-  , <190.000000, 7.000000>
-  , <190.000000, 7.000000>
-  , <190.000000, 383.000000>
-  , <190.000000, 404.000000>
-  , <190.000000, 425.000000>
-  , <190.000000, 425.000000>
-  , <190.000000, 550.000000>
-  , <315.000000, 600.000000>
-  , <315.000000, 800.000000>
-#ifdef ( LampGlobe_USE_NORMAL_TRANSFORM )
-  transform { LampGlobe_NORMAL_TRANSFORM }
-#end
-  texture { LampGlobeTexture }
-}
-
 #declare LampHandle_width = 493.037500;
-#declare LampHandle_height = 611.750000;
+#declare LampHandle_height = 611.480000;
 #declare LampHandle_left = 271.962500;
 #declare LampHandle_right = 765.000000;
 #declare LampHandle_top = 1355.000000;
-#declare LampHandle_bottom = 1966.750000;
+#declare LampHandle_bottom = 1966.480000;
 #declare LampHandle_max_extent = max(LampHandle_width, LampHandle_height);
 
 #declare LampHandle_NORMAL_TRANSFORM = transform {

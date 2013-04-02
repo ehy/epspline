@@ -31,6 +31,7 @@ LDFLAGS = -L/DE\
 
 LIBS =  $(LPATH)\wxmsw$(WX_RELEASE_NODOT)d$(WX_LIB_FLAVOUR)_core.lib  \
 	$(LPATH)\wxbase$(WX_RELEASE_NODOT)d$(WX_LIB_FLAVOUR).lib  \
+	$(LPATH)\wxmsw$(WX_RELEASE_NODOT)d$(WX_LIB_FLAVOUR)_aui.lib \
 	$(LPATH)\wxmsw$(WX_RELEASE_NODOT)d$(WX_LIB_FLAVOUR)_html.lib \
 	$(LPATH)\wxtiffd.lib $(LPATH)\wxjpegd.lib $(LPATH)\wxpngd.lib \
 	$(LPATH)\wxzlibd.lib \

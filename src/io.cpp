@@ -6,12 +6,54 @@
 // for setting "C" locale in a block
 #include "clocnumeric.h"
 
+#include <limits>
 #include <cerrno>
 #ifdef __WXMSW__
 #include <float.h>  // for FLT_MIN
 #else
 #include <cfloat>
 #endif
+
+
+// Must check and sanitize the real numbers, as
+// extreme values can cause big trouble like infinite loops,
+// as dicovered using input from a T1 font conversion, with
+// a bug that made values like 5.20004e+08; while fixes
+// are needed at the point of the infinite loop (I don't even
+// know now if it's in app code or wx code), sanitization
+// should happen here anyway.
+// Use the callback for something more reasonable than the default.
+// (App is not presently multi-threaded; if threads are eventually
+// employed, the io code had better be used by one thread, likely
+// the main thread.)
+//
+// Return of 0 is OK, failure non-zero is assigned to errno,
+// so it should be useful in that role -- probably EINVAL.
+int (*io_sanitise_spline_point)(void*, SplinePoint*) = 0;
+void* io_sanitise_spline_point_data = 0;
+
+inline int sanitise_spline_point(SplinePoint& pt)
+{
+	if ( io_sanitise_spline_point != 0 ) {
+		return io_sanitise_spline_point(
+			io_sanitise_spline_point_data, &pt);
+	}
+
+	// semi-arbitrary default maximum; use callback
+	const double maxV = 3300.0;
+	if ( std::abs(pt.x) > maxV )
+		return EINVAL;
+	if ( std::abs(pt.y) > maxV )
+		return EINVAL;
+	// NOTE: float epsilon, although double is tested; serves as min.
+	// for this application.
+	const double minV = std::numeric_limits<float>::epsilon();
+	if ( std::abs(pt.x) <= minV )
+		pt.x = pt.x < 0.0 ? -0.0 : 0.0;
+	if ( std::abs(pt.y) <= minV )
+		pt.y = pt.y < 0.0 ? -0.0 : 0.0;
+	return 0;
+}
 
 // Data file format version:
 const long format_version = 0x00000002L;
@@ -268,19 +310,35 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 		if ( fvers >= format_version ) {
 			for ( int i = 0; i < ti; i++ ) {
 				SplinePoint pt;
+				double d;
 
 				t = wxT("U");
 				t << i;
 				wxString t2 = wxT("");
 				pe->GetAttributeValue(t, t2);
-				t2.ToDouble(&pt.x);
+				if ( t2 == wxT("") ) {
+					d = 0.0;
+				} else {
+					t2.ToDouble(&d);
+				}
+				pt.x = d;
 
 				t = wxT("V");
 				t << i;
 				t2 = wxT("");
 				pe->GetAttributeValue(t, t2);
-				t2.ToDouble(&pt.y);
+				if ( t2 == wxT("") ) {
+					d = 0.0;
+				} else {
+					t2.ToDouble(&d);
+				}
+				pt.y = d;
 
+				int err = sanitise_spline_point(pt);
+				if ( err ) {
+					errno = err;
+					return -1;
+				}
 				p->push_back(pt);
 			}
 		} else {
@@ -299,6 +357,11 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 				pe->GetAttributeValue(t, t2);
 				pt.y = t2;
 
+				int err = sanitise_spline_point(pt);
+				if ( err ) {
+					errno = err;
+					return -1;
+				}
 				p->push_back(pt);
 			}
 		}

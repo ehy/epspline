@@ -2239,11 +2239,12 @@ A_Canvas::Open(wxString filename)
 			a_frame->SetTitlePrefix(tn);
 			Refresh();
 		} else {
+			int err = errno;
 			wxString msg;
 
 			msg.Printf(_("Failed reading \"%s\""), filename.c_str());
-			if ( errno ) {
-				wxString es = ch2wxs(std::strerror(errno));
+			if ( err ) {
+				wxString es = ch2wxs(std::strerror(err));
 				msg += _(" : ");
 				msg += es;
 			}

@@ -12,6 +12,24 @@ bool WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	, std::vector<int>& hg, std::vector<int>& vg);
 
+// Must check and sanitize the real numbers, as
+// extreme values can cause big trouble like infinite loops,
+// as dicovered using input from a T1 font conversion, with
+// a bug that made values like 5.20004e+08; while fixes
+// are needed at the point of the infinite loop (I don't even
+// know now if it's in app code or wx code), sanitization
+// should happen here anyway.
+// Use the callback for something more reasonable than the default.
+// (App is not presently multi-threaded; if threads are eventually
+// employed, the io code had better be used by one thread, likely
+// the main thread.)
+//
+// Return of 0 is OK, failure non-zero is assigned to errno,
+// so it should be useful in that role -- probably EINVAL.
+extern int (*io_sanitise_spline_point)(void*, SplinePoint*);
+extern void* io_sanitise_spline_point_data;
+
+
 inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }

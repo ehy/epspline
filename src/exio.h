@@ -1,10 +1,27 @@
-/* //////////////////////////////////////////////////////////////////////////
-// Name:        exio.h
-// Purpose:     C helper defines and functions for wxExio class
+/*
+ * *MODIFICATIONS ONLY* Copyright (c) 2013 Ed Hynan
+ *
+ * This file is part of Epspline
+ *
+ * This file has been copied from a distibution of the wxWidgets
+ * library, formerly called wxWindows, because it was no longer
+ * supported by wxWidgets.
+ *
+ * This file is covered by the original wxWindows license, or any
+ * that the original authors or copyright holders would apply. The
+ * original comment appears below.
+ *
+ * For the "wxWindows Licence" see:
+ *	http://www.wxwidgets.org/about/newlicen.htm
+ */
+
+////////////////////////////////////////////////////////////////////////// */
+// Name:        expr.h
+// Purpose:     C helper defines and functions for wxExpr class
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id: exio.h,v 1.10 2001/02/16 18:36:17 vadz Exp $
+// RCS-ID:      $Id: expr.h,v 1.10 2001/02/16 18:36:17 vadz Exp $
 // Copyright:   (c)
 // Licence:   	wxWindows licence
 ////////////////////////////////////////////////////////////////////////// */

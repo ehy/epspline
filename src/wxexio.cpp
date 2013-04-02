@@ -1,3 +1,20 @@
+/*
+ * *MODIFICATIONS ONLY* Copyright (c) 2013 Ed Hynan
+ *
+ * This file is part of Epspline
+ *
+ * This file has been copied from a distibution of the wxWidgets
+ * library, formerly called wxWindows, because it was no longer
+ * supported by wxWidgets.
+ *
+ * This file is covered by the original wxWindows license, or any
+ * that the original authors or copyright holders would apply. The
+ * original comment appears below.
+ *
+ * For the "wxWindows Licence" see:
+ *      http://www.wxwidgets.org/about/newlicen.htm
+ */
+ 
 /**
 ***  This is a slightly modified copy of the wxExpr class from the
 ***  wx(Windows|Widgets) library.  It exists because compilation of

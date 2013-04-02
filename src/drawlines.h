@@ -1,9 +1,8 @@
 /*
- * drawlines.h -- C++ template header providing an adaptation
- *                of the Xiaolin Wu line algorithm
- *                                                                    
- * Copyright (C) 2013 Ed Hynan                                        
- *                                                                    
+ * Copyright (c) 2013 Ed Hynan
+ *
+ * This file is part of Epspline
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,6 +19,10 @@
  * MA 02110-1301, USA.
  */
 
+/*
+ * drawlines.h -- C++ template header providing an adaptation
+ *                of the Xiaolin Wu line algorithm
+ */
 
 #ifndef _ANTI_A_LINE_H_
 #define _ANTI_A_LINE_H_  0x0010

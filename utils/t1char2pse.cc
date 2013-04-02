@@ -133,10 +133,10 @@ scale_pts(ccont& c)
 	}
 
 	// scale
-	realtype sclX = limY / maxX;
+	realtype sclX = limY / maxY;
 	realtype sclY = limY / maxY;
 	for ( unsigned i = 0; i < c.size(); i++ ) {
-		c[i].x *= tmp;
+		c[i].x *= sclX;
 		c[i].y *= sclY;
 	}
 }
@@ -197,7 +197,7 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 		}
 
 		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
-			// end last seg.; POV-Ray does no do so implicitley
+			// end last seg.; POV-Ray does not do so implicitely
 			o.push_back(pc);
 		}
 
@@ -302,14 +302,14 @@ prn_outline(const FT_Outline& outline, ostream& o, bool& result)
 
 	prn_openf();
 
-	unsigned nuv = 0;
+	ccont c;
+	c.reserve(2u * outline.n_points);
 
 	short p0 = 0;
 	for ( short c0 = 0; c0 < outline.n_contours; c0++ ) {
 		short pN = outline.contours[c0];
 
 		o << "/* contour " << c0 << ", " << (pN - p0) << " points */\n";
-		ccont c;
 		bool tbool = get_contour(p0, pN, outline, c);
 		if ( tbool == false ) {
 			cerr << "FAILED on contour: " << c0 << endl;
@@ -324,14 +324,14 @@ prn_outline(const FT_Outline& outline, ostream& o, bool& result)
 			return o;
 		}
 
-		scale_pts(c);
-		for ( unsigned n = 0; n < c.size(); n++ ) {
-			printf("  'U%u' = \"%g\",\n", nuv, double(c[n].x));
-			printf("  'V%u' = \"%g\",\n", nuv, double(c[n].y));
-			nuv++;
-		}
-
 		p0 = pN + 1;
+	}
+
+	scale_pts(c);
+	unsigned nuv = 0;
+	for ( ; nuv < c.size(); nuv++ ) {
+		printf("  'U%u' = \"%g\",\n", nuv, double(c[nuv].x));
+		printf("  'V%u' = \"%g\",\n", nuv, double(c[nuv].y));
 	}
 
 	printf("  'UVcount' = %u).\n", nuv);

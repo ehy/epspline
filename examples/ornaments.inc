@@ -5,10 +5,48 @@
 #ifndef ( INCLUDED_ornaments_inc )
 #declare INCLUDED_ornaments_inc = 1;
 
-#declare OrnA2_Band1_width = 219.831695;
+#declare OrnA2_width = 210.000000;
+#declare OrnA2_height = 225.000000;
+#declare OrnA2_left = -105.000000;
+#declare OrnA2_right = 105.000000;
+#declare OrnA2_top = 600.000000;
+#declare OrnA2_bottom = 825.000000;
+#declare OrnA2_max_extent = max(OrnA2_width, OrnA2_height);
+
+#declare OrnA2_NORMAL_TRANSFORM = transform {
+  translate <0, -OrnA2_top - OrnA2_height / 2, 0>
+  scale (1 / OrnA2_max_extent)
+  scale <1, -1, 1>
+}
+
+#declare OrnA2 =
+lathe { bezier_spline
+  16
+  , <0.000000, 825.000000>
+  , <0.000000, 805.937988>
+  , <0.000000, 628.000000>
+  , <0.000000, 600.000000>
+  , <0.000000, 600.000000>
+  , <9.000000, 600.000000>
+  , <13.000000, 600.000000>
+  , <11.000000, 622.000000>
+  , <11.000000, 622.000000>
+  , <103.000000, 637.000000>
+  , <105.000000, 668.437988>
+  , <105.000000, 720.000000>
+  , <105.000000, 720.000000>
+  , <105.000000, 767.812012>
+  , <105.000000, 810.000000>
+  , <0.000000, 825.000000>
+#ifdef ( OrnA2_USE_NORMAL_TRANSFORM )
+  transform { OrnA2_NORMAL_TRANSFORM }
+#end
+}
+
+#declare OrnA2_Band1_width = 219.680000;
 #declare OrnA2_Band1_height = 39.942993;
-#declare OrnA2_Band1_left = -109.915848;
-#declare OrnA2_Band1_right = 109.915848;
+#declare OrnA2_Band1_left = -109.840000;
+#declare OrnA2_Band1_right = 109.840000;
 #declare OrnA2_Band1_top = 700.057007;
 #declare OrnA2_Band1_bottom = 740.000000;
 #declare OrnA2_Band1_max_extent = max(OrnA2_Band1_width, OrnA2_Band1_height);
@@ -43,10 +81,10 @@ lathe { bezier_spline
 #end
 }
 
-#declare OrnA3_width = 297.105750;
+#declare OrnA3_width = 297.149852;
 #declare OrnA3_height = 300.000000;
-#declare OrnA3_left = -148.552875;
-#declare OrnA3_right = 148.552875;
+#declare OrnA3_left = -148.574926;
+#declare OrnA3_right = 148.574926;
 #declare OrnA3_top = 825.000000;
 #declare OrnA3_bottom = 1125.000000;
 #declare OrnA3_max_extent = max(OrnA3_width, OrnA3_height);
@@ -157,10 +195,10 @@ lathe { bezier_spline
 #end
 }
 
-#declare OrnA5_width = 271.320000;
+#declare OrnA5_width = 271.351839;
 #declare OrnA5_height = 300.000000;
-#declare OrnA5_left = -135.660000;
-#declare OrnA5_right = 135.660000;
+#declare OrnA5_left = -135.675919;
+#declare OrnA5_right = 135.675919;
 #declare OrnA5_top = 1425.000000;
 #declare OrnA5_bottom = 1725.000000;
 #declare OrnA5_max_extent = max(OrnA5_width, OrnA5_height);
@@ -271,44 +309,6 @@ lathe { bezier_spline
 #end
 }
 
-#declare OrnA2_width = 210.000000;
-#declare OrnA2_height = 225.000000;
-#declare OrnA2_left = -105.000000;
-#declare OrnA2_right = 105.000000;
-#declare OrnA2_top = 600.000000;
-#declare OrnA2_bottom = 825.000000;
-#declare OrnA2_max_extent = max(OrnA2_width, OrnA2_height);
-
-#declare OrnA2_NORMAL_TRANSFORM = transform {
-  translate <0, -OrnA2_top - OrnA2_height / 2, 0>
-  scale (1 / OrnA2_max_extent)
-  scale <1, -1, 1>
-}
-
-#declare OrnA2 =
-lathe { bezier_spline
-  16
-  , <0.000000, 825.000000>
-  , <0.000000, 805.937988>
-  , <0.000000, 786.875000>
-  , <0.000000, 600.000000>
-  , <0.000000, 600.000000>
-  , <0.000000, 650.312012>
-  , <0.000000, 632.187988>
-  , <0.000000, 614.062012>
-  , <0.000000, 614.062012>
-  , <105.000000, 626.250000>
-  , <105.000000, 668.437988>
-  , <105.000000, 720.000000>
-  , <105.000000, 720.000000>
-  , <105.000000, 767.812012>
-  , <105.000000, 810.000000>
-  , <0.000000, 825.000000>
-#ifdef ( OrnA2_USE_NORMAL_TRANSFORM )
-  transform { OrnA2_NORMAL_TRANSFORM }
-#end
-}
-
 #declare OrnA1_width = 194.500000;
 #declare OrnA1_height = 300.000000;
 #declare OrnA1_left = -97.250000;
@@ -347,12 +347,12 @@ lathe { bezier_spline
 #end
 }
 
-#declare OrnCap0_width = 27.957876;
-#declare OrnCap0_height = 14.487023;
-#declare OrnCap0_left = -13.978938;
-#declare OrnCap0_right = 13.978938;
+#declare OrnCap0_width = 27.959150;
+#declare OrnCap0_height = 14.461500;
+#declare OrnCap0_left = -13.979575;
+#declare OrnCap0_right = 13.979575;
 #declare OrnCap0_top = 1.435900;
-#declare OrnCap0_bottom = 15.922923;
+#declare OrnCap0_bottom = 15.897400;
 #declare OrnCap0_max_extent = max(OrnCap0_width, OrnCap0_height);
 
 #declare OrnCap0_NORMAL_TRANSFORM = transform {
@@ -387,12 +387,12 @@ lathe { quadratic_spline
 #end
 }
 
-#declare OrnA0_width = 210.128755;
-#declare OrnA0_height = 298.178719;
-#declare OrnA0_left = -105.064377;
-#declare OrnA0_right = 105.064377;
-#declare OrnA0_top = 1.335871;
-#declare OrnA0_bottom = 299.514590;
+#declare OrnA0_width = 210.220801;
+#declare OrnA0_height = 298.155362;
+#declare OrnA0_left = -105.110400;
+#declare OrnA0_right = 105.110400;
+#declare OrnA0_top = 1.344184;
+#declare OrnA0_bottom = 299.499546;
 #declare OrnA0_max_extent = max(OrnA0_width, OrnA0_height);
 
 #declare OrnA0_NORMAL_TRANSFORM = transform {

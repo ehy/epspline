@@ -23,6 +23,7 @@
 // build with something like:
 //	make CXXFLAGS="$CXXFLAGS $(freetype-config --cflags)" \
 //		LDLIBS="$(freetype-config --libs)" t1char2pse
+// (On SunOS try 'CCFLAGS=...', and so on.)
 //
 
 #include <iostream>

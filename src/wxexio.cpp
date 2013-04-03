@@ -883,8 +883,8 @@ void wxExio::WriteExpr(FILE* stream)    // Write as any other subexpression
       // POVRay SDL, which will not accept such symbols as of v. 3.6)
       //const wxWX2MBbuf val = wxConvLibc.cWX2MB(value.string);
       wxString tstr(value.string);
-      tmpchbuffer val(wxs2ch(tstr));
-      size_t len = strlen(val);
+      const tmp_cstr val(wxs2ch(tstr)); // in util.h
+      size_t len = val.cnt - 1; // object has count including null
       for (i = 0; i < len; i++)
       {
         char ch = val[i];

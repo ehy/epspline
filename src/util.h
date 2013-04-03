@@ -25,32 +25,83 @@
 #define _UTIL_H_
 #include "cfg.h"
 #include "stdcc.h"
+// std
+#include <stdexcept>
 
 #undef  A_SIZE
 #define A_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 
 // quick, dirty automatic buffer w/ closure
 template < class T > struct tbuffer {
+	std::size_t cnt;
 	T* ptr;
-	tbuffer(std::size_t size) : ptr(new T[size]) {}
+	tbuffer(std::size_t size) : cnt(size), ptr(new T[size]) {}
 	~tbuffer()       { delete[] ptr; }
+	const T* p() const { return ptr; }
+	operator const T*() const { return ptr; }
+	operator const void*() const { return ptr; }
+	T* p()            { return ptr; }
 	operator T*()    { return ptr; }
 	operator void*() { return ptr; }
-	T& operator [] (int i) { return ptr[i]; }
+	T& at(std::size_t i) throw(std::range_error)
+	{
+		if ( i >= cnt ) {
+			throw std::range_error("operator [] indice too great");
+		}
+		return ptr[i];
+	}
+	const T& at(std::size_t i) const throw(std::range_error)
+	{
+		if ( i >= cnt ) {
+			throw std::range_error("operator [] indice too great");
+		}
+		return ptr[i];
+	}
+	T& operator [] (std::size_t i) throw(std::range_error)
+	{ return at(i); }
+	const T& operator [] (std::size_t i) const throw(std::range_error)
+	{ return at(i); }
 };
 
 struct tmpchbuffer : public tbuffer<char> {
 	tmpchbuffer(const char* s)
 	: tbuffer<char>(std::strlen(s) + 1) {
-		std::strcpy(ptr, s);
+		if ( cnt > 1 ) {
+			std::snprintf(ptr, cnt, "%s", s);
+		}
+		ptr[cnt - 1] = '\0';
 	}
 };
 struct tmpwchbuffer : public tbuffer<wchar_t> {
 	tmpwchbuffer(const wchar_t* s)
 	: tbuffer<wchar_t>(std::wcslen(s) + 1) {
-		std::wcscpy(ptr, s);
+		if ( cnt > 1 ) {
+			std::wcscpy(ptr, s);
+		}
+		ptr[cnt - 1] = '\0';
 	}
 };
+
+typedef tmpchbuffer  tmp_cstr;
+typedef tmpwchbuffer tmp_wstr;
+
+#if defined(_UNICODE) || defined(UNICODE)
+typedef tmp_wstr	tmp_str;
+#else
+typedef tmp_cstr	tmp_str;
+#endif
+
+// copy string with op new
+#if defined(_UNICODE) || defined(UNICODE)
+#	define newstrdup newwstrdup
+#else
+#	define newstrdup newcstrdup
+#endif
+// copy char string with op new
+char* newcstrdup(const char* str);
+// copy wide char string with op new
+wchar_t* newwstrdup(const wchar_t* str);
+
 #if ! NO_TRAWBUFFER
 // Like tbuffer above, but tbuffer uses C++ operator new[], and
 // therefore will invoke the default constructor over the entire
@@ -94,60 +145,6 @@ template < class T > struct trawbuffer {
 // returns false, because I don't know MSW well enough.
 bool
 is_priviliged();
-
-// copy t_ch string with op new
-#if defined(_UNICODE) || defined(UNICODE)
-#	define newstrdup newwstrdup
-#else
-#	define newstrdup newcstrdup
-#endif
-// copy char string with op new
-char* newcstrdup(const char* str);
-// copy wide char string with op new
-wchar_t* newwstrdup(const wchar_t* str);
-
-// Temporary new[]'d string of char types
-template<class T, class AllocF>
-class tmpstr_tpl {
-	AllocF f;
-	T* p;
-public:
-	tmpstr_tpl(const T* str) : p(f(str)) {}
-	~tmpstr_tpl() {delete[] p;}
-	inline T* getchar() {return p;}
-	inline const T* getcchar() const {return p;}
-	inline operator T* () {return getchar();}
-	inline operator const T* () const {return getcchar();}
-	inline T* c() {return getchar();}
-	inline const T* cc() const {return getcchar();}
-	inline T& operator [] (int i) { return p[i]; }
-	inline const T& operator [] (int i) const { return p[i]; }
-	inline T* release() {T* t = p; p = 0; return t;}
-};
-
-class char_new_duplicator {
-public:
-	char_new_duplicator() {}
-	inline char* operator () (const char* p) {
-	    return newcstrdup(p);
-	}
-};
-typedef tmpstr_tpl<char, char_new_duplicator>		tmp_cstr;
-
-class wchar_t_new_duplicator {
-public:
-	wchar_t_new_duplicator() {}
-	inline wchar_t* operator () (const wchar_t* p) {
-	    return newwstrdup(p);
-	}
-};
-typedef tmpstr_tpl<wchar_t, wchar_t_new_duplicator>	tmp_wstr;
-
-#if defined(_UNICODE) || defined(UNICODE)
-typedef tmp_wstr	tmp_str;
-#else
-typedef tmp_cstr	tmp_str;
-#endif
 
 // delete elements of pointer container
 template<class T>

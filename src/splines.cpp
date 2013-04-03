@@ -613,13 +613,13 @@ SplineBase::Export(FILE* f, int n,
 
 	// first put size declarations
 	fprintf(f, "#declare %s_width = %f;\n#declare %s_height = %f;\n"
-		, Ct.cc(), double(Mx-Lx), Ct.cc(), double(My-Ly));
+		, Ct.p(), double(Mx-Lx), Ct.p(), double(My-Ly));
 	fprintf(f, "#declare %s_left = %f;\n#declare %s_right = %f;\n"
-		, Ct.cc(), double(Lx), Ct.cc(), double(Mx));
+		, Ct.p(), double(Lx), Ct.p(), double(Mx));
 	fprintf(f, "#declare %s_top = %f;\n#declare %s_bottom = %f;\n"
-		, Ct.cc(), double(Ly), Ct.cc(), double(My));
+		, Ct.p(), double(Ly), Ct.p(), double(My));
 	fprintf(f, "#declare %s_max_extent = max(%s_width, %s_height);\n"
-		, Ct.cc(), Ct.cc(), Ct.cc());
+		, Ct.p(), Ct.p(), Ct.p());
 	fputc('\n', f);
 
 	// declare a 'transform' object that can be used to normalize
@@ -634,9 +634,9 @@ SplineBase::Export(FILE* f, int n,
 		" <1 / %s_max_extent, 1, 1 / %s_max_extent>\n"
 		"  scale <1, 1, -1>\n"
 		"}\n\n";
-		fprintf(f, t, Ct.cc(),
-			Ct.cc(), Ct.cc(), Ct.cc(), Ct.cc(),
-			Ct.cc(), Ct.cc()
+		fprintf(f, t, Ct.p(),
+			Ct.p(), Ct.p(), Ct.p(), Ct.p(),
+			Ct.p(), Ct.p()
 		);
 	} else if ( objt == lathe ) {
 		const char t[] = "#declare %s_NORMAL_TRANSFORM = transform {\n"
@@ -644,9 +644,9 @@ SplineBase::Export(FILE* f, int n,
 		"  scale (1 / %s_max_extent)\n"
 		"  scale <1, -1, 1>\n"
 		"}\n\n";
-		fprintf(f, t, Ct.cc(),
-			Ct.cc(), Ct.cc(),
-			Ct.cc()
+		fprintf(f, t, Ct.p(),
+			Ct.p(), Ct.p(),
+			Ct.p()
 		);
 	}
 
@@ -654,18 +654,18 @@ SplineBase::Export(FILE* f, int n,
 	switch ( objt ) {
 		case prism:
 			fprintf(f, "#declare %s =\nprism { %s %s %f, %f\n  , "
-				, Ct.cc(), Csps.cc(), Csws.cc()
+				, Ct.p(), Csps.p(), Csws.p()
 				, sweep_min, sweep_max);
 			break;
 		case lathe:
 			fprintf(f, "#declare %s =\nlathe { %s\n  "
-				, Ct.cc(), Csps.cc());
+				, Ct.p(), Csps.p());
 			break;
 		case undef:
 		default:
 			fprintf(f, "#declare %s =\nundef_type { %f, %f //sweep data"
 					   "\n  %s\n  "
-				, Ct.cc(), sweep_min, sweep_max, Csps.cc());
+				, Ct.p(), sweep_min, sweep_max, Csps.p());
 			break;
 	}
 
@@ -704,7 +704,7 @@ SplineBase::Export(FILE* f, int n,
 			"#ifdef ( %s_USE_NORMAL_TRANSFORM )\n"
 			"  transform { %s_NORMAL_TRANSFORM }\n"
 			"#end\n",
-			Ct.cc(), Ct.cc());
+			Ct.p(), Ct.p());
 #	endif
 
 	// finally, put user-optional attributes

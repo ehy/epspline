@@ -77,7 +77,7 @@ global_settings {
 }
 
 // After textures include epspline .inc file.
-#include "chisel0.inc"
+#include "chisel.inc"
 
 camera {
 	location <0, 2, -3>

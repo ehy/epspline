@@ -1,9 +1,52 @@
 'FileData'('FileFormatVersion' = 2,
-  'ObjectCount' = 11,
+  'ObjectCount' = 12,
   'HGuideCount' = 13,
   'VGuideCount' = 17).
 
-'Object0'(objname = "OddPat3",
+'Object0'(objname = "ChiselBladeProfileTapered",
+  splinetype = 3,
+  povtype = 1,
+  sweeptype = 1,
+  use_sturm = 0,
+  use_open = 0,
+  sweep_min = "-1.00000000",
+  sweep_max = "-0.50000000",
+  'Texture' = "ChiselBladeTexture",
+  'U0' = "-180.00000000",
+  'V0' = "-45.00000000",
+  'U1' = "-65.00000000",
+  'V1' = "60.00000000",
+  'U2' = "65.00000000",
+  'V2' = "60.00000000",
+  'U3' = "180.00000000",
+  'V3' = "-45.00000000",
+  'U4' = "180.00000000",
+  'V4' = "-45.00000000",
+  'U5' = "195.00000000",
+  'V5' = "-80.00000000",
+  'U6' = "144.00000000",
+  'V6' = "-80.00000000",
+  'U7' = "156.00000000",
+  'V7' = "-57.00000000",
+  'U8' = "156.00000000",
+  'V8' = "-57.00000000",
+  'U9' = "65.00000000",
+  'V9' = "-5.00000000",
+  'U10' = "-65.00000000",
+  'V10' = "-5.00000000",
+  'U11' = "-158.00000000",
+  'V11' = "-57.00000000",
+  'U12' = "-158.00000000",
+  'V12' = "-57.00000000",
+  'U13' = "-150.00000000",
+  'V13' = "-80.00000000",
+  'U14' = "-195.00000000",
+  'V14' = "-80.00000000",
+  'U15' = "-180.00000000",
+  'V15' = "-45.00000000",
+  'UVcount' = 16).
+
+'Object1'(objname = "OddPat3",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -97,7 +140,7 @@ increased sweep -10, 10
   'V39' = "1410.00000000",
   'UVcount' = 40).
 
-'Object1'(objname = "OddPat1",
+'Object2'(objname = "OddPat1",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -191,7 +234,7 @@ increased sweep -10, 10
   'V39' = "810.00000000",
   'UVcount' = 40).
 
-'Object2'(objname = "OddPat0",
+'Object3'(objname = "OddPat0",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -285,7 +328,7 @@ increased sweep -10, 10
   'V39' = "810.00000000",
   'UVcount' = 40).
 
-'Object3'(objname = "OddPat2",
+'Object4'(objname = "OddPat2",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -379,7 +422,7 @@ increased sweep -10, 10
   'V39' = "1410.00000000",
   'UVcount' = 40).
 
-'Object4'(objname = "Imprint0",
+'Object5'(objname = "Imprint0",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -454,7 +497,7 @@ increased sweep -10, 10
   'V31' = "1150.00000000",
   'UVcount' = 32).
 
-'Object5'(objname = "GrindForm",
+'Object6'(objname = "GrindForm",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -513,7 +556,7 @@ increased sweep -10, 10
   'V23' = "955.00000000",
   'UVcount' = 24).
 
-'Object6'(objname = "TangForm",
+'Object7'(objname = "TangForm",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,
@@ -523,7 +566,7 @@ increased sweep -10, 10
   sweep_max = "1.00000000",
   'Texture' = "TangFormTexture",
   'U0' = "385.00000000",
-  'V0' = "-0.00000000",
+  'V0' = "0.00000000",
   'U1' = "385.00000000",
   'V1' = "129.39100647",
   'U2' = "385.00000000",
@@ -553,10 +596,10 @@ increased sweep -10, 10
   'U14' = "447.89999390",
   'V14' = "0.00000000",
   'U15' = "385.00000000",
-  'V15' = "-0.00000000",
+  'V15' = "0.00000000",
   'UVcount' = 16).
 
-'Object7'(objname = "ChiselFerruleChamfer",
+'Object8'(objname = "ChiselFerruleChamfer",
   splinetype = 2,
   povtype = 2,
   sweeptype = 0,
@@ -595,7 +638,7 @@ increased sweep -10, 10
   'V13' = "881.26300049",
   'UVcount' = 14).
 
-'Object8'(objname = "ChiselFerrule",
+'Object9'(objname = "ChiselFerrule",
   splinetype = 2,
   povtype = 2,
   sweeptype = 0,
@@ -634,7 +677,7 @@ increased sweep -10, 10
   'V13' = "800.00000000",
   'UVcount' = 14).
 
-'Object9'(objname = "ChiselHandle",
+'Object10'(objname = "ChiselHandle",
   splinetype = 3,
   povtype = 2,
   sweeptype = 0,
@@ -685,7 +728,7 @@ increased sweep -10, 10
   'V19' = "0.00000000",
   'UVcount' = 20).
 
-'Object10'(objname = "ChiselBladeProfile",
+'Object11'(objname = "ChiselBladeProfile",
   splinetype = 3,
   povtype = 1,
   sweeptype = 0,

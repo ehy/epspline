@@ -449,7 +449,7 @@
 		\IXnewterm{canvas}.
 		The \IXarg{canvas} has a white background with a grid
 		of thin blue lines. This is meant to suggest physical
-		\IXnewterm{graphing paper}. (In the future there
+		\IXnewterm{graph paper}. (In the future there
 		may be an option to disable the grid; there is none now).
 
 
@@ -466,7 +466,7 @@
 		pane also shows temporary help messages associated
 		with \IXarg{tool} bar or \IXarg{menu} items. Such help
 		messages are shown when the mouse is over the item, and
-		any original text is restored when the mouse leaves.
+		any original text is restored when the mouse leaves the item.
 		The pane in the middle shows the coordinates of the
 		mouse pointer (the pointer's active spot). The right
 		pane shows the scale at which the drawing area is displayed.
@@ -485,11 +485,11 @@
 	interactions that focus on a graphical result.
 	\IXpkgu{} does not. In \IXpkg{}, placing spline
 	objects on the drawing area is meant to follow the
-	\IXpov{} \href{http://www.povray.org/}{documentation}
+	\IXpov{} \href{\URLPOVdocs}{documentation}
 	on
-	\href{http://www.povray.org/documentation/view/3.6.1/281/}{lathe}
+	\href{\URLPOVdocsLathe}{lathe}
 	and
-	\href{http://www.povray.org/documentation/view/3.6.1/282/}{prism}
+	\href{\URLPOVdocsPrism}{prism}
 	objects.
 
 	As mentioned previously, there is an important difference
@@ -498,7 +498,7 @@
 	$y$-axis. Therefore, the spline object for the prism
 	is drawn parallel to the $x$-$z$ plane in three-dimensional space.
 	The lathe is rotated \emph{around} the $y$-axis. So, its
-	curve is drawn parallel to the $y$-axis. Put another way,
+	spline object is drawn parallel to the $y$-axis. Put another way,
 	when editing with \IXpkg{}, if the object is a prism
 	then the user's \IXnewterm{view} is parallel to the
 	$y$-axis, and perpendicular to the $x$-$z$ plane. If the
@@ -508,7 +508,7 @@
 	Editing with \IXpkg{}, the user may mix prism and lathe
 	objects in the same file, but should remember that the
 	\emph{view} of each type is different. When generating
-	temporary \IXarg{SDL} for the \IXpov{} preview \IXpkg{}
+	temporary \IXarg{SDL} for a preview with \IXpov{}, \IXpkg{}
 	adds a \IXarg{rotate} transform to the prism objects
 	so that the preview will be more useful. \IXpkgu{} does
 	not rotate objects in \IXarg{SDL} exported for
@@ -524,11 +524,11 @@
 	in the subsection ``Necessary Transforms.''
 
 	Hopefully, the following subsections will be clear enough
-	to get started, and to soon begin realizing ideas. Where
+	to get started and begin realizing ideas. Where
 	this document is insufficient, the \IXpov{}
-	\href{http://www.povray.org/}{documentation} should help;
-	it is helpful to understand how \IXpov{} handles the
-	prism and the lathe.
+	\href{\URLPOVdocs}{documentation} should help;
+	it is necessary to understand how \IXpov{} handles the
+	prism and the lathe objects.
 	Although the following subsections are not written as a
 	step-by--step tutorial, it should be possible
 	(and it is suggested) to follow along with a running
@@ -553,8 +553,9 @@
 		that the spline objects are really several splines
 		taken together as a ``path''; from here on ``segment''
 		will refer to one spline part of the whole spline object.)
-		Once at least one segment segment is complete, another
-		shift click will stop editing (placing more points).
+		Once at least one segment is complete, another
+		shift+click will stop editing the object, and the points
+		placed so far will remain.
 		It will be clear that at least one segment is complete
 		when a curve is drawn between some of the control points.
 		
@@ -569,9 +570,10 @@
 		spline object before a segment is complete, and
 		Figure~\ref{fig:first_curve_between} shows the first
 		curve appear after two more control points have completed
-		a segment. The object in the figures is a \IXnewterm{cubic}
-		spline; the necessary control points differ among the
-		four available spline types.
+		the segment. The object in the figures is a \IXnewterm{cubic}
+		spline, which requires four control points for a segment.
+		(The number of control points per segment differs among the
+		four available spline types.) 
 		
 		\begin{figure}[htbp]
 		\centering
@@ -579,6 +581,14 @@
 		\caption{Curve appears between control points of a cubic spline.}
 		\label{fig:first_curve_between}
 		\end{figure}
+
+		If shift+click is given at the stage of
+		Figure~\ref{fig:first_two_points}, the two points will
+		be deleted, but at the stage of
+		Figure~\ref{fig:first_curve_between} the points will
+		be retained, and editing mode stopped. Editing
+		is continued if the object is selected with a click
+		(and no keys), and shift+click given again.
 
 		\begin{figure}[htbp]
 		\centering
@@ -588,9 +598,11 @@
 		\end{figure}
 
 		Figure~\ref{fig:first_cubic_unclosed} shows the spline
-		object nearly complete. At this point, another shift+click
+		object nearly complete. More points have been added,
+		and another shift+click
 		has terminated editing. \IXpov{} would reject the object
-		as it is because the curve is not closed.
+		as it is because the curve is not closed, and \IXpkg{}
+		will not export it to \IXarg{SDL}.
 
 		\begin{figure}[htbp]
 		\centering
@@ -604,23 +616,58 @@
 		indicated by the dotted rectangle (on some platforms the
 		rectangle might be dashed). With the whole objected
 		selected, a control point at an open end was selected,
-		indicated by the cyan square, and moved to coincide
+		indicated by the cyan colored square, and moved to coincide
 		with the other open end control point. Now that it
 		is properly closed, \IXpov{} will render the object.
+		Also note that the two points that closed the curve are
+		not the first or the last, but rather the second and
+		the next-to--last. With the cubic spline curve, those
+		are the points that must match, and the first and last
+		are not drawn through. This differs in the other
+		spline types. The
+		\IXpov{} \href{\URLPOVdocs}{documentation}
+		on the
+		\href{\URLPOVdocsLathe}{lathe}
+		and
+		\href{\URLPOVdocsPrism}{prism}
+		objects will explain in more detail.
 
+		\begin{figure}[p]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedQuadratic}
+		\caption{Quadratic spline, not closed.}
+		\label{fig:first_quadratic_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedQuadratic}
+		\caption{Quadratic spline, closed and complete.}
+		\label{fig:first_quadratic_closed}
+		\end{figure}
+
+		\begin{figure}[p]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedLinear}
+		\caption{Linear spline, not closed.}
+		\label{fig:first_linear_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedLinear}
+		\caption{Linear spline, closed and complete.}
+		\label{fig:first_linear_closed}
+		\end{figure}
+
+		\begin{figure}[p]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedBezier}
+		\caption{\dtybezieru{} spline, not closed.}
+		\label{fig:first_bezier_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedBezier}
+		\caption{\dtybezieru{} spline, closed and complete.}
+		\label{fig:first_bezier_closed}
+		\end{figure}
+		
 
 		\subsection{Necessary Transforms}%WX%4||||
 
 	\section{Tips}%WX%3||||
 
 
-%\IXpkgu{} is an interactive program with a
-%graphical interface. Interaction is primarily by use of a mouse
-%(or any pointing device from which the windowing system delivers
-%`mouse' events to software).
-%\subsection{Overview}%WX%4||||
-%\subsection{Mouse and Key}%WX%4||||
-%% no coded comment for subsubsection
-%\subsubsection{Operations}%xxxWX%5||||
-%\subsection{Usage Table}%WX%4||||
-%

@@ -36,6 +36,10 @@
 % hyperref package from texlive is choking on it.
 \documentclass[11pt,onecolumn,letterpaper]{report}%
 	\usepackage{apphelpdoc}%
+	% these might need adjustment as contents change;
+	% probably better place here, rather than sty.
+	\widowpenalty=300
+	\clubpenalty=300
 \begin{document}
 
 % hide numbers for front matter:
@@ -95,9 +99,19 @@
 % roman numbers for contents:
 \pagenumbering{roman}
 
-\tableofcontents
 % coded comment for table of contents
 %WX%1|Contents|1000000000|HelpTOC|
+\tableofcontents
+
+\ifnotWX{
+	%\addcontentsline{toc}{part}{Contents}
+
+	%\addcontentsline{toc}{part}{\listfigurename}
+	\listoffigures
+	
+	%\addcontentsline{toc}{part}{\listtablename}
+	\listoftables
+}%\ifWX
 
 \ifMKhtml
 	\clearpage
@@ -122,6 +136,17 @@
 %
 \input{ch_licenses}
 
+\ifWX{
+%\addcontentsline{toc}{chapter}{\listfigurename}
+% coded comment for list of figures
+%WX%1|List of Figures|3000000000|ListFigures|
+\listoffigures
+
+%\addcontentsline{toc}{chapter}{\listtablename}
+% coded comment for list of tables
+%WX%1|List of Tables|4000000000|ListTables|
+\listoftables
+}%\ifWX
 
 %% bibliography
 %%WX%1|Bibliography|9000000000||
@@ -149,7 +174,7 @@
 	\cleardoublepage
 	\phantomsection
 	% why is this needed for pdf, but not htlatex (makes duplicate)?
-	\addcontentsline{toc}{chapter}{Index}
+	\addcontentsline{toc}{part}{Index}
 \fi
 \printindex
 

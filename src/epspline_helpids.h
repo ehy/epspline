@@ -62,21 +62,29 @@
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		304
+#define IDI_GPL3_Section		256
 #define IDS_GPL3_Section		"GNU General Public License"
 #define IDF_GPL3_Section		"epsplinese6.html"
 
-#define IDI_GPL2_Section		368
+#define IDI_GPL2_Section		320
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
 #define IDF_GPL2_Section		"epsplinese7.html"
 
-#define IDI_FDL_Section		432
+#define IDI_FDL_Section		384
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese8.html"
 
+#define IDI_ListFigures		3000000000
+#define IDS_ListFigures		"List of Figures"
+#define IDF_ListFigures		"epsplineli2.html"
+
+#define IDI_ListTables		4000000000
+#define IDS_ListTables		"List of Tables"
+#define IDF_ListTables		"epsplineli3.html"
+
 #define IDI_Index		2000000000
 #define IDS_Index		"Index"
-#define IDF_Index		"epsplineli2.html"
+#define IDF_Index		"epsplineli4.html"
 
 
 #endif /* _epspline_helpids_INCLUDED */

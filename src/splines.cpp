@@ -2028,7 +2028,7 @@ BezierSpline::AddPoint(const SplinePoint& point)
 	if ( sz < 4 ) return false;
 
 	// if curve isn't POV-Okay assume edit/fixing,
-	if ( !POkay() ) {
+	if ( (sz & bitsng) || ! POkay() ) {
 		// let caller handle it
 		return false;
 	}

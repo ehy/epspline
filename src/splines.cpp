@@ -468,6 +468,12 @@ SplineBase::Okay() const
 	return size() ? true : false;
 }
 
+bool
+SplineBase::POkay() const
+{
+	return false;
+}
+
 void
 SplineBase::SetType(obj_t type)
 {
@@ -582,10 +588,14 @@ SplineBase::DrawDotsSelectedDot(wxDC& dc
 	DrawSelectedDot(dc, selectedbr, pt, selsize);
 }
 
-void
+bool
 SplineBase::Export(FILE* f, int n,
 	double& lx, double& ly, double& mx, double& my, bool indemo)
 {
+	if ( !POkay() ) {
+		return false;
+	}
+
 	// this makes sure real number formatting is in "C" locale""
 	cnumtmp c_tmp;
 
@@ -728,6 +738,8 @@ SplineBase::Export(FILE* f, int n,
 	ly = std::min(ly, Ly);
 	mx = std::max(mx, Mx);
 	my = std::max(my, My);
+
+	return true;
 }
 
 void
@@ -1118,23 +1130,60 @@ LinearSpline::CopySelf() const
 bool
 LinearSpline::Okay() const
 {
-	return (size() >= 3) ? true : false;
+	return (size() >= 2) ? true : false;
+}
+
+bool
+LinearSpline::POkay() const
+{
+	if ( size() > 2 ) {
+		const_iterator i = begin();
+		const_iterator e = end();
+		const_iterator j = i; // 1nd point and last must match
+		++i; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				// discontinuity
+				j = i++;
+				if ( i++ == e ) return false;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool
 LinearSpline::DelPoint(const SplinePoint& p)
 {
-	if ( !Okay() ) return false;
+	if ( size() < 4 ) return false;
 
 	iterator i = PointIndexIt(p, 0);
 	iterator j = end();
-	if ( i != j && i != --j && i != begin() ) {
-		erase(i);
-		SetDirty();
-		return true;
+	if ( i == j ) {
+		return false;
 	}
 
-	return false;
+	if ( i == begin() ) {
+		iterator t = i; ++t;
+		*++t = *--j;
+	} else if ( --j == i ) {
+		iterator t = begin();
+		if ( *j == *t ) {
+			*--j = *begin();
+		}
+	}
+
+	erase(i);
+	SetDirty();
+	return true;
+
 }
 
 bool
@@ -1286,13 +1335,40 @@ QuadraticSpline::CopySelf() const
 bool
 QuadraticSpline::Okay() const
 {
-	return (size() >= 4) ? true : false;
+	return (size() >= 3) ? true : false;
+}
+
+bool
+QuadraticSpline::POkay() const
+{
+	if ( size() > 4 ) { // POV requires 5
+		const_iterator i = begin();
+		const_iterator e = end();
+		const_iterator j = i; ++j; // 2nd point and last must match
+		i = j; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				// discontinuity
+				j = i; ++j;
+				if ( j == e ) return false;
+				i = j; ++i;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool
 QuadraticSpline::DelPoint(const SplinePoint& p)
 {
-	if ( !Okay() ) return false;
+	if ( size() < 6 ) return false;
 
 	iterator i = PointIndexIt(p, 0);
 	iterator j = end();
@@ -1526,7 +1602,38 @@ CubicSpline::CopySelf() const
 bool
 CubicSpline::Okay() const
 {
-	return (size() >= 5) ? true : false;
+	return (size() >= 4) ? true : false;
+}
+
+bool
+CubicSpline::POkay() const
+{
+	if ( size() > 5 ) { // POV requires 6
+		const_iterator i = begin();
+		const_iterator e = end();
+		const_iterator j = i; ++j; // 2nd point and last must match
+		i = j; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					return false;
+				}
+				if ( ++i == e ) {
+					--i;
+					break;
+				}
+				// discontinuity
+				j = i; ++j;
+				if ( j == e ) return false;
+				i = j; ++i;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool
@@ -1787,9 +1894,75 @@ BezierSpline::Okay() const
 }
 
 bool
+BezierSpline::POkay() const
+{
+	const size_type sz = size();
+	const size_type bitsng = 3u;
+	
+	if ( sz < 4 || (sz & bitsng) ) {
+		return false;
+	} else if ( sz == 4 ) {
+		const_iterator i = begin();
+		const_iterator e = end();
+		if ( *i == *--e ) {
+			// ensure 2 dimensions
+			const_iterator p1 = i; ++p1;
+			const_iterator p2 = p1; ++p2;
+			if ( *i != *p1 && *i != *p2 && *p1 != *p2 ) {
+				return true;
+			}
+		}
+	} else { // sz >= 8
+		const_iterator i = begin();
+		const_iterator e = end();
+		const_iterator j = i; // 1st point and last must match
+		++i; ++i; // advance to 3rd here, while loop advances to 4th
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				// valid discontinuity: set j 1st of next segment
+				j = i--;
+			}
+			// advance to 3rd in next segment
+			// test not needed since mult. of 4 is confirmed,
+			// but leave defensively against code changes.
+			if ( ++i == e ) return false;
+			if ( ++i == e ) return false;
+			if ( ++i == e ) return false;
+		}
+		
+		// closed path: OK
+		if ( *j == *--i ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool
 BezierSpline::DelPoint(const SplinePoint& p)
 {
-	if ( size() < 8 ) return false;
+	const size_type sz = size();
+	const size_type bitsng = 3u;
+	
+	if ( sz & bitsng ) {
+		// point count is not a multiple of 4,
+		// so curve is not currently valid;
+		// just remove the point and let user
+		// work on it.
+		iterator i = PointIndexIt(p);
+		if ( i != end() ) {
+			erase(i, i + 1);
+			SetDirty();
+			return true;
+		}
+		return false;
+	}
+
+	if ( sz < 8 ) return false;
 
 	int n = PointIndex(p, 0);
 	int q = n / 4;
@@ -1849,8 +2022,18 @@ BezierSpline::DelPoint(const SplinePoint& p)
 bool
 BezierSpline::AddPoint(const SplinePoint& point)
 {
-	if ( size() < 4 ) return false;
+	const size_type sz = size();
+	const size_type bitsng = 3u;
+	
+	if ( sz < 4 ) return false;
 
+	// if curve isn't POV-Okay assume edit/fixing,
+	if ( !POkay() ) {
+		// let caller handle it
+		return false;
+	}
+
+	// from here: try to add segment for point selection on path
 	#ifdef BEZIER_SPLINE_INCREMENT
 	const unsigned inc = BEZIER_SPLINE_INCREMENT ;
 	#else

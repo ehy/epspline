@@ -109,7 +109,7 @@ class SplineBase : public SplineBaseBase {
 	friend class eps_funcs::cp_offset;
 
 public:
-	virtual void Export(FILE* f, int n,
+	virtual bool Export(FILE* f, int n,
                      double& lx, double& ly,
                      double& mx, double& my,
                      bool indemo = false);
@@ -204,7 +204,8 @@ public:
 	virtual bool PtInRect(const wxPoint& p) const;
 	virtual bool PtInRect(const wxPoint& p, unsigned pad) const;
 
-	virtual bool Okay() const;
+	virtual bool Okay() const; // Okay for Epspline; maybe not POV
+	virtual bool POkay() const; // Okay for POV-Ray export
 	virtual SplineBase* CopySelf() const = 0;
 
 	enum obj_t { undef, prism, lathe };
@@ -375,6 +376,7 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
+	virtual bool POkay() const; // Okay for POV-Ray export
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -394,6 +396,7 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
+	virtual bool POkay() const; // Okay for POV-Ray export
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -413,6 +416,7 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
+	virtual bool POkay() const; // Okay for POV-Ray export
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -439,6 +443,7 @@ public:
 	virtual void DrawDotsSelectedDot(wxDC& dc,const SplinePoint& pt
 		,wxBrush selectedbr,unsigned size = dotsz,unsigned selsize = sdotsz);
 	virtual bool Okay() const;
+	virtual bool POkay() const; // Okay for POV-Ray export
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual bool MovePoint(SplinePoint& pt, double xoff, double yoff);

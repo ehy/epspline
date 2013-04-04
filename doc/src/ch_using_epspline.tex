@@ -503,13 +503,13 @@
 	then the user's \IXnewterm{view} is parallel to the
 	$y$-axis, and perpendicular to the $x$-$z$ plane. If the
 	object is a lathe, the view is perpendicular to the $y$-axis
-	(a plane is irrelevant since the lathe is rotated).
+	(and $x$-axis, even though the lathe is rotated).
 	
 	Editing with \IXpkg{}, the user may mix prism and lathe
 	objects in the same file, but should remember that the
 	\emph{view} of each type is different. When generating
 	temporary \IXarg{SDL} for the \IXpov{} preview \IXpkg{}
-	adds a \IXnewterm{rotate} transform to the prism objects
+	adds a \IXarg{rotate} transform to the prism objects
 	so that the preview will be more useful. \IXpkgu{} does
 	not rotate objects in \IXarg{SDL} exported for
 	inclusion in the user's scene, so the user must add
@@ -519,15 +519,15 @@
 	is, frankly, simply the most convenient for the programming
 	of \IXpkg{}. The graduated scales beside the drawing area
 	will make it clear that the vertical axis increases
-	in the down direction. This is corrected easily using
+	in the down direction. This is easily corrected using
 	transforms available in the \IXarg{SDL}, and will be discussed
 	in the subsection ``Necessary Transforms.''
 
 	Hopefully, the following subsections will be clear enough
 	to get started, and to soon begin realizing ideas. Where
 	this document is insufficient, the \IXpov{}
-	\href{http://www.povray.org/}{documentation} should help,
-	since it is helpful to understand how \IXpov{} handles the
+	\href{http://www.povray.org/}{documentation} should help;
+	it is helpful to understand how \IXpov{} handles the
 	prism and the lathe.
 	Although the following subsections are not written as a
 	step-by--step tutorial, it should be possible
@@ -535,9 +535,9 @@
 	instance of \IXpkg{}.
 
 		\subsection{Starting a New File}%WX%4||||
-		Start \IXpkg{} without file arguments on the
-		commandline, and the main window will open with
-		one tab. The drawing area (the area with the grid
+		Started without file arguments, \IXpkg{}'s
+		main window will open with one empty tab.
+		The drawing area (the area with the grid
 		of light blue lines) is ready, but note that it
 		doesn't respond to a (primary) mouse click alone. To start
 		a new spline, press and hold the \IXnewterm{shift}

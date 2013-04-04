@@ -213,6 +213,9 @@ PovDemoProc::writepov(FILE* f)
 	while ( i != l.end() ) {
 		SplineBase* p = *i++;
 		
+		if ( ! p->POkay() ) {
+			continue;
+		}
 		if ( p->Getobjt() == SplineBase::undef ) {
 			continue;
 		}
@@ -296,6 +299,9 @@ PovDemoProc::writepov(FILE* f)
 		SplineBase* p = *i++;
 		int rtt = 0;
 
+		if ( ! p->POkay() ) {
+			continue;
+		}
 		if ( p->Getobjt() == SplineBase::undef ) {
 			continue;
 		}

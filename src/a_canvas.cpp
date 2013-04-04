@@ -1254,8 +1254,9 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 			if ( D->cur && !D->cur->Okay() ) {
 				PopUndo();
 				Refresh();
-			} else
+			} else {
 				D->cur = 0;
+			}
 			creating = false;
 		} else {
 			if ( D->sel ) {
@@ -2537,7 +2538,9 @@ A_Canvas::ExportFILE(FILE* f, const wxString& fname, bool indemo)
 
 	while ( it != D->lst.end() ) {
 		SplineBase* p = *it++;
-		p->Export(f, n++, lx, ly, mx, my, indemo);
+		if ( p->Export(f, n, lx, ly, mx, my, indemo) ) {
+			++n;
+		}
 	}
 
 	wxString t(wxT("I_"));

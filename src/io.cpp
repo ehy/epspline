@@ -24,17 +24,17 @@
 #include <wx/wx.h>
 #include "wxexio.h"
 #include "wxutil.h"
-// for setting "C" locale in a block
-#include "clocnumeric.h"
 
 #include <limits>
 #include <cerrno>
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && defined(__SC__) // old.
 #include <float.h>  // for FLT_MIN
 #else
 #include <cfloat>
 #endif
 
+// for setting "C" locale in a block
+#include "clocnumeric.h"
 
 // Must check and sanitize the real numbers, as
 // extreme values can cause big trouble like infinite loops,
@@ -212,6 +212,8 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	cnumtmp c_tmp;
 	int n;
 	wxExioDatabase db;
+
+	errno = 0;
 
 	if ( !db.Read(fname) ) {
 		int e = errno;

@@ -2262,15 +2262,15 @@ A_Canvas::Open(wxString filename)
 			Refresh();
 		} else {
 			int err = errno;
-			wxString msg;
+			wxString m;
 
-			msg.Printf(_("Failed reading \"%s\""), filename.c_str());
+			m += _("Failed reading \"") + filename + _("\"");
 			if ( err ) {
 				wxString es = ch2wxs(std::strerror(err));
-				msg += _(" : ");
-				msg += es;
+				m += _(" :\n");
+				m += es;
 			}
-			ErrorBox(msg);
+			ErrorBox(m);
 		}
 
 		// If read succeeded, this was swapped with the old D

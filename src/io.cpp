@@ -216,9 +216,13 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	errno = 0;
 
 	if ( !db.Read(fname) ) {
-		int e = errno;
+		// int e = errno; cannot rely on errno being set
+		// by open(2) or read(2): lexer code uses isatty(2)
+		// which sets ENOTTY, and puzzlingly EAGAIN on
+		// GNU/Linux and OpenBSD . . .
 		fprintf(stderr, "Failed reading %s\n", wxs2fn(fname));
-		errno = e;
+		// errno = e; . . . so just set EINVAL
+		errno = EINVAL;
 		return -1;
 	}
 	db.BeginFind();

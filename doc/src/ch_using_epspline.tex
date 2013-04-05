@@ -12,7 +12,7 @@
 	The main groups of \IXarg{interface} elements are
 	discussed briefly, from the top down in order of appearance,
 	in the following subsections. An image of the main window
-	is shown in Figure~\ref{fig:bezier_linked_control_points}.
+	is shown in figure~\ref{fig:bezier_linked_control_points}.
 
 		\subsection{The Title Bar}%WX%4||||
 		The \IXnewterm{title bar} is not actually part of
@@ -521,7 +521,7 @@
 	will make it clear that the vertical axis increases
 	in the down direction. This is easily corrected using
 	transforms available in the \IXarg{SDL}, and will be discussed
-	in the subsection ``Necessary Transforms.''
+	in the section ``Necessary Transforms.''
 
 	Hopefully, the following subsections will be clear enough
 	to get started and begin realizing ideas. Where
@@ -534,7 +534,7 @@
 	(and it is suggested) to follow along with a running
 	instance of \IXpkg{}.
 
-		\subsection{Starting a New File}%WX%4||||
+		\subsection{Creating New Objects}%WX%4||||
 		Started without file arguments, \IXpkg{}'s
 		main window will open with one empty tab.
 		The drawing area (the area with the grid
@@ -568,7 +568,7 @@
 		
 		Figure~\ref{fig:first_two_points} shows the start of a
 		spline object before a segment is complete, and
-		Figure~\ref{fig:first_curve_between} shows the first
+		figure~\ref{fig:first_curve_between} shows the first
 		curve appear after two more control points have completed
 		the segment. The object in the figures is a \IXnewterm{cubic}
 		spline, which requires four control points for a segment.
@@ -583,12 +583,12 @@
 		\end{figure}
 
 		If shift+click is given at the stage of
-		Figure~\ref{fig:first_two_points}, the two points will
+		figure~\ref{fig:first_two_points}, the two points will
 		be deleted, but at the stage of
-		Figure~\ref{fig:first_curve_between} the points will
+		figure~\ref{fig:first_curve_between} the points will
 		be retained, and editing mode stopped. Editing
-		is continued if the object is selected with a click
-		(and no keys), and shift+click given again.
+		is continued if the object is selected with a click,
+		and shift+click given again.
 
 		\begin{figure}[htbp]
 		\centering
@@ -611,28 +611,70 @@
 		\label{fig:first_cubic_closed}
 		\end{figure}
 		
-		In Figure~\ref{fig:first_cubic_closed} the object has
+		In figure~\ref{fig:first_cubic_closed} the object has
 		been selected with a click. The selected state state is
 		indicated by the dotted rectangle (on some platforms the
 		rectangle might be dashed). With the whole objected
 		selected, a control point at an open end was selected,
 		indicated by the cyan colored square, and moved to coincide
-		with the other open end control point. Now that it
+		with the matching control point. Now that it
 		is properly closed, \IXpov{} will render the object.
 		Also note that the two points that closed the curve are
 		not the first or the last, but rather the second and
 		the next-to--last. With the cubic spline curve, those
 		are the points that must match, and the first and last
 		are not drawn through. This differs in the other
-		spline types. The
+		spline types. \IXpov{} requires a minimum of six
+		points in a cubic spline (\IXpkg{} will draw a cubic
+		spline with five points if points two and four coincide,
+		but \IXpov{} will reject the object).
+		
+		The
 		\IXpov{} \href{\URLPOVdocs}{documentation}
 		on the
 		\href{\URLPOVdocsLathe}{lathe}
 		and
 		\href{\URLPOVdocsPrism}{prism}
-		objects will explain in more detail.
+		objects will explain in more detail how points
+		should be placed for each spline type, and other
+		characteristics of the types.
+		
+		The cubic type of spline has been discussed so far
+		because it is the default type for new objects if another
+		type has not been selected. To choose among the four spline
+		types, make sure that no existing object is selected by
+		clicking the drawing area, outside of the selection
+		rectangle of any selected object, with the primary
+		mouse button. Next, click the drawing area with secondary
+		button, which will invoke a ``pop-up'' menu. The
+		drawing area menu is seen in
+		figure~\ref{fig:canvas_popup_menu}.
 
-		\begin{figure}[p]
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics{\ImgCtxMenuA}
+		\caption{The drawing area ``pop-up'' menu.}
+		\label{fig:canvas_popup_menu}
+		\end{figure}
+
+		The first (topmost) \IXarg{menu} item ``Curves''
+		names the menu, and also serves to dismiss the menu
+		without making a selection.
+		The \IXarg{menu} items beginning with ``Set \ldots''
+		select the type of object to be created. The first four
+		of these offer the spline type, and the next two offer the
+		\IXpov{} object type: prism or lathe. The last four
+		items on the menu
+		are equivalent to the ``File'' \IXarg{menu} items
+		with the same labels
+		(table~\ref{tab:File_menu}), and are placed on this menu
+		for convenience. Note that an existing object can
+		be changed between a lathe and prism, so it's not
+		necessary to make that choice intitially, but an existing
+		object cannot be changed to a different spline type, so
+		a type should be chosen before starting each object.
+
+		\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedQuadratic}
 		\caption{Quadratic spline, not closed.}
@@ -643,7 +685,17 @@
 		\label{fig:first_quadratic_closed}
 		\end{figure}
 
-		\begin{figure}[p]
+		Figures~\ref{fig:first_quadratic_unclosed}~and~\ref{fig:first_quadratic_closed}
+		are similar to
+		figures~\ref{fig:first_cubic_unclosed}~and~\ref{fig:first_cubic_closed},
+		but show a quadratic spline. In this case the points that
+		must match to close the curve are the second and the
+		\emph{last} (rather than the second-to--last
+		point in the cubic type).
+		\IXpov{} requires at least five points in the closed
+		quadratic spline.
+
+		\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedLinear}
 		\caption{Linear spline, not closed.}
@@ -654,7 +706,11 @@
 		\label{fig:first_linear_closed}
 		\end{figure}
 
-		\begin{figure}[p]
+		The equivalent for the linear spline type is seen in
+		figures~\ref{fig:first_linear_unclosed}~and~\ref{fig:first_linear_closed}.
+		There must be at least three points in the linear spline.		
+
+		\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedBezier}
 		\caption{\dtybezieru{} spline, not closed.}
@@ -664,9 +720,78 @@
 		\caption{\dtybezieru{} spline, closed and complete.}
 		\label{fig:first_bezier_closed}
 		\end{figure}
-		
 
-		\subsection{Necessary Transforms}%WX%4||||
+		The \dtybezierl{} spline object must be closed too, of course,
+		as seen in
+		figures~\ref{fig:first_bezier_unclosed}~and~\ref{fig:first_bezier_closed}.
+		\IXpov{} will render a \dtybezierl{} spline object with only
+		four points, which is one complete segment, if the first
+		and last points coincide.
+		The figures show a \dtybezierl{} object
+		with two segments.
+
+
+		\subsection{Continued Editing}%WX%4||||
+
+
+	\section{Necessary Transforms}%WX%3||||
+	An example of the \IXarg{SDL} generated by \IXpkg{}
+	for export is seen in listing~\ref{pvlst:sdl_one_obj}.
+	
+	\begin{povsdl}
+		{\small
+		\begin{verbatim}
+		// POV include file
+		// Generated by epspline
+		
+		
+		#ifndef ( INCLUDED_foo_inc )
+		#declare INCLUDED_foo_inc = 1;
+		
+		#declare Foo_width = 300.000000;
+		#declare Foo_height = 99.379610;
+		#declare Foo_left = 100.000000;
+		#declare Foo_right = 400.000000;
+		#declare Foo_top = 100.000000;
+		#declare Foo_bottom = 199.379610;
+		#declare Foo_max_extent = max(Foo_width, Foo_height);
+		
+		#declare Foo_NORMAL_TRANSFORM = transform {
+		  translate <-Foo_left - Foo_width / 2, 0, -Foo_top - Foo_height / 2>
+		  scale <1 / Foo_max_extent, 1, 1 / Foo_max_extent>
+		  scale <1, 1, -1>
+		}
+		
+		#declare Foo =
+		prism { bezier_spline linear_sweep -1.000000, 1.000000
+		  , 8
+		  , <100.000000, 100.000000>
+		  , <186.000000, 162.644928>
+		  , <315.000000, 160.717391>
+		  , <400.000000, 100.000000>
+		  , <400.000000, 100.000000>
+		  , <316.000000, 232.036232>
+		  , <186.000000, 233.000000>
+		  , <100.000000, 100.000000>
+		#ifdef ( Foo_USE_NORMAL_TRANSFORM )
+		  transform { Foo_NORMAL_TRANSFORM }
+		#end
+		}
+		
+		#declare I_foo_inc_width = 300.000000;
+		#declare I_foo_inc_height = 99.379610;
+		#declare I_foo_inc_left = 100.000000;
+		#declare I_foo_inc_right = 400.000000;
+		#declare I_foo_inc_top = 100.000000;
+		#declare I_foo_inc_bottom = 199.379610;
+		
+		#end // #ifdef ( INCLUDED_foo_inc )
+		\end{verbatim}
+		}%small
+	\caption{One spline object named ``Foo'' exported as
+		\emph{scene description language}.}
+	\label{pvlst:sdl_one_obj}
+	\end{povsdl}
 
 	\section{Tips}%WX%3||||
 

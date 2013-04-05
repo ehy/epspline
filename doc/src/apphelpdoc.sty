@@ -96,6 +96,8 @@
 	\usepackage[T1]{fontenc}
 	% should pslatex appear before or after fontenc? are both needed?
 	\usepackage{pslatex}
+	% for floats for e.g., POC SDL listings
+	\usepackage{float}
 	\usepackage{epigraph}
 	\usepackage{graphicx}
 	\DeclareGraphicsExtensions{.png,.jpg}
@@ -237,4 +239,10 @@
 	\newcommand{\IXSpline}{Spline\inIDX{spline}}
 	\newcommand{\IXspline}{\IXarg{spline}}
 	%
+
+	% setup a float type for POV-Ray SDL
+	\floatstyle{boxed}
+	\newfloat{povsdl}{htbp}{pvlst}
+	\floatname{povsdl}{SDL-Listing}
+
 

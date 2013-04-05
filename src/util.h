@@ -27,6 +27,7 @@
 #include "stdcc.h"
 // std
 #include <stdexcept>
+#include <cstdio>
 
 #undef  A_SIZE
 #define A_SIZE(a) (sizeof(a)/sizeof((a)[0]))
@@ -67,7 +68,8 @@ struct tmpchbuffer : public tbuffer<char> {
 	tmpchbuffer(const char* s)
 	: tbuffer<char>(std::strlen(s) + 1) {
 		if ( cnt > 1 ) {
-			std::snprintf(ptr, cnt, "%s", s);
+			// not in std::
+			::snprintf(ptr, cnt, "%s", s);
 		}
 		ptr[cnt - 1] = '\0';
 	}

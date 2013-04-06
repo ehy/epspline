@@ -54,25 +54,29 @@
 #define IDS_CreatingandEditing		"Creating and Editing"
 #define IDF_CreatingandEditing		"epsplinese4.html"
 
-#define IDI_Tips		240
+#define IDI_NecessaryTransforms		240
+#define IDS_NecessaryTransforms		"Necessary Transforms"
+#define IDF_NecessaryTransforms		"epsplinese5.html"
+
+#define IDI_Tips		256
 #define IDS_Tips		"Tips"
-#define IDF_Tips		"epsplinese5.html"
+#define IDF_Tips		"epsplinese6.html"
 
 #define IDI_Licenses		202000
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		256
+#define IDI_GPL3_Section		272
 #define IDS_GPL3_Section		"GNU General Public License"
-#define IDF_GPL3_Section		"epsplinese6.html"
+#define IDF_GPL3_Section		"epsplinese7.html"
 
-#define IDI_GPL2_Section		320
+#define IDI_GPL2_Section		336
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
-#define IDF_GPL2_Section		"epsplinese7.html"
+#define IDF_GPL2_Section		"epsplinese8.html"
 
-#define IDI_FDL_Section		384
+#define IDI_FDL_Section		400
 #define IDS_FDL_Section		"GNU Free Documentation License"
-#define IDF_FDL_Section		"epsplinese8.html"
+#define IDF_FDL_Section		"epsplinese9.html"
 
 #define IDI_ListFigures		3000000000
 #define IDS_ListFigures		"List of Figures"

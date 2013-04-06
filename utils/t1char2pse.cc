@@ -40,12 +40,12 @@ extern "C" {
 
 using namespace std;
 
-typedef double realtype;
+typedef double flt_t;
 template <typename T> struct TplPtCoord {
 	T x, y;
 };
 
-typedef TplPtCoord<realtype> PtCoord;
+typedef TplPtCoord<flt_t> PtCoord;
 typedef std::vector<PtCoord> ccont;
 
 ostream&
@@ -53,9 +53,9 @@ prn_contour(short p0, short pN, const FT_Outline& outline, ostream& o, bool& res
 bool
 get_contour(short p0, short pN, const FT_Outline& outline, ccont& o);
 void
-scale_pts(ccont& c, double scale);
+scale_pts(ccont& c, flt_t scale);
 bool
-collect_pts(double xshift, double yshift, ccont& ccr, FT_Face face,
+collect_pts(flt_t xshift, flt_t yshift, ccont& ccr, FT_Face face,
 	FT_GlyphSlot slot, FT_Outline& outline);
 void
 prn_prnobj(ccont& c, unsigned obj_num);
@@ -77,7 +77,7 @@ static void f_atexit(void)
 } // extern "C"
 
 // approx. epspline virtual x
-const double Xmax = 3000.0;
+const flt_t Xmax = 3000.0;
 
 int
 main(int argc, char* argv[])
@@ -109,8 +109,8 @@ main(int argc, char* argv[])
 		return 1;
 	}
 
-	double xshift = 0.0;
-	double yshift = face->bbox.yMax;
+	flt_t xshift = 0.0;
+	flt_t yshift = face->bbox.yMax;
 	bool xshift_init = false;
 	vector<ccont> c_all;
 	c_all.reserve(argc - 2);
@@ -172,7 +172,7 @@ main(int argc, char* argv[])
 	}
 
 	prn_openf(c_all.size());
-	double scl = Xmax / xshift;
+	flt_t scl = Xmax / xshift;
 	for ( unsigned  i = 0; i < c_all.size(); i++ ) {
 		if ( scl < 1.0 ) {
 			scale_pts(c_all[i], scl);
@@ -182,7 +182,7 @@ main(int argc, char* argv[])
 	}
 
 #if 0
-	double llx, lly, urx, ury;
+	flt_t llx, lly, urx, ury;
 	llx = face->bbox.xMin;
 	lly = face->bbox.yMin;
 	urx = face->bbox.xMax;
@@ -215,7 +215,7 @@ main(int argc, char* argv[])
 }
 
 void
-scale_pts(ccont& c, double scale)
+scale_pts(ccont& c, flt_t scale)
 {
 	for ( unsigned i = 0; i < c.size(); i++ ) {
 		c[i].x *= scale;
@@ -388,7 +388,7 @@ prn_prnobj(ccont& c, unsigned obj_num)
 }
 
 bool
-collect_pts(double xshift, double yshift, ccont& ccr, FT_Face face,
+collect_pts(flt_t xshift, flt_t yshift, ccont& ccr, FT_Face face,
 	FT_GlyphSlot slot, FT_Outline& outline)
 {
 	// Sanity check:

@@ -27,15 +27,19 @@
 //
 
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <vector>
 #include <limits>
 #include <cstdio>
 #include <cstdlib>
+#include <cctype>
 #include <cerrno>
 
 extern "C" {
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include <freetype/t1tables.h>
 }
 
 using namespace std;
@@ -46,7 +50,20 @@ template <typename T> struct TplPtCoord {
 };
 
 typedef TplPtCoord<flt_t> PtCoord;
-typedef std::vector<PtCoord> ccont;
+struct ccont {
+	typedef std::vector<PtCoord> ptvec;
+	ptvec v;
+	std::string comment;
+	ccont() {}
+	ccont(const std::string& s) : comment(s) {}
+	ccont(const ccont& o) { *this = o; }
+	
+	ccont& operator = (const ccont& o) {
+		v = o.v;
+		comment = o.comment;
+		return *this;
+	}
+};
 
 ostream&
 prn_contour(short p0, short pN, const FT_Outline& outline, ostream& o, bool& result);
@@ -62,6 +79,10 @@ void
 prn_prnobj(ccont& c, unsigned obj_num);
 void
 prn_openf(unsigned cnt);
+void
+prn_comment(const std::string& out);
+std::string&
+sanitise_string(std::string& in, std::string& out);
 
 std::vector<FT_Library> ftlib_vec;
 extern "C" {
@@ -110,6 +131,7 @@ main(int argc, char* argv[])
 		return 1;
 	}
 
+	bool has_glyph_names = FT_HAS_GLYPH_NAMES(face) != 0;
 	flt_t xshift = 0.0;
 	flt_t yshift = face->bbox.yMax;
 	bool xshift_init = false;
@@ -143,6 +165,7 @@ main(int argc, char* argv[])
 			cerr << "Error " << error << " from FT_Load_Glyph()\n";
 			return 1;
 		}
+
 		FT_GlyphSlot slot = face->glyph;
 
 		if ( !xshift_init ) {
@@ -150,34 +173,31 @@ main(int argc, char* argv[])
 			xshift_init = true;
 		}
 
-#		if 0
-		flt_t llx, lly, urx, ury;
-		llx = face->bbox.xMin;
-		lly = face->bbox.yMin;
-		urx = face->bbox.xMax;
-		ury = face->bbox.yMax;
-		cerr << "face->bbox:\n\t" <<
-			"xMin " << llx << ", yMin " << lly <<
-			", xMax " << urx << ", yMax " << ury << endl;
-		cerr << "face->units_per_EM " << face->units_per_EM << endl;
-		cerr << "face->ascender " << face->ascender << endl;
-		cerr << "face->descender " << face->descender << endl;
-		cerr << "face->height " << face->height << endl;
-		cerr << "face->underline_position " <<
-			face->underline_position << endl;
+		std::string sarg(argv[i]);
+		std::ostringstream so;
+
+		so << "Glyph data for argument " << sarg << ":\n";
+		if ( has_glyph_names ) {
+			const FT_UInt sz = 512;
+			char buf[sz];
+			if ( FT_Get_Glyph_Name(face, glyph_index, buf, sz) == 0 ) {
+				buf[sz - 1] = '\0';
+				so << " Glyph name: \"" << buf << "\"\n";
+			}
+		}
+
 		FT_Glyph_Metrics& gm = slot->metrics;
-		cerr << "glyph metrics:\n\t" <<
+		so << " glyph metrics:\n\t" <<
 			"width " << gm.width << ", height " << gm.height <<
-			endl <<
+			std::endl <<
 			"\thoriBearingX " << gm.horiBearingX <<
 			", horiBearingY " << gm.horiBearingY <<
 			", horiAdvance " << gm.horiAdvance <<
-			endl <<
+			std::endl <<
 			"\tvertBearingX " << gm.vertBearingX <<
 			", vertBearingY " << gm.vertBearingY <<
 			", vertAdvance " << gm.vertAdvance <<
-			endl;
-#		endif
+			std::endl;
 
 		FT_Outline& outline = slot->outline;
 
@@ -185,7 +205,7 @@ main(int argc, char* argv[])
 			cerr << "outline: n_points == " << outline.n_points
 				<< ", n_contours == " << outline.n_contours << endl;
 		
-			c_all.push_back(ccont());
+			c_all.push_back(ccont(so.str()));
 			ccont& ccr = c_all.back();
 			bool res = collect_pts(xshift, yshift, ccr,
 				face, slot, outline);
@@ -206,24 +226,114 @@ main(int argc, char* argv[])
 
 	prn_openf(c_all.size());
 	flt_t scl = Xmax / xshift;
+	if ( scl > 1.0 ) { // temporary: check for Y later
+		scl = 1.0;
+	}
 	for ( unsigned  i = 0; i < c_all.size(); i++ ) {
-		if ( scl < 1.0 ) {
-			scale_pts(c_all[i], scl);
-		}
-	
+		scale_pts(c_all[i], scl);
 		prn_prnobj(c_all[i], i);
 	}
 
+	std::ostringstream so;
+	so << "Bezier spline characters converted from \n\"" <<
+		argv[1] << "\"\n";
+	if ( const char* p = FT_Get_Postscript_Name(face) ) {
+		so << "Postscript name: " << p << '\n';
+	}
+	if ( face->family_name && *face->family_name ) {
+		so << "Typeface family name: " << face->family_name << '\n';
+	}
+	if ( face->style_name && *face->style_name ) {
+		so << "Typeface style name: " << face->style_name << '\n';
+	}
+	{
+		PS_FontInfoRec fir;
+		if ( FT_Get_PS_Font_Info(face, &fir) == 0 ) {
+			so << "Font info version: " << fir.version << '\n';
+			so << "Font info full name: " << fir.full_name << '\n';
+			so << "Font info family name: " << fir.family_name << '\n';
+			so << "Font info weight: " << fir.weight << '\n';
+			so << "Font info italic angle: " <<
+				fir.italic_angle << '\n';
+			so << "Font info fixed pitch boolean: " <<
+				fir.is_fixed_pitch << '\n';
+			so << "Font info underline_position: " <<
+				fir.underline_position << '\n';
+			so << "Font info underline_thickness: " <<
+				fir.underline_thickness << '\n';
+		}
+	}
+	so << "Data conversion scaling factor: " << scl << '\n';
+	so << "Baseline, scaled and translated for epspline: " <<
+		double(scl * yshift) << '\n';
+	so << "Typeface unscaled data:\n";
+	so << " bounding box: " << face->bbox.xMin << ", "
+		<< face->bbox.yMin << ", "
+		<< face->bbox.xMax << ", "
+		<< face->bbox.yMax << '\n';
+	so << " units-per-em: " << face->units_per_EM << '\n';
+	so << " ascender: " << face->ascender << '\n';
+	so << " descender: " << face->descender << '\n';
+	so << " height: " << face->height << '\n';
+	so << " max_advance_width: " <<
+		face->max_advance_width << '\n';
+	so << " max_advance_height: " <<
+		face->max_advance_height << '\n';
+	so << " underline_position: " <<
+		face->underline_position << '\n';
+	so << " underline_thickness: " <<
+		face->underline_thickness << '\n';
+
+	std::string c("/*\n");
+	std::string cm = so.str();
+	prn_comment(c + sanitise_string(cm, cm) + "*/");
 
 	return 0;
+}
+
+std::string&
+sanitise_string(std::string& in, std::string& out)
+{
+	std::istringstream si(in);
+	std::ostringstream so;
+	
+	std::string::value_type c;
+	while ( si.get(c) ) {
+		if ( ! std::isprint(c) && ! std::isspace(c) ) {
+			char buf[8];
+			::snprintf(buf, 8, "0x%02X", unsigned(c));
+			so << buf;
+			continue;
+		}
+		switch ( c ) {
+			case '\'':
+			case '"':
+			case '\\':
+				so.put('\\');
+				break;
+			default:
+				break;
+		}
+		so.put(c);
+	}
+	
+	out = so.str();
+	std::string::size_type p;
+	while ( (p = out.find("*/")) != std::string::npos ) {
+		out.replace(p, 2, "**");
+	}
+	while ( (p = out.find("/*")) != std::string::npos ) {
+		out.replace(p, 2, "**");
+	}
+	return out;
 }
 
 void
 scale_pts(ccont& c, flt_t scale)
 {
-	for ( unsigned i = 0; i < c.size(); i++ ) {
-		c[i].x *= scale;
-		c[i].y *= scale;
+	for ( unsigned i = 0; i < c.v.size(); i++ ) {
+		c.v[i].x *= scale;
+		c.v[i].y *= scale;
 	}
 }
 
@@ -277,17 +387,17 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 				pc2.x = v2.x; pc2.y = v2.y;
 				pc2.x += pc.x; pc2.y += pc.y;
 				pc2.x /= 2.0; pc2.y /= 2.0;
-				o.push_back(pc2);
-				o.push_back(pc2);
+				o.v.push_back(pc2);
+				o.v.push_back(pc2);
 			}
 		}
 
 		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
 			// end last seg.; POV-Ray does not do so implicitely
-			o.push_back(pc);
+			o.v.push_back(pc);
 		}
 
-		o.push_back(pc);
+		o.v.push_back(pc);
 		fl0 = fl;
 	}
 
@@ -301,21 +411,22 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 		pc2.x = v2.x; pc2.y = v2.y;
 		pc2.x += pc.x; pc2.y += pc.y;
 		pc2.x /= 2.0; pc2.y /= 2.0;
-		o.push_back(pc2);
-		o.push_back(pc2);
+		o.v.push_back(pc2);
+		o.v.push_back(pc2);
 	}
 
 	// POV wants first point repeated to close curve
 	const FT_Vector& v = outline.points[p0];
 	PtCoord pc;
 	pc.x = v.x; pc.y = v.y;
-	o.push_back(pc);
+	o.v.push_back(pc);
 
 	return true;
 }
 
 ostream&
-prn_contour(short p0, short pN, const FT_Outline& outline, ostream& o, bool& result)
+prn_contour(short p0, short pN, const FT_Outline& outline,
+			ostream& o, bool& result)
 {
 	if ( (pN - p0) < 3 ) {
 		cerr << "CONTOUR with " << (pN - p0) << " points\n";
@@ -367,10 +478,22 @@ prn_openf(unsigned cnt)
 	, cnt);
 }
 
+void
+prn_comment(const std::string& out)
+{
+	printf(
+	" 'FileComments'('CommentCount' = 1,\n"
+	"   'Comment1' = \"%s\").\n"
+	" \n"
+	, out.c_str());
+}
 
 void
 prn_prnobj(ccont& c, unsigned obj_num)
 {
+	std::string cm("/*\n");
+	cm += sanitise_string(c.comment, c.comment) + "*/";
+
 	printf(
 	" 'Object%u'(objname = \"SplineObject\",\n"
 	"   splinetype = 3,\n"
@@ -380,12 +503,13 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	"   use_open = 0,\n"
 	"   sweep_min = \"-1.00000000\",\n"
 	"   sweep_max = \"1.00000000\",\n"
-	, obj_num);
+	"   'UserStr' = \"%s\",\n"
+	, obj_num, cm.c_str());
 
 	unsigned nuv = 0;
-	for ( ; nuv < c.size(); nuv++ ) {
-		printf("  'U%u' = \"%g\",\n", nuv, double(c[nuv].x));
-		printf("  'V%u' = \"%g\",\n", nuv, double(c[nuv].y));
+	for ( ; nuv < c.v.size(); nuv++ ) {
+		printf("  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
+		printf("  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
 	}
 
 	printf("  'UVcount' = %u).\n\n", nuv);
@@ -403,7 +527,7 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 		return false;
 	}
 
-	ccr.reserve(2u * outline.n_points);
+	ccr.v.reserve(2u * outline.n_points);
 
 	short p0 = 0;
 	for ( short c0 = 0; c0 < outline.n_contours; c0++ ) {
@@ -420,9 +544,9 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 		p0 = pN + 1;
 	}
 
-	for ( size_t i = 0; i < ccr.size(); i++ ) {
-		ccr[i].x += xshift;
-		ccr[i].y = yshift - ccr[i].y;
+	for ( size_t i = 0; i < ccr.v.size(); i++ ) {
+		ccr.v[i].x += xshift;
+		ccr.v[i].y = yshift - ccr.v[i].y;
 	}
 	
 	return true;

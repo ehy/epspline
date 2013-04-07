@@ -508,8 +508,8 @@ prn_prnobj(ccont& c, unsigned obj_num)
 
 	unsigned nuv = 0;
 	for ( ; nuv < c.v.size(); nuv++ ) {
-		printf("  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
-		printf("  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
+		printf("  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
+		printf("  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
 	}
 
 	printf("  'UVcount' = %u).\n\n", nuv);

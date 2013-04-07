@@ -55,8 +55,9 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o);
 void
 scale_pts(ccont& c, flt_t scale);
 bool
-collect_pts(flt_t xshift, flt_t yshift, ccont& ccr, FT_Face face,
-	FT_GlyphSlot slot, FT_Outline& outline);
+collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
+	const FT_Face face, const FT_GlyphSlot slot,
+	const FT_Outline& outline);
 void
 prn_prnobj(ccont& c, unsigned obj_num);
 void
@@ -89,8 +90,7 @@ main(int argc, char* argv[])
 
 	FT_Library library;
 	int error = FT_Init_FreeType( &library );
-	if ( error )
-	{
+	if ( error ) {
 		cerr << "Failed FT_Init_FreeType()\n";
 		return 1;
 	}
@@ -102,7 +102,8 @@ main(int argc, char* argv[])
 	const char* ffile = argv[1];
 	error = FT_New_Face(library, ffile, 0, &face);
 	if ( error == FT_Err_Unknown_File_Format ) {
-		cerr << "Failed on \"" << ffile << "\": FT_Err_Unknown_File_Format\n";
+		cerr << "Failed on \"" << ffile << 
+			"\": FT_Err_Unknown_File_Format\n";
 		return 1;
 	} else if ( error ) {
 		cerr << "Failed on \"" << ffile << "\": unknown error\n";
@@ -134,7 +135,9 @@ main(int argc, char* argv[])
 	
 		error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
 		if ( error == FT_Err_Invalid_Argument ) {
-			cerr << "Error \"FT_Err_Invalid_Argument\" from FT_Load_Glyph()\n";
+			cerr << 
+				"Error \"FT_Err_Invalid_Argument\" "
+				"from FT_Load_Glyph()\n";
 			return 1;
 		} else if ( error ) {
 			cerr << "Error " << error << " from FT_Load_Glyph()\n";
@@ -144,7 +147,37 @@ main(int argc, char* argv[])
 
 		if ( !xshift_init ) {
 			xshift -= slot->metrics.horiBearingX;
+			xshift_init = true;
 		}
+
+#		if 0
+		flt_t llx, lly, urx, ury;
+		llx = face->bbox.xMin;
+		lly = face->bbox.yMin;
+		urx = face->bbox.xMax;
+		ury = face->bbox.yMax;
+		cerr << "face->bbox:\n\t" <<
+			"xMin " << llx << ", yMin " << lly <<
+			", xMax " << urx << ", yMax " << ury << endl;
+		cerr << "face->units_per_EM " << face->units_per_EM << endl;
+		cerr << "face->ascender " << face->ascender << endl;
+		cerr << "face->descender " << face->descender << endl;
+		cerr << "face->height " << face->height << endl;
+		cerr << "face->underline_position " <<
+			face->underline_position << endl;
+		FT_Glyph_Metrics& gm = slot->metrics;
+		cerr << "glyph metrics:\n\t" <<
+			"width " << gm.width << ", height " << gm.height <<
+			endl <<
+			"\thoriBearingX " << gm.horiBearingX <<
+			", horiBearingY " << gm.horiBearingY <<
+			", horiAdvance " << gm.horiAdvance <<
+			endl <<
+			"\tvertBearingX " << gm.vertBearingX <<
+			", vertBearingY " << gm.vertBearingY <<
+			", vertAdvance " << gm.vertAdvance <<
+			endl;
+#		endif
 
 		FT_Outline& outline = slot->outline;
 
@@ -181,35 +214,6 @@ main(int argc, char* argv[])
 		prn_prnobj(c_all[i], i);
 	}
 
-#if 0
-	flt_t llx, lly, urx, ury;
-	llx = face->bbox.xMin;
-	lly = face->bbox.yMin;
-	urx = face->bbox.xMax;
-	ury = face->bbox.yMax;
-	cerr << "face->bbox:\n\t" <<
-		"xMin " << llx << ", yMin " << lly <<
-		", xMax " << urx << ", yMax " << ury << endl;
-	cerr << "face->units_per_EM " << face->units_per_EM << endl;
-	cerr << "face->ascender " << face->ascender << endl;
-	cerr << "face->descender " << face->descender << endl;
-	cerr << "face->height " << face->height << endl;
-	cerr << "face->underline_position " << face->underline_position << endl;
-	FT_Glyph_Metrics& gm = slot->metrics;
-	cerr << "glyph metrics:\n\t" <<
-		"width " << gm.width << ", height " << gm.height <<
-		endl <<
-		"\thoriBearingX " << gm.horiBearingX <<
-		", horiBearingY " << gm.horiBearingY <<
-		", horiAdvance " << gm.horiAdvance <<
-		endl <<
-		"\tvertBearingX " << gm.vertBearingX <<
-		", vertBearingY " << gm.vertBearingY <<
-		", vertAdvance " << gm.vertAdvance <<
-		endl;
-
-	return result ? 0 : 1;
-#endif
 
 	return 0;
 }
@@ -388,8 +392,9 @@ prn_prnobj(ccont& c, unsigned obj_num)
 }
 
 bool
-collect_pts(flt_t xshift, flt_t yshift, ccont& ccr, FT_Face face,
-	FT_GlyphSlot slot, FT_Outline& outline)
+collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
+	const FT_Face face, const FT_GlyphSlot slot,
+	const FT_Outline& outline)
 {
 	// Sanity check:
 	if ( outline.n_points

@@ -100,6 +100,8 @@ static void f_atexit(void)
 
 // approx. epspline virtual x
 const flt_t Xmax = 3000.0;
+// point fmt precision: '%g' or '%.8f'
+bool extra_prec = false;
 
 int
 main(int argc, char* argv[])
@@ -129,6 +131,13 @@ main(int argc, char* argv[])
 	} else if ( error ) {
 		cerr << "Failed on \"" << ffile << "\": unknown error\n";
 		return 1;
+	}
+
+	if ( const char* p = std::getenv("EPSPL_HIGH_PREC") ) {
+		std::string s(p);
+		if ( s != "no" && s != "false" && s !=  "0" ) {
+			extra_prec = true;
+		}
 	}
 
 	bool has_glyph_names = FT_HAS_GLYPH_NAMES(face) != 0;
@@ -518,9 +527,16 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	, obj_num, cm.c_str());
 
 	unsigned nuv = 0;
-	for ( ; nuv < c.v.size(); nuv++ ) {
-		printf("  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
-		printf("  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
+	if ( extra_prec ) {
+		for ( ; nuv < c.v.size(); nuv++ ) {
+			printf("  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
+			printf("  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
+		}
+	} else {
+		for ( ; nuv < c.v.size(); nuv++ ) {
+			printf("  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
+			printf("  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
+		}
 	}
 
 	printf("  'UVcount' = %u).\n\n", nuv);

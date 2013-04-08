@@ -110,7 +110,7 @@ main(int argc, char* argv[])
 	}
 
 	FT_Library library;
-	int error = FT_Init_FreeType( &library );
+	int error = FT_Init_FreeType(&library);
 	if ( error ) {
 		cerr << "Failed FT_Init_FreeType()\n";
 		return 1;
@@ -140,10 +140,10 @@ main(int argc, char* argv[])
 
 	for ( int i = 2; i < argc; i++ ) {
 		errno = 0;
-		FT_ULong ftul = strtoul(argv[i], 0, 0);
+		FT_ULong ftul = std::strtoul(argv[i], 0, 0);
 		if ( errno ) {
 			cerr << "arg \"" << argv[i] << "\" no good: "
-				<< strerror(errno) << endl;
+				<< ::strerror(errno) << endl;
 			continue;
 		}
 	
@@ -173,47 +173,58 @@ main(int argc, char* argv[])
 			xshift_init = true;
 		}
 
-		std::string sarg(argv[i]);
-		std::ostringstream so;
-
-		so << "Glyph data for argument " << sarg << ":\n";
-		if ( has_glyph_names ) {
-			const FT_UInt sz = 512;
-			char buf[sz];
-			if ( FT_Get_Glyph_Name(face, glyph_index, buf, sz) == 0 ) {
-				buf[sz - 1] = '\0';
-				so << " Glyph name: \"" << buf << "\"\n";
-			}
-		}
-
-		FT_Glyph_Metrics& gm = slot->metrics;
-		so << " glyph metrics:\n\t" <<
-			"width " << gm.width << ", height " << gm.height <<
-			std::endl <<
-			"\thoriBearingX " << gm.horiBearingX <<
-			", horiBearingY " << gm.horiBearingY <<
-			", horiAdvance " << gm.horiAdvance <<
-			std::endl <<
-			"\tvertBearingX " << gm.vertBearingX <<
-			", vertBearingY " << gm.vertBearingY <<
-			", vertAdvance " << gm.vertAdvance <<
-			std::endl;
-
 		FT_Outline& outline = slot->outline;
 
 		if ( outline.n_contours > 0 ) {
-			cerr << "outline: n_points == " << outline.n_points
-				<< ", n_contours == " << outline.n_contours << endl;
-		
-			c_all.push_back(ccont(so.str()));
+			c_all.push_back(ccont());
 			ccont& ccr = c_all.back();
 			bool res = collect_pts(xshift, yshift, ccr,
 				face, slot, outline);
 			if ( !res ) {
 				c_all.pop_back();
-				cerr << "Failed on arg " << i << endl;
+				cerr << "Failed on arg " << i <<
+					": \"" << argv[i] << "\"\n";
 				continue;
 			}
+
+			std::ostringstream so;
+	
+			so << "Glyph data for argument " << argv[i] << ":\n";
+			if ( has_glyph_names ) {
+				const FT_UInt sz = 64;
+				char buf[sz];
+				if ( FT_Get_Glyph_Name(face, glyph_index, buf, sz)
+					 == 0 ) {
+					buf[sz - 1] = '\0';
+					so << " Glyph name: \"" << buf << "\"\n";
+				}
+			}
+			so << " Number of contours: " << outline.n_contours << '\n';
+			so << " Number of points: " << outline.n_points << '\n';
+			so << " Number of points in POV-Ray conversion: " <<
+				ccr.v.size() << '\n';
+			// use double for segments so fraction will show
+			// if points count is not a multiple of four
+			so << " Number of segments in POV-Ray conversion: " <<
+				(double(ccr.v.size()) / 4.0) << '\n';
+	
+			FT_Glyph_Metrics& gm = slot->metrics;
+			so << " glyph metrics:\n\t" <<
+				"width " << gm.width << ", height " << gm.height <<
+				std::endl <<
+				"\thoriBearingX " << gm.horiBearingX <<
+				", horiBearingY " << gm.horiBearingY <<
+				", horiAdvance " << gm.horiAdvance <<
+				std::endl <<
+				"\tvertBearingX " << gm.vertBearingX <<
+				", vertBearingY " << gm.vertBearingY <<
+				", vertAdvance " << gm.vertAdvance <<
+				std::endl;
+	
+			cerr << "outline: n_points == " << outline.n_points
+				<< ", n_contours == " << outline.n_contours << endl;
+		
+			ccr.comment = so.str();
 		}
 
 		xshift += slot->metrics.horiAdvance;
@@ -255,8 +266,9 @@ main(int argc, char* argv[])
 			so << "Font info weight: " << fir.weight << '\n';
 			so << "Font info italic angle: " <<
 				fir.italic_angle << '\n';
+			// cast char to int to ensure conversion:
 			so << "Font info fixed pitch boolean: " <<
-				fir.is_fixed_pitch << '\n';
+				int(fir.is_fixed_pitch) << '\n';
 			so << "Font info underline_position: " <<
 				fir.underline_position << '\n';
 			so << "Font info underline_thickness: " <<
@@ -267,7 +279,8 @@ main(int argc, char* argv[])
 	so << "Baseline, scaled and translated for epspline: " <<
 		double(scl * yshift) << '\n';
 	so << "Typeface unscaled data:\n";
-	so << " bounding box: " << face->bbox.xMin << ", "
+	so << " bounding box: "
+		<< face->bbox.xMin << ", "
 		<< face->bbox.yMin << ", "
 		<< face->bbox.xMax << ", "
 		<< face->bbox.yMax << '\n';
@@ -297,7 +310,7 @@ sanitise_string(std::string& in, std::string& out)
 	std::istringstream si(in);
 	std::ostringstream so;
 	
-	std::string::value_type c;
+	char c;
 	while ( si.get(c) ) {
 		if ( ! std::isprint(c) && ! std::isspace(c) ) {
 			char buf[8];
@@ -325,6 +338,7 @@ sanitise_string(std::string& in, std::string& out)
 	while ( (p = out.find("/*")) != std::string::npos ) {
 		out.replace(p, 2, "**");
 	}
+
 	return out;
 }
 

@@ -390,9 +390,6 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 				o.v.push_back(pc2);
 				o.v.push_back(pc2);
 			}
-		}
-
-		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
 			// end last seg.; POV-Ray does not do so implicitely
 			o.v.push_back(pc);
 		}

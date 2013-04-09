@@ -29,6 +29,10 @@
 #include <stdexcept>
 #include <cstdio>
 
+#if defined(__DMC__) || defined (__SC__) && defined(__WXMSW__)
+#	define snprintf _snprintf // sigh
+#endif
+
 #undef  A_SIZE
 #define A_SIZE(a) (sizeof(a)/sizeof((a)[0]))
 

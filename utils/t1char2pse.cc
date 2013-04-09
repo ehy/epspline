@@ -20,10 +20,55 @@
  */
 
 //
-// build with something like:
+// Build on Unix/POSIX systems with something like:
 //	make CXXFLAGS="$CXXFLAGS $(freetype-config --cflags)" \
 //		LDLIBS="$(freetype-config --libs)" t1char2pse
 // (On SunOS try 'CCFLAGS=...', and so on.)
+//
+// This can also be built for MSW systems, although there are a few
+// issues, mostly how to build and link against freetype.
+// The following description of building with the cost-free
+// Digital Mars `dmc' compiler might be a rough guide for other
+// MSW compilers too.
+//
+// The dmc compiler can be downloaded at:
+//	http://www.digitalmars.com/download/dmcpp.html
+// Not all links are free downloads (the IDDE is worth buying)
+// but the commandline C++ compiler .zip *and* ``STLport'' .zip
+// are cost-free, and both are needed.
+//
+// The freetype headers and dll and a zlib dll can be had in
+// binary packages at:
+//	http://gnuwin32.sourceforge.net/packages/freetype.htm
+// Get the links ``Binaries'' (freetype-bin-zip) and
+// ``Dependencies'' (freetype-dep-zip)
+//
+// unzip freetype-bin-zip, then freetype-dep-zip. With this file
+// in the same working directory where the .zips were unzipped,
+// and named ``t1char2pse.cc,'' this should build it:
+//	wine dmc -cpp -o+space -mn -Aa -Ab -Ar -Ae -wx -p \
+//		-IC:\\dm\\stlport\\stlport \
+//		-I.\\include\\freetype2 \
+//		-I.\\include \
+//		t1char2pse.cc \
+//		.\\lib\\freetype-bcc.lib
+//
+// Note the '\' at line ends mean continuation: the command
+// should be on one line (without '\'). Also note the file
+// .\\lib\\freetype-bcc.lib on the command; the `bcc' suggests
+// it is meant for the Borland compiler, but DMC will use it.
+// Further note that the example is of using wine under a
+// Unix system, but it should work on MSW with the obvious
+// changes to the command. Additionally note that the command
+// assumes DMC installed in C:\dm, ymmv. Finally note that if
+// not using DMC, edit this file at the ``#if __DMC__'' line
+// to add support for your tool.
+//
+// The needed DLLs are (from the unzipped dir)
+// bin\\freetype6.dll bin\\zlib1.dll and of course they must be put
+// where the loader can find them; probably the same place
+// t1char2pse.exe gets put. The const-free DMC will static-link
+// the DMC C-library (at least that has been my experience).
 //
 
 #include <iostream>
@@ -35,6 +80,20 @@
 #include <cstdlib>
 #include <cctype>
 #include <cerrno>
+
+// bits needed for cost-free Digital Mars MSW32 compiler.
+// add what you need for your MSW development tools.
+#if __DMC__
+#	include <io.h>		// for setmode()
+#	include <fcntl.h>	// for O_BINARY
+#	define snprintf _snprintf
+#	ifndef _WIN32
+#		define _WIN32
+#	endif
+#endif
+#if defined(_WIN32)
+#	define _MSSYS_ 1
+#endif
 
 extern "C" {
 #include <ft2build.h>
@@ -103,9 +162,33 @@ const flt_t Xmax = 3000.0;
 // point fmt precision: '%g' or '%.8f'
 bool extra_prec = false;
 
+// although using std::cerr for messages,
+// C streams are used for data output
+std::FILE* out_fp;
+
 int
 main(int argc, char* argv[])
 {
+#if _MSSYS_
+	// diddle standard output to stop the \r on line ends
+	// because, although the MSW epspline will open files
+	// w/o \r, the Unix epspline fails on files with \r.
+	{
+		int nofd = ::dup(fileno(stdout));
+		::setmode(nofd, O_BINARY);
+		if ( (out_fp = ::fdopen(nofd, "wb")) == 0 ) {
+			std::cerr << "Failed to dup standard output\n"
+				<< "output will have \\r\n";
+			::close(nofd);
+			out_fp = stdout;
+		} else {
+			std::fclose(stdout);
+		}
+	}
+#else
+	out_fp = stdout;
+#endif
+
 	if ( argc < 3 ) {
 		cerr << "need 2 args: font-file, and glyph-index\n";
 		return 1;
@@ -489,7 +572,7 @@ prn_contour(short p0, short pN, const FT_Outline& outline,
 void
 prn_openf(unsigned cnt)
 {
-	printf(
+	fprintf(out_fp, 
 	" 'FileData'('FileFormatVersion' = 2,\n"
 	"   'ObjectCount' = %u,\n"
 	"   'HGuideCount' = 0,\n"
@@ -501,7 +584,7 @@ prn_openf(unsigned cnt)
 void
 prn_comment(const std::string& out)
 {
-	printf(
+	fprintf(out_fp, 
 	" 'FileComments'('CommentCount' = 1,\n"
 	"   'Comment1' = \"%s\").\n"
 	" \n"
@@ -514,7 +597,7 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	std::string cm("/*\n");
 	cm += sanitise_string(c.comment, c.comment) + "*/";
 
-	printf(
+	fprintf(out_fp, 
 	" 'Object%u'(objname = \"SplineObject\",\n"
 	"   splinetype = 3,\n"
 	"   povtype = 1,\n"
@@ -529,17 +612,17 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	unsigned nuv = 0;
 	if ( extra_prec ) {
 		for ( ; nuv < c.v.size(); nuv++ ) {
-			printf("  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
-			printf("  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
+			fprintf(out_fp, "  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
+			fprintf(out_fp, "  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
 		}
 	} else {
 		for ( ; nuv < c.v.size(); nuv++ ) {
-			printf("  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
-			printf("  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
+			fprintf(out_fp, "  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
+			fprintf(out_fp, "  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
 		}
 	}
 
-	printf("  'UVcount' = %u).\n\n", nuv);
+	fprintf(out_fp, "  'UVcount' = %u).\n\n", nuv);
 }
 
 bool

@@ -161,6 +161,8 @@ static void f_atexit(void)
 const flt_t Xmax = 3000.0;
 // point fmt precision: '%g' or '%.8f'
 bool extra_prec = false;
+// write all args as one object
+bool one_object = false;
 
 // although using std::cerr for messages,
 // C streams are used for data output
@@ -173,9 +175,9 @@ main(int argc, char* argv[])
 	// diddle standard output to stop the \r on line ends
 	// because, although the MSW epspline will open files
 	// w/o \r, the Unix epspline fails on files with \r.
-	{
-		int nofd = ::dup(fileno(stdout));
-		::setmode(nofd, O_BINARY);
+	if ( ! isatty(fileno(stdout)) ) {
+		int nofd = dup(fileno(stdout));
+		setmode(nofd, O_BINARY);
 		if ( (out_fp = ::fdopen(nofd, "wb")) == 0 ) {
 			std::cerr << "Failed to dup standard output\n"
 				<< "output will have \\r\n";
@@ -184,6 +186,8 @@ main(int argc, char* argv[])
 		} else {
 			std::fclose(stdout);
 		}
+	} else {
+		out_fp = stdout;
 	}
 #else
 	out_fp = stdout;
@@ -220,6 +224,12 @@ main(int argc, char* argv[])
 		std::string s(p);
 		if ( s != "no" && s != "false" && s !=  "0" ) {
 			extra_prec = true;
+		}
+	}
+	if ( const char* p = std::getenv("EPSPL_ONE_OBJECT") ) {
+		std::string s(p);
+		if ( s != "no" && s != "false" && s !=  "0" ) {
+			one_object = true;
 		}
 	}
 
@@ -332,9 +342,23 @@ main(int argc, char* argv[])
 	if ( scl > 1.0 ) { // temporary: check for Y later
 		scl = 1.0;
 	}
-	for ( unsigned  i = 0; i < c_all.size(); i++ ) {
-		scale_pts(c_all[i], scl);
-		prn_prnobj(c_all[i], i);
+	{
+		ccont oneobj;
+		for ( unsigned  i = 0; i < c_all.size(); i++ ) {
+			scale_pts(c_all[i], scl);
+			if ( ! one_object ) {
+				prn_prnobj(c_all[i], i);
+			} else {
+				const ccont& tcc = c_all[i];
+				for ( unsigned  i = 0; i < tcc.v.size(); i++ ) {
+					oneobj.v.push_back(tcc.v[i]);
+				}
+				oneobj.comment += tcc.comment;
+			}
+		}
+		if ( one_object ) {
+			prn_prnobj(oneobj, 0);
+		}
 	}
 
 	std::ostringstream so;

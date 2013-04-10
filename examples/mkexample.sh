@@ -32,4 +32,4 @@ test -f "$N" && test -r "$N" || {
 
 OBN="${N%.*}"
 
-exec povray +D +X3 +P +FN +A0.7 +W$W +H$H -I"$N" -O"$OBN"-${W}x${H}${OTYPE} ${ADDLARG}
+exec povray +D +X3 +P +FN +A0.2 +Q9 +W$W +H$H -I"$N" -O"$OBN"-${W}x${H}${OTYPE} ${ADDLARG}

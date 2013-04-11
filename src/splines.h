@@ -165,7 +165,8 @@ public:
 	}
 
 	// param unsigned type must be an or_enum, found in wxutil.h
-	virtual void Scale(unsigned type, int xs, int ys);
+	virtual void Scale(unsigned type,
+					int xs, int ys, bool proportional = false);
 	virtual void Flip(unsigned type);
 	virtual void Shear(unsigned type,
                     wxPoint p0, wxPoint p1, wxPoint c);

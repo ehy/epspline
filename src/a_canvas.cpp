@@ -1043,7 +1043,10 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 		return;
 	}
 	
-	bool snap = event.ShiftDown();
+	bool shiftdown = event.ShiftDown();
+	bool ctrldown = event.CmdDown();
+	bool altdown = event.AltDown();
+	bool snap = shiftdown;
 
 	if ( !movingsel && snap )
 		GuideSnap(pos);
@@ -1061,7 +1064,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 
 			if ( !movingtrans ) {
 				PushUndo();
-				if ( event.CmdDown() ) {
+				if ( ctrldown ) {
 					D->sel = CopyObj(D->sel);
 					D->lst.push_front(D->sel);
 				}
@@ -1069,7 +1072,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 			movingtrans = true;
 			transpt = pos;
 			wxRect r0(*D->sel->BBox());
-			if ( DoTransform(dc, event.ShiftDown()) ) {
+			if ( DoTransform(dc, shiftdown, altdown) ) {
 				D->sel->CalcBBox();
 				wxRect r(*D->sel->BBox());
 				int W = std::max(r0.x+r0.width,r.x+r.width);
@@ -1095,7 +1098,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 			}
 			movingpoint = true;
 
-			bool ol = D->sel->SetDotLock(!event.CmdDown());
+			bool ol = D->sel->SetDotLock(!ctrldown);
 
 			D->sel->MovePoint(*D->selpt
 				, pos.x - D->selpt->x
@@ -1114,7 +1117,7 @@ A_Canvas::OnMouseMove(wxMouseEvent& event)
 		} else if ( D->sel ) {
 			if ( !movingsel ) {
 				PushUndo();
-				if ( event.CmdDown() ) {
+				if ( ctrldown ) {
 					D->sel = CopyObj(D->sel);
 					D->lst.push_front(D->sel);
 				}
@@ -1180,10 +1183,13 @@ A_Canvas::OnMouseLUp(wxMouseEvent& event)
 	PrepareDC(dc);
 	#endif
 
+	bool shiftdown = event.ShiftDown();
+	//bool ctrldown = event.CmdDown();
+
 	if ( transforming ) {
 		RefreshObjBox(D->sel, &dc);
 	}
-	if ( !event.m_shiftDown && D->sel ) {
+	if ( !shiftdown && D->sel ) {
 		DrawSelBox(dc, D->sel);
 	}
 
@@ -1231,7 +1237,10 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 	PrepareDC(dc);
 	#endif
 
-	if ( !event.m_shiftDown && !creating && PickupGuide(dc, event) ) {
+	bool shiftdown = event.ShiftDown();
+	//bool ctrldown = event.CmdDown();
+
+	if ( !shiftdown && !creating && PickupGuide(dc, event) ) {
 		 return;
 	}
 
@@ -1249,7 +1258,7 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 		return;
 	}
 
-	if ( event.m_shiftDown ) { // start/end curve edit
+	if ( shiftdown ) { // start/end curve edit
 		if ( creating ) {
 			if ( D->cur && !D->cur->Okay() ) {
 				PopUndo();
@@ -1280,7 +1289,7 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 				creating = true;
 			}
 		}
-	} else { // ! event.m_shiftDown
+	} else { // ! shiftdown
 		if ( creating && D->cur ) { // editing curve, new point
 			D->cur->push_back(pt_mousedown);
 		} else if ( D->sel ) { // (de)select
@@ -1332,7 +1341,7 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 }
 
 bool
-A_Canvas::DoTransform(wxDC& dc, bool constrain)
+A_Canvas::DoTransform(wxDC& dc, bool constrain, bool extmode)
 {
 	const wxRect& r = *D->sel->BBox();
 
@@ -1619,7 +1628,7 @@ A_Canvas::DoTransform(wxDC& dc, bool constrain)
 		default: break;
 		}
 
-		D->sel->Scale(transtype, xs, ys);
+		D->sel->Scale(transtype, xs, ys, extmode);
 		return true;
 	} else if ( shearing ) {
 		wxPoint ctr = transctrpt;

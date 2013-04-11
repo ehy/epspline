@@ -1041,7 +1041,7 @@ SplineBase::Flip(unsigned type)
 }
 
 void
-SplineBase::Scale(unsigned type, int xs, int ys)
+SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 {
 	const wxRect& r = *BBox();
 
@@ -1064,52 +1064,58 @@ SplineBase::Scale(unsigned type, int xs, int ys)
 				double(ys) * double(p.y-r.y) / double(r.height)
 				);
 				break;
-			case or_se:
-				p.x += (
-				double(xs) * double(p.x-r.x) / double(r.width)
-				);
-				p.y += (
-				double(ys) * double(p.y-r.y) / double(r.height)
-				);
-				break;
 			case or_w:
 				p.x += (
-				double(xs) * (1.0f - double(p.x-r.x) /
+				double(xs) * (1.0 - double(p.x-r.x) /
 				double(r.width))
 				);
 				break;
 			case or_n:
 				p.y += (
-				double(ys) * (1.0f - double(p.y-r.y) /
+				double(ys) * (1.0 - double(p.y-r.y) /
 				double(r.height))
+				);
+				break;
+			case or_se:
+				p.x += (
+					double(xs) * double(p.x-r.x) / double(r.width)
+				);
+				p.y += (
+					double(proportional ? xs : ys) *
+					double(p.y-r.y) /
+					double(proportional ? r.width : r.height)
 				);
 				break;
 			case or_nw:
 				p.x += (
-				double(xs) * (1.0f - double(p.x-r.x) /
-				double(r.width))
+					double(xs) * (1.0 - double(p.x-r.x) /
+					double(r.width))
 				);
 				p.y += (
-				double(ys) * (1.0f - double(p.y-r.y) /
-				double(r.height))
+					double(proportional ? xs : ys) *
+					(1.0 - double(p.y-r.y) /
+					double(proportional ? r.width : r.height))
 				);
 				break;
 			case or_ws:
 				p.x += (
-				double(xs) * (1.0f - double(p.x-r.x) /
-				double(r.width))
+					double(xs) * (1.0 - double(p.x-r.x) /
+					double(r.width))
 				);
 				p.y += (
-				double(ys) * double(p.y-r.y) / double(r.height)
+					double(proportional ? xs : ys) *
+					double(p.y-r.y) /
+					double(proportional ? r.width : r.height)
 				);
 				break;
 			case or_en:
 				p.x += (
-				double(xs) * double(p.x-r.x) / double(r.width)
+					double(xs) * double(p.x-r.x) / double(r.width)
 				);
 				p.y += (
-				double(ys) * (1.0f - double(p.y-r.y) /
-				double(r.height))
+					double(proportional ? xs : ys) *
+					(1.0 - double(p.y-r.y) /
+					double(proportional ? r.width : r.height))
 				);
 				break;
 			default:

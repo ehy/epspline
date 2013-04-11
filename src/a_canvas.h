@@ -356,7 +356,7 @@ protected:
 	static int scaleconstrainval;
 	static int shearconstrainval;
 	static double rotateconstrainval;
-	bool DoTransform(wxDC& dc, bool constrain);
+	bool DoTransform(wxDC& dc, bool constrain, bool extmode = false);
 	void DrawTransCtr(wxDC& dc, bool clear, bool draw, wxPoint pt);
 	bool TestTransCtr(wxPoint pt);
 	void GetTransCtrRect(wxRect& r);

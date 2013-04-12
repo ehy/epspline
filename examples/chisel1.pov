@@ -9,6 +9,7 @@ global_settings {
 	max_trace_level 12
 }
 
+#declare Use_AreaLight = 1;
 // Declare textures before including epspline .inc file.
 #declare ChiselBladeTexture = texture { T_Chrome_2C }
 
@@ -86,8 +87,18 @@ camera {
 	right x * (image_width / image_height)
 }
 
+#if ( Use_AreaLight )
+light_source {
+	<-4, 4, -6>
+	color White
+	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
+	adaptive 1
+	jitter
+}
+#else
 light_source { <-2, 4, -3> color White }
 light_source { <-30, 40, -33> color White }
+#end
 
 #if ( 0 )
 #declare blade_unit_raw = object {

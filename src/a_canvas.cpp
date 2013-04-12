@@ -3066,12 +3066,9 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	int rowlen = imw * pixlen;
 	unsigned char* pd = im.GetData();
 	// vars for colors to be assigned
-	const unsigned char opaq = 255;
-	unsigned char cR, cG, cB, cA = opaq;
+	unsigned char cR, cG, cB;
 	// pixel component indices
-	// no, alpha is not the 4th indice, but the 1st indice
-	// in separate memory
-	const int iR = 0, iG = 1, iB = 2; //, iA = 3;
+	const int iR = 0, iG = 1, iB = 2;;
 	
 	// device x, y
 	int X, Y, W, H;
@@ -3091,19 +3088,23 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	cR = bg.Red();
 	cG = bg.Green();
 	cB = bg.Blue();
-#	if wxCHECK_VERSION(2, 8, 0)
-	cA = bg.Alpha();
-#	endif
-	unsigned char* rp = pd;
-	for ( int j = 0; j < imh; j++ ) {
-		unsigned char* p = rp;
 
-		for ( int i = 0; i < imw; i++ ) {
-			p[iR] = cR; p[iG] = cG; p[iB] = cB;
-			p += pixlen;
+	if ( cR == cG && cR == cB ) {
+		// memset is likely to be optimized better than the
+		// compiler can optimize the loop below
+		std::memset(pd, int(cR), size_t(imh) * rowlen);
+	} else {
+		unsigned char* rp = pd;
+		for ( int j = 0; j < imh; j++ ) {
+			unsigned char* p = rp;
+	
+			for ( int i = 0; i < imw; i++ ) {
+				p[iR] = cR; p[iG] = cG; p[iB] = cB;
+				p += pixlen;
+			}
+	
+			rp += rowlen;
 		}
-
-		rp += rowlen;
 	}
 
 	// draw grid lines
@@ -3111,9 +3112,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 		cR = grc.Red();
 		cG = grc.Green();
 		cB = grc.Blue();
-#		if wxCHECK_VERSION(2, 8, 0)
-		cA = grc.Alpha();
-#		endif
+
 		int xs = wid;
 		int ys = wid;
 		int xsm = X % xs;
@@ -3152,9 +3151,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	cR = rlc.Red();
 	cG = rlc.Green();
 	cB = rlc.Blue();
-#	if wxCHECK_VERSION(2, 8, 0)
-	cA = rlc.Alpha();
-#	endif
+
 	if ( !D ) {
 		return;
 	}

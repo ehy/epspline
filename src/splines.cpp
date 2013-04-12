@@ -673,61 +673,69 @@ SplineBase::Export(FILE* f, int n,
 			break;
 		case undef:
 		default:
-			fprintf(f, "#declare %s =\nundef_type { %f, %f //sweep data"
-					   "\n  %s\n  "
-				, Ct.p(), sweep_min, sweep_max, Csps.p());
+			fprintf(f, "/*\n"
+					   "  Undefined type \"%s\" was defined as a %s\n"
+					   "  with sweep (min, max) %f and %f.\n"
+					   "  It is declared as an array here.\n"
+					   "*/\n"
+				, Ct.p(), Csps.p(), sweep_min, sweep_max);
+			fprintf(f, "#declare %s_ARRAY_COUNT = %u;\n"
+				, Ct.p(), unsigned(size()));
+			fprintf(f, "#declare %s_SWEEP_MIN = %f;\n"
+				, Ct.p(), sweep_min);
+			fprintf(f, "#declare %s_SWEEP_MAX = %f;\n"
+				, Ct.p(), sweep_max);
+			fprintf(f, "#declare %s = array[%s_ARRAY_COUNT] {\n  "
+				, Ct.p(), Ct.p());
 			break;
 	}
 
-	// put control point count
-	fprintf(f, "%lu\n", (unsigned long)size());
-
-	// put control points
-	iterator i = begin();
-	while ( i != end() ) {
-		SplinePoint& P = *i++;
-		fprintf(f, "  , <%f, %f>\n", double(P.x), double(P.y));
-	}
-
-	// 'open', if used, must be first after <u,v> points
-	if ( use_open && objt == prism ) {
-		fputs("  open\n", f);
-	}
-	if ( use_sturm ) {
-		fputs("  sturm\n", f);
-	}
-
-#	if 0 // POVRay regards these as unnecessary, and removes them
-	if ( objt == lathe ) {
-		fprintf(f, "  bounded_by {box {<%f, %f, %f>, <%f, %f, %f>}}\n",
-			Lx, Ly, Lx, Mx, My, Mx);
+	if ( objt == undef ) {
+		// put control points
+		iterator b = begin(), e = end();
+		for ( iterator i = b; i != e; i++ ) {
+			SplinePoint& P = *i;
+			if ( i != b ) fputs(",\n  ", f);
+			fprintf(f, "<%f, %f>", double(P.x), double(P.y));
+		}
+		fputc('\n', f);
 	} else {
-		fprintf(f, "  bounded_by {box {<%f, %f, %f>, <%f, %f, %f>}}\n",
-			Lx, sweep_min, Ly, Mx, sweep_max, My);
-	}
-#	endif
+		// put control point count
+		fprintf(f, "%u\n", unsigned(size()));
+	
+		// put control points
+		iterator i = begin();
+		while ( i != end() ) {
+			SplinePoint& P = *i++;
+			fprintf(f, "  , <%f, %f>\n", double(P.x), double(P.y));
+		}
+	
+		// 'open', if used, must be first after <u,v> points
+		if ( use_open && objt == prism ) {
+			fputs("  open\n", f);
+		}
+		if ( use_sturm ) {
+			fputs("  sturm\n", f);
+		}
 
-#	if 1 // still working on this
-	// put normalisation transform, inside pov conditional
-	if ( objt != undef )
 		fprintf(f,
 			"#ifdef ( %s_USE_NORMAL_TRANSFORM )\n"
 			"  transform { %s_NORMAL_TRANSFORM }\n"
 			"#end\n",
 			Ct.p(), Ct.p());
-#	endif
 
-	// finally, put user-optional attributes
-	if ( NotStringFieldEmpty(Texture) )
-		fprintf(f, "  texture { %s }\n", wxs2ch(Texture));
-	if ( NotStringFieldEmpty(Interior) )
-		fprintf(f, "  interior { %s }\n", wxs2ch(Interior));
-	// demo code cannot make dummies for these, as it can for the above
-	if ( !indemo ) {
-		if ( NotStringFieldEmpty(Transform) )
-			fprintf(f, "  transform { %s }\n", wxs2ch(Transform));
-		if ( NotStringFieldEmpty(UserStr) )
-			fprintf(f, "  %s\n", wxs2ch(UserStr));
+		// finally, put user-optional attributes
+		if ( NotStringFieldEmpty(Texture) )
+			fprintf(f, "  texture { %s }\n", wxs2ch(Texture));
+		if ( NotStringFieldEmpty(Interior) )
+			fprintf(f, "  interior { %s }\n", wxs2ch(Interior));
+		// demo code cannot make dummies for these
+		if ( !indemo ) {
+			if ( NotStringFieldEmpty(Transform) )
+				fprintf(f, "  transform { %s }\n", wxs2ch(Transform));
+			if ( NotStringFieldEmpty(UserStr) )
+				fprintf(f, "  %s\n", wxs2ch(UserStr));
+		}
 	}
 
 	// put object close and blank line
@@ -1347,6 +1355,11 @@ QuadraticSpline::Okay() const
 bool
 QuadraticSpline::POkay() const
 {
+	if ( size() > 2 ) { // epspline will draw the curve with 3
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
 	if ( size() > 4 ) { // POV requires 5
 		const_iterator i = begin();
 		const_iterator e = end();
@@ -1614,6 +1627,11 @@ CubicSpline::Okay() const
 bool
 CubicSpline::POkay() const
 {
+	if ( size() > 3 ) { // epspline will draw the curve with 4
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
 	if ( size() > 5 ) { // POV requires 6
 		const_iterator i = begin();
 		const_iterator e = end();
@@ -1905,6 +1923,11 @@ BezierSpline::POkay() const
 	const size_type sz = size();
 	const size_type bitsng = 3u;
 	
+	if ( sz > 3 ) { // epspline will draw the curve with 4
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
 	if ( sz < 4 || (sz & bitsng) ) {
 		return false;
 	} else if ( sz == 4 ) {

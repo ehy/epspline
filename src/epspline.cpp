@@ -108,6 +108,11 @@ IMPLEMENT_APP(AnApp)
 bool
 AnApp::OnInit()
 {
+	// n.g. unless using wx commandline parser, else fails on args!
+	if ( false && !wxApp::OnInit() ) {
+		return false;
+	}
+
 	// will need to control some C-library functions,
 	// particularly string formatting of numeric data;
 	// otherwise let locale from environment be used
@@ -166,18 +171,30 @@ AnApp::OnInit()
 #	if ! NO_USE_WXLOCALE
 	if ( bool r = app_locale.Init() == false ) {
 		wxLogError(wxT("(wx) 1st Locale initialization failed"));
+		std::fputs(
+			"epspline: 1st Locale initialization failed\n", stderr);
 		// 2nd app_locale.Init() removes a flag used in default, above
 		r = app_locale.Init(wxLANGUAGE_DEFAULT, wxLOCALE_CONV_ENCODING);
 		if ( ! r ) {
 			wxLogError(wxT("(wx) 2nd Locale initialization failed"));
+			std::fputs(
+				"epspline: 2nd Locale initialization failed\n", stderr);
 		}
 	}
+	
 #	ifdef L10N_INSTALL_PATH
 	wxLocale::AddCatalogLookupPathPrefix(wxT(L10N_INSTALL_PATH));
 #	endif
-	app_locale.AddCatalog(wxT(APPNAME_IN_ASCII));
-#	endif // ! NO_USE_WXLOCALE
+
+	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII)) ) {
+		wxLogError(wxT("(wx) add initialization catalog failed"));
+		std::fprintf(stderr,
+			"epspline: AddCatalog(%s) failed\n", APPNAME_IN_ASCII);
+	}
 	
+	app_locale.AddCatalog(wxT("wxstd"));
+#	endif // ! NO_USE_WXLOCALE
+
 	// set the global wxMBConv* -- this envvar will be undocumented
 	if ( const char* p = std::getenv("WXCHARCONV") ) {
 		if ( ! std::strcmp(p, "libc") ) {

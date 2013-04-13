@@ -221,7 +221,7 @@ AnApp::OnInit()
 	}
 	
 	app_mbconv = app_global_mbconv;
-	
+
 	wxFileName fn_av0(ARGV[0]);
 	av0 = fn_av0.GetName();
 

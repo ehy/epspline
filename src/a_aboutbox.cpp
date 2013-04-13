@@ -31,9 +31,11 @@
 #include "wx/encconv.h"
 #endif
 
-#ifndef USE_DJ_ICONS
-#	if !defined(__WXMSW__) || !defined(USE_OLD_MSW_ICONS)
-#		define USE_DJ_ICONS 1
+#if USE_APPDIST_ICONS
+#	ifndef USE_DJ_ICONS
+#		if !defined(__WXMSW__) || !defined(USE_OLD_MSW_ICONS)
+#			define USE_DJ_ICONS 1
+#		endif
 #	endif
 #endif
 
@@ -55,6 +57,7 @@ static const wxChar tM[] =
 #include "a_aboutbox.h"
 #include "epspline.h"
 #include "wxutil.h"
+#include "cdata.h"
 
 // A_Aboutbox
 //
@@ -81,7 +84,8 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		fea.GetCount() > 0 ? fea[0] : wxFONTENCODING_DEFAULT
 		);
 	wxTextAttr tatt(*wxBLACK, *wxWHITE, font);
-	wxString text(wxGetApp().GetAppTitle());
+	//wxString text(wxGetApp().GetAppTitle());
+	wxString text(wxT(APPCLASS_IN_ASCII));
 	int wi, hi, tw, th;
 	::wxDisplaySize(&wi, &hi);
 	wi -= 256; hi -= 256;
@@ -127,6 +131,9 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	wxPanel* page = new wxPanel(book);
 	wxBoxSizer* szr     = new wxBoxSizer(wxVERTICAL);
 	wxStaticText* pstxt = new wxStaticText(page, -1, text);
+	// Added 2013/04/13
+	pstxt->SetFont(font);
+	//
 	szr->Add(20, 20);
 	szr->Add(pstxt, 0, wxALIGN_CENTER|wxADJUST_MINSIZE, 0);
 	szr->Add(20, 20);

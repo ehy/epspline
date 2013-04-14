@@ -101,8 +101,6 @@ extern "C" {
 #include <freetype/t1tables.h>
 }
 
-using namespace std;
-
 typedef double flt_t;
 template <typename T> struct TplPtCoord {
 	T x, y;
@@ -124,8 +122,9 @@ struct ccont {
 	}
 };
 
-ostream&
-prn_contour(short p0, short pN, const FT_Outline& outline, ostream& o, bool& result);
+std::ostream&
+prn_contour(short p0, short pN, const FT_Outline& outline,
+			std::ostream& o, bool& result);
 bool
 get_contour(short p0, short pN, const FT_Outline& outline, ccont& o);
 void
@@ -142,6 +141,10 @@ void
 prn_comment(const std::string& out);
 std::string&
 sanitise_string(std::string& in, std::string& out);
+void
+get_envvars();
+void
+get_options(int ac, char* av[]);
 
 std::vector<FT_Library> ftlib_vec;
 extern "C" {
@@ -157,6 +160,8 @@ static void f_atexit(void)
 }
 } // extern "C"
 
+const char default_prog[] = "t1char2pse";
+const char* prog = default_prog;
 // approx. epspline virtual x
 const flt_t Xmax = 3000.0;
 // point fmt precision: '%g' or '%.8f'
@@ -171,6 +176,16 @@ std::FILE* out_fp;
 int
 main(int argc, char* argv[])
 {
+	if ( argv[0] && *argv[0] ) {
+		std::string s(argv[0]);
+		std::string::size_type p = s.rfind('/');
+		if ( p != std::string::npos && (p+1) < s.length() ) {
+			prog = &argv[0][++p];
+		} else {
+			prog = argv[0];
+		}
+	}
+
 #if _MSSYS_
 	// diddle standard output to stop the \r on line ends
 	// because, although the MSW epspline will open files
@@ -193,15 +208,13 @@ main(int argc, char* argv[])
 	out_fp = stdout;
 #endif
 
-	if ( argc < 3 ) {
-		cerr << "need 2 args: font-file, and glyph-index\n";
-		return 1;
-	}
+	get_envvars();
+	get_options(argc, argv);
 
 	FT_Library library;
 	int error = FT_Init_FreeType(&library);
 	if ( error ) {
-		cerr << "Failed FT_Init_FreeType()\n";
+		std::cerr << "Failed FT_Init_FreeType()\n";
 		return 1;
 	}
 
@@ -212,46 +225,33 @@ main(int argc, char* argv[])
 	const char* ffile = argv[1];
 	error = FT_New_Face(library, ffile, 0, &face);
 	if ( error == FT_Err_Unknown_File_Format ) {
-		cerr << "Failed on \"" << ffile << 
+		std::cerr << "Failed on \"" << ffile << 
 			"\": FT_Err_Unknown_File_Format\n";
 		return 1;
 	} else if ( error ) {
-		cerr << "Failed on \"" << ffile << "\": unknown error\n";
+		std::cerr << "Failed on \"" << ffile << "\": unknown error\n";
 		return 1;
-	}
-
-	if ( const char* p = std::getenv("EPSPL_HIGH_PREC") ) {
-		std::string s(p);
-		if ( s != "no" && s != "false" && s !=  "0" ) {
-			extra_prec = true;
-		}
-	}
-	if ( const char* p = std::getenv("EPSPL_ONE_OBJECT") ) {
-		std::string s(p);
-		if ( s != "no" && s != "false" && s !=  "0" ) {
-			one_object = true;
-		}
 	}
 
 	bool has_glyph_names = FT_HAS_GLYPH_NAMES(face) != 0;
 	flt_t xshift = 0.0;
 	flt_t yshift = face->bbox.yMax;
 	bool xshift_init = false;
-	vector<ccont> c_all;
+	std::vector<ccont> c_all;
 	c_all.reserve(argc - 2);
 
 	for ( int i = 2; i < argc; i++ ) {
 		errno = 0;
 		FT_ULong ftul = std::strtoul(argv[i], 0, 0);
 		if ( errno ) {
-			cerr << "arg \"" << argv[i] << "\" no good: "
-				<< ::strerror(errno) << endl;
+			std::cerr << "arg \"" << argv[i] << "\" no good: "
+				<< ::strerror(errno) << std::endl;
 			continue;
 		}
 	
 		FT_UInt glyph_index = FT_Get_Char_Index(face, ftul);
 		if ( glyph_index == 0 ) {
-			cerr << "Found no glyph for \"" << argv[i]
+			std::cerr << "Found no glyph for \"" << argv[i]
 				<< "\" (" << ftul <<
 			")\n";
 			continue;
@@ -259,12 +259,12 @@ main(int argc, char* argv[])
 	
 		error = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
 		if ( error == FT_Err_Invalid_Argument ) {
-			cerr << 
+			std::cerr << 
 				"Error \"FT_Err_Invalid_Argument\" "
 				"from FT_Load_Glyph()\n";
 			return 1;
 		} else if ( error ) {
-			cerr << "Error " << error << " from FT_Load_Glyph()\n";
+			std::cerr << "Error " << error << " from FT_Load_Glyph()\n";
 			return 1;
 		}
 
@@ -284,7 +284,7 @@ main(int argc, char* argv[])
 				face, slot, outline);
 			if ( !res ) {
 				c_all.pop_back();
-				cerr << "Failed on arg " << i <<
+				std::cerr << "Failed on arg " << i <<
 					": \"" << argv[i] << "\"\n";
 				continue;
 			}
@@ -323,8 +323,9 @@ main(int argc, char* argv[])
 				", vertAdvance " << gm.vertAdvance <<
 				std::endl;
 	
-			cerr << "outline: n_points == " << outline.n_points
-				<< ", n_contours == " << outline.n_contours << endl;
+			std::cerr << "outline: n_points == " << outline.n_points
+				<< ", n_contours == " << outline.n_contours <<
+				std::endl;
 		
 			ccr.comment = so.str();
 		}
@@ -333,7 +334,7 @@ main(int argc, char* argv[])
 	}
 
 	if ( c_all.size() < 1 ) {
-		cerr << "No valid outlines collected\n";
+		std::cerr << "No valid outlines collected\n";
 		return 1;
 	}
 
@@ -420,6 +421,34 @@ main(int argc, char* argv[])
 	return 0;
 }
 
+void
+get_envvars()
+{
+	if ( const char* p = std::getenv("EPSPL_HIGH_PREC") ) {
+		std::string s(p);
+		if ( s != "no" && s != "false" && s !=  "0" ) {
+			extra_prec = true;
+		}
+	}
+	if ( const char* p = std::getenv("EPSPL_ONE_OBJECT") ) {
+		std::string s(p);
+		if ( s != "no" && s != "false" && s !=  "0" ) {
+			one_object = true;
+		}
+	}
+}
+
+void
+get_options(int ac, char* av[])
+{	
+	if ( ac < 3 ) {
+		std::cerr << prog
+			<< ": need 2 args: font-file, and glyph-index\n";
+		std::exit(1);
+	}
+
+}
+
 std::string&
 sanitise_string(std::string& in, std::string& out)
 {
@@ -497,7 +526,7 @@ bool
 get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 {
 	if ( (pN - p0) < 3 ) {
-		cerr << "CONTOUR with " << (pN - p0) << " points\n";
+		std::cerr << "CONTOUR with " << (pN - p0) << " points\n";
 		return false;
 	}
 
@@ -511,7 +540,7 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 
 		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
 			if ( fl0 == FT_CURVE_TAG_ON ) {
-				//2 endpoints in seq. means straight line segment
+				// 2 endpoints in seq. means straight line segment
 				const FT_Vector& v2 = outline.points[i - 1];
 				PtCoord pc2;
 				pc2.x = v2.x; pc2.y = v2.y;
@@ -551,12 +580,12 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 	return true;
 }
 
-ostream&
+std::ostream&
 prn_contour(short p0, short pN, const FT_Outline& outline,
-			ostream& o, bool& result)
+			std::ostream& o, bool& result)
 {
 	if ( (pN - p0) < 3 ) {
-		cerr << "CONTOUR with " << (pN - p0) << " points\n";
+		std::cerr << "CONTOUR with " << (pN - p0) << " points\n";
 		result = false;
 		return o;
 	}
@@ -657,7 +686,7 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 	// Sanity check:
 	if ( outline.n_points
 	 != (outline.contours[outline.n_contours-1]+1) ) {
-		cerr << "First sanity check FAILED\n";
+		std::cerr << "First sanity check FAILED\n";
 		return false;
 	}
 
@@ -669,11 +698,11 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 
 		bool tbool = get_contour(p0, pN, outline, ccr);
 		if ( tbool == false ) {
-			cerr << "FAILED on contour: " << c0 << endl;
+			std::cerr << "FAILED on contour: " << c0 << std::endl;
 			return false;
 		}
 
-		prn_contour(p0, pN, outline, cerr, tbool);
+		prn_contour(p0, pN, outline, std::cerr, tbool);
 
 		p0 = pN + 1;
 	}

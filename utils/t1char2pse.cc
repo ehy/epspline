@@ -513,13 +513,25 @@ usage(int status)
 	<<
 	" -f <fontfile> [-1 -s <8-bit-string>] [<unicode indices>]\n"
 	"\n"
+	"Get curves from a type-1 font file and convert for epspline.\n"
+	"\n"
 	"-f file    the type-1 font (typeface) file: required\n"
-	"-1         make all characters be one object\n"
+	"-1         ('one') make all characters be one object\n"
 	"-s string  use characters from UTF-8 (or ASCII) string\n"
 	"-h         print this usage help and succeed\n"
 	"\n"
-	"arguments that are not introduced by option switches are\n"
-	"taken to be unicode charmap indices.\n"
+	"Arguments that are not introduced by option switches are\n"
+	"taken to be unicode charmap indices and will be converted\n"
+	"with strtoul(3), so a base prefix may be present.\n"
+	"\n"
+	"Arguments may appear in any order, and may be repeated;\n"
+	"so, the following example works as expected:\n"
+	"\n"
+	"% " << prog <<
+	" -f foo.pfb 0x2018 -s \"single quotes\" 0x2019 > foo-q.pse\n"
+	"\n"
+	"Output is always printed on the standard output: redirect!\n"
+	"\n"
 	;
 
 	std::exit(status);
@@ -588,7 +600,7 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 		}
 	}
 
-	if ( fontfile == 0 && nargs == 0 ) {
+	if ( fontfile == 0 || nargs == 0 ) {
 		usage(1);
 	}
 }

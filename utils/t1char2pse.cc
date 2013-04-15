@@ -476,7 +476,7 @@ handle_string_arg(const char* s, std::vector<iarg>& ia)
 	// init state
 	int wr = std::mbtowc(0, 0, slen);
 	if ( wr ) {
-		std::cerr << prog << ": found state-dependent environment\n";
+		std::cerr << prog << ": found state-dependent mb chars\n";
 	}
 	
 	for ( const char* i = s; *i != '\0'; ) {
@@ -496,7 +496,7 @@ handle_string_arg(const char* s, std::vector<iarg>& ia)
 		}
 		
 		t.v = FT_ULong(c);
-		t.s = ""; t.s.append(i, std::string::size_type(wr));
+		t.s.append(i, std::string::size_type(wr));
 		slen -= wr;
 		ia.push_back(t);
 		i += wr;
@@ -605,7 +605,7 @@ sanitise_string(std::string& in, std::string& out)
 			char buf[8];
 			union { char c; unsigned char u; } uc;
 			uc.c = c;
-			::snprintf(buf, 8, "\\x%02X", unsigned(uc.u));
+			::snprintf(buf, 8, "\\\\x%02X", unsigned(uc.u));
 			so << buf;
 			continue;
 		}

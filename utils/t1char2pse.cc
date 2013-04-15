@@ -496,10 +496,7 @@ handle_string_arg(const char* s, std::vector<iarg>& ia)
 		}
 		
 		t.v = FT_ULong(c);
-		char buf[MB_CUR_MAX + 1];
-		std::strncpy(buf, i, size_t(wr));
-		buf[wr] = '\0';
-		t.s = buf;
+		t.s = ""; t.s.append(i, std::string::size_type(wr));
 		slen -= wr;
 		ia.push_back(t);
 		i += wr;

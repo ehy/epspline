@@ -78,11 +78,13 @@
 #include <limits>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cctype>
 #include <cerrno>
+#include <clocale>
 
-// bits needed for cost-free Digital Mars MSW32 compiler.
-// add what you need for your MSW development tools.
+// Things needed for cost-free Digital Mars MSW32 compiler.
+// Add what you need for your MSW development tools.
 #if __DMC__
 #	include <io.h>		// for setmode()
 #	include <fcntl.h>	// for O_BINARY
@@ -91,6 +93,7 @@
 #		define _WIN32
 #	endif
 #endif
+// Anything needed to detect MS; set _MSSYS_ 1
 #if defined(_WIN32)
 #	define _MSSYS_ 1
 #endif
@@ -100,6 +103,23 @@ extern "C" {
 #include FT_FREETYPE_H
 #include <freetype/t1tables.h>
 }
+
+template<int C> class C_loc_Temp {
+protected:
+        std::string orig;
+public:
+        C_loc_Temp() {
+                const char* p = std::setlocale(C, NULL);
+                orig = p ? p : "";
+                std::setlocale(C, "C");
+        }
+        ~C_loc_Temp() {
+                std::setlocale(C, orig.c_str());
+        }
+};
+
+typedef C_loc_Temp<LC_NUMERIC> cnumtmp;
+
 
 typedef double flt_t;
 template <typename T> struct TplPtCoord {
@@ -120,6 +140,11 @@ struct ccont {
 		comment = o.comment;
 		return *this;
 	}
+};
+
+struct iarg {
+	std::string s;
+	FT_ULong    v;
 };
 
 std::ostream&
@@ -144,7 +169,7 @@ sanitise_string(std::string& in, std::string& out);
 void
 get_envvars();
 void
-get_options(int ac, char* av[]);
+get_options(int ac, char* av[], std::vector<iarg>& ia);
 
 std::vector<FT_Library> ftlib_vec;
 extern "C" {
@@ -162,6 +187,8 @@ static void f_atexit(void)
 
 const char default_prog[] = "t1char2pse";
 const char* prog = default_prog;
+// typeface file
+const char* fontfile = 0;
 // approx. epspline virtual x
 const flt_t Xmax = 3000.0;
 // point fmt precision: '%g' or '%.8f'
@@ -208,8 +235,12 @@ main(int argc, char* argv[])
 	out_fp = stdout;
 #endif
 
+	std::setlocale(LC_ALL, "");
+
+	std::vector<iarg> iargs;
+
 	get_envvars();
-	get_options(argc, argv);
+	get_options(argc, argv, iargs);
 
 	FT_Library library;
 	int error = FT_Init_FreeType(&library);
@@ -222,7 +253,7 @@ main(int argc, char* argv[])
 	ftlib_vec.push_back(library);
 
 	FT_Face face;      /* handle to face object */
-	const char* ffile = argv[1];
+	const char* ffile = fontfile;
 	error = FT_New_Face(library, ffile, 0, &face);
 	if ( error == FT_Err_Unknown_File_Format ) {
 		std::cerr << "Failed on \"" << ffile << 
@@ -238,22 +269,16 @@ main(int argc, char* argv[])
 	flt_t yshift = face->bbox.yMax;
 	bool xshift_init = false;
 	std::vector<ccont> c_all;
-	c_all.reserve(argc - 2);
+	c_all.reserve(iargs.size());
 
-	for ( int i = 2; i < argc; i++ ) {
-		errno = 0;
-		FT_ULong ftul = std::strtoul(argv[i], 0, 0);
-		if ( errno ) {
-			std::cerr << "arg \"" << argv[i] << "\" no good: "
-				<< ::strerror(errno) << std::endl;
-			continue;
-		}
+	for ( int i = 0; i < iargs.size(); i++ ) {
+		FT_ULong ftul = iargs[i].v;
+		std::string& as = iargs[i].s;
 	
 		FT_UInt glyph_index = FT_Get_Char_Index(face, ftul);
 		if ( glyph_index == 0 ) {
-			std::cerr << "Found no glyph for \"" << argv[i]
-				<< "\" (" << ftul <<
-			")\n";
+			std::cerr << "Found no glyph for \"" << as
+				<< "\" " << ftul << std::endl;
 			continue;
 		}
 	
@@ -285,13 +310,13 @@ main(int argc, char* argv[])
 			if ( !res ) {
 				c_all.pop_back();
 				std::cerr << "Failed on arg " << i <<
-					": \"" << argv[i] << "\"\n";
+					": \"" << as << "\"\n";
 				continue;
 			}
 
 			std::ostringstream so;
 	
-			so << "Glyph data for argument " << argv[i] << ":\n";
+			so << "Glyph data for argument " << as << ":\n";
 			if ( has_glyph_names ) {
 				const FT_UInt sz = 64;
 				char buf[sz];
@@ -338,7 +363,7 @@ main(int argc, char* argv[])
 		return 1;
 	}
 
-	prn_openf(c_all.size());
+	prn_openf(one_object ? 1u : c_all.size());
 	flt_t scl = Xmax / xshift;
 	if ( scl > 1.0 ) { // temporary: check for Y later
 		scl = 1.0;
@@ -364,7 +389,7 @@ main(int argc, char* argv[])
 
 	std::ostringstream so;
 	so << "Bezier spline characters converted from \n\"" <<
-		argv[1] << "\"\n";
+		fontfile << "\"\n";
 	if ( const char* p = FT_Get_Postscript_Name(face) ) {
 		so << "Postscript name: " << p << '\n';
 	}
@@ -438,15 +463,137 @@ get_envvars()
 	}
 }
 
+int
+handle_string_arg(const char* s, std::vector<iarg>& ia)
+{
+	if ( ! s ) {
+		return -1;
+	}
+	
+	int num = 0;
+	size_t slen = std::strlen(s) + 1;
+	
+	// init state
+	int wr = std::mbtowc(0, 0, slen);
+	if ( wr ) {
+		std::cerr << prog << ": found state-dependent environment\n";
+	}
+	
+	for ( const char* i = s; *i != '\0'; ) {
+		iarg t;
+		wchar_t c;
+		// mb handling
+		wr = std::mbtowc(&c, i, slen);
+		// returns 0 upon '\0'
+		if ( wr == 0 ) {
+			break;
+		}
+		// -1 on error
+		if ( wr < 0 ) {
+			std::cerr << prog << ": found a bad mb char -- "
+				<< ::strerror(errno) << std::endl;
+			return -1;
+		}
+		
+		t.v = FT_ULong(c);
+		char buf[MB_CUR_MAX + 1];
+		std::strncpy(buf, i, size_t(wr));
+		buf[wr] = '\0';
+		t.s = buf;
+		slen -= wr;
+		ia.push_back(t);
+		i += wr;
+		num++;
+	}
+	
+	return num;
+}
+
 void
-get_options(int ac, char* av[])
+usage(int status)
+{
+	std::cerr << "Usage: " << prog
+	<<
+	" -f <fontfile> [-1 -s <8-bit-string>] [<unicode indices>]\n"
+	"\n"
+	"-f file    the type-1 font (typeface) file: required\n"
+	"-1         make all characters be one object\n"
+	"-s string  use characters from UTF-8 (or ASCII) string\n"
+	"-h         print this usage help and succeed\n"
+	"\n"
+	"arguments that are not introduced by option switches are\n"
+	"taken to be unicode charmap indices.\n"
+	;
+
+	std::exit(status);
+}
+
+void
+get_options(int ac, char* av[], std::vector<iarg>& ia)
 {	
-	if ( ac < 3 ) {
-		std::cerr << prog
-			<< ": need 2 args: font-file, and glyph-index\n";
-		std::exit(1);
+	int nargs = 0;
+
+	for ( int i = 1; i < ac; i++ ) {
+		const char* p = av[i];
+		if ( *p == '-' ) {
+			const char* p2 = p + 1;
+			switch ( *p2 ) {
+				case 'f':
+					if ( *++p2 != '\0' ) {
+						fontfile = p2;
+						break;
+					}
+					if ( ++i == ac ) {
+						usage(1);
+					}
+					fontfile = av[i];
+					break;
+				case '1':
+					one_object = true;
+					break;
+				case 's': {
+					const char* s;
+					int n;
+					if ( *++p2 != '\0' ) {
+						s = p2;
+					} else if ( ++i == ac ) {
+						usage(1);
+					} else {
+						s = av[i];
+					}
+					if ( (n = handle_string_arg(s, ia)) < 1 ) {
+						usage(1);
+					}
+					nargs += n;
+				}
+					break;
+				case 'h':
+					usage(0);
+					break;
+				default:
+					std::cerr << "arg \"" << p << "\" no good: "
+						<< ::strerror(errno) << std::endl;
+					usage(1);
+			}
+		} else {
+			errno = 0;
+			FT_ULong ftul = std::strtoul(p, 0, 0);
+			if ( errno ) {
+				std::cerr << "arg \"" << p << "\" no good: "
+					<< ::strerror(errno) << std::endl;
+				usage(1);
+			}
+			iarg t;
+			t.v = ftul;
+			t.s = p;
+			ia.push_back(t);
+			nargs++;
+		}
 	}
 
+	if ( fontfile == 0 && nargs == 0 ) {
+		usage(1);
+	}
 }
 
 std::string&
@@ -459,7 +606,9 @@ sanitise_string(std::string& in, std::string& out)
 	while ( si.get(c) ) {
 		if ( ! std::isprint(c) && ! std::isspace(c) ) {
 			char buf[8];
-			::snprintf(buf, 8, "0x%02X", unsigned(c));
+			union { char c; unsigned char u; } uc;
+			uc.c = c;
+			::snprintf(buf, 8, "\\x%02X", unsigned(uc.u));
 			so << buf;
 			continue;
 		}
@@ -647,10 +796,12 @@ prn_comment(const std::string& out)
 void
 prn_prnobj(ccont& c, unsigned obj_num)
 {
+	cnumtmp c_num;
+
 	std::string cm("/*\n");
 	cm += sanitise_string(c.comment, c.comment) + "*/";
 
-	fprintf(out_fp, 
+	std::fprintf(out_fp, 
 	" 'Object%u'(objname = \"SplineObject\",\n"
 	"   splinetype = 3,\n"
 	"   povtype = 1,\n"
@@ -665,17 +816,21 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	unsigned nuv = 0;
 	if ( extra_prec ) {
 		for ( ; nuv < c.v.size(); nuv++ ) {
-			fprintf(out_fp, "  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
-			fprintf(out_fp, "  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
+			std::fprintf(out_fp,
+				"  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
+			std::fprintf(out_fp,
+				"  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
 		}
 	} else {
 		for ( ; nuv < c.v.size(); nuv++ ) {
-			fprintf(out_fp, "  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
-			fprintf(out_fp, "  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
+			std::fprintf(out_fp,
+				"  'U%u' = \"%g\",\n", nuv, double(c.v[nuv].x));
+			std::fprintf(out_fp,
+				"  'V%u' = \"%g\",\n", nuv, double(c.v[nuv].y));
 		}
 	}
 
-	fprintf(out_fp, "  'UVcount' = %u).\n\n", nuv);
+	std::fprintf(out_fp, "  'UVcount' = %u).\n\n", nuv);
 }
 
 bool

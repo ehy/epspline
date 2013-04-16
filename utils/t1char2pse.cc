@@ -671,6 +671,11 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 		const char* p = av[i];
 		if ( *p == '-' ) {
 			const char* p2 = p + 1;
+			if ( *p2 == '\0' ) {
+				// need at least one
+				std::cerr << prog << ": got '-' without character\n";
+				usage(1);
+			}
 			while ( char cur = *p2++ ) {
 				switch ( cur ) {
 					case 'f':
@@ -682,7 +687,7 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 							usage(1);
 						}
 						fontfile = av[i];
-						p2 = "";
+						p2 = ""; // stop while()
 						break;
 					case 'M':
 					case 'm': {
@@ -707,7 +712,7 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 								usage(1);
 							}
 						}
-						p2 = "";
+						p2 = ""; // stop while()
 						break;
 					case 'x':
 						extra_prec = true;
@@ -739,7 +744,7 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 							}
 							nargs += n;
 						}
-						p2 = "";
+						p2 = ""; // stop while()
 						break;
 					case 'h':
 						usage(0);

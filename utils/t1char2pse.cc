@@ -191,6 +191,9 @@ const char* prog = default_prog;
 const char* fontfile = 0;
 // approx. epspline virtual x
 const flt_t Xmax = 3000.0;
+// prism sweep values; set with option args
+double sweep_min = -1.0;
+double sweep_max = 1.0;
 // point fmt precision: '%g' or '%.8f'
 bool extra_prec = false;
 // write all args as one object; option -1
@@ -627,7 +630,7 @@ usage(int status)
 {
 	std::cerr << "Usage: " << prog
 	<<
-	" -f <fontfile> [-1 -s <8-bit-string>] [<unicode indices>]\n"
+	" -f file [-1xbBvh -mM number -s string] [unicode indices]\n"
 	"\n"
 	"Get curves from a type-1 font file and convert for epspline.\n"
 	"\n"
@@ -637,6 +640,8 @@ usage(int status)
 	"-b         include character bounds boxes\n"
 	"-B         with option -1, add box around whole object\n"
 	"-v         very verbose; will obscure warnings and errors\n"
+	"-m real    set minimum sweep of the prism objects\n"
+	"-M real    set maximum sweep of the prism objects\n"
 	"-s string  use characters from UTF-8 (or ASCII) string\n"
 	"-h         print this usage help and succeed\n"
 	"\n"
@@ -648,7 +653,7 @@ usage(int status)
 	"so, the following example works as expected:\n"
 	"\n"
 	"% " << prog <<
-	" -f foo.pfb 0x2018 -s \"single quotes\" 0x2019 > foo-q.pse\n"
+	" -f foo.pfb -s single 32 0x2018 -s\"quotes\" 0x2019 > foo-q.pse\n"
 	"\n"
 	"Output is always printed on the standard output: redirect!\n"
 	"\n"
@@ -666,56 +671,85 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 		const char* p = av[i];
 		if ( *p == '-' ) {
 			const char* p2 = p + 1;
-			switch ( *p2 ) {
-				case 'f':
-					if ( *++p2 != '\0' ) {
-						fontfile = p2;
+			while ( char cur = *p2++ ) {
+				switch ( cur ) {
+					case 'f':
+						if ( *p2 != '\0' ) {
+							fontfile = p2;
+							break;
+						}
+						if ( ++i == ac ) {
+							usage(1);
+						}
+						fontfile = av[i];
+						p2 = "";
 						break;
-					}
-					if ( ++i == ac ) {
+					case 'M':
+					case 'm': {
+							const char* s;
+							if ( *p2 != '\0' ) {
+								s = p2;
+							} else if ( ++i == ac ) {
+								usage(1);
+							} else {
+								s = av[i];
+							}
+							errno = 0;
+							if ( cur == 'M' )
+								sweep_max = std::strtod(s, 0);
+							else
+								sweep_min = std::strtod(s, 0);
+							if ( errno ) {
+								std::cerr << prog
+									<< "; bad sweep argument \"" << s
+									<< "\", error \""
+									<< ::strerror(errno) << "\"\n";
+								usage(1);
+							}
+						}
+						p2 = "";
+						break;
+					case 'x':
+						extra_prec = true;
+						break;
+					case 'b':
+						box_chars = true;
+						break;
+					case 'B':
+						box_allchars = true;
+						break;
+					case 'v':
+						very_verbose = true;
+						break;
+					case '1':
+						one_object = true;
+						break;
+					case 's': {
+							const char* s;
+							int n;
+							if ( *p2 != '\0' ) {
+								s = p2;
+							} else if ( ++i == ac ) {
+								usage(1);
+							} else {
+								s = av[i];
+							}
+							if ( (n = handle_string_arg(s, ia)) < 1 ) {
+								usage(1);
+							}
+							nargs += n;
+						}
+						p2 = "";
+						break;
+					case 'h':
+						usage(0);
+						break;
+					default:
+						std::cerr << "arg \"" << p << "\" no good: "
+							<< ::strerror(errno) << std::endl;
 						usage(1);
-					}
-					fontfile = av[i];
-					break;
-				case 'x':
-					extra_prec = true;
-					break;
-				case 'b':
-					box_chars = true;
-					break;
-				case 'B':
-					box_allchars = true;
-					break;
-				case 'v':
-					very_verbose = true;
-					break;
-				case '1':
-					one_object = true;
-					break;
-				case 's': {
-						const char* s;
-						int n;
-						if ( *++p2 != '\0' ) {
-							s = p2;
-						} else if ( ++i == ac ) {
-							usage(1);
-						} else {
-							s = av[i];
-						}
-						if ( (n = handle_string_arg(s, ia)) < 1 ) {
-							usage(1);
-						}
-						nargs += n;
-					}
-					break;
-				case 'h':
-					usage(0);
-					break;
-				default:
-					std::cerr << "arg \"" << p << "\" no good: "
-						<< ::strerror(errno) << std::endl;
-					usage(1);
-			}
+				}
+			} // while ( cur = ... )
 		} else {
 			errno = 0;
 			FT_ULong ftul = std::strtoul(p, 0, 0);
@@ -747,6 +781,10 @@ sanitise_string(std::string& in, std::string& out)
 	while ( si.get(c) ) {
 		if ( ! std::isprint(c) && ! std::isspace(c) ) {
 			char buf[8];
+			// char and unsigned char (and signed char) are
+			// different C++ types even if char is unsigned;
+			// use union to get an unsigned type regardless
+			// of sign of char
 			union { char c; unsigned char u; } uc;
 			uc.c = c;
 			::snprintf(buf, 8, "\\\\x%02X", unsigned(uc.u));
@@ -949,10 +987,10 @@ prn_prnobj(ccont& c, unsigned obj_num)
 	"   sweeptype = 0,\n"
 	"   use_sturm = 0,\n"
 	"   use_open = 0,\n"
-	"   sweep_min = \"-1.00000000\",\n"
-	"   sweep_max = \"1.00000000\",\n"
+	"   sweep_min = \"%f\",\n"
+	"   sweep_max = \"%f\",\n"
 	"   'UserStr' = \"%s\",\n"
-	, obj_num, cm.c_str());
+	, obj_num, sweep_min, sweep_max, cm.c_str());
 
 	unsigned nuv = 0;
 	if ( extra_prec ) {

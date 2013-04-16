@@ -681,12 +681,11 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 					case 'f':
 						if ( *p2 != '\0' ) {
 							fontfile = p2;
-							break;
-						}
-						if ( ++i == ac ) {
+						} else if ( ++i == ac ) {
 							usage(1);
+						} else {
+							fontfile = av[i];
 						}
-						fontfile = av[i];
 						p2 = ""; // stop while()
 						break;
 					case 'M':

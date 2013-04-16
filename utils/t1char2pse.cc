@@ -193,8 +193,14 @@ const char* fontfile = 0;
 const flt_t Xmax = 3000.0;
 // point fmt precision: '%g' or '%.8f'
 bool extra_prec = false;
-// write all args as one object
+// write all args as one object; option -1
 bool one_object = false;
+// lots of info output: will obscure warnings and errors
+bool very_verbose = false;
+// include character bounding box around chars
+bool box_chars = false;
+// if option -1, then box the whole
+bool box_allchars = false;
 
 // although using std::cerr for messages,
 // C streams are used for data output
@@ -266,6 +272,7 @@ main(int argc, char* argv[])
 
 	bool has_glyph_names = FT_HAS_GLYPH_NAMES(face) != 0;
 	flt_t xshift = 0.0;
+	flt_t xshift_1st = 0.0;
 	flt_t yshift = face->bbox.yMax;
 	bool xshift_init = false;
 	std::vector<ccont> c_all;
@@ -295,8 +302,9 @@ main(int argc, char* argv[])
 
 		FT_GlyphSlot slot = face->glyph;
 
+		xshift_1st = slot->metrics.horiBearingX;
 		if ( !xshift_init ) {
-			xshift -= slot->metrics.horiBearingX;
+			xshift -= xshift_1st;
 			xshift_init = true;
 		}
 
@@ -312,6 +320,51 @@ main(int argc, char* argv[])
 				std::cerr << "Failed on arg " << i <<
 					": \"" << as << "\"\n";
 				continue;
+			}
+
+			if ( box_chars ) {
+				FT_Glyph_Metrics& gm = slot->metrics;
+				flt_t mnX = xshift + gm.horiBearingX;
+				flt_t mxX = mnX + gm.width;
+				flt_t mxY = yshift - gm.horiBearingY + gm.height;
+				flt_t mnY = mxY - gm.height;
+				PtCoord pt1, pt2;
+				
+				pt1.x = mnX; pt1.y = mnY;
+				pt2.x = mnX; pt2.y = mxY;
+				ccr.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt2);
+				
+				pt1.x = mnX; pt1.y = mxY;
+				pt2.x = mxX; pt2.y = mxY;
+				ccr.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt2);
+				
+				pt1.x = mxX; pt1.y = mxY;
+				pt2.x = mxX; pt2.y = mnY;
+				ccr.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt2);
+				
+				pt1.x = mxX; pt1.y = mnY;
+				pt2.x = mnX; pt2.y = mnY;
+				ccr.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt1);
+				ccr.v.push_back(pt2);
 			}
 
 			std::ostringstream so;
@@ -371,8 +424,8 @@ main(int argc, char* argv[])
 	{
 		ccont oneobj;
 		for ( unsigned  i = 0; i < c_all.size(); i++ ) {
-			scale_pts(c_all[i], scl);
 			if ( ! one_object ) {
+				scale_pts(c_all[i], scl);
 				prn_prnobj(c_all[i], i);
 			} else {
 				const ccont& tcc = c_all[i];
@@ -383,6 +436,52 @@ main(int argc, char* argv[])
 			}
 		}
 		if ( one_object ) {
+			if ( box_allchars ) {
+				flt_t mnX = face->bbox.xMin;
+				flt_t mxX = 0.0 + xshift + xshift_1st;
+;
+				flt_t mnY = yshift - face->bbox.yMin;
+				flt_t mxY = yshift - face->bbox.yMax;
+				PtCoord pt1, pt2;
+				
+				pt1.x = mnX; pt1.y = mnY;
+				pt2.x = mnX; pt2.y = mxY;
+				oneobj.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt2);
+				
+				pt1.x = mnX; pt1.y = mxY;
+				pt2.x = mxX; pt2.y = mxY;
+				oneobj.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt2);
+				
+				pt1.x = mxX; pt1.y = mxY;
+				pt2.x = mxX; pt2.y = mnY;
+				oneobj.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt2);
+				
+				pt1.x = mxX; pt1.y = mnY;
+				pt2.x = mnX; pt2.y = mnY;
+				oneobj.v.push_back(pt1);
+				pt1.x = (pt1.x + pt2.x) / 2.0;
+				pt1.y = (pt1.y + pt2.y) / 2.0;
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt1);
+				oneobj.v.push_back(pt2);
+			}
+
+			scale_pts(oneobj, scl);
 			prn_prnobj(oneobj, 0);
 		}
 	}
@@ -461,6 +560,12 @@ get_envvars()
 			one_object = true;
 		}
 	}
+	if ( const char* p = std::getenv("EPSPL_VERY_VERBOSE") ) {
+		std::string s(p);
+		if ( s != "no" && s != "false" && s !=  "0" ) {
+			very_verbose = true;
+		}
+	}
 }
 
 int
@@ -479,27 +584,38 @@ handle_string_arg(const char* s, std::vector<iarg>& ia)
 		std::cerr << prog << ": found state-dependent mb chars\n";
 	}
 	
-	for ( const char* i = s; *i != '\0'; ) {
-		iarg t;
+	while ( slen > 0 ) {
 		wchar_t c;
-		// mb handling
-		wr = std::mbtowc(&c, i, slen);
-		// returns 0 upon '\0'
+
+		wr = std::mbtowc(&c, s, slen);
+		// returns 0 at '\0'
 		if ( wr == 0 ) {
 			break;
 		}
 		// -1 on error
 		if ( wr < 0 ) {
-			std::cerr << prog << ": found a bad mb char -- "
+			std::cerr << prog
+				<< ": found a bad mb char at start of:\n\t\""
+				<< s << "\"\n\terror: "
 				<< ::strerror(errno) << std::endl;
 			return -1;
 		}
+		// perverse return
+		if ( wr > slen ) {
+			std::cerr << prog
+				<< ": got perverse result from start of:\n\t\""
+				<< s << "\"\n\treturn from mbtowc() "
+				<< wr << " greater than maximum " << slen << std::endl;
+			return -1;
+		}
 		
+		// success
+		iarg t;
 		t.v = FT_ULong(c);
-		t.s.append(i, std::string::size_type(wr));
-		slen -= wr;
 		ia.push_back(t);
-		i += wr;
+		ia.back().s.append(s, std::string::size_type(wr));
+		slen -= wr;
+		s += wr;
 		num++;
 	}
 	
@@ -517,6 +633,10 @@ usage(int status)
 	"\n"
 	"-f file    the type-1 font (typeface) file: required\n"
 	"-1         ('one') make all characters be one object\n"
+	"-x         use extra precision reals ('%.8f vs. %g')\n"
+	"-b         include character bounds boxes\n"
+	"-B         with option -1, add box around whole object\n"
+	"-v         very verbose; will obscure warnings and errors\n"
 	"-s string  use characters from UTF-8 (or ASCII) string\n"
 	"-h         print this usage help and succeed\n"
 	"\n"
@@ -557,24 +677,36 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 					}
 					fontfile = av[i];
 					break;
+				case 'x':
+					extra_prec = true;
+					break;
+				case 'b':
+					box_chars = true;
+					break;
+				case 'B':
+					box_allchars = true;
+					break;
+				case 'v':
+					very_verbose = true;
+					break;
 				case '1':
 					one_object = true;
 					break;
 				case 's': {
-					const char* s;
-					int n;
-					if ( *++p2 != '\0' ) {
-						s = p2;
-					} else if ( ++i == ac ) {
-						usage(1);
-					} else {
-						s = av[i];
+						const char* s;
+						int n;
+						if ( *++p2 != '\0' ) {
+							s = p2;
+						} else if ( ++i == ac ) {
+							usage(1);
+						} else {
+							s = av[i];
+						}
+						if ( (n = handle_string_arg(s, ia)) < 1 ) {
+							usage(1);
+						}
+						nargs += n;
 					}
-					if ( (n = handle_string_arg(s, ia)) < 1 ) {
-						usage(1);
-					}
-					nargs += n;
-				}
 					break;
 				case 'h':
 					usage(0);
@@ -594,8 +726,8 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 			}
 			iarg t;
 			t.v = ftul;
-			t.s = p;
 			ia.push_back(t);
+			ia.back().s = p;
 			nargs++;
 		}
 	}
@@ -866,7 +998,9 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 			return false;
 		}
 
-		prn_contour(p0, pN, outline, std::cerr, tbool);
+		if ( very_verbose ) {
+			prn_contour(p0, pN, outline, std::cerr, tbool);
+		}
 
 		p0 = pN + 1;
 	}
@@ -878,4 +1012,3 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 	
 	return true;
 }
-

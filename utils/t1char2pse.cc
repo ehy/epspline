@@ -699,16 +699,24 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 							} else {
 								s = av[i];
 							}
+							char* ep = 0;
 							errno = 0;
 							if ( cur == 'M' )
-								sweep_max = std::strtod(s, 0);
+								sweep_max = std::strtod(s, &ep);
 							else
-								sweep_min = std::strtod(s, 0);
+								sweep_min = std::strtod(s, &ep);
 							if ( errno ) {
 								std::cerr << prog
 									<< "; bad sweep argument \"" << s
 									<< "\", error \""
 									<< ::strerror(errno) << "\"\n";
+								usage(1);
+							}
+							if ( ep && *ep ) {
+								std::cerr << prog
+									<< "; bad sweep argument \"" << s
+									<< "\": characters \""
+									<< ep << "\"\n";
 								usage(1);
 							}
 						}
@@ -756,11 +764,17 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 				}
 			} // while ( cur = ... )
 		} else {
+			char* ep = 0;
 			errno = 0;
-			FT_ULong ftul = std::strtoul(p, 0, 0);
+			FT_ULong ftul = std::strtoul(p, &ep, 0);
 			if ( errno ) {
 				std::cerr << "arg \"" << p << "\" no good: "
 					<< ::strerror(errno) << std::endl;
+				usage(1);
+			}
+			if ( ep && *ep ) {
+				std::cerr << "arg \"" << p << "\" no good, chars: "
+					<< ep << std::endl;
 				usage(1);
 			}
 			iarg t;

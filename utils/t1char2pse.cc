@@ -800,7 +800,7 @@ sanitise_string(std::string& in, std::string& out)
 		// char and unsigned char (and signed char) are
 		// different C++ types even if char is unsigned;
 		// use union to get an unsigned type regardless
-		// of sign of char
+		// of signedness of char
 		union { char c; unsigned char u; } uc;
 		uc.c = c;
 		if ( uc.u > 127 || ! (std::isprint(c) || std::isspace(c)) ) {

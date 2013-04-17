@@ -116,7 +116,7 @@ AnApp::OnInit()
 	// will need to control some C-library functions,
 	// particularly string formatting of numeric data;
 	// otherwise let locale from environment be used
-#	if ! NO_INVOKE_SETLOCALE
+#	if ! NO_INVOKE_SETLOCALE && NO_USE_WXLOCALE
 	std::setlocale(LC_ALL, "");
 	// NOTE: the C++ locale object(s) are not used here:
 	// 1st) that would be the business of wxWidgets; and as of
@@ -161,7 +161,7 @@ AnApp::OnInit()
 		std::fprintf(stderr,
 			"Cannot set install prefix -- unexpected condition: "
 			"bad_cast: \"%s\"\n", e.what());
-		// can continue, but will probably fail i18n and help setup
+		// can continue, but might fail i18n and help setup
 	}
 #	endif
 
@@ -169,29 +169,55 @@ AnApp::OnInit()
 	// as of 12-2012 this needs real testing; there are
 	// no translations yet
 #	if ! NO_USE_WXLOCALE
-	if ( bool r = app_locale.Init() == false ) {
-		wxLogError(wxT("(wx) 1st Locale initialization failed"));
-		std::fputs(
-			"epspline: 1st Locale initialization failed\n", stderr);
-		// 2nd app_locale.Init() removes a flag used in default, above
-		r = app_locale.Init(wxLANGUAGE_DEFAULT, wxLOCALE_CONV_ENCODING);
-		if ( ! r ) {
-			wxLogError(wxT("(wx) 2nd Locale initialization failed"));
-			std::fputs(
-				"epspline: 2nd Locale initialization failed\n", stderr);
-		}
-	}
-	
 #	ifdef L10N_INSTALL_PATH
 	wxLocale::AddCatalogLookupPathPrefix(wxT(L10N_INSTALL_PATH));
 #	endif
 
+	// possible args: wxLANGUAGE_DEFAULT, wxLOCALE_DONT_LOAD_DEFAULT
+	if ( ! app_locale.Init() ) {
+		wxLogError(wxT("(wx) 1st Locale initialization failed"));
+		std::fputs(
+			"epspline: 1st Locale initialization failed\n", stderr);
+	}
+
+	// Even if Init() above returns false, translations might
+	// still work, so keep at it.
+#	if wxCHECK_VERSION(2, 9, 0)
+	// Sigh. wx 2.9.4 wxTranslations has the bizarre logic in
+	// AddCatalog() that if the app's string language matches
+	// the message cat language, then there is no need to load
+	// the catalog, so the method returns true w/o loading.
+	// A comment from the wx source in src/common/translation.cpp:
+    //    It is OK to not load catalog if the msgid language and m_language match,
+    //    in which case we can directly display the texts embedded in program's
+    //    source code:
+    //
+    // Furthermore, the one-arg AddCatalog() calls the two-arg
+    // override, passing wxLANGUAGE_ENGLISH_US; therefore, messages
+    // for the en_US locale will never be loaded!
+    // Whoever came up with that seems not to realize that app
+    // embedded strings are best kept in 7-bit ASCII, and that even
+    // the world-despised Americans might benefit from characters
+    // beyond ASCII loaded with the i18n system.
+    //
+    // So, work around the anti-US code by using the two-arg
+    // AddCatalog() call with something that differs from the domain.
+    wxLanguage wxtrlang = wxLanguage(app_locale.GetLanguage());
+    if ( wxtrlang == wxLANGUAGE_ENGLISH ) {
+		wxtrlang = wxLANGUAGE_ENGLISH_US;
+	} else {
+		wxtrlang = wxLANGUAGE_ENGLISH;
+	}
+	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII), wxtrlang) ) {
+#	else  // wxCHECK_VERSION(2, 9, 0)
 	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII)) ) {
+#	endif // wxCHECK_VERSION(2, 9, 0)
 		wxLogError(wxT("(wx) add initialization catalog failed"));
 		std::fprintf(stderr,
 			"epspline: AddCatalog(%s) failed\n", APPNAME_IN_ASCII);
 	}
 	
+	// right from internat sample:
 	app_locale.AddCatalog(wxT("wxstd"));
 #	endif // ! NO_USE_WXLOCALE
 
@@ -221,6 +247,15 @@ AnApp::OnInit()
 	}
 	
 	app_mbconv = app_global_mbconv;
+
+#	if DEBUG
+	std::fprintf(stderr,".GetLocale() == %s\n",
+		  wxs2ch(app_locale.GetLocale()));
+	std::fprintf(stderr,".GetSysName() == %s\n",
+		  wxs2ch(app_locale.GetSysName()));
+	std::fprintf(stderr,".GetCanonicalName() == %s\n",
+		  wxs2ch(app_locale.GetCanonicalName()));
+#	endif
 
 	wxFileName fn_av0(ARGV[0]);
 	av0 = fn_av0.GetName();

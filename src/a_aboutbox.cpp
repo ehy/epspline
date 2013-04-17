@@ -135,7 +135,12 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	pstxt->SetFont(font);
 	//
 	szr->Add(20, 20);
-	szr->Add(pstxt, 0, wxALIGN_CENTER|wxADJUST_MINSIZE, 0);
+	szr->Add(pstxt, 0, wxALIGN_CENTER
+#	if ! wxCHECK_VERSION(2, 9, 0)
+		|wxADJUST_MINSIZE, 0);
+#	else // ! wxCHECK_VERSION(2, 9, 0)
+		, 0);
+#	endif // ! wxCHECK_VERSION(2, 9, 0)
 	szr->Add(20, 20);
 	page->SetSizer(szr);
 	book->AddPage(page, _("Copyrights"), true);

@@ -110,7 +110,7 @@ prog: uninst_setup depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
 		CXX="$(CXX)" \
-		CCFLAGS="$(CCFLAGS) $(NDEBUG)"  \
+		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" all ) || \
 		{ echo IF build failed with complaints about unknown options; \
@@ -124,7 +124,7 @@ mingw exe msw epspline.exe: depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
 		CXX="$(CXX)" MSWRCC="$(MSWRCC)" \
-		CCFLAGS="$(CCFLAGS) $(NDEBUG)"  \
+		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" mingw ) || \
 		{ echo IF build failed with complaints about unknown options; \
@@ -148,7 +148,7 @@ src/depend :
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXXDEPS="$(CXXDEPS)" DEPSOPT="$(DEPSOPT)" \
-		CCFLAGS="$(CCFLAGS) $(NDEBUG)"  \
+		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" depend ) ; \
 	done

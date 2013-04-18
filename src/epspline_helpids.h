@@ -54,9 +54,9 @@
 #define IDS_CreatingandEditing		"Creating and Editing"
 #define IDF_CreatingandEditing		"epsplinese4.html"
 
-#define IDI_NecessaryTransforms		240
-#define IDS_NecessaryTransforms		"Necessary Transforms"
-#define IDF_NecessaryTransforms		"epsplinese5.html"
+#define IDI_UsefulTransforms		240
+#define IDS_UsefulTransforms		"Useful Transforms"
+#define IDF_UsefulTransforms		"epsplinese5.html"
 
 #define IDI_Tips		256
 #define IDS_Tips		"Tips"

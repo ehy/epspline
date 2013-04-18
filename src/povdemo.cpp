@@ -356,7 +356,7 @@ PovDemoProc::SetupTmp()
 {
 	cnumtmp c_tmp;
 	char pc[PATH_MAX];
-	FILE* f;
+	auto_std_FILE f;
 
 	int fd = gettmpfd(pc, A_SIZE(pc));
 	if ( fd < 0 ) {
@@ -382,7 +382,8 @@ PovDemoProc::SetupTmp()
 #endif
 
 	fd = gettmpfd(pc, A_SIZE(pc));
-	if ( (f = ::fdopen(fd, "r+")) == NULL ) {
+	f.assign(::fdopen(fd, "r+"));
+	if ( ! f ) {
 		::perror("PovDemoProc::SetupTmp() 10");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -396,7 +397,7 @@ PovDemoProc::SetupTmp()
 
 	can.ExportFILE(f, itmp.AfterLast(SEPC), true);
 	int e0 = ::ferror(f);
-	int e1 = ::fclose(f);
+	int e1 = ::fclose(f.release());
 	if ( e0 || e1 ) {
 		::perror("PovDemoProc::SetupTmp() 20");
 		::remove(wxs2fn(otmp));
@@ -406,7 +407,8 @@ PovDemoProc::SetupTmp()
 	}
 
 	fd = gettmpfd(pc, A_SIZE(pc));
-	if ( (f = ::fdopen(fd, "r+")) == NULL ) {
+	f.assign(::fdopen(fd, "r+"));
+	if ( ! f ) {
 		::perror("PovDemoProc::SetupTmp() 30");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -421,7 +423,7 @@ PovDemoProc::SetupTmp()
 
 	writepov(f);
 	e0 = ::ferror(f);
-	e1 = ::fclose(f);
+	e1 = ::fclose(f.release());
 	if ( e0 || e1 ) {
 		::perror("PovDemoProc::SetupTmp() 40");
 		::remove(wxs2fn(otmp));

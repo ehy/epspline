@@ -148,7 +148,6 @@ template < class T > struct trawbuffer {
 
 // Automatic, or "scoped", std FILE, closed in dtor
 class auto_std_FILE {
-protected:
 	std::FILE* fp;
 	auto_std_FILE(const auto_std_FILE&);
 	auto_std_FILE& operator = (const auto_std_FILE&);

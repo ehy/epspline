@@ -26,6 +26,7 @@
 #include "cfg.h"
 #include "stdcc.h"
 // std
+#include <string>
 #include <stdexcept>
 #include <cstdio>
 
@@ -139,11 +140,37 @@ template < class T > struct trawbuffer {
 			std::return_temporary_buffer(ptr);
 		}
 	}
-	operator T*()    { return ptr; }
-	operator void*() { return ptr; }
+	operator T* ()    { return ptr; }
+	operator void* () { return ptr; }
 	T& operator [] (int i) { return ptr[i]; }
 };
 #endif // ! NO_TRAWBUFFER
+
+// Automatic, or "scoped", std FILE, closed in dtor
+class auto_std_FILE {
+protected:
+	std::FILE* fp;
+	auto_std_FILE(const auto_std_FILE&);
+	auto_std_FILE& operator = (const auto_std_FILE&);
+public:
+	auto_std_FILE() { fp = 0; }
+	auto_std_FILE(std::FILE* already_open) { fp = already_open; }
+	auto_std_FILE(const char* n, const char* m = "w+b")
+	{ fp = std::fopen(n, m); }
+	auto_std_FILE(int fd, const char* m = "w+b")
+	{ fp = /* not in std */ ::fdopen(fd, m); }
+	~auto_std_FILE() { if ( fp ) std::fclose(fp); }
+
+	operator std::FILE* () { return fp; }
+	std::FILE* get() { return fp; }
+	bool operator == (std::FILE* o) const { return fp == o; }
+	bool isopen() const { return fp != 0; }
+	operator bool () const { return isopen(); }
+	
+	std::FILE* release(std::FILE* newfp = 0)
+	{ std::FILE* t = fp; fp = newfp; return t; }
+	std::FILE* assign(std::FILE* newfp) { return release(newfp); }
+};
 
 // There would be no good reason to run this in a priviliged account,
 // but provide a test anyway, for some security conditions
@@ -151,6 +178,15 @@ template < class T > struct trawbuffer {
 // returns false, because I don't know MSW well enough.
 bool
 is_priviliged();
+
+// char string: anything that is _not_ ascii, printable or space,
+// is changed to hex in the '\xNN' convention; also backslash
+// "escapes" are put before '\', '"', and '\'' if esc == true
+std::string&
+sanitise_string(std::string& in, std::string& out, bool esc = false);
+// replace C comments "/*" and "*/" with r
+std::string&
+unccom_string(std::string& in, std::string& out, const char* r = "");
 
 // delete elements of pointer container
 template<class T>

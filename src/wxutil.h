@@ -28,9 +28,11 @@
 #include "util.h"
 
 bool WriteData(const wxString& fname, const std::list<SplineBase*>& lst
-	, const std::vector<int>& hg, const std::vector<int>& vg);
+	, const std::vector<int>& hg, const std::vector<int>& vg
+	, const wxString* pcomment = 0);
 int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
-	, std::vector<int>& hg, std::vector<int>& vg);
+	, std::vector<int>& hg, std::vector<int>& vg
+	, wxString* pcomment = 0);
 
 // Must check and sanitize the real numbers, as
 // extreme values can cause big trouble like infinite loops,
@@ -39,7 +41,8 @@ int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 // are needed at the point of the infinite loop (I don't even
 // know now if it's in app code or wx code), sanitization
 // should happen here anyway.
-// Use the callback for something more reasonable than the default.
+// Set the function pointer 'io_sanitise_spline_point' to
+// something better than the default.
 // (App is not presently multi-threaded; if threads are eventually
 // employed, the io code had better be used by one thread, likely
 // the main thread.)
@@ -48,7 +51,6 @@ int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 // so it should be useful in that role -- probably EINVAL.
 extern int (*io_sanitise_spline_point)(void*, SplinePoint*);
 extern void* io_sanitise_spline_point_data;
-
 
 inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
@@ -227,6 +229,13 @@ extern const size_t pov_chars_OK_count;
 // (non-const) reference argument.  Return true if a change was made,
 // else false
 bool sanitise_for_pov(wxString& str);
+
+// replace C comments "/*" and "*/" with r
+inline wxString unccom_wxs(const wxString& s, const char* r = "")
+{
+	std::string ss(wxs2ch(s));
+	return ch2wxs(unccom_string(ss, ss, r).c_str());
+}
 
 #endif  // _WXUTIL_H_
 

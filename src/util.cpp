@@ -64,6 +64,7 @@ extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #endif
 #endif
 
+#include <sstream>
 #include <cstring>
 #include <cmath>
 
@@ -573,3 +574,60 @@ bool check_identifier(wxString& word)
 	return check_identifier(word);
 }
 
+// replace C comments "/*" and "*/" with r
+std::string&
+unccom_string(std::string& in, std::string& out, const char* r)
+{
+	std::string t(in);
+	std::string::size_type p;
+
+	while ( (p = t.find("*/")) != std::string::npos ) {
+		t.replace(p, 2, r);
+	}
+	while ( (p = t.find("/*")) != std::string::npos ) {
+		t.replace(p, 2, r);
+	}
+
+	out = t;
+	return out;
+}
+
+// char string: anything that is _not_ ascii, printable or space,
+// is changed to hex in the '\xNN' convention; also backslash
+// "escapes" are put before '\', '"', and '\''
+std::string&
+sanitise_string(std::string& in, std::string& out, bool esc)
+{
+	std::istringstream si(in);
+	std::ostringstream so;
+	
+	char c;
+	while ( si.get(c) ) {
+		// char and unsigned char (and signed char) are
+		// different C++ types even if char is unsigned;
+		// use union to get an unsigned type regardless
+		// of signedness of char
+		union { char c; unsigned char u; } uc;
+		uc.c = c;
+		if ( uc.u > 127 || ! (std::isprint(c) || std::isspace(c)) ) {
+			char buf[8];
+			::snprintf(buf, 8, "\\\\x%02X", unsigned(uc.u));
+			so << buf;
+			continue;
+		}
+		if ( esc ) {
+			switch ( c ) {
+				case '\'':
+				case '"':
+				case '\\':
+					so.put('\\');
+					break;
+				default:
+					break;
+			}
+		}
+		so.put(c);
+	}
+	
+	return out;
+}

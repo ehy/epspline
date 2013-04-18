@@ -321,6 +321,7 @@ public:
 
 protected:
 	DataState*       D;
+	wxString         filecomment;
 	wxCursor*        arrowcursor, * curcursor;
 	wxCursor*        scalecursor, * shearcursor, * rotatecursor;
 	bool             creating;

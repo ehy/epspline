@@ -25,7 +25,12 @@
 #include "wxexio.h"
 #include "wxutil.h"
 
+#include <string>
+#include <sstream>
+#include <vector>
+#include <list>
 #include <limits>
+#include <cctype>
 #include <cerrno>
 #if defined(__WXMSW__) && defined(__SC__) // old.
 #include <float.h>  // for FLT_MIN
@@ -36,6 +41,14 @@
 // for setting "C" locale in a block
 #include "clocnumeric.h"
 
+namespace {
+	inline wxString wxsani(const wxString& s)
+	{
+		std::string ss(wxs2ch(s));
+		return ch2wxs(sanitise_string(ss, ss).c_str());
+	}
+}
+
 // Must check and sanitize the real numbers, as
 // extreme values can cause big trouble like infinite loops,
 // as dicovered using input from a T1 font conversion, with
@@ -43,7 +56,8 @@
 // are needed at the point of the infinite loop (I don't even
 // know now if it's in app code or wx code), sanitization
 // should happen here anyway.
-// Use the callback for something more reasonable than the default.
+// Set the function pointer 'io_sanitise_spline_point' to
+// something better than the default.
 // (App is not presently multi-threaded; if threads are eventually
 // employed, the io code had better be used by one thread, likely
 // the main thread.)
@@ -60,14 +74,14 @@ inline int sanitise_spline_point(SplinePoint& pt)
 			io_sanitise_spline_point_data, &pt);
 	}
 
-	// semi-arbitrary default maximum; use callback
-	const double maxV = 3300.0;
+	// arbitrary default maximum; use io_sanitise_spline_point!
+	const double maxV = 65535.0;
 	if ( std::abs(pt.x) > maxV )
 		return EINVAL;
 	if ( std::abs(pt.y) > maxV )
 		return EINVAL;
-	// NOTE: float epsilon, although double is tested; serves as min.
-	// for this application.
+	// NOTE: float epsilon, although double is tested; serves as
+	// minimum for this default proc.
 	const double minV = std::numeric_limits<float>::epsilon();
 	if ( std::abs(pt.x) <= minV )
 		pt.x = pt.x < 0.0 ? -0.0 : 0.0;
@@ -84,15 +98,19 @@ const int default_real_fmt_precision = 8;
 
 bool
 WriteData(const wxString& fname, const std::list<SplineBase*>& lst
-	, const std::vector<int>& hg, const std::vector<int>& vg)
+	, const std::vector<int>& hg, const std::vector<int>& vg
+	, const wxString* pcomment)
 {
+	errno = 0;
 	cnumtmp c_tmp;
 	int real_fmt_precision = default_real_fmt_precision;
 	wxString real_fmt;
-	FILE* o = fopen(wxs2fn(fname), "wb"); // MS reads fail w/ "wt"
+	auto_std_FILE o(wxs2fn(fname), "wb"); // MS reads fail w/ "wt"
 
-	if ( o == NULL ) {
+	if ( ! o ) {
+		int e = errno;
 		::perror(wxs2fn(fname));
+		errno = e;
 		return false;
 	}
 	
@@ -115,28 +133,29 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 
 		ob << nobj++;
 		wxExio& e  = *new wxExio(ob);
-		e.AddAttributeValueString(wxT("objname"), p->GetObNam());
+		e.AddAttributeValueString(wxT("objname")
+			, wxsani(p->GetObNam()));
 		e.AddAttributeValue(wxT("splinetype"), (long)p->Getsplinet());
 		e.AddAttributeValue(wxT("povtype"), (long)p->Getobjt());
 		e.AddAttributeValue(wxT("sweeptype"), (long)p->Getsweept());
 		e.AddAttributeValue(wxT("use_sturm"), (long)p->Getusesturm());
 		e.AddAttributeValue(wxT("use_open"), (long)p->Getuseopen());
 		wxString swv; swv.Printf(real_fmt, p->Getsweepmin());
-		e.AddAttributeValueString(wxT("sweep_min"), swv);
+		e.AddAttributeValueString(wxT("sweep_min"), wxsani(swv));
 		swv = wxT(""); swv.Printf(real_fmt, p->Getsweepmax());
-		e.AddAttributeValueString(wxT("sweep_max"), swv);
+		e.AddAttributeValueString(wxT("sweep_max"), wxsani(swv));
 		if ( SplineBase::NotStringFieldEmpty(p->GetTransform()) )
 			e.AddAttributeValueString(p->PropNames[p->transform]
-				, p->GetTransform());
+				, wxsani(p->GetTransform()));
 		if ( SplineBase::NotStringFieldEmpty(p->GetTexture()) )
 			e.AddAttributeValueString(p->PropNames[p->texture]
-				, p->GetTexture());
+				, wxsani(p->GetTexture()));
 		if ( SplineBase::NotStringFieldEmpty(p->GetInterior()) )
 			e.AddAttributeValueString(p->PropNames[p->interior]
-				, p->GetInterior());
+				, wxsani(p->GetInterior()));
 		if ( SplineBase::NotStringFieldEmpty(p->GetUserStr()) )
 			e.AddAttributeValueString(p->PropNames[p->userstr]
-				, p->GetUserStr());
+				, wxsani(p->GetUserStr()));
 
 		int npt = 0;
 		SplineBaseBase::const_iterator i = p->begin();
@@ -196,18 +215,22 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 		db.Append(&ex);
 	}
 
-	db.Write(o);
-	if ( fclose(o) ) {
-		::perror(wxs2fn(fname));
-		return false;
+	if ( pcomment ) {
+		// Regardless of count, allow just one for now
+		wxExio* ex = new wxExio(wxT("FileComments"));
+		ex->AddAttributeValue(wxT("CommentCount"), 1l);
+		ex->AddAttributeValueString(wxT("Comment1"), wxsani(*pcomment));
+		db.Append(ex);
 	}
+
+	db.Write(o);
 
 	return true;
 }
 
 int
 ReadData(const wxString& fname, std::list<SplineBase*>& lst
-	, std::vector<int>& hg, std::vector<int>& vg)
+	, std::vector<int>& hg, std::vector<int>& vg, wxString* pcomment)
 {
 	cnumtmp c_tmp;
 	int n;
@@ -418,6 +441,23 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 		}
 	}
 
+	if ( pcomment ) {
+		// Regardless of count, allow just one for now
+		pe = db.FindClauseByFunctor(wxT("FileComments"));
+		if ( pe ) {
+			long n = 0;
+			pe->GetAttributeValue(wxT("CommentCount"), n);
+			if ( n > 0 ) {
+				wxString t;
+				pe->GetAttributeValue(wxT("Comment1"), t);
+				*pcomment = wxsani(t);
+			} else {
+				*pcomment = wxT("");
+			}
+		} else {
+			*pcomment = wxT("");
+		}
+	}
+
 	return n;
 }
-

@@ -771,19 +771,14 @@
 	are not similar to the \IXpov{}
 	\IXarg{\emph{coordinate system}}. In fact, the \IXarg{SDL}
 	allows the \IXpov{} \IXarg{coordinate system}
-	to be modified, and so assumptions made be a program
+	to be modified, and so assumptions made by a program
 	such as \IXpkg{} might not be valid. It is better that
 	the user understand \IXpov{} \IXarg{transforms} and
 	place the objects logically. \IXpkgu{} declares a number
-	of necessary values describing the (unscaled) extremes
-	and position of objects, and using these declarations
+	of necessary values describing the (un-scaled) extremes
+	and position of objects, and using these declarations,
 	the typical transforms are routine.
 
-	An example of the \IXarg{SDL} exported by \IXpkg{}
-	is shown in listing~\ref{pvlst:sdl_one_obj}.
-	The name of the object is ``Foo'', and the file it was
-	exported to is named ``foo.inc''
-	
 	\begin{povsdl}
 		{\small
 		\begin{verbatim}
@@ -839,38 +834,136 @@
 	\label{pvlst:sdl_one_obj}
 	\end{povsdl}
 
-	Listing~\ref{pvlst:sdl_one_obj} begins (after an initial
+	An example of the \IXarg{SDL} exported by \IXpkg{}
+	is shown in listing~\ref{pvlst:sdl_one_obj}.
+	The name of the object is ``Foo'', and the file it was
+	exported to is named ``foo.inc''
+	This ``include file'' begins (after an initial
 	comment) with a guard against re-inclusion by testing and
-	declaring ``INCLUDED\_foo\_inc.'' The guard name will
+	declaring
+	``\texttt{INCLUDED\_foo\_inc}.''
+	The guard name will
 	integrate the file name, so it will probably
 	be unique. If the file is
-	included a second time the \emph{\#ifndef} test will fail
+	included a second time the \texttt{\#ifndef} test will fail
 	and everything will be ignored up to the matching
-	\emph{\#end} near the end of the file. This common guard
-	allows one fragment file to be used by several other files
+	\texttt{\#end} near the end of the file. This common guard
+	allows one include file to be used by several other files
 	without conflict.
 	
 	Following the guard, constants are declared for the
-	dimensions of the the object, and the declarations use
-	the object's name. These dimensions are calculated
+	dimensions and position of the the object.
+	These values are collected
 	by \IXpkg{} as the curve is calculated
-	(i.e., \IXarg{interpolated}),
+	(i.e., \IXarg{interpolated}) for display,
 	and are limited in accuracy by the resolution of the
-	\IXarg{interpolation}, but should be precise enough
+	\IXarg{interpolation}, but they should be precise enough
 	for any scene.
 	
 	Appearing next, just before the spline object
 	declaration, is the declaration of an optional transform,
-	named ``Foo\_NORMAL\_TRANSFORM.''
-	It is optional because it is only applied if
-	``Foo\_USE\_NORMAL\_TRANSFORM'' is declared before the
-	file is included. If used, the transform scales the
-	object (not including \emph{sweep}, if it is a spline)
+	named ``\texttt{Foo\_NORMAL\_TRANSFORM}.''
+	This is only applied if
+	``\texttt{Foo\_USE\_NORMAL\_TRANSFORM}''
+	is declared before the
+	file is included. If used, the transform scales the object
+	(not including the \emph{\IXarg{sweep}} of a \IXarg{prism})
 	to one unit on the axis with the greater extent. It also
 	centers the object at the origin, and inverts the object
 	along the $z$-axis for the prism,
 	or the $y$-axis for the lathe (because of the difference in view
 	between \IXpov{} and \IXpkg{}).
+	
+	Next, the object is declared. If there was more than
+	one object in listing~\ref{pvlst:sdl_one_obj},
+	then the sequence of constants-transform--object would
+	be repeated for each.
+	
+	Finally, constants are declared that are similar to those
+	declared for objects
+	but which pertain to all the objects in the file.
+	As listing~\ref{pvlst:sdl_one_obj} shows only one object,
+	these happen to be the same as the constants for
+	``\texttt{Foo},'' but if a file is composed of several
+	objects meant to keep their relative positions and sizes,
+	then these final constants are useful.
+
+
+		\subsection{Example with a Lathe and Prism}%WX%4||||
+		\label{ssec:ex_lath_and_prism}
+		Consider a scene with two objects, a lathe and a
+		prism, that should be rendered together. The lathe
+		is named ``Cup,'' and the prism is named ``Handle.''
+		Drawn quickly in \IXpkg{}, they might look like
+		figure~\ref{fig:cup_doodle}.
+		Hopefully, it is obvious which objects are assigned
+		the names. Since \IXarg{lathes} are rotated around
+		the $y$-axis, ``Cup'' is the profile of half of a cup.
+		Also, the left-most points of ``Cup'' are at the
+		horizontal point zero. If those points had a positive
+		offset, then the cup would have a hole in the bottom.
+		(If they had a negative offset, \IXpov{} would reject
+		the object and exit with an error message: lathes may
+		not have negative values on the rotated axis.)
+
+		After these objects
+		are exported to an include file, ``cup.inc,''
+		a main scene file is necessary to render the cup
+		with \IXpov{}. A minimal ``cup.pov'' is shown in
+		listing~\ref{pvlst:sdl_coffee_cup_pov}.
+
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgCupDoodle}
+		\caption{A simple cup on the \dtypkg{} canvas.}
+		\label{fig:cup_doodle}
+		\end{figure}
+
+		\begin{povsdl}
+			{\small
+			\begin{verbatim}
+			#version 3.5;
+			#include "colors.inc"
+			
+			light_source { <20, 20, -20> color White }
+			
+			camera {
+			    location <0, 0.75, -4>
+			    look_at <0, 0.25, 0>
+			    right x * image_width / image_height
+			    angle 45
+			}
+			
+			#declare CupTexture = texture { pigment { color LightBlue } }
+			#declare BoxTexture = texture { pigment { color DarkGreen } }
+			
+			#include "cup.inc"
+			
+			#declare CoffeeCupRaw = union {
+			    object { Handle
+			        rotate x * -90
+			    }
+			    object { Cup }
+			}
+			
+			#declare CoffeeCup = object {
+			    CoffeeCupRaw
+			    translate <0, -Cup_top - Cup_height / 2, 0>
+			    scale 1 / Cup_height
+			    scale <1, -1, 1>
+			    texture { CupTexture }
+			}
+			
+			object { CoffeeCup translate <0, 0.5, 0> }
+			// somewhere to put the cup down:
+			box { <-1, -0.25, -0.75> <1, 0, 0.75>
+			    texture { BoxTexture }
+			}
+			\end{verbatim}
+			}%small
+		\caption{\dtypov{} SDL for a simple coffee cup scene.}
+		\label{pvlst:sdl_coffee_cup_pov}
+		\end{povsdl}
 
 
 	\section{Tips}%WX%3||||

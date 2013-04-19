@@ -58,7 +58,7 @@
 #define IDS_UsefulTransforms		"Useful Transforms"
 #define IDF_UsefulTransforms		"epsplinese5.html"
 
-#define IDI_Tips		256
+#define IDI_Tips		272
 #define IDS_Tips		"Tips"
 #define IDF_Tips		"epsplinese6.html"
 
@@ -66,15 +66,15 @@
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		272
+#define IDI_GPL3_Section		288
 #define IDS_GPL3_Section		"GNU General Public License"
 #define IDF_GPL3_Section		"epsplinese7.html"
 
-#define IDI_GPL2_Section		336
+#define IDI_GPL2_Section		352
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
 #define IDF_GPL2_Section		"epsplinese8.html"
 
-#define IDI_FDL_Section		400
+#define IDI_FDL_Section		416
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese9.html"
 

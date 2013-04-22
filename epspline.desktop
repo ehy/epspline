@@ -7,4 +7,4 @@ TryExec=epspline
 Exec=epspline %F
 Icon=epspline
 MimeType=application/x-epspline;application/pse;
-Categories=Graphics
+Categories=Graphics;3DGraphics;

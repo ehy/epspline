@@ -67,7 +67,7 @@
 // The needed DLLs are (from the unzipped dir)
 // bin\\freetype6.dll bin\\zlib1.dll and of course they must be put
 // where the loader can find them; probably the same place
-// t1char2pse.exe gets put. The const-free DMC will static-link
+// t1char2pse.exe gets put. The cost-free DMC will static-link
 // the DMC C-library (at least that has been my experience).
 //
 

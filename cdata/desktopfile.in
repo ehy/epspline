@@ -7,4 +7,4 @@ TryExec=appname
 Exec=appname %F
 Icon=appname
 MimeType=application/x-appname;application/genFileExtND;
-Categories=Graphics;Utility;
+Categories=Graphics;3DGraphics;

@@ -45,6 +45,10 @@ define(mswinstallername,
 	appName`-'appversion`-msw32-install.exe')dnl	name of MSW install prog
 define(mswinstallernameS,
 	"mswinstallername")dnl
+define(mswinstallername64,
+	appName`-'appversion`-msw64-install.exe')dnl	name of MSW64bit install prog
+define(mswinstallername64S,
+	"mswinstallername64")dnl
 define(mswinstalldir, `appclass appversion')dnl	top MSW install dir
 dnl define(mswinstalldir, `appclass')dnl			top MSW install dir
 define(mswinstalldirS, "mswinstalldir")dnl

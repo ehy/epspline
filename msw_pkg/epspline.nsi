@@ -86,7 +86,7 @@
 
   ;Name and file
   Name "Epspline Prism and Lathe Editor 0.0.4.2"
-  OutFile "Epspline-0.0.4.2-msw32-install.exe"
+  OutFile "Epspline-0.0.4.2-msw64-install.exe"
 
 ;--------------------------------
 ;Variables

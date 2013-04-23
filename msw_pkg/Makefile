@@ -80,6 +80,6 @@ uninstall:
 clean :
 	$(RM) $(NAME) $(NAME64) i18n-sect.in i18n-sect
 
-cleanall : clean
+cleanall : clean $(SRC)
 
 distclean: cleanall

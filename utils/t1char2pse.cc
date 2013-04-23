@@ -871,8 +871,9 @@ scale_pts(ccont& c, flt_t scale)
 bool
 get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 {
-	if ( (pN - p0) < 3 ) {
-		std::cerr << "CONTOUR with " << (pN - p0) << " points\n";
+	if ( (pN - p0 + 1) < 3 ) {
+		std::cerr << "CONTOUR with " << (pN - p0 + 1)
+			<< " points\n";
 		return false;
 	}
 

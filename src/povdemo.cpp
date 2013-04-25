@@ -193,11 +193,12 @@ PovDemoProc::writepov(FILE* f)
 		"  scale (1 / %f) * szadj\n"
 		"  rotate x * 90\n"
 		"}\n\n";
-	cnumtmp c_tmp; // ensures real number formatting is in "C" locale
-	int clr = 0, n = 0;
+	int clr = 0, n = 0, outcnt = 0;
 	wxString t(itmp), tn, tt, ts = wxT("");
 	const double cam_pos_adj = 0.25; // trial & error adjustment
 	const double cam_angle = 45.0; // this may become configurable
+
+	cnumtmp c_tmp; // ensures real number formatting is in "C" locale
 
 	std::fputs(fst, f);
 
@@ -219,7 +220,8 @@ PovDemoProc::writepov(FILE* f)
 		if ( p->Getobjt() == SplineBase::undef ) {
 			continue;
 		}
-		
+
+		outcnt++;
 		// for whole min and max
 		double mnx, mny, mxx, mxy;
 		p->CBox(mnx, mny, mxx, mxy);
@@ -262,6 +264,11 @@ PovDemoProc::writepov(FILE* f)
 		}
 	}
 
+	// write any good objects lately?
+	if ( outcnt < 1 ) {
+		return false;
+	}
+
     double zp, scale;
     scale = std::max(std::abs(My-Ly), std::abs(Mx-Lx));
 
@@ -302,9 +309,6 @@ PovDemoProc::writepov(FILE* f)
 		if ( ! p->POkay() ) {
 			continue;
 		}
-		if ( p->Getobjt() == SplineBase::undef ) {
-			continue;
-		}
 		
 		tn = p->GetObNam();
 		if ( tn == SplineBase::DefaultName ) {
@@ -312,6 +316,11 @@ PovDemoProc::writepov(FILE* f)
 		}
 		n++;
 
+		// continue on undef _after_ checking name
+		// and inc'ing n, because objects were exported this way
+		if ( p->Getobjt() == SplineBase::undef ) {
+			continue;
+		}
 #if 0 // working on this: see A_Canvas::ExportFile()
 		int nn = 0;
 		wxString ttn(tn);

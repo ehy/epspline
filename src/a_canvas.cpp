@@ -2559,15 +2559,19 @@ A_Canvas::ExportFILE(FILE* f, const wxString& fname, bool indemo)
 		}
 	}
 
-	wxString t(wxT("I_"));
-	t += fname;
-	sanitise_for_pov(t);
-	fprintf(f, "#declare %s_width = %f;\n#declare %s_height = %f;\n"
-		, wxs2ch(t), double(mx-lx), wxs2ch(t), double(my-ly));
-	fprintf(f, "#declare %s_left = %f;\n#declare %s_right = %f;\n"
-		, wxs2ch(t), double(lx), wxs2ch(t), double(mx));
-	fprintf(f,"#declare %s_top = %f;\n#declare %s_bottom = %f;\n"
-		, wxs2ch(t), double(ly), wxs2ch(t), double(my));
+	if ( n > 0 ) {
+		wxString t(wxT("I_"));
+		t += fname;
+		sanitise_for_pov(t);
+		fprintf(f, "#declare %s_width = %f;\n#declare %s_height = %f;\n"
+			, wxs2ch(t), double(mx-lx), wxs2ch(t), double(my-ly));
+		fprintf(f, "#declare %s_left = %f;\n#declare %s_right = %f;\n"
+			, wxs2ch(t), double(lx), wxs2ch(t), double(mx));
+		fprintf(f,"#declare %s_top = %f;\n#declare %s_bottom = %f;\n"
+			, wxs2ch(t), double(ly), wxs2ch(t), double(my));
+	} else {
+		fputs("// No prism or lathe objects were exported\n", f);
+	}
 
 	fprintf(f, "\n#end // #ifdef ( %s )\n\n", wxs2ch(sentry));
 }

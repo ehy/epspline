@@ -679,7 +679,7 @@ SplineBase::Export(FILE* f, int n,
 				, Ct.p(), sweep_min);
 			fprintf(f, "#declare %s_SWEEP_MAX = %f;\n"
 				, Ct.p(), sweep_max);
-			fprintf(f, "#declare %s = array[%s_ARRAY_COUNT] {\n  "
+			fprintf(f, "#declare %s =\narray[%s_ARRAY_COUNT] {\n  "
 				, Ct.p(), Ct.p());
 			break;
 	}

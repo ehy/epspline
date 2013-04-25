@@ -29,6 +29,8 @@
 #include "cfg.h"
 #include "util.h"
 #include <vector>
+#include <list>
+#include <utility>
 
 // Here's the little class structure:
 // The point is creating POV's various spline-based objects,
@@ -107,6 +109,15 @@ class SplineBase : public SplineBaseBase {
 	friend class DataState;
 	friend class eps_funcs::sp_offset;
 	friend class eps_funcs::cp_offset;
+
+public:
+	// for making list of sub-curves as iterator pairs:
+	typedef std::pair<iterator, iterator>
+				subcurve;
+	typedef std::pair<const_iterator, const_iterator>
+				const_subcurve;
+	typedef std::list<subcurve> subcurve_list;
+	typedef std::list<const_subcurve> const_subcurve_list;
 
 public:
 	virtual bool Export(FILE* f, int n,
@@ -206,7 +217,17 @@ public:
 	virtual bool PtInRect(const wxPoint& p, unsigned pad) const;
 
 	virtual bool Okay() const; // Okay for Epspline; maybe not POV
-	virtual bool POkay() const; // Okay for POV-Ray export
+	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
+	// collected (the code in this procedure is natural for that)
+	virtual bool POkay(const_subcurve_list* ps = 0) const = 0;
+	virtual bool POkay(subcurve_list* ps = 0) = 0;
+	// More aptly named subcurve collector
+	bool get_subcurves(const_subcurve_list* ps) const {
+		return POkay(ps);
+	}
+	bool get_subcurves(subcurve_list* ps) {
+		return POkay(ps);
+	}
 	virtual SplineBase* CopySelf() const = 0;
 
 	enum obj_t { undef, prism, lathe };
@@ -377,7 +398,10 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
-	virtual bool POkay() const; // Okay for POV-Ray export
+	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
+	// collected (the code in this procedure is natural for that)
+	virtual bool POkay(const_subcurve_list* ps = 0) const;
+	virtual bool POkay(subcurve_list* ps = 0);
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -397,7 +421,10 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
-	virtual bool POkay() const; // Okay for POV-Ray export
+	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
+	// collected (the code in this procedure is natural for that)
+	virtual bool POkay(const_subcurve_list* ps = 0) const;
+	virtual bool POkay(subcurve_list* ps = 0);
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -417,7 +444,10 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	//virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz
 	virtual bool Okay() const;
-	virtual bool POkay() const; // Okay for POV-Ray export
+	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
+	// collected (the code in this procedure is natural for that)
+	virtual bool POkay(const_subcurve_list* ps = 0) const;
+	virtual bool POkay(subcurve_list* ps = 0);
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual SplineBase* CopySelf() const;
@@ -444,7 +474,10 @@ public:
 	virtual void DrawDotsSelectedDot(wxDC& dc,const SplinePoint& pt
 		,wxBrush selectedbr,unsigned size = dotsz,unsigned selsize = sdotsz);
 	virtual bool Okay() const;
-	virtual bool POkay() const; // Okay for POV-Ray export
+	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
+	// collected (the code in this procedure is natural for that)
+	virtual bool POkay(const_subcurve_list* ps = 0) const;
+	virtual bool POkay(subcurve_list* ps = 0);
 	virtual bool AddPoint(const SplinePoint& pt);
 	virtual bool DelPoint(const SplinePoint& pt);
 	virtual bool MovePoint(SplinePoint& pt, double xoff, double yoff);

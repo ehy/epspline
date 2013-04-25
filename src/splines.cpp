@@ -468,12 +468,6 @@ SplineBase::Okay() const
 	return size() ? true : false;
 }
 
-bool
-SplineBase::POkay() const
-{
-	return false;
-}
-
 void
 SplineBase::SetType(obj_t type)
 {
@@ -1148,25 +1142,71 @@ LinearSpline::Okay() const
 }
 
 bool
-LinearSpline::POkay() const
+LinearSpline::POkay(const_subcurve_list* ps) const
 {
 	if ( size() > 2 ) {
 		const_iterator i = begin();
 		const_iterator e = end();
 		const_iterator j = i; // 1nd point and last must match
+		const_subcurve c;
+		c.first = j;
 		++i; ++i;
 		while ( ++i != e ) {
 			if ( *i == *j ) {
 				if ( ++i == e ) {
 					break;
 				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
 				// discontinuity
-				j = i++;
+				c.first = j = i++;
 				if ( i++ == e ) return false;
 				if ( i == e ) return false;
 			}
 		}
 		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool
+LinearSpline::POkay(subcurve_list* ps)
+{
+	if ( size() > 2 ) {
+		iterator i = begin();
+		iterator e = end();
+		iterator j = i; // 1nd point and last must match
+		subcurve c;
+		c.first = j;
+		++i; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
+				// discontinuity
+				c.first = j = i++;
+				if ( i++ == e ) return false;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
 			return true;
 		}
 	}
@@ -1353,7 +1393,7 @@ QuadraticSpline::Okay() const
 }
 
 bool
-QuadraticSpline::POkay() const
+QuadraticSpline::POkay(const_subcurve_list* ps) const
 {
 	if ( size() > 2 ) { // epspline will draw the curve with 3
 		if ( objt == undef )
@@ -1363,21 +1403,73 @@ QuadraticSpline::POkay() const
 	if ( size() > 4 ) { // POV requires 5
 		const_iterator i = begin();
 		const_iterator e = end();
-		const_iterator j = i; ++j; // 2nd point and last must match
-		i = j; ++i;
+		const_iterator j = i; // 2nd point and last must match
+		const_subcurve c;
+		c.first = j;
+		i = ++j; ++i;
 		while ( ++i != e ) {
 			if ( *i == *j ) {
 				if ( ++i == e ) {
 					break;
 				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
 				// discontinuity
-				j = i; ++j;
+				c.first = j = i; ++j;
 				if ( j == e ) return false;
 				i = j; ++i;
 				if ( i == e ) return false;
 			}
 		}
 		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool
+QuadraticSpline::POkay(subcurve_list* ps)
+{
+	if ( size() > 2 ) { // epspline will draw the curve with 3
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
+	if ( size() > 4 ) { // POV requires 5
+		iterator i = begin();
+		iterator e = end();
+		iterator j = i; // 2nd point and last must match
+		subcurve c;
+		c.first = j;
+		i = ++j; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
+				// discontinuity
+				c.first = j = i; ++j;
+				if ( j == e ) return false;
+				i = j; ++i;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
 			return true;
 		}
 	}
@@ -1625,7 +1717,7 @@ CubicSpline::Okay() const
 }
 
 bool
-CubicSpline::POkay() const
+CubicSpline::POkay(const_subcurve_list* ps) const
 {
 	if ( size() > 3 ) { // epspline will draw the curve with 4
 		if ( objt == undef )
@@ -1635,8 +1727,10 @@ CubicSpline::POkay() const
 	if ( size() > 5 ) { // POV requires 6
 		const_iterator i = begin();
 		const_iterator e = end();
-		const_iterator j = i; ++j; // 2nd point and last must match
-		i = j; ++i;
+		const_iterator j = i; // 2nd point and last must match
+		const_subcurve c;
+		c.first = j;
+		i = ++j; ++i;
 		while ( ++i != e ) {
 			if ( *i == *j ) {
 				if ( ++i == e ) {
@@ -1646,14 +1740,70 @@ CubicSpline::POkay() const
 					--i;
 					break;
 				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
 				// discontinuity
-				j = i; ++j;
+				c.first = j = i; ++j;
 				if ( j == e ) return false;
 				i = j; ++i;
 				if ( i == e ) return false;
 			}
 		}
 		if ( *j == *--i ) {
+			if ( ps ) {
+				++i;
+				c.second = ++i;
+				ps->push_back(c);
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool
+CubicSpline::POkay(subcurve_list* ps)
+{
+	if ( size() > 3 ) { // epspline will draw the curve with 4
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
+	if ( size() > 5 ) { // POV requires 6
+		iterator i = begin();
+		iterator e = end();
+		iterator j = i; // 2nd point and last must match
+		subcurve c;
+		c.first = j;
+		i = ++j; ++i;
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					return false;
+				}
+				if ( ++i == e ) {
+					--i;
+					break;
+				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
+				// discontinuity
+				c.first = j = i; ++j;
+				if ( j == e ) return false;
+				i = j; ++i;
+				if ( i == e ) return false;
+			}
+		}
+		if ( *j == *--i ) {
+			if ( ps ) {
+				++i;
+				c.second = ++i;
+				ps->push_back(c);
+			}
 			return true;
 		}
 	}
@@ -1918,7 +2068,7 @@ BezierSpline::Okay() const
 }
 
 bool
-BezierSpline::POkay() const
+BezierSpline::POkay(const_subcurve_list* ps) const
 {
 	const size_type sz = size();
 	const size_type bitsng = 3u;
@@ -1928,16 +2078,20 @@ BezierSpline::POkay() const
 			return true; // no check, this is up to user
 	}
 
-	if ( sz < 4 || (sz & bitsng) ) {
+	if ( ! ps && (sz < 4 || (sz & bitsng)) ) {
 		return false;
 	} else if ( sz == 4 ) {
 		const_iterator i = begin();
 		const_iterator e = end();
+		const_subcurve c(i, e);
 		if ( *i == *--e ) {
 			// ensure 2 dimensions
 			const_iterator p1 = i; ++p1;
 			const_iterator p2 = p1; ++p2;
 			if ( *i != *p1 && *i != *p2 && *p1 != *p2 ) {
+				if ( ps ) {
+					ps->push_back(c);
+				}
 				return true;
 			}
 		}
@@ -1945,14 +2099,19 @@ BezierSpline::POkay() const
 		const_iterator i = begin();
 		const_iterator e = end();
 		const_iterator j = i; // 1st point and last must match
+		const_subcurve c(i, e);
 		++i; ++i; // advance to 3rd here, while loop advances to 4th
 		while ( ++i != e ) {
 			if ( *i == *j ) {
 				if ( ++i == e ) {
 					break;
 				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
 				// valid discontinuity: set j 1st of next segment
-				j = i--;
+				c.first = j = i--;
 			}
 			// advance to 3rd in next segment
 			// test not needed since mult. of 4 is confirmed,
@@ -1964,6 +2123,77 @@ BezierSpline::POkay() const
 		
 		// closed path: OK
 		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool
+BezierSpline::POkay(subcurve_list* ps)
+{
+	const size_type sz = size();
+	const size_type bitsng = 3u;
+
+	if ( sz > 3 ) { // epspline will draw the curve with 4
+		if ( objt == undef )
+			return true; // no check, this is up to user
+	}
+
+	if ( ! ps && (sz < 4 || (sz & bitsng)) ) {
+		return false;
+	} else if ( sz < 5 ) {
+		iterator i = begin();
+		iterator e = end();
+		subcurve c(i, e);
+		if ( *i == *--e ) {
+			// ensure 2 dimensions
+			iterator p1 = i; ++p1;
+			iterator p2 = p1; ++p2;
+			if ( *i != *p1 && *i != *p2 && *p1 != *p2 ) {
+				if ( ps ) {
+					ps->push_back(c);
+				}
+				return true;
+			}
+		}
+	} else { // sz >= 8
+		iterator i = begin();
+		iterator e = end();
+		iterator j = i; // 1st point and last must match
+		subcurve c(i, e);
+		++i; ++i; // advance to 3rd here, while loop advances to 4th
+		while ( ++i != e ) {
+			if ( *i == *j ) {
+				if ( ++i == e ) {
+					break;
+				}
+				if ( ps ) {
+					c.second = i;
+					ps->push_back(c);
+				}
+				// valid discontinuity: set j 1st of next segment
+				c.first = j = i--;
+			}
+			// advance to 3rd in next segment
+			// test not needed since mult. of 4 is confirmed,
+			// but leave defensively against code changes.
+			if ( ++i == e ) return false;
+			if ( ++i == e ) return false;
+			if ( ++i == e ) return false;
+		}
+		
+		// closed path: OK
+		if ( *j == *--i ) {
+			if ( ps ) {
+				c.second = ++i;
+				ps->push_back(c);
+			}
 			return true;
 		}
 	}
@@ -1974,76 +2204,110 @@ BezierSpline::POkay() const
 bool
 BezierSpline::DelPoint(const SplinePoint& p)
 {
-	const size_type sz = size();
-	const size_type bitsng = 3u;
+	iterator pti = PointIndexIt(p);
 	
-	if ( sz & bitsng ) {
+	if ( pti == end() ) {
+		return false;
+	}
+
+	iterator i = begin(), l = end();
+	subcurve_list sl;
+	bool allok = get_subcurves(&sl);
+
+	if ( allok == false ) {
+		iterator c = i;
 		// point count is not a multiple of 4,
 		// so curve is not currently valid;
+		// get_subcurves will return false, but
+		// not before collecting subset of subcurves
+		subcurve_list::iterator b = sl.begin(), e = sl.end();
+		while ( b != e ) {
+			subcurve& sc = *b++;
+			c = std::find(sc.first, sc.second, p);
+			if ( c != sc.second ) {
+				// found in valid sub
+				i = sc.first;
+				l = sc.second;
+				goto BezierSplineDelPoint_delseg;
+			}
+		}
+		// not found, it's in remainder
+		sl.clear();
+		while ( (end() - c) > 3 ) {
+			iterator tmpc = std::find(c + 2, end(), *c);
+			if ( tmpc++ != end() && ((tmpc - c) & 3) == 0 ) {
+				sl.push_back(subcurve(c, tmpc));
+				c = tmpc;
+				continue;
+			}
+			++c;
+		}
+		// try again with subcurve list
+		b = sl.begin(), e = sl.end();
+		while ( b != e ) {
+			subcurve& sc = *b++;
+			c = std::find(sc.first, sc.second, p);
+			if ( c != sc.second ) {
+				// found in valid sub
+				i = sc.first;
+				l = sc.second;
+				goto BezierSplineDelPoint_delseg;
+			}
+		}
 		// just remove the point and let user
 		// work on it.
-		iterator i = PointIndexIt(p);
-		if ( i != end() ) {
-			erase(i, i + 1);
-			SetDirty();
-			return true;
+		erase(pti);
+		SetDirty();
+		return true;
+	} else {
+		subcurve_list::iterator b = sl.begin(), e = sl.end();
+		while ( b != e ) {
+			subcurve& sc = *b++;
+			iterator c = std::find(sc.first, sc.second, p);
+			if ( c != sc.second ) {
+				// found in valid sub
+				i = sc.first;
+				l = sc.second;
+				goto BezierSplineDelPoint_delseg;
+			}
 		}
 		return false;
 	}
 
-	if ( sz < 8 ) return false;
+BezierSplineDelPoint_delseg:
+	// one seg subcurve?
+	if ( (i + 4) == l ) {
+		erase(i, l);
+	    SetDirty();
+		return true;
+	}
 
-	int n = PointIndex(p, 0);
-	int q = n / 4;
+	int n = pti - i;
 	int m = n % 4;
-	iterator i = begin() + (n - m), i1 = i + 4;
-	iterator i2 = i + 1, i3 = i2 + 1;
-	SplinePoint C0 = *i2, C1 = *i3;
+	iterator b = i;
+	i += (n - m);                     // point to start of seg w/ pti
+	iterator ni = i + 4;              // ni == start of next seg
 
-	#ifdef HAVE_OLD_HEADERS
-	if ( i1 == end () ) {
-		erase(i, i1);
-		i = end();
+	iterator berase = i, eerase = ni;
+	// erasing 1st seg, last seg, or in-between
+	if ( i == b ) {
+		iterator e = l - 1;
+		SplinePoint& t0 = *ni, & t1 = *e;
+		SplinePoint tp((t0.x+t1.x)/2.0, (t0.y+t1.y)/2.0);
+		t0 = t1 = tp;
+	} else if ( ni == l ) {
+		iterator e = l - 5;
+		SplinePoint& t0 = *b, & t1 = *e;
+		SplinePoint tp((t0.x+t1.x)/2.0, (t0.y+t1.y)/2.0);
+		t0 = t1 = tp;
 	} else {
-		SplinePoint tmp = *i1;
-		erase(i, i1);
-		i = PointIndexIt(tmp);
-	}
-	#else
-	i = erase(i, i1);
-	#endif
-
-	if ( i == end() ) {
-		i1 = --i;
-		--i;
-		i2 = begin();
-		i3 = i2 + 1;
-	} else if ( q == 0 ) {
-		i2 = i;
-		i3 = i2 + 1;
-		i = end();
-		i1 = --i;
-		--i;
-	} else {
-		i2 = i;
-		i1 = --i;
-		--i;
-		i3 = i2 + 1;
+		iterator s = i - 1;
+		SplinePoint& t0 = *s, & t1 = *ni;
+		SplinePoint tp((t0.x+t1.x)/2.0, (t0.y+t1.y)/2.0);
+		t0 = t1 = tp;
 	}
 
-	SplinePoint& P = *i, &P1 = *i1, &P2 = *i2, &P3 = *i3;
-
-	C0.x = (C0.x + P.x + P1.x) / 3;
-	C1.x = (C1.x + P3.x + P2.x) / 3;
-	C0.y = (C0.y + P.y + P1.y) / 3;
-	C1.y = (C1.y + P3.y + P2.y) / 3;
-	P  = C0;
-	P3 = C1;
-
-	P1.x += (P2.x - P1.x) / 2;
-	P1.y += (P2.y - P1.y) / 2;
-	P2 = P1;
-
+	erase(berase, eerase);
     SetDirty();
 	return true;
 }

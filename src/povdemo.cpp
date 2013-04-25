@@ -644,9 +644,10 @@ GetPovExecutable(wxString& dest)
 }
 
 // The only public interface: proto in util.h
-void
+long
 DoPovDemo(A_Canvas& canvas, std::list<SplineBase*>& lst)
 {
+	long ret = 0;
 	int flags = 0;
 #ifdef wxEXEC_ASYNC
 	flags |= wxEXEC_ASYNC;
@@ -655,11 +656,14 @@ DoPovDemo(A_Canvas& canvas, std::list<SplineBase*>& lst)
 	flags |= wxEXEC_MAKE_GROUP_LEADER;
 #endif
 	PovDemoProc* p = new PovDemoProc(lst, canvas);
-	if ( p->Okay() )
-		wxExecute(p->GetCommand(), flags, p);
-	else {
+	if ( p->Okay() ) {
+		ret = wxExecute(p->GetCommand(), flags, p);
+	} else {
 	    fprintf(stderr, "FAILED: %s\n", wxs2ch(p->GetCommand()));
 		delete p;
+		return false;
 	}
+	
+	return ret;
 }
 

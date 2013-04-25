@@ -532,7 +532,7 @@ public:
 
 // Quick  demo
 // TODO: put this in proper place
-void DoPovDemo(A_Canvas& canvas, A_Canvas::data_store& lst);
+long DoPovDemo(A_Canvas& canvas, A_Canvas::data_store& lst);
 
 #endif  // _A_CANVAS_H_
 

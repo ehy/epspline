@@ -1918,7 +1918,10 @@ A_Canvas::PopUndo()
 	if ( ustack.count() > 0 ) {
 		if ( D ) delete D;
 		D = ustack.popv();
-		if ( ustack.count() == 0 ) {
+		// Update: added 'true || '; cannot recall
+		// why test is present at all -- it remains
+		// as a reminder if the reason surfaces.
+		if ( true || ustack.count() == 0 ) {
 			UpdateStatusBar();
 		}
 	}

@@ -745,10 +745,155 @@
 		The figures show a \dtybezierl{} object
 		with two segments.
 
+			\subsubsection{The Points of the \dtybezieru{} Type}%WX%5||||
+			\label{sssec:editing_points_bezier}
+			Quoting the start of section
+			\ref{sec:creat_editing},
+			``In \IXpkg{}, placing spline
+			objects on the drawing area is meant to follow the
+			\IXpov{} \href{\URLPOVdocs}{documentation}
+			on
+			\href{\URLPOVdocsLathe}{lathe}
+			and
+			\href{\URLPOVdocsPrism}{prism}
+			objects.''
+			That means that a point must be placed on the canvas
+			in the same manner that a \IXnewterm{vector} would
+			be added to a \IXarg{prism} or \IXarg{lathe} when
+			editing \IXarg{SDL},
+			with the same requirements of order and position.
+			\IXpkgu{} does not add missing points or
+			automatically close curves; but, a little help
+			is provided when the graphical interface makes
+			it necessary: when two points are clearly meant
+			to coincide, \IXpkg{} may make them do so, because
+			such precise placement with a mouse is very
+			difficult. In general, a curve or \IXnewterm{sub-curve}
+			must be closed with the user's knowledge of
+			which points must coincide.
+			
+			The \IXbezn{} spline type is discussed here in more detail
+			because:
+			
+			\begin{itemize}
+				\item It differs from the other types more
+						than they differ from each other.
+				\item Regardless of the difference, mastering
+						the \IXbezn{} might make mastering the
+						other types easier.
+				\item The \IXbezn{} might be the most
+						useful type [in the author's opinion
+						that is so].
+			\end{itemize}
+			
+			To begin a new object, and to stop editing it,
+			is accomplished the same way for all the spline types.
+			If that was not made
+			clear above, look forward to the
+			\nameref{sssec:new_obj_summary} section.
+			Once a \IXbezn{} spline object has been started
+			it \emph{must} be remembered that that the whole
+			curve is composed of segments, that each segment
+			is composed of four control points, that the
+			segments must be joined so that the last (fourth) point
+			of the previous segment \IXarg{coincides} with
+			the first point of the next segment,
+			and that the whole curve must be closed by
+			placing the last point of the last segment
+			\IXarg{coincident} with the first point
+			of the first segment of the curve.
+			(A \IXbezn{} spline object
+			may consist of a single segment, in which case
+			the first and last points of this one segment
+			must coincide.) Therefore, after first starting
+			a \IXbezn{} curve, place the second, third and
+			fourth points where they make sense, but do not
+			move the mouse after placing the fourth point.
+			Click again at the position of the fourth point
+			to begin the next segment, and it's
+			first point will \IXarg{coincide} with the
+			last of the previous segment, as it should.
+			Finally, close the curve by placing a segment's
+			last point just at the point that started the curve.
+			
+			Although \IXpkg{} does little to enforce these
+			requirements, \IXpov{} will enforce them.
+			\IXpkgu{} does provide a little help: if the
+			fourth and first points of two segments in
+			sequence were placed offset by a pixel or two,
+			\IXpkg{} will join them, so a slight movement
+			of the mouse before placing the first point
+			of a new segment is not an irrecoverable error.
+			If two points that should coincide are separated
+			by more than a couple of pixels,
+			\IXpkg{} will not join them, but they can be brought
+			together with subsequent editing, i.e, after the
+			initial creation of the object has been
+			finished with another shift-key+primary-click.
+			
+			Some trial and error practice should make the
+			points of this discussion more clear.
+			(The ``Undo'' facility will always be very
+			helpful.) After a few successful \IXbezn{}
+			creations, try the other spline types and discover
+			how they differ.
+
+
+			\subsubsection{New Object Summary}%WX%5||||
+			\label{sssec:new_obj_summary}
+			As a summary of the creation of a new \IXarg{prism}
+			or \IXarg{lathe}, consider this step-by--step list:
+			
+			\begin{enumerate}
+				\item If any current object is \IXarg{selected}
+						(a dashed or dotted box is shown and
+						control points are shown with circles),
+						\IXarg{deselect} it by clicking the
+						drawing area outside the selected object's
+						bounding box.
+				\item Set the type of \IXarg{spline}
+						to be created by clicking the
+						drawing area with the secondary \IXarg{mouse}
+						button and choosing from the \IXarg{menu},
+						as shown in
+						figure~\ref{fig:canvas_popup_menu}.
+						Do not forget this step because the
+						\IXarg{spline} type of an existing
+						object cannot be changed.
+				\item Optionally, choose whether the new object
+						will be a \IXarg{prism} or \IXarg{lathe}
+						from the drawing area \IXarg{menu}.
+						This can be changed for an existing
+						object, so it is not necessary initially.
+				\item Enter editing mode:
+						with the shift-key depressed, click the
+						canvas with
+						the primary mouse button at a suitable
+						place for the first control point, and
+						a circle representing the point should appear.
+				\item Release the shift-key before clicking
+						the \IXarg{canvas} again, or the object
+						will be cancelled. Of course, the object
+						may be cancelled intentionally.
+				\item Click to add points, in a manner suitable
+						for the type of spline being created,
+						until the object is complete, or at
+						least until a curve segment is drawn between
+						points (so that the object will not
+						be cancelled and will remain for further
+						editing).
+				\item Leave editing mode with a primary
+						mouse button click with the shift
+						key depressed.
+			\end{enumerate}
+
 
 		\subsection{Continued Editing}%WX%4||||
 		\label{ssec:cont_editing}
-
+			\subsubsection{Object Properties}%WX%5||||
+			\label{sssec:object_props}
+			\subsubsection{Discontinuous Objects}%WX%5||||
+			\label{sssec:discont_objects}
 
 	\section{Useful Transforms}%WX%3||||
 	\label{sec:useful_transforms}

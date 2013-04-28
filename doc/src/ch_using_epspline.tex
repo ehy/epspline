@@ -574,7 +574,7 @@
 		It will be clear that at least one segment is complete
 		when a curve is drawn between some of the control points.
 		
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgFirstTwoPt}
 		\caption{First two control points starting a cubic spline.}
@@ -590,7 +590,7 @@
 		(The number of control points per segment differs among the
 		four available spline types.) 
 		
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgFirstSeg}
 		\caption{Curve appears between control points of a cubic spline.}
@@ -605,7 +605,7 @@
 		is continued if the object is selected with a click,
 		and shift+click given again.
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedCubic}
 		\caption{Cubic spline, not closed.}
@@ -619,7 +619,7 @@
 		as it is because the curve is not closed, and \IXpkg{}
 		will not export it to \IXarg{SDL}.
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgClosedCubic}
 		\caption{Cubic spline, closed and complete.}
@@ -665,7 +665,7 @@
 		drawing area menu is seen in
 		figure~\ref{fig:canvas_popup_menu}.
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics{\ImgCtxMenuA}
 		\caption{The drawing area ``pop-up'' menu.}
@@ -689,7 +689,7 @@
 		object cannot be changed to a different spline type, so
 		a type should be chosen before starting each object.
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedQuadratic}
 		\caption{Quadratic spline, not closed.}
@@ -710,7 +710,7 @@
 		\IXpov{} requires at least five points in the closed
 		quadratic spline.
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedLinear}
 		\caption{Linear spline, not closed.}
@@ -725,7 +725,7 @@
 		figures~\ref{fig:first_linear_unclosed}~and~\ref{fig:first_linear_closed}.
 		There must be at least three points in the linear spline.		
 
-		\begin{figure}[htbp]
+		\begin{figure}[htb!]
 		\centering
 		\includegraphics[width=\linewidth]{\ImgUnclosedBezier}
 		\caption{\dtybezieru{} spline, not closed.}
@@ -890,10 +890,142 @@
 
 		\subsection{Continued Editing}%WX%4||||
 		\label{ssec:cont_editing}
+		Typically, an idea
+		of a form will suggest where points should be
+		placed, but the curve that appears is less than
+		ideal. In fact, placing
+		\IXarg{points} with mouse clicks, as descibed
+		so far, is just a rough start. If an idea of an
+		object for a \IXpov{} \IXarg{scene} can be
+		implemented as a \IXpov{} \IXarg{prism} or
+		\IXarg{lathe}, then \IXpkg{} might help
+		\emph{develop} the object. That is, making
+		any but the simplest objects will be a process
+		of changes and tuning. In this process, the
+		interactive graphical interface should be
+		an advantage. The use of the facilities
+		provided by \IXpkg{} are discussed below.
+		
 			\subsubsection{Object Properties}%WX%5||||
 			\label{sssec:object_props}
+			To this point prisms and lathes have been
+			referred to repeatedly, but there has been
+			little, if any, mention of their properties.
+			Moreover, it was stated that although an
+			object's spline-type cannot be changed after
+			it's created, it can be changed to a prism
+			or lathe.
+			
+			The properties of objects in \IXpkg{}
+			are changed in a \IXnewterm{dialog} window,
+			``Spline Properties,'' which is invoked
+			through an object \IXarg{menu}. This menu,
+			seen in figure~\ref{fig:object_popup_menu},
+			will `pop up' in response to a secondary
+			button click on a selected object.
+			(If no object is selected, the secondary
+			button click will produce the drawing area
+			menu.)
+			
+			\begin{figure}[htb!]
+			\centering
+			\includegraphics{\ImgCtxMenuB}
+			\caption{The object ``pop-up'' menu.}
+			\label{fig:object_popup_menu}
+			\end{figure}
+
+			The object menu has four items (after the label,
+			``Selection''). The last three items are
+			equivalent to similarly named items on the
+			Edit Menu (see \nameref{sssec:edit_menu}).
+			The first item, as its name suggests, invokes
+			the ``Spline Properties'' dialog, shown in
+			figure~\ref{fig:props_dlg}.
+
+			\begin{figure}[htb!]
+			\centering
+			\includegraphics{\ImgPropDlgA}
+			\caption{The properties window.}
+			\label{fig:props_dlg}
+			\end{figure}
+			
+			The ``Spline Properties'' dialog fields are as follows:
+			\begin{description}
+			  \item[(label)] A label stating the type of spline.
+			  \item[Object Name] A text entry field: a name
+				for the object, suitable for \IXpov{} \IXarg{SDL},
+				should be entered here before export.
+			  \item[Render Type] A selection of rendering options:
+				as lathe, as prism, or ``Undefined,''
+				which means that it will not
+				be rendered; this can be used to hide an object in
+				a \IXpov{} \IXarg{scene} while keeping it in the
+				\IXpkg{} file. This ``Undefined'' type must be given
+				a name too, because it is exported to SDL as a \IXpov{}
+				array (which might be useful).
+			  \item[Sweep Type] This applies to prisms. The sweep
+				type is described well in the \IXpov{}
+				\href{\URLPOVdocsPrism}{prism documentation}.
+				Note that presently a conic sweep prism is best
+				if moved so that its center occurs at the origin
+				of the \IXpkg{} drawing area.
+			  \item[Use Sturm, Open] These are optional. Sturm selects
+				a more accurate but slower algorithm; unless you
+				know that you need this, you probably don't.
+				Open applies to the prism: the flat faces will not
+				be rendered, leaving an open outline.
+			  \item[Start, End Sweep] This applies to prisms:
+				roughly, the offset and height of the prism.
+			  \item[Texture, Interior, Transform] Text entry
+				fields that can accept a name for the attribute
+				that must be
+				`\verb!#declare!'ed
+				before the exported \IXarg{SDL} is included
+				in a scene. These fields appear with a default
+				string (until changed) that is not applied to
+				the object --- the default is only a place-holder.
+				These attributes can probably be applied more
+				flexibly in the using SDL.				
+			  \item[Predefined Identifiers] This text entry field
+				can accept more than one line. It is poorly named
+				because it is not restricted to identifiers;
+				for example, a comment may be added here.
+				The most important point about this field is
+				that it is not checked at all by \IXpkg{} ---
+				the user must be certain that anything added here
+				is valid SDL. The contents will be added near the
+				end of the object definition.
+			  \item[buttons] Dismiss the dialog window, either
+				cancelling or effecting any changes that were made.
+			\end{description}
+			Obviously, some of these properties should be set
+			before export to \IXarg{SDL}.
+
+			\subsubsection{\dtypkgu{} Transforms and Copies}%WX%5||||
+			\label{sssec:epspline_transforms}
+			The transforms provided by \IXpov{} \IXarg{SDL}
+			will be necessary in any any scene, and some are
+			discussed in \nameref{sec:useful_transforms}.
+			\IXpkgu{} provides some interactive transforms
+			that might be useful while developing objects.
+			These are applied directly to the control \IXarg{point}
+			values rather than as exported SDL statements.
+			
+			Objects may be moved. Click an object to select it,
+			and then \IXnewterm{drag} it with the mouse, and
+			release it in the desired position.
+
+			\subsubsection{Adding and Deleting Points}%WX%5||||
+			\label{sssec:add_del_points}
+
 			\subsubsection{Discontinuous Objects}%WX%5||||
 			\label{sssec:discont_objects}
+
+			\subsubsection{Guide Lines}%WX%5||||
+			\label{sssec:guide_lines}
+
+			\subsubsection{Missing Features}%WX%5||||
+			\label{sssec:missing_todo}
 
 	\section{Useful Transforms}%WX%3||||
 	\label{sec:useful_transforms}

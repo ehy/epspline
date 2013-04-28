@@ -41,7 +41,7 @@ make64 $(NAME64) : i18n-sect.in
 	S=$$?; $(RM) $(SRC).64.in; \
 	exit $$S )
 	$(MKNSIS) $(SRC)
-	ls -l $@
+	ls -l $(NAME64)
 
 #  SetOutPath "$INSTDIR\en"
 #  

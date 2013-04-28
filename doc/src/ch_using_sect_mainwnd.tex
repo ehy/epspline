@@ -1,0 +1,482 @@
+	The elements of the \IXarg{interface} presented by \IXpkg{}
+	have an arrangement that has been common in
+	windowing systems for many years, and will probably
+	seem familiar to most users. Most individual elements are common,
+	but a few are specific to \IXpkg{}. A few are similar
+	to common elements in most windowed applications,
+	but with some difference in behavior.
+
+	The main groups of \IXarg{interface} elements are
+	discussed briefly, from the top down in order of appearance,
+	in the following subsections. An image of the main window
+	is shown in figure~\ref{fig:bezier_linked_control_points}.
+
+		\subsection{The Title Bar}%WX%4||||
+		\label{ssec:title_bar}
+		The \IXnewterm{title bar} is not actually part of
+		the interface provided by an application. It is
+		created and managed, if it exists at all, by a
+		component of the windowing system. When present,
+		it is usually similar for most applications. Some
+		windowing systems (or system configurations) do not
+		attach a \IXarg{title bar} to the application window,
+		and may use another graphical device such as a
+		single `bar' at the top of the screen that will
+		change to represent any window that has the \emph{focus}.
+		
+		Regardless of the way in which a \IXarg{title bar}
+		might be presented, an application such as \IXpkg{}
+		has little control over it. The presence and position
+		of buttons on the \IXarg{title bar}, for example,
+		are a feature of the system. \IXpkgu{} only sets
+		the text of the title.
+
+		\subsection{The Menu Bar}%WX%4||||
+		\label{ssec:menu_bar}
+		The \IXarg{menu} ``bar'' consists of the labels, arranged
+		horizontally, nearest the top of the window. Each
+		label can be selected with the \IXarg{mouse} and
+		will produce a small rectangular window, the
+		\IXnewterm{menu}, with selectable labels, or
+		\emph{items}.
+		
+		Selecting a \IXarg{menu} item invokes an action
+		such as saving or closing data. When an item does not
+		make sense for the current state of the data, it
+		cannot be selected, and this is indicated by showing the
+		label ``greyed,'' or dimmed, in appearance.
+		
+		Many of the \IXarg{menu} item labels have additional text,
+		usually near the right-side edge, such as ``Ctrl+S.''  These
+		indicate combinations of keys that will invoke the
+		action associated with the \IXarg{menu} item without
+		selecting the \IXarg{menu} with the mouse. These
+		key combinations are often called ``accelerators.''
+		
+		In the following subsections on the menus, the \IXarg{menu}
+		items are presented in tables with short descriptions of
+		the associated actions. Items that differ from
+		common use or are unique to \IXpkg{} are described in
+		more detail following the table.
+		Also, note that the accelerator keys that are shown
+		may differ from those seen in a running instance of
+		\IXpkg{}. The current windowing \IXarg{toolkit} or environment
+		might provide accelerators for some common \IXarg{menu}
+		items, and \IXpkg{} might use them.
+
+			\subsubsection{The File Menu}%xxxWX%5||||
+			\label{sssec:files_menu}
+			This \IXarg{menu} provides items that generally
+			apply to the current data, or ``file.''
+
+			\begin{table}[htbp]
+			\centering
+			\textsf{
+			\begin{tabular}[c]{ | l | l || p{5.33cm} | }
+			\hline
+			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
+			\hline \hline
+			Save & Ctrl+S & save data with current name\\ \hline
+			Save As & --- & save data with a new name\\ \hline
+			New & Ctrl+N & create a tab for new data\\ \hline
+			Open Here & --- & open (load) file data in current tab\\ \hline
+			Open & Ctrl+O & open (load) file data in a new tab\\ \hline
+			Close & Ctrl+W & close the data (file), leave tab\\ \hline
+			Close Tab & --- & close the data (file), close tab\\ \hline
+			Export & Ctrl+E & save the data as \IXpov{} \IXarg{SDL}\\ \hline
+			Export As & --- & save as \IXarg{SDL} with a new name\\ \hline
+			\hline
+			Quit & Ctrl+Q & quit the \textrm{\dtythispkgname{}} program\\ \hline
+			\end{tabular}
+			}%\textsf
+			\caption{The Items of the File Menu}
+			\label{tab:File_menu}
+			\end{table}
+
+			The unusual items that need more explanation are:
+			\begin{description}
+			  \item[New] The action is to create a new tab in the
+			  tabbed interface, without contents, suitable for
+			  creating a new work. Alternatively, a file can be opened
+			  in the new empty tab with ``Open Here.''
+			  \item[Open Here] Open a file and load the data into
+			  the current tab. If the tab contains data with
+			  unsaved changes the user will be asked whether to
+			  proceed (which will close the current file,
+			  discarding changes) or cancel.
+			  \item[Close Tab] This will close the file data
+			  \emph{and} the tab, while the item ``Close''
+			  will only close the file data, and leave the tab
+			  open and empty. If there are unsaved changes the
+			  user will be prompted.
+			  \item[Export] \IXpkgu{} saves files in its own
+			  simple format; to use the data with \IXpov{}
+			  it must be ``exported'' to \IXarg{SDL}. This item
+			  will export the data to a file with an existing
+			  name that had be given with ``Export As.''
+			  \item[Export As] Like ``Export'' but shows a file
+			  selector dialog window so that the user may provide
+			  a file name. This is necessary the first time the
+			  file is exported; thereafter ``Export'' can be used
+			  to overwrite the current file with changes. (Note that
+			  the file name suffix `.inc' is commonly used for
+			  such \IXarg{SDL} fragments, but it is not required by
+			  \IXpov{} or appended by \IXpkg.)
+			\end{description}
+
+			\subsubsection{The Edit Menu}%xxxWX%5||||
+			\label{sssec:edit_menu}
+			This \IXarg{menu} provides items that
+			affect or change the current data.
+
+			\begin{table}[htbp]
+			\centering
+			\textsf{
+			\begin{tabular}[c]{ | l | l || p{5.33cm} | }
+			\hline
+			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
+			\hline \hline
+			Undo & Ctrl+Z & revert the last change made\\ \hline
+			Redo & Ctrl+R & do again a change that was reverted\\ \hline
+			\hline
+			Copy & Ctrl+C & copy the selected object onto internal ``clipboard''\\ \hline
+			Cut & Ctrl+X & remove, after copying the selected object onto internal ``clipboard''\\ \hline
+			Delete & --- & remove selected object\\ \hline
+			Paste & Ctrl+V & place an object from internal ``clipboard'' in the data\\ \hline
+			Copy Global & --- & like ``Copy'', onto a ``clipboard'' available to all tabs\\ \hline
+			Cut Global & --- & like ``Cut'', onto a ``clipboard'' available to all tabs\\ \hline
+			Paste Global & --- & like ``Paste'', from a ``clipboard'' available to all tabs\\ \hline
+			\hline
+			Down & --- & move the selected object down in $z$-order\\ \hline
+			Up & --- & move the selected object up in $z$-order\\ \hline
+			\end{tabular}
+			}%\textsf
+			\caption{The Items of the Edit Menu}
+			\label{tab:Edit_menu}
+			\end{table}
+
+			The unusual items that need more explanation are:
+			\begin{description}
+			  \item[Copy, Cut, Paste] These item names are common
+			  in windowing system programs, but in \IXpkg{} data
+			  is \emph{not} placed on a system ``clipboard,'' but
+			  is only available within \IXpkg. Moreover, data
+			  copied or cut by these items can only be pasted into
+			  the same tab.
+			  \item[Copy, Cut, Paste --- Global] These differ from
+			  the items without ``Global'' only in that data
+			  copied or cut from one tab is available to be pasted
+			  into the data of another tab.
+			  \item[Down, Up] The drawing area may have several
+			  objects, and these are kept in a stacking order, or
+			  ``$z$-order.'' This may not be apparent in the
+			  two-dimensional interface, but will be noticed when
+			  the user attempts to select an object that is below
+			  another. In such a case, it might be necessary
+			  to move the obstructing object down in the order
+			  to make the wanted object selectable. Note that
+			  there is one $z$-order for all objects, even
+			  those that don't overlap, so it might be necessary
+			  to select ``Down'' several times (and on more
+			  than one object) before the wanted
+			  object is no longer obstructed. If the wanted object
+			  can be selected, but only around the edges of an
+			  obstructing object, then ``Up'' can be used to
+			  raise the selection and make it easier to select
+			  with the next attempt. Note also that the
+			  stacking or $z$-order has no effect on the way
+			  \IXpov{} will render the objects, and will only affect
+			  the order in which the objects appear in exported
+			  \IXarg{SDL}.
+			\end{description}
+			
+			A final note on the ``clipboard'': it's an omission
+			that the system clipboard is not used. It would be
+			useful if a selection could be copied (or cut) to
+			the system clipboard as a \IXarg{SDL} fragment
+			which could be pasted into a text editor. Likewise,
+			an attempt could be made to paste from the system
+			clipboard, if in text form, by trying to parse a
+			\IXprism{} or \IXlathe{} definition in \IXarg{SDL}. This
+			feature might be added in the future if \IXpkg{}
+			warrants more work.
+
+			\subsubsection{The Tools Menu}%xxxWX%5||||
+			\label{sssec:tools_menu}
+			This \IXarg{menu} has miscellaneous items that
+			are specific to \IXpkg.
+
+			\begin{table}[htbp]
+			\centering
+			\textsf{
+			\begin{tabular}[c]{ | l | l || p{5.33cm} | }
+			\hline
+			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
+			\hline \hline
+			Set Scale & --- & show a dialog to set arbitrary scale of display\\ \hline
+			Cycle Scale & --- & cycle scale of display through normal, large, and small\\ \hline
+			Toggle Quick Drawing & --- & switch between anti-aliased, and not, outlines\\ \hline
+			Save Visible to File & --- & save the visible part of drawing area to an image file\\ \hline
+			\end{tabular}
+			}%\textsf
+			\caption{The Items of the Tools Menu}
+			\label{tab:Tools_menu}
+			\end{table}
+
+			The Tools \IXarg{menu} items all need explanation:
+			\begin{description}
+			  \item[Set Scale] The view of the drawing area can be
+			  displayed with a scaling factor. This feature uses a
+			  capability provided by the \IXarg{\emph{wxWidgets}}
+			  library; that is, \IXpkg{} is not drawing lines at
+			  different scales, but the view in the window is scaled.
+			  Therefore, with a large scale lines (and all drawn
+			  items) will appear thicker, and details such as
+			  anti-aliasing will become apparent. With a small scale,
+			  some lines of one-pixel--width are lost. Nevertheless,
+			  this feature can be useful at times. Generally, most
+			  work will be easiest at 100\% (normal) scale.
+			  \item[Cycle Scale] This is a quick way to rotate through
+			  100\%, 200\%, and 50\% scales, and is probably more
+			  generally useful than ``Set Scale.''
+			  \item[Toggle Quick Drawing] The object outlines, the
+			  curves, are drawn by default with anti-aliasing. The
+			  alternative drawing method, the ``quick'' method, simply
+			  uses several simple lines drawn with
+			  \IXarg{\emph{wxWidgets}}' graphics \IXnewterm{API} calls
+			  to approximate the curve forms. The latter is not
+			  likely to be useful unless the drawing area is on
+			  a display to which raster image data transfers are
+			  slow. Most modern computers are much faster than
+			  necessary for the anti-aliased drawing if the the
+			  display is on the same machine that is running \IXpkg.
+			  If the display is not on the same host that is running
+			  \IXpkg, the anti-aliased drawing might be too slow to
+			  be usable (particularly over a slow link such as
+			  802.11). That is because the anti-aliasing must be
+			  done on a raster image, and the whole image,
+			  which is a large chunk of data, transferred to the display.
+			  With ``quick drawing'' the \IXarg{API} line drawing
+			  is accomplished with small data transfers, and will
+			  be quicker, and probably usable (but less accurate
+			  in appearance).
+			  \item[Save Visible to File] The part of the drawing area
+			  that is visible within the \emph{scrolled} window can
+			  be saved to a raster image file. This is (the remains
+			  of) a development feature, and as it is difficult to
+			  imagine how it might be useful to users, it is likely
+			  to be removed at some point. It remains, for now,
+			  mostly because it is harmless and adds very little
+			  size.
+			\end{description}
+			
+			Note on ``Toggle Quick Drawing'': above, it was said
+			that anti-aliased drawing is the default. There is an
+			exception under the \IXarg{\emph{X Window System}},
+			where the ``DISPLAY'' environment variable is checked
+			for a host component, i.e., ``somehost:0.0'' rather
+			than simply ``:0.0''. If a host part is found, even
+			if it is \emph{localhost}, the default will be switched
+			to ``quick'' (not anti-aliased) drawing, on the obvious
+			assumption that the display is remote (or remote-like).
+			Of course, the user may still select
+			``Toggle Quick Drawing'' and decide whether performance
+			with ant-aliasing is acceptable.
+			
+			\subsubsection{The Help Menu}%xxxWX%5||||
+			\label{sssec:help_menu}
+			This \IXarg{menu} appears in most windowing system
+			applications, and provides items that might
+			be helpful in some way.
+
+			\begin{table}[htbp]
+			\centering
+			\textsf{
+			\begin{tabular}[c]{ | l | l || p{5.33cm} | }
+			\hline
+			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
+			\hline \hline
+			Help & Ctrl+H & show the \IXpkg{} online help\\ \hline
+			\hline
+			Preview & --- & invoke \IXpov{} with temporary \IXarg{SDL} to view the work\\ \hline
+			\hline
+			About & --- & show the ``About'' window\\ \hline
+			\end{tabular}
+			}%\textsf
+			\caption{The Items of the Help Menu}
+			\label{tab:Help_menu}
+			\end{table}
+
+			Additional explanation:
+			\begin{description}
+			  \item[Help] This will show (or bring to the
+			  forefront, if already shown) a \IXnewterm{help viewer}
+			  window with the ``Contents'' Chapter visible.
+			  (The \IXarg{help viewer} is a non-trivial piece of
+			  software provided entirely by \IXarg{\emph{wxWidgets}},
+			  and much to its credit --- developers take note.)
+			  \item[Preview] The \IXpov{} preview does not attempt
+			  to make a very nice rendering. It does attempt to
+			  make an image with a perspective that includes all
+			  objects. Only a few simple colors are used. Although
+			  crude, the preview will often be useful. An important
+			  thing to note is that \IXpkg{} does not delete the
+			  temporary \IXarg{SDL} files and output until the
+			  running \IXpov{} has been quit. If \IXpkg{} is
+			  quit while a \IXpov{} child is still running, temporary
+			  files are left in place.
+			  \item[About] The ``About'' window includes copyright
+			  and license information.
+			\end{description}
+			
+			A further note on the preview: \IXpov{} for Unix-like
+			systems is based on a command-line interface, but can
+			also draw in real-time to a simple \IXnewterm{X}
+			window, and this suits the preview well. \IXpov{}
+			will quit with a single click on its window, or the
+			\emph{Q} key. \IXpov{} for Microsoft Windows is quite
+			different. That version will show an interactive control
+			and editing window before the real-time display window,
+			and might prompt the user with several dialog windows
+			too (and might even play a little music). It is a nice
+			tool for developing \IXpov{} images, but it is a little
+			awkward when used for a simple preview by another
+			program. Nevertheless,
+			the preview remains useful. The Microsoft Windows version
+			of \IXpov{} is quit with a menu or button; not a click.
+			The same caveat about quiting \IXpkg{} with
+			a child \IXpov{} instance running applies.
+
+
+		\subsection{The Tool Bar}%WX%4||||
+		\label{ssec:tool_bar}
+		The \IXnewterm{tool} bar just below the \IXarg{menu}
+		bar. It is a row of buttons with icons that can be
+		clicked to invoke actions. Each action available on
+		the \IXarg{tool} bar is equivalent to a \IXarg{menu} item
+		action. Naturally, the \IXarg{tool} bar will be more
+		convenient while working than the equivalent \IXarg{menu}
+		items. From left to right, the \IXarg{tool} bar
+		items are:
+
+			\begin{description}
+			  \item[Quit] Same as ``Quit'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Open New Tab] Same as ``New'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Open] Same as ``Open'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Save] Same as ``Save'' in the
+			  ``File'' \IXarg{menu}.
+			  \item[Paste] Same as ``Paste'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Copy] Same as ``Copy'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Cut] Same as ``Cut'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Move Down] Same as ``Down'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Move Up] Same as ``Up'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Undo] Same as ``Undo'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Redo] Same as ``Redo'' in the
+			  ``Edit'' \IXarg{menu}.
+			  \item[Cycle Scale] Same as ``Cycle Scale'' in the
+			  ``Tools'' \IXarg{menu}.
+			  \item[Preview] Same as ``Preview'' in the
+			  ``Help'' \IXarg{menu}.
+			  \item[Show Application Help] Same as ``Help'' in the
+			  ``Help'' \IXarg{menu}.
+			\end{description}
+			
+		\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUsingA}
+		\caption{\dtypkgu{}'s tool bar.}
+		\label{fig:tool_bar_1}
+		\end{figure}
+
+		Figure~\ref{fig:tool_bar_1} shows the \IXarg{tool}
+		bar with its buttons. The icons shown are from a
+		\IXnewterm{desktop} \emph{theme}, and may be
+		different for each theme, in the \IXarg{GTK2} version
+		of \IXpkg{}. In other versions a set of icons included
+		with \IXarg{\emph{wxWidgets}} is used.
+		Depending on the current platform, it might be possible
+		to grab the \IXarg{tool} bar and drag it off the
+		main window, and, of course, back onto the window.
+
+
+		\subsection{The Tab Selection Area}%WX%4||||
+		\label{ssec:tab_area}
+		The \IXnewterm{tab} area is between the \IXarg{tool}
+		bar and the \IXarg{drawing area}. There may be one or
+		several \IXarg{tabs} present. \IXpkgu{} uses tabs to
+		allow holding several sets of data, or files, open at
+		once. Each \IXarg{tab} functions like a button: when
+		the tab is clicked the associated data is brought to the
+		front (i.e., shown). Each tab has a label with the name
+		of its file, or symbolic text meant to suggest that the
+		data has not been saved to a file yet (or the tab is empty).
+		
+		As of \IXarg{\emph{wxWidgets}} version 2.8 two forms
+		of tabs are available: a simple type available in previous
+		versions, and a new type with more features. The simple
+		type does not provide a close button on the \IXarg{tabs},
+		and the order cannot be rearranged. The new type does
+		provide for close buttons, and a \IXarg{tab} can be
+		dragged with the mouse to a new position among the others.
+		The new type also provides for a button at the right
+		side of the \IXarg{tab} area, which produces a \IXarg{menu}
+		of the available tabs for direct selection; this is
+		convenient when there are many \IXarg{tabs} and some
+		cannot be seen due to lack of space.
+		
+		\IXpkgu{} uses the new type of \IXarg{tabs} by default
+		(except when built with \IXarg{\emph{wxWidgets}} 2.6).
+		There is little reason to use the simple type, and to
+		do so requires setting a condition when the program is
+		built from source (which is left as an exercise for those
+		so inclined).
+		
+
+		\subsection{The Drawing Area and Canvas}%WX%4||||
+		\label{ssec:drawing_area}
+		This is where the work is done. At the top and
+		to the left are graduated scales, and as the mouse
+		is moved in the \IXnewterm{drawing} area a thin line
+		is drawn on the scales to help locate the mouse active
+		point with precision. To the right and at the bottom
+		are scroll bars to move the visible part of the
+		\IXarg{drawing} area.
+		
+		The `real' drawing area may also be called the
+		\IXnewterm{canvas}.
+		The \IXarg{canvas} has a white background with a grid
+		of thin blue lines. This is meant to suggest physical
+		\IXnewterm{graph paper}. (In the future there
+		may be an option to disable the grid; there is none now).
+
+
+		\subsection{The Status Bar}%WX%4||||
+		\label{ssec:status_bar}
+		The \IXnewterm{status} bar is at the bottom of
+		the main window. It accepts no input; it exists
+		only to provide information.
+		
+		The \IXarg{status}
+		bar has three sections, or ``panes.'' The left, and
+		longest, pane shows details about a selected object,
+		such as its name and type, and if it is a \IXprism{}, the
+		type and extent of its \IXnewterm{sweep}. The left
+		pane also shows temporary help messages associated
+		with \IXarg{tool} bar or \IXarg{menu} items. Such help
+		messages are shown when the mouse is over the item, and
+		any original text is restored when the mouse leaves the item.
+		The pane in the middle shows the coordinates of the
+		mouse pointer (the pointer's active spot). The right
+		pane shows the scale at which the drawing area is displayed.
+		Also, if there are unsaved changes to the data, the
+		right pane will show an asterisk.
+

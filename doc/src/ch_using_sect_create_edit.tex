@@ -1,0 +1,539 @@
+	Working with \IXpkg{} is working with \IXspline{} curves.
+	\IXSpline{} curves are common to many programs of
+	several types, such as `drawing' programs and typeface
+	editors. Of course, any such program must design a
+	means of using an input device, usually a \IXnewterm{mouse},
+	to place splines on the drawing area. Programs meant
+	for drawing might devise powerful and intuitive mouse
+	interactions that focus on a graphical result.
+	\IXpkgu{} does not. In \IXpkg{}, placing \IXspline{}
+	objects on the drawing area is meant to follow the
+	\IXpov{} \href{\URLPOVdocs}{documentation}
+	on
+	\href{\URLPOVdocsLathe}{\IXlathe{}}
+	and
+	\href{\URLPOVdocsPrism}{\IXprism{}}
+	objects.
+
+	As mentioned in \nameref{ssec:intro_epspline},
+	there is an important difference
+	in the ways \IXpov{} will render prisms and lathes.
+	The \IXprism{} is extended (like an ``extrusion'') along the
+	$y$-axis. Therefore, the \IXspline{} object for the \IXprism{}
+	is drawn parallel to the $x$-$z$ plane in three-dimensional space.
+	The \IXlathe{} is rotated \emph{around} the $y$-axis. So, its
+	\IXspline{} object is drawn parallel to the $y$-axis. Put another way,
+	when editing with \IXpkg{}, if the object is a \IXprism{}
+	then the user's \IXnewterm{view} is parallel to the
+	$y$-axis, and perpendicular to the $x$-$z$ plane. If the
+	object is a \IXlathe{}, the view is perpendicular to the $y$-axis
+	(and $x$-axis, even though the \IXlathe{} is rotated).
+	
+	Editing with \IXpkg{}, the user may mix \IXprism{} and \IXlathe{}
+	objects in the same file, but should remember that the
+	\emph{view} of each type is different. When generating
+	temporary \IXarg{SDL} for a preview with \IXpov{}, \IXpkg{}
+	adds a \IXarg{rotate} transform to the \IXprism{} objects
+	so that the preview will be more useful. \IXpkgu{} does
+	not rotate objects in \IXarg{SDL} exported for
+	inclusion in the user's scene, so the user must add
+	rotations as necessary.
+	
+	The coordinate system of the \IXarg{drawing area} in \IXpkg{}
+	is, frankly, simply the most convenient for the programming
+	of \IXpkg{}. The graduated scales beside the drawing area
+	will make it clear that the vertical axis increases
+	in the down direction. This is easily corrected using
+	transforms available in the \IXarg{SDL}, and will be discussed
+	in the section~\nameref{sec:useful_transforms}.
+
+	Hopefully, the following subsections will be clear enough
+	to get started and begin realizing ideas. Where
+	this document is insufficient, the \IXpov{}
+	\href{\URLPOVdocs}{documentation} should help;
+	it is necessary to understand how \IXpov{} handles the
+	\IXprism{} and the \IXlathe{} objects.
+	Although the following subsections are not written as a
+	step-by--step tutorial, it should be possible
+	(and it is suggested) to follow along with a running
+	instance of \IXpkg{}.
+
+		\subsection{Creating New Objects}%WX%4||||
+		\label{ssec:creating_newobj}
+		Started without file arguments, \IXpkg{}'s
+		main window will open with one empty tab.
+		The drawing area (the area with the grid
+		of light blue lines) is ready, but note that it
+		doesn't respond to a (primary) mouse click alone. To start
+		a new \IXspline{}, press and hold the \IXnewterm{shift}
+		key and click a suitable point with the primary
+		mouse button. For practice, a ``suitable'' point
+		might be anywhere. A small red-filled circle should
+		appear at the point of the mouse click, and that is
+		the first control point. Release the shift key to
+		continue placing control points. Another shift+click
+		before completing at least one \IXspline{} \IXnewterm{segment}
+		will cancel, and the control points placed so far will be
+		removed. (Recall from the ``Introduction'' chapter
+		that the \IXspline{} objects are really several splines
+		taken together as a ``path''; from here on ``segment''
+		will refer to one \IXspline{} part of the whole \IXspline{} object.)
+		Once at least one segment is complete, another
+		shift+click will stop editing the object, and the points
+		placed so far will remain.
+		It will be clear that at least one segment is complete
+		when a curve is drawn between some of the control points.
+		
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgFirstTwoPt}
+		\caption{First two control points starting a cubic spline.}
+		\label{fig:first_two_points}
+		\end{figure}
+		
+		Figure~\ref{fig:first_two_points} shows the start of a
+		\IXspline{} object before a segment is complete, and
+		figure~\ref{fig:first_curve_between} shows the first
+		curve appear after two more control points have completed
+		the segment. The object in the figures is a \IXnewterm{cubic}
+		\IXspline{}, which requires four control points for a segment.
+		(The number of control points per segment differs among the
+		four available \IXspline{} types.) 
+		
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgFirstSeg}
+		\caption{Curve appears between control points of a cubic spline.}
+		\label{fig:first_curve_between}
+		\end{figure}
+
+		If shift+click is given at the stage of
+		figure~\ref{fig:first_two_points}, the two points will
+		be deleted, but at the stage of
+		figure~\ref{fig:first_curve_between} the points will
+		be retained, and editing mode stopped. Editing
+		is continued if the object is selected with a click,
+		and shift+click given again.
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedCubic}
+		\caption{Cubic spline, not closed.}
+		\label{fig:first_cubic_unclosed}
+		\end{figure}
+
+		Figure~\ref{fig:first_cubic_unclosed} shows the \IXspline{}
+		object nearly complete. More points have been added,
+		and another shift+click
+		has terminated editing. \IXpov{} would reject the object
+		as it is because the curve is not closed, and \IXpkg{}
+		will not export it to \IXarg{SDL}.
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgClosedCubic}
+		\caption{Cubic spline, closed and complete.}
+		\label{fig:first_cubic_closed}
+		\end{figure}
+		
+		In figure~\ref{fig:first_cubic_closed} the object has
+		been selected with a click. The selected state state is
+		indicated by the dotted rectangle (on some platforms the
+		rectangle might be dashed). With the whole object
+		selected, a control point at an open end was selected,
+		indicated by the cyan colored square, and moved to coincide
+		with the matching control point. Now that it
+		is properly closed, \IXpov{} will render the object.
+		Also note that the two points that closed the curve are
+		not the first or the last, but rather the second and
+		the next-to--last. With the \IXcubic{} \IXspline{} curve, those
+		are the points that must match, and the first and last
+		are not drawn through. This differs in the other
+		\IXspline{} types. \IXpov{} requires a minimum of six
+		points in a \IXcubic{} \IXspline{} (\IXpkg{} will draw a \IXcubic{}
+		\IXspline{} with five points if points two and four coincide,
+		but \IXpov{} will reject the object).
+		
+		The
+		\IXpov{} \href{\URLPOVdocs}{documentation}
+		on the
+		\href{\URLPOVdocsLathe}{\IXlathe{}}
+		and
+		\href{\URLPOVdocsPrism}{\IXprism{}}
+		objects will explain in more detail how points
+		should be placed for each \IXspline{} type, and other
+		characteristics of the types.
+		
+		The \IXcubic{} type of \IXspline{} has been discussed so far
+		because it is the default type for new objects if another
+		type has not been selected. To choose among the four \IXspline{}
+		types, make sure that no existing object is selected by
+		clicking the drawing area, outside of the selection
+		rectangle of any selected object, with the primary
+		mouse button. Next, click the drawing area with secondary
+		button, which will invoke a ``pop-up'' menu. The
+		drawing area menu is seen in
+		figure~\ref{fig:canvas_popup_menu}.
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics{\ImgCtxMenuA}
+		\caption{The drawing area ``pop-up'' menu.}
+		\label{fig:canvas_popup_menu}
+		\end{figure}
+
+		The first (topmost) \IXarg{menu} item ``Curves''
+		names the menu, and also serves to dismiss the menu
+		without making a selection.
+		The \IXarg{menu} items beginning with ``Set \ldots''
+		select the type of object to be created. The first four
+		of these offer the \IXspline{} type, and the next two offer the
+		\IXpov{} object type: \IXprism{} or \IXlathe{}. The last four
+		items on the menu
+		are equivalent to the ``File'' \IXarg{menu} items
+		with the same labels
+		(table~\ref{tab:File_menu}), and are placed on this menu
+		for convenience. Note that an existing object can
+		be changed between a \IXlathe{} and \IXprism{}, so it's not
+		necessary to make that choice initially, but an existing
+		object cannot be changed to a different \IXspline{} type, so
+		a type should be chosen before starting each object.
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedQuadratic}
+		\caption{Quadratic spline, not closed.}
+		\label{fig:first_quadratic_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedQuadratic}
+		\caption{Quadratic spline, closed and complete.}
+		\label{fig:first_quadratic_closed}
+		\end{figure}
+
+		Figures~\ref{fig:first_quadratic_unclosed}~and~\ref{fig:first_quadratic_closed}
+		are similar to
+		figures~\ref{fig:first_cubic_unclosed}~and~\ref{fig:first_cubic_closed},
+		but show a \IXquadratic{} \IXspline{}. In this case the points that
+		must match to close the curve are the second and the
+		\emph{last} (rather than the second-to--last
+		point in the \IXcubic{} type).
+		\IXpov{} requires at least five points in the closed
+		\IXquadratic{} \IXspline{}.
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedLinear}
+		\caption{Linear spline, not closed.}
+		\label{fig:first_linear_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedLinear}
+		\caption{Linear spline, closed and complete.}
+		\label{fig:first_linear_closed}
+		\end{figure}
+
+		The equivalent for the \IXlinear{} \IXspline{} type is seen in
+		figures~\ref{fig:first_linear_unclosed}~and~\ref{fig:first_linear_closed}.
+		There must be at least three points in the \IXlinear{} \IXspline{}.		
+
+		\begin{figure}[htb!]
+		\centering
+		\includegraphics[width=\linewidth]{\ImgUnclosedBezier}
+		\caption{\dtybezieru{} spline, not closed.}
+		\label{fig:first_bezier_unclosed}
+		\vspace{16pt}
+		\includegraphics[width=\linewidth]{\ImgClosedBezier}
+		\caption{\dtybezieru{} spline, closed and complete.}
+		\label{fig:first_bezier_closed}
+		\end{figure}
+
+		The \IXbezn{} \IXspline{} object must be closed too, of course,
+		as seen in
+		figures~\ref{fig:first_bezier_unclosed}~and~\ref{fig:first_bezier_closed}.
+		\IXpov{} will render a \IXbezn{} \IXspline{} object with only
+		four points, which is one complete segment, if the first
+		and last points coincide.
+		The figures show a \IXbezn{} object
+		with two segments.
+
+			\subsubsection{The Points of the \dtybezieru{} Type}%WX%5||||
+			\label{sssec:editing_points_bezier}
+			Quoting the start of section
+			\ref{sec:creat_editing},
+			``In \IXpkg{}, placing \IXspline{}
+			objects on the drawing area is meant to follow the
+			\IXpov{} \href{\URLPOVdocs}{documentation}
+			on
+			\href{\URLPOVdocsLathe}{\IXlathe{}}
+			and
+			\href{\URLPOVdocsPrism}{\IXprism{}}
+			objects.''
+			That means that a point must be placed on the canvas
+			in the same manner that a \IXnewterm{vector} would
+			be added to a \IXprism{} or \IXlathe{} when
+			editing \IXarg{SDL},
+			with the same requirements of order and position.
+			\IXpkgu{} does not add missing points or
+			automatically close curves; but, a little help
+			is provided when the graphical interface makes
+			it necessary: when two points are clearly meant
+			to coincide, \IXpkg{} may make them do so, because
+			such precise placement with a mouse is very
+			difficult. In general, a curve or \IXnewterm{sub-curve}
+			must be closed with the user's knowledge of
+			which points must coincide.
+			
+			The \IXbezn{} \IXspline{} type is discussed here in more detail
+			because:
+			
+			\begin{itemize}
+				\item It differs from the other types more
+						than they differ from each other.
+				\item Regardless of the difference, mastering
+						the \IXbezn{} might make mastering the
+						other types easier.
+				\item The \IXbezn{} might be the most
+						useful type [in the author's opinion
+						that is so].
+			\end{itemize}
+			
+			To begin a new object, and to stop editing it,
+			is accomplished the same way for all the \IXspline{} types.
+			If that was not made
+			clear above, look forward to the
+			\nameref{sssec:new_obj_summary} section.
+			Once a \IXbezn{} \IXspline{} object has been started
+			it \emph{must} be remembered that that the whole
+			curve is composed of segments, that each segment
+			is composed of four control points, that the
+			segments must be joined so that the last (fourth) point
+			of the previous segment \IXarg{coincides} with
+			the first point of the next segment,
+			and that the whole curve must be closed by
+			placing the last point of the last segment
+			\IXarg{coincident} with the first point
+			of the first segment of the curve.
+			(A \IXbezn{} \IXspline{} object
+			may consist of a single segment, in which case
+			the first and last points of this one segment
+			must coincide.) Therefore, after first starting
+			a \IXbezn{} curve, place the second, third and
+			fourth points where they make sense, but do not
+			move the mouse after placing the fourth point.
+			Click again at the position of the fourth point
+			to begin the next segment, and its
+			first point will \IXarg{coincide} with the
+			last of the previous segment, as it should.
+			Finally, close the curve by placing a segment's
+			last point just at the point that started the curve.
+			
+			Although \IXpkg{} does little to enforce these
+			requirements, \IXpov{} will enforce them.
+			\IXpkgu{} does provide a little help: if the
+			fourth and first points of two segments in
+			sequence were placed offset by a pixel or two,
+			\IXpkg{} will join them, so a slight movement
+			of the mouse before placing the first point
+			of a new segment is not an irrecoverable error.
+			If two points that should coincide are separated
+			by more than a couple of pixels,
+			\IXpkg{} will not join them, but they can be brought
+			together with subsequent editing, i.e, after the
+			initial creation of the object has been
+			finished with another shift-key+primary-click.
+			
+			Some trial and error practice should make the
+			points of this discussion more clear.
+			(The ``Undo'' facility will always be very
+			helpful.) After a few successful \IXbezn{}
+			creations, try the other \IXspline{} types and discover
+			how they differ.
+
+
+			\subsubsection{New Object Summary}%WX%5||||
+			\label{sssec:new_obj_summary}
+			As a summary of the creation of a new \IXprism{}
+			or \IXlathe{}, consider this step-by--step list:
+			
+			\begin{enumerate}
+				\item If any current object is \IXarg{selected}
+						(a dashed or dotted box is shown and
+						control points are shown with circles),
+						\IXarg{deselect} it by clicking the
+						drawing area outside the selected object's
+						bounding box.
+				\item Set the type of \IXspline{}
+						to be created by clicking the
+						drawing area with the secondary \IXarg{mouse}
+						button and choosing from the \IXarg{menu},
+						as shown in
+						figure~\ref{fig:canvas_popup_menu}.
+						Do not forget this step because the
+						\IXspline{} type of an existing
+						object cannot be changed.
+				\item Optionally, choose whether the new object
+						will be a \IXprism{} or \IXlathe{}
+						from the drawing area \IXarg{menu}.
+						This can be changed for an existing
+						object, so it is not necessary initially.
+				\item Enter editing mode:
+						with the shift-key depressed, click the
+						canvas with
+						the primary mouse button at a suitable
+						place for the first control point, and
+						a circle representing the point should appear.
+				\item Release the shift-key before clicking
+						the \IXarg{canvas} again, or the object
+						will be cancelled. Of course, the object
+						may be cancelled intentionally.
+				\item Click to add points, in a manner suitable
+						for the type of \IXspline{} being created,
+						until the object is complete, or at
+						least until a curve segment is drawn between
+						points (so that the object will not
+						be cancelled and will remain for further
+						editing).
+				\item Leave editing mode with a primary
+						mouse button click with the shift
+						key depressed.
+			\end{enumerate}
+
+
+		\subsection{Continued Editing}%WX%4||||
+		\label{ssec:cont_editing}
+		Typically, an idea
+		of a form will suggest where points should be
+		placed, but the curve that appears is less than
+		ideal. In fact, placing
+		\IXarg{points} with mouse clicks, as described
+		so far, is just a rough start. If an idea of an
+		object for a \IXpov{} \IXarg{scene} can be
+		implemented as a \IXpov{} \IXprism{} or
+		\IXlathe{}, then \IXpkg{} might help
+		\emph{develop} the object. That is, making
+		any but the simplest objects will be a process
+		of changes and tuning. In this process, the
+		interactive graphical interface should be
+		an advantage. The use of the facilities
+		provided by \IXpkg{} are discussed below.
+		
+			\subsubsection{Object Properties}%WX%5||||
+			\label{sssec:object_props}
+			To this point prisms and lathes have been
+			referred to repeatedly, but there has been
+			little, if any, mention of their properties.
+			Moreover, it was stated that although an
+			object's spline-type cannot be changed after
+			it's created, it can be changed to a \IXprism{}
+			or \IXlathe{}.
+			
+			The properties of objects in \IXpkg{}
+			are changed in a \IXnewterm{dialog} window,
+			``Spline Properties,'' which is invoked
+			through an object \IXarg{menu}. This menu,
+			seen in figure~\ref{fig:object_popup_menu},
+			will `pop up' in response to a secondary
+			button click on a selected object.
+			(If no object is selected, the secondary
+			button click will produce the drawing area
+			menu.)
+			
+			\begin{figure}[htb!]
+			\centering
+			\includegraphics{\ImgCtxMenuB}
+			\caption{The object ``pop-up'' menu.}
+			\label{fig:object_popup_menu}
+			\end{figure}
+
+			The object menu has four items (after the label,
+			``Selection''). The last three items are
+			equivalent to similarly named items on the
+			Edit Menu (see \nameref{sssec:edit_menu}).
+			The first item, as its name suggests, invokes
+			the ``Spline Properties'' dialog, shown in
+			figure~\ref{fig:props_dlg}.
+
+			\begin{figure}[htb!]
+			\centering
+			\includegraphics{\ImgPropDlgA}
+			\caption{The properties window.}
+			\label{fig:props_dlg}
+			\end{figure}
+			
+			The ``Spline Properties'' dialog fields are as follows:
+			\begin{description}
+			  \item[(label)] A label stating the type of \IXspline{}.
+			  \item[Object Name] A text entry field: a name
+				for the object, suitable for \IXpov{} \IXarg{SDL},
+				should be entered here before export.
+			  \item[Render Type] A selection of rendering options:
+				as \IXlathe{}, as \IXprism{}, or ``Undefined,''
+				which means that it will not
+				be rendered; this can be used to hide an object in
+				a \IXpov{} \IXarg{scene} while keeping it in the
+				\IXpkg{} file. This ``Undefined'' type must be given
+				a name too, because it is exported to SDL as a \IXpov{}
+				array (which might be useful).
+			  \item[Sweep Type] This applies to prisms. The sweep
+				type is described well in the \IXpov{}
+				\href{\URLPOVdocsPrism}{\IXprism{} documentation}.
+				Note that presently a conic sweep \IXprism{} is best
+				if moved so that its center occurs at the origin
+				of the \IXpkg{} drawing area.
+			  \item[Use Sturm, Open] These are optional. Sturm selects
+				a more accurate but slower algorithm; unless you
+				know that you need this, you probably don't.
+				Open applies to the \IXprism{}: the flat faces will not
+				be rendered, leaving an open outline.
+			  \item[Start, End Sweep] This applies to prisms:
+				roughly, the offset and height of the \IXprism{}.
+			  \item[Texture, Interior, Transform] Text entry
+				fields that can accept a name for the attribute
+				that must be
+				`\verb!#declare!'ed
+				before the exported \IXarg{SDL} is included
+				in a scene. These fields appear with a default
+				string (until changed) that is not applied to
+				the object --- the default is only a place-holder.
+				These attributes can probably be applied more
+				flexibly in the using SDL.				
+			  \item[Predefined Identifiers] This text entry field
+				can accept more than one line. It is poorly named
+				because it is not restricted to identifiers;
+				for example, a comment may be added here.
+				The most important point about this field is
+				that it is not checked at all by \IXpkg{} ---
+				the user must be certain that anything added here
+				is valid SDL. The contents will be added near the
+				end of the object definition.
+			  \item[buttons] Dismiss the dialog window, either
+				cancelling or effecting any changes that were made.
+			\end{description}
+			Obviously, some of these properties should be set
+			before export to \IXarg{SDL}.
+
+			\subsubsection{\dtypkgu{} Transforms and Copies}%WX%5||||
+			\label{sssec:epspline_transforms}
+			The transforms provided by \IXpov{} \IXarg{SDL}
+			will be necessary in any any scene, and some are
+			discussed in \nameref{sec:useful_transforms}.
+			\IXpkgu{} provides some interactive transforms
+			that might be useful while developing objects.
+			These are applied directly to the control \IXarg{point}
+			values rather than as exported SDL statements.
+			
+			Objects may be moved. Click an object to select it,
+			and then \IXnewterm{drag} it with the mouse, and
+			release it in the desired position.
+
+			\subsubsection{Adding and Deleting Points}%WX%5||||
+			\label{sssec:add_del_points}
+
+			\subsubsection{Discontinuous Objects}%WX%5||||
+			\label{sssec:discont_objects}
+
+			\subsubsection{Guide Lines}%WX%5||||
+			\label{sssec:guide_lines}
+
+			\subsubsection{Missing Features}%WX%5||||
+			\label{sssec:missing_todo}
+

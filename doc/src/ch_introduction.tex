@@ -94,9 +94,9 @@ at \url{http://www.povray.org/distribution-license.html}.}
 	\label{ssec:intro_epspline}
 Two of the object types that may be defined in \IXpov's
 \IXarg{scene description language} (\IXarg{SDL})
-are the `prism' and the `lathe.'
+are the `\IXprism{}' and the `\IXlathe{}.'
 The purpose of \IXpkg{} is to provide a graphical,
-interactive editor of those objects. The prism and lathe
+interactive editor of those objects. The \IXprism{} and \IXlathe{}
 objects are based on interpolated curves, often called
 \IXnewterm{spline} curves. Such curves are defined by
 the method of interpolation and \IXnewterm{control points}.
@@ -104,7 +104,7 @@ Several sets of control points can be grouped together, and
 if done well, can compose complex, and \emph{scalable},
 shapes.
 The shapes of the characters on this page are, almost certainly,
-defined by spline curves in a computer typeface, or `font.'
+defined by \IXspline{} curves in a computer typeface, or `font.'
 
 \begin{figure}[htb]
 \centering
@@ -113,9 +113,9 @@ defined by spline curves in a computer typeface, or `font.'
 \label{fig:bezier_linked_control_points}
 \end{figure}
 
-\IXpov{} renders spline curves as three dimensional objects.
+\IXpov{} renders \IXspline{} curves as three dimensional objects.
 Figure~\ref{fig:pov_image_Intro_0} is a sample scene
-composed mostly of \IXpov's prism and lathe objects
+composed mostly of \IXpov's \IXprism{} and \IXlathe{} objects
 (there is also a `plane' to provide a background, and of course
 light sources and a `camera', which is the point-of--view).
 The objects arranged in space
@@ -123,7 +123,7 @@ are chisels. The handles and ferrules of the chisels are
 \IXpov{} lathes, and the blades and decorative imprints
 on the handles are prisms.
 
-The difference between the prism and lathe is that
+The difference between the \IXprism{} and \IXlathe{} is that
 with the former the curve is extruded in the $y$-direction,
 and with the latter it is rotated around the $y$-axis.
 Making either of these objects in the \IXpov{} \IXarg{SDL}
@@ -147,7 +147,7 @@ without graphical feedback.
 Existing shapes can be edited in several ways, and also
 duplicated, deleted, or transformed.
 Figure~\ref{fig:bezier_linked_control_points}
-shows a \IXarg{\dtybezil} spline being edited with the mouse.
+shows a \IXarg{\dtybezil} \IXspline{} being edited with the mouse.
 The cyan colored square is a \IXnewterm{selected} control
 point. The cyan colored circles are control points
 associated with the selected point and may be moved along with
@@ -163,7 +163,7 @@ called segments if it is easier to think of the whole
 shape as one curve). This mode of editing should be easier
 than simply placing numbers in a text editor.
 
-\IXpkgu{} saves the prism and lathe data in its own type
+\IXpkgu{} saves the \IXprism{} and \IXlathe{} data in its own type
 of file rather than \IXpov{} \IXarg{SDL}.
 To use the objects in a \IXpov{} scene they
 must be \IXnewterm{exported} to an \IXarg{SDL} file that will be

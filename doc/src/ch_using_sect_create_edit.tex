@@ -447,7 +447,7 @@
 			The object menu has four items (after the label,
 			``Selection''). The last three items are
 			equivalent to similarly named items on the
-			Edit Menu (see \nameref{sssec:edit_menu}).
+			edit \IXarg{menu} (see \nameref{sssec:edit_menu}).
 			The first item, as its name suggests, invokes
 			the ``Spline Properties'' dialog, shown in
 			figure~\ref{fig:props_dlg}.
@@ -526,13 +526,88 @@
 			and then \IXnewterm{drag} it with the mouse, and
 			release it in the desired position. Single-pixel
 			movements can be made with the arrow keys. Larger
-			movements can be made with the page-up and page-down
+			movements can be made with the page up and page down
 			keys; if the control (or command) key is down then
 			the page-key movements will be horizontal. Note that
 			to move the whole object with keys, make sure that
 			no control point is selected, or the point will be
 			moved.
+			
+			Objects may be scaled, sheared, or rotated.
+			To enter the mode in which these transforms are
+			done, first select the object, then hold the
+			shift \IXarg{key} down and click with the secondary
+			mouse button. An object selected for these
+			transforms is seen in figure~\ref{fig:sel_for_trans_a}.
+			To leave this mode, another secondary click, but
+			\emph{without} the shift key down, will return
+			the object to the simple selected state.
+			Repeated shift-key+secondary-clicks
+			cycle through the scale, shear, and rotate modes,
+			in order.
 
+			\begin{figure}[htb!]
+			\centering
+			\includegraphics[width=\linewidth]{\ImgSelTransformA}
+			\caption{Selected object in transform mode.}
+			\label{fig:sel_for_trans_a}
+			\end{figure}
+			
+			In transform mode small squares are
+			shown just inside the object's bounding box, at the
+			corners and at the middle of the sides. These
+			squares are \IXnewterm{handles} for manipulating
+			the object: \IXarg{drag} the handles to effect the
+			transform.
+			
+			In figure~\ref{fig:sel_for_trans_a}
+			two small concentric circles can be seen at the
+			middle of the object. These circles are shown for
+			shearing and rotation, and may be dragged with the
+			mouse to a new location.
+			The transform will be centered at the circles.
+			They are not shown in the scaling mode, which uses no
+			center as such.
+			
+			For each of the
+			scale, shear, and rotate modes the shape of the
+			mouse pointer will change. The pointer shapes
+			should be suggestive of the mode (in some
+			\IXarg{GTK} themes of the last several years the
+			pointer shapes no longer seem to make sense, but the
+			user should still form an association between the
+			pointer shapes and the modes).
+			
+			Each transform, effected by dragging a handle with the
+			mouse, is modified by one or more keys.	If the shift
+			key is held down, the shear and rotate transforms
+			will be constrained to a 15 degree angle (presently,
+			this angle can only be changed as a compile-time
+			macro, but may be made configurable
+			in a future release if \IXpkg{} warrants more work).
+			The scale mode transform, with the shift key, will become
+			instead a \IXnewterm{flip} of the object horizontally,
+			vertically, or diagonally according to the handle
+			used. Also with the scale transform, if the `alt'
+			key is held the transform will be directly proportional
+			when using the upper-left or lower-right handle-squares,
+			or inversely proportional with upper-right or
+			lower left handles. The alt key has no effect on
+			scaling with the middle-of--the--sides handles, or on
+			the shear and rotate transforms.
+			
+			A copy of the original, un-scaled object is left
+			if the control (or command) key is down
+			at the start of any transform. To make a copy that
+			does not require a transform, simply make a
+			\IXarg{clipboard} copy with the edit \IXarg{menu}
+			(see \nameref{sssec:edit_menu}) or \IXarg{tool} bar
+			(see \nameref{ssec:tool_bar}) and
+			\IXarg{paste} the copy back. Whenever a copy is
+			made, remember to make sure that each has a unique
+			name (this is not done automatically, at present;
+			see \nameref{sssec:object_props}).
+			
 			\subsubsection{Moving, Adding, and Deleting Points}%WX%5||||
 			\label{sssec:add_del_points}
 

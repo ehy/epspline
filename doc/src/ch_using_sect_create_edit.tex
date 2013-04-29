@@ -514,16 +514,24 @@
 			\subsubsection{\dtypkgu{} Transforms and Copies}%WX%5||||
 			\label{sssec:epspline_transforms}
 			The transforms provided by \IXpov{} \IXarg{SDL}
-			will be necessary in any any scene, and some are
+			will be necessary in any any scene, and some
+			that pertain to \IXpkg{} output are
 			discussed in \nameref{sec:useful_transforms}.
 			\IXpkgu{} provides some interactive transforms
-			that might be useful while developing objects.
+			that should be useful while developing objects.
 			These are applied directly to the control \IXarg{point}
 			values rather than as exported SDL statements.
 			
 			Objects may be moved. Click an object to select it,
 			and then \IXnewterm{drag} it with the mouse, and
-			release it in the desired position.
+			release it in the desired position. Single-pixel
+			movements can be made with the arrow keys. Larger
+			movements can be made with the page-up and page-down
+			keys; if the control (or command) key is down then
+			the page-key movements will be horizontal. Note that
+			to move the whole object with keys, make sure that
+			no control point is selected, or the point will be
+			moved.
 
 			\subsubsection{Moving, Adding, and Deleting Points}%WX%5||||
 			\label{sssec:add_del_points}

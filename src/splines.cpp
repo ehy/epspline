@@ -590,7 +590,7 @@ SplineBase::Export(FILE* f, int n,
 		return false;
 	}
 
-	// this makes sure real number formatting is in "C" locale""
+	// this makes sure real number formatting is in "C" locale
 	cnumtmp c_tmp;
 
 	// get min and max for this object
@@ -1216,21 +1216,22 @@ LinearSpline::POkay(subcurve_list* ps)
 bool
 LinearSpline::DelPoint(const SplinePoint& p)
 {
-	if ( size() < 4 ) return false;
-
 	iterator i = PointIndexIt(p, 0);
 	iterator j = end();
 	if ( i == j ) {
 		return false;
 	}
 
-	if ( i == begin() ) {
-		iterator t = i; ++t;
-		*++t = *--j;
-	} else if ( --j == i ) {
-		iterator t = begin();
-		if ( *j == *t ) {
-			*--j = *begin();
+	size_type sz = size();
+	if ( sz > 2 ) {
+		if ( i == begin() ) {
+			iterator t = i;
+			*++t = *--j;
+		} else if ( --j == i ) {
+			iterator t = begin();
+			if ( *j == *t ) {
+				*--j = *begin();
+			}
 		}
 	}
 
@@ -1479,7 +1480,20 @@ QuadraticSpline::POkay(subcurve_list* ps)
 bool
 QuadraticSpline::DelPoint(const SplinePoint& p)
 {
-	if ( size() < 6 ) return false;
+#	if 1
+	iterator i = PointIndexIt(p, 0);
+	iterator e = end();
+	
+	if ( i == e ) {
+		return false;
+	}
+
+	erase(i);
+	SetDirty();
+	return true;
+#	else
+	size_type sz = size();
+	if ( sz < 6 ) return false;
 
 	iterator i = PointIndexIt(p, 0);
 	iterator j = end();
@@ -1491,6 +1505,7 @@ QuadraticSpline::DelPoint(const SplinePoint& p)
 	}
 
 	return false;
+#	endif
 }
 
 bool
@@ -1813,18 +1828,16 @@ CubicSpline::POkay(subcurve_list* ps)
 bool
 CubicSpline::DelPoint(const SplinePoint& p)
 {
-	if ( !Okay() ) return false;
-
 	iterator i = PointIndexIt(p, 0);
-	iterator j = end();
-	iterator k = begin();
-	if ( i != j && i != --j && i != --j && i != k && i != ++k ) {
-		erase(i);
-		SetDirty();
-		return true;
+	iterator e = end();
+	
+	if ( i == e ) {
+		return false;
 	}
-
-	return false;
+	
+	erase(i);
+	SetDirty();
+	return true;
 }
 
 bool

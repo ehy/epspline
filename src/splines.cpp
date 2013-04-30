@@ -1050,7 +1050,27 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 	if ( !r.width || !r.height )
 		return;
 
+	double W = r.width, H = r.height, X = r.x, Y = r.y;
+	double SX = xs, SY = ys;
+	double t1, t2;
 	iterator i = begin(), e = end();
+
+	// Float-Note on the math that follows:
+	// group for intermediates of greater magnitude:
+	// 		(SX * (p.x-X)) / W
+	// is better than
+	// 		SX * (p.x-X) / W
+	// it didn't seem to matter in this program
+	// until recently: using a utility to get curves
+	// from T1 fonts (integer data) and scaling down:
+	// there are some perverse fonts with points that
+	// differ by 1, in an object with dimensions of
+	// e.g., 1300 -- then scaled by, say 0.4, in the
+	// T1 utility, then arbitrarily scaled here . . .
+	// the divisions shown above can (do) make losses;
+	// particulary if performed before the multiplications
+	// -- if a term of the mult is >= 1 (and they are)
+	// then doing it first helps.
 
 	while ( i != e ) {
 		SplinePoint& p = *i++;
@@ -1058,66 +1078,63 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 		switch ( type ) {
 			case or_e:
 				p.x += (
-				double(xs) * double(p.x-r.x) / double(r.width)
+					(SX * (p.x-X)) / W
 				);
 				break;
 			case or_s:
 				p.y += (
-				double(ys) * double(p.y-r.y) / double(r.height)
+					(SY * (p.y-Y)) / H
 				);
 				break;
 			case or_w:
 				p.x += (
-				double(xs) * (1.0 - double(p.x-r.x) /
-				double(r.width))
+					//SX * (1.0 - (p.x-X) / W) see comment above
+					SX - ((SX * (p.x-X)) / W)
 				);
 				break;
 			case or_n:
 				p.y += (
-				double(ys) * (1.0 - double(p.y-r.y) /
-				double(r.height))
+					SY - ((SY * (p.y-Y)) / H)
 				);
 				break;
 			case or_se:
 				p.x += (
-					double(xs) * double(p.x-r.x) / double(r.width)
+					(SX * (p.x-X)) / W
 				);
 				p.y += (
-					double(proportional ? xs : ys) *
-					double(p.y-r.y) /
-					double(proportional ? r.width : r.height)
+					((proportional ? SX : SY) *
+					(p.y-Y)) /
+					(proportional ? W : H)
 				);
 				break;
 			case or_nw:
 				p.x += (
-					double(xs) * (1.0 - double(p.x-r.x) /
-					double(r.width))
+					SX * (1.0 - (p.x-X) / W)
 				);
+				t1 = proportional ? SX : SY;
+				t2 = proportional ? W : H;
 				p.y += (
-					double(proportional ? xs : ys) *
-					(1.0 - double(p.y-r.y) /
-					double(proportional ? r.width : r.height))
+					t1 - ((t1 * (p.y-Y)) / t2)
 				);
 				break;
 			case or_ws:
 				p.x += (
-					double(xs) * (1.0 - double(p.x-r.x) /
-					double(r.width))
+					SX - ((SX * (p.x-X)) / W)
 				);
 				p.y += (
-					double(proportional ? xs : ys) *
-					double(p.y-r.y) /
-					double(proportional ? r.width : r.height)
+					((proportional ? SX : SY) *
+					(p.y-Y)) /
+					(proportional ? W : H)
 				);
 				break;
 			case or_en:
 				p.x += (
-					double(xs) * double(p.x-r.x) / double(r.width)
+					(SX * (p.x-X)) / W
 				);
+				t1 = proportional ? SX : SY;
+				t2 = proportional ? W : H;
 				p.y += (
-					double(proportional ? xs : ys) *
-					(1.0 - double(p.y-r.y) /
-					double(proportional ? r.width : r.height))
+					t1 - ((t1 * (p.y-Y)) / t2)
 				);
 				break;
 			default:

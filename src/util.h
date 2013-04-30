@@ -242,7 +242,11 @@ PointOnSegPQ(long Px, long Py,
 // Length of Line
 inline double LineLength(double Qx, double Qy)
 {
+#	if NEED_HYPOT
 	return std::sqrt(Qx * Qx + Qy * Qy);
+#	else
+	return ::hypot(Qx, Qy);
+#	endif
 }
 inline double LineLength(double Px, double Py,
                         double Qx, double Qy)

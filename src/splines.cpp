@@ -1101,18 +1101,18 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 				p.x += (
 					(SX * (p.x-X)) / W
 				);
+				t1 = proportional ? SX : SY;
+				t2 = proportional ? W : H;
 				p.y += (
-					((proportional ? SX : SY) *
-					(p.y-Y)) /
-					(proportional ? W : H)
+					(t1 * (p.y-Y)) / t2
 				);
 				break;
 			case or_nw:
 				p.x += (
-					SX * (1.0 - (p.x-X) / W)
+					SX - ((SX * (p.x-X)) / W)
 				);
 				t1 = proportional ? SX : SY;
-				t2 = proportional ? W : H;
+				t2 = H;
 				p.y += (
 					t1 - ((t1 * (p.y-Y)) / t2)
 				);
@@ -1121,10 +1121,10 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 				p.x += (
 					SX - ((SX * (p.x-X)) / W)
 				);
+				t1 = proportional ? SX : SY;
+				t2 = proportional ? W : H;
 				p.y += (
-					((proportional ? SX : SY) *
-					(p.y-Y)) /
-					(proportional ? W : H)
+					(t1 * (p.y-Y)) / t2
 				);
 				break;
 			case or_en:
@@ -1132,7 +1132,7 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 					(SX * (p.x-X)) / W
 				);
 				t1 = proportional ? SX : SY;
-				t2 = proportional ? W : H;
+				t2 = H;
 				p.y += (
 					t1 - ((t1 * (p.y-Y)) / t2)
 				);

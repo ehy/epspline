@@ -1785,8 +1785,10 @@ A_Canvas::OnMouseRDown(wxMouseEvent& event)
 	if ( transforming && !event.m_shiftDown ) {
 		transforming = scaling = shearing = rotating = false;
 		curcursor = arrowcursor;
-		D->sel->toggle_close();
-		RefreshObjBox(D->sel, &dc);
+		if ( D->sel ) {
+			D->sel->toggle_close();
+			RefreshObjBox(D->sel, &dc);
+		}
 	} else if ( event.m_shiftDown ) {
 		wxPoint p;
 		p.x = dc.DeviceToLogicalX(event.m_x);

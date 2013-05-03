@@ -1111,8 +1111,8 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 				p.x += (
 					SX - ((SX * (p.x-X)) / W)
 				);
-				t1 = proportional ? SX : SY;
-				t2 = H;
+				t1 = SX;
+				t2 = proportional ? W : H;
 				p.y += (
 					t1 - ((t1 * (p.y-Y)) / t2)
 				);

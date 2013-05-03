@@ -491,6 +491,16 @@ A_Canvas::OnKeyDown(wxKeyEvent& event)
 	if ( !D->sel ) {
 		switch ( event.m_keyCode ) {
 			case WXK_NEXT: case WXK_PRIOR:
+				if ( event.CmdDown() ) {
+					int x,y;
+					GetViewStart(&x, &y);
+					x += event.m_keyCode == WXK_PRIOR ? -page : page;
+					Scroll(x, -1);
+					// Force conditional in OnIdle().
+					resized = true;
+					// no Skip();
+					return;
+				}
 			case WXK_HOME: case WXK_END:
 			case WXK_LEFT: case WXK_UP:
 			case WXK_RIGHT: case WXK_DOWN:

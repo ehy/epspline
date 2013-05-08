@@ -1055,23 +1055,6 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 	double t1, t2;
 	iterator i = begin(), e = end();
 
-	// Float-Note on the math that follows:
-	// group for intermediates of greater magnitude:
-	// 		(SX * (p.x-X)) / W
-	// is better than
-	// 		SX * (p.x-X) / W
-	// it didn't seem to matter in this program
-	// until recently: using a utility to get curves
-	// from T1 fonts (integer data) and scaling down:
-	// there are some perverse fonts with points that
-	// differ by 1, in an object with dimensions of
-	// e.g., 1300 -- then scaled by, say 0.4, in the
-	// T1 utility, then arbitrarily scaled here . . .
-	// the divisions shown above can (do) make losses;
-	// particulary if performed before the multiplications
-	// -- if a term of the mult is >= 1 (and they are)
-	// then doing it first helps.
-
 	while ( i != e ) {
 		SplinePoint& p = *i++;
 
@@ -1088,7 +1071,6 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 				break;
 			case or_w:
 				p.x += (
-					//SX * (1.0 - (p.x-X) / W) see comment above
 					SX - ((SX * (p.x-X)) / W)
 				);
 				break;

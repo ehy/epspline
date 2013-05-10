@@ -298,9 +298,9 @@
 			
 			To begin a new object, and to stop editing it,
 			is accomplished the same way for all the \IXspline{} types.
-			If that was not made
+			(If that was not made
 			clear above, look forward to the
-			\nameref{sssec:new_obj_summary} section.
+			\nameref{sssec:new_obj_summary} section.)
 			Once a \IXbezn{} \IXspline{} object has been started
 			it \emph{must} be remembered that that the whole
 			curve is composed of segments, that each segment
@@ -610,24 +610,68 @@
 			
 			\subsubsection{Adding, Moving, and Deleting Points}%WX%5||||
 			\label{sssec:add_del_points}
-			Points can be added to an existing object in two
-			senses: as part of a new discontinuos subcurve, or as
+			Points can be added to an existing object
+			for two purposes:
+			as part of a new discontinuous sub-curve, or as
 			part of an existing curve. The former case is
 			discussed later in the
 			section~\nameref{sssec:discont_objects}.
 			
 			To add a point to an existing curve, first make sure
 			the object is selected. Place the mouse active point
-			\emph{on} the curve at the position it should be added.
+			\emph{on} the curve at the desired position.
 			Hold the shift \IXarg{key} down and click the
 			primary mouse button. If the mouse pointer was
 			properly on the curve, a new point will appear as a
-			cyan colored square. If the new point appears as
-			a red circle, the mouse point did not lie on the
-			curve. The errant new point can be removed with
-			``Undo'' or the control+z key combination.
+			cyan colored square. If a new point appears as
+			a red circle, the mouse active point did not lie on the
+			curve, and should the point not be left in place.
+			The errant new point can be removed with
+			``Undo'' on the edit \IXarg{menu}
+			(see \nameref{sssec:edit_menu}) or \IXarg{tool} bar
+			(see \nameref{ssec:tool_bar}),
+			or the \IXnewterm{control+z} key combination.
 			
+			A `point' is added to the \IXbezn{} curve in the
+			same way, but the actual result is that the current
+			segment is divided in two at the mouse point, and
+			several necessary points are added. Some effort is
+			made to place new \IXnewterm{tangent} control
+			points sensibly, but adjustment will be needed.
 			
+			Moving points should be obvious: select the point so
+			that it appears as a cyan colored square and drag it
+			with the mouse. Only the \IXbezn{} curve needs more
+			explanation. The section
+			``\nameref{sssec:editing_points_bezier}'' explained
+			that the last and first end-points of neighboring
+			segments are (must be) coincident. \IXpkgu{}
+			actually maintains an association of four points:
+			the last and first \IXarg{tangent} control points
+			and the end-points of neighboring segments. When any
+			of these is selected the whole group will be
+			colored cyan, and the selected point will be square.
+			Within this group, dragging a \IXarg{tangent}
+			control point will also move the other tangent
+			point onto a line that passes through the endpoints;
+			this produces a smooth curve through the end-points.
+			A tangent point can be moved independently by
+			depressing the control (or command) key, making
+			an angle at the end-points. The end-points can
+			be dragged, and they are always kept together
+			as one. Dragging the end-points will also make
+			an equivalent movement of the
+			tangent points, causing a movement of the
+			whole group; the end-points can be moved
+			without affecting the tangent points by
+			depressing the control (or command) key.
+			
+			Selected points may be deleted with the delete key
+			(the edit \IXarg{menu} item will delete the
+			whole object). In the case of the
+			\IXbezn{} curve a whole segment must be
+			deleted, and remaining segments are joined at
+			end-points. Adjustment will be needed.
 
 			\subsubsection{Discontinuous Objects}%WX%5||||
 			\label{sssec:discont_objects}

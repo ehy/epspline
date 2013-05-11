@@ -604,7 +604,6 @@ A_Canvas::DelSelPt()
 		} else
 			PopUndo();
 	} else if ( D->sel ) {
-		PushUndo();
 		DelSel();
 	}
 }
@@ -1908,9 +1907,7 @@ A_Canvas::GotPopup(wxCommandEvent& event)
 			break;
 		case IC_delete:
 			if ( D->sel ) {
-				PushUndo();
 				DelSel();
-				Refresh();
 			}
 			break;
 		case IC_move_down:
@@ -2064,7 +2061,6 @@ A_Canvas::clipCutGlobal()
 {
 	if ( !D || !D->sel ) return;
 
-	PushUndo();
 	clipCopyGlobal();
 	DelSel();
 }
@@ -2074,7 +2070,6 @@ A_Canvas::clipCut()
 {
 	if ( !D || !D->sel ) return;
 
-	PushUndo();
 	clipCopy();
 	DelSel();
 }
@@ -2109,15 +2104,24 @@ void
 A_Canvas::DelSel()
 {
 	if ( !D || !D->sel ) return;
+
+	PushUndo();
+
 	std::list<SplineBase*>::iterator i =
 		find(D->lst.begin(), D->lst.end(), D->sel);
-	if ( i != D->lst.end() )
+	if ( i != D->lst.end() ) {
 		D->lst.erase(i);
-	delete D->sel;
-	D->selpt = 0;
-	D->sel = 0;
-	Refresh();
-	UpdateStatusBar();
+		delete D->sel;
+		D->selpt = 0;
+		D->sel = 0;
+		Refresh();
+		UpdateStatusBar();
+	} else {
+		std::fputs("Epspline: internal error -- D->sel != 0?!?!\n"
+			, stderr);
+		PopUndo();
+		D->sel = 0;
+	}
 }
 
 void

@@ -932,7 +932,7 @@ A_Frame::OnOption(wxCommandEvent& event)
 			StatusBarAntiClobberHack();
 			break;
 		case EdDel:
-			canvas->DelSel();
+			canvas->DelSelPt();
 			StatusBarAntiClobberHack();
 			break;
 		case SetUserScale:

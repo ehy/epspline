@@ -1090,11 +1090,13 @@ SplineBase::Scale(unsigned type, int xs, int ys, bool proportional)
 				);
 				break;
 			case or_nw:
+				t1 = proportional ? SY : SX;
+				t2 = proportional ? H : W;
 				p.x += (
-					SX - ((SX * (p.x-X)) / W)
+					t1 - ((t1 * (p.x-X)) / t2)
 				);
-				t1 = proportional ? SX : SY;
-				t2 = proportional ? W : H;
+				t1 = SY;
+				t2 = H;
 				p.y += (
 					t1 - ((t1 * (p.y-Y)) / t2)
 				);

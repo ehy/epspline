@@ -76,25 +76,41 @@ spline {
 	//vlength(v2 - v1)
 #end
 
+// Joke's on me: I failed to notice that POV-Ray
+// provides atan2(o, a) and made this macro
+// unnecessarily (oddly, pov docs do not mention
+// atan(one_arg) and suggest using atan2 to get the
+// same result; but atan() is present -- anyway,
+// this macro is left in place, for optional use
+// . . . because it is slower?)
+#macro m_atan2 ( o, a )
+	// take angle as if segment is in 1st quadrant
+	#local tt = 0;
+	#if ( a != 0 )
+		#local tt = atan(abs(o / a));
+	#end
+	// test signs of a,o to find the segment's
+	// quadrant, and find real angle using q1 angle
+	// see POV-Ray function docs for `select'
+	#local tr = select(a,
+		select(o, tt + pi, pi - tt),
+		select(o, -pi / 2, 0, pi / 2),
+		select(o, pi * 2 - tt, tt)
+	);
+	tr
+#end
+
 // As well as translation along a path, a suitable
 // rotation might look nice
 #macro nang ( ov, nv )
 	// wanted: angle of segment between two u,v vectors
 	#local tu = nv.u - ov.u;
 	#local tv = nv.v - ov.v;
-	// take angle as if segment is in 1st quadrant
-	#local tt = 0;
-	#if ( tu != 0 )
-		#local tt = atan(abs(tv / tu));
-	#end
-	// test signs of tu,tv to find the segment's
-	// quadrant, and find real angle using q1 angle
-	// see POV-Ray function docs for `select'
-	#local tr = select(tu,
-		select(tv, tt + pi, pi - tt),
-		select(tv, 3 * pi / 2, pi / 2),
-		select(tv, pi * 2 - tt, tt)
-	);
+	#if ( 0 )
+	#local tr = atan2(tv, tu);
+	#else
+	#local tr = m_atan2(tv, tu);
+	#end // if ( 1 )
 	// radians -> degrees
 	#local ta = tr * 180 / pi;
 	// result

@@ -1324,15 +1324,16 @@ LinearSpline::CalcCurveCache()
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = 0.0;
-		B[X] = 0.0;
-		C[X] = -1.0 * double(p.x) + 1.0 * double(p1.x);
-		D[X] = 1.0 * double(p.x);
+		enum { U = 0, V = 1 };
+		A[U] = 0.0;
+		B[U] = 0.0;
+		C[U] = -1.0 * double(p.x) + 1.0 * double(p1.x);
+		D[U] = 1.0 * double(p.x);
 
-		A[Y] = 0.0;
-		B[Y] = 0.0;
-		C[Y] = -1.0 * double(p.y) + 1.0 * double(p1.y);
-		D[Y] = 1.0 * double(p.y);
+		A[V] = 0.0;
+		B[V] = 0.0;
+		C[V] = -1.0 * double(p.y) + 1.0 * double(p1.y);
+		D[V] = 1.0 * double(p.y);
 
 #		if ! FORCE_CONSTANT_SPLINE_INCREMENT
 		// *very* crude estimate of suitable increment
@@ -1344,7 +1345,7 @@ LinearSpline::CalcCurveCache()
 		p = p1;
 
 		// Generate and store line endpoint approximation of segment.
-		CurvePt P(D[X], D[Y]);
+		CurvePt P(D[U], D[V]);
 		wxPoint wxpt = P;
 		UpdateBbox(wxpt);
 		UpdateCbox(P);
@@ -1354,8 +1355,8 @@ LinearSpline::CalcCurveCache()
 			double t  = double(T) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			CurvePt p(A[X]*t3+B[X]*t2+C[X]*t+D[X],
-				A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]);
+			CurvePt p(A[U]*t3+B[U]*t2+C[U]*t+D[U],
+				A[V]*t3+B[V]*t2+C[V]*t+D[V]);
 #			if 0
 			if ( p == P ) continue;
 #			else
@@ -1555,29 +1556,30 @@ QuadraticSpline::AddPoint(const SplinePoint& point)
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = 0.0;
-		B[X] = 0.5 * double(p.x)
+		enum { U = 0, V = 1 };
+		A[U] = 0.0;
+		B[U] = 0.5 * double(p.x)
 			- 1.0 * double(p1.x) + 0.5 * double(p2.x);
-		C[X] = -0.5 * double(p.x) + 0.5 * double(p2.x);
-		D[X] = double(p1.x);
+		C[U] = -0.5 * double(p.x) + 0.5 * double(p2.x);
+		D[U] = double(p1.x);
 
-		A[Y] = 0.0;
-		B[Y] = 0.5 * double(p.y)
+		A[V] = 0.0;
+		B[V] = 0.5 * double(p.y)
 			- 1.0 * double(p1.y) + 0.5 * double(p2.y);
-		C[Y] = -0.5 * double(p.y) + 0.5 * double(p2.y);
-		D[Y] = double(p1.y);
+		C[V] = -0.5 * double(p.y) + 0.5 * double(p2.y);
+		D[V] = double(p1.y);
 
 		// Test for point on generated approximation segments
-		wxPoint P; // (int(irint(D[X])), int(irint(D[Y])));
-		P.x = int(irint(D[X]));
-		P.y = int(irint(D[Y]));
+		wxPoint P; // (int(irint(D[U])), int(irint(D[V])));
+		P.x = int(irint(D[U]));
+		P.y = int(irint(D[V]));
 		for ( unsigned J = 1; J <= inc; J++ ) {
 			wxPoint Q;
 			double t  = double(J) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			Q.x = int(irint(A[X]*t3+B[X]*t2+C[X]*t+D[X]));
-			Q.y = int(irint(A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]));
+			Q.x = int(irint(A[U]*t3+B[U]*t2+C[U]*t+D[U]));
+			Q.y = int(irint(A[V]*t3+B[V]*t2+C[V]*t+D[V]));
 			if ( P == Q ) continue;
 			if ( PointOnSegPQ(P, Q, T) ) {
 				insert(it, point);
@@ -1659,17 +1661,18 @@ QuadraticSpline::CalcCurveCache()
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = 0.0;
-		B[X] = 0.5 * double(p.x)
+		enum { U = 0, V = 1 };
+		A[U] = 0.0;
+		B[U] = 0.5 * double(p.x)
 			- 1.0 * double(p1.x) + 0.5 * double(p2.x);
-		C[X] = -0.5 * double(p.x) + 0.5 * double(p2.x);
-		D[X] = double(p1.x);
+		C[U] = -0.5 * double(p.x) + 0.5 * double(p2.x);
+		D[U] = double(p1.x);
 
-		A[Y] = 0.0;
-		B[Y] = 0.5 * double(p.y)
+		A[V] = 0.0;
+		B[V] = 0.5 * double(p.y)
 			- 1.0 * double(p1.y) + 0.5 * double(p2.y);
-		C[Y] = -0.5 * double(p.y) + 0.5 * double(p2.y);
-		D[Y] = double(p1.y);
+		C[V] = -0.5 * double(p.y) + 0.5 * double(p2.y);
+		D[V] = double(p1.y);
 
 #		if ! FORCE_CONSTANT_SPLINE_INCREMENT
 		// *very* crude estimate of suitable increment
@@ -1682,7 +1685,7 @@ QuadraticSpline::CalcCurveCache()
 		p1= p2;
 
 		// Generate and store line endpoint approximation of segment.
-		CurvePt P(D[X], D[Y]);
+		CurvePt P(D[U], D[V]);
 		wxPoint wxpt = P;
 		UpdateBbox(wxpt);
 		UpdateCbox(P);
@@ -1692,8 +1695,8 @@ QuadraticSpline::CalcCurveCache()
 			double t  = double(T) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			CurvePt p(A[X]*t3+B[X]*t2+C[X]*t+D[X],
-				A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]);
+			CurvePt p(A[U]*t3+B[U]*t2+C[U]*t+D[U],
+				A[V]*t3+B[V]*t2+C[V]*t+D[V]);
 #			if 0
 			if ( p == P ) continue;
 #			else
@@ -1892,30 +1895,31 @@ CubicSpline::AddPoint(const SplinePoint& point)
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = -0.5 * double(p.x) + 1.5 * double(p1.x)
+		enum { U = 0, V = 1 };
+		A[U] = -0.5 * double(p.x) + 1.5 * double(p1.x)
 			- 1.5 * double(p2.x) + 0.5 * double(p3.x);
-		B[X] = double(p.x) - 2.5 * double(p1.x)
+		B[U] = double(p.x) - 2.5 * double(p1.x)
 			+ 2.0 * double(p2.x) - 0.5 * double(p3.x);
-		C[X] = -0.5 * double(p.x) + 0.5 * double(p2.x);
-		D[X] = double(p1.x);
+		C[U] = -0.5 * double(p.x) + 0.5 * double(p2.x);
+		D[U] = double(p1.x);
 
-		A[Y] = -0.5 * double(p.y) + 1.5 * double(p1.y)
+		A[V] = -0.5 * double(p.y) + 1.5 * double(p1.y)
 			- 1.5 * double(p2.y) + 0.5 * double(p3.y);
-		B[Y] = double(p.y) - 2.5 * double(p1.y)
+		B[V] = double(p.y) - 2.5 * double(p1.y)
 			+ 2.0 * double(p2.y) - 0.5 * double(p3.y);
-		C[Y] = -0.5 * double(p.y) + 0.5 * double(p2.y);
-		D[Y] = double(p1.y);
+		C[V] = -0.5 * double(p.y) + 0.5 * double(p2.y);
+		D[V] = double(p1.y);
 
-		wxPoint P; // (int(irint(D[X])), int(irint(D[Y])));
-		P.x = int(irint(D[X]));
-		P.y = int(irint(D[Y]));
+		wxPoint P; // (int(irint(D[U])), int(irint(D[V])));
+		P.x = int(irint(D[U]));
+		P.y = int(irint(D[V]));
 		for ( unsigned J = 1; J <= inc; J++ ) {
 			wxPoint Q;
 			double t  = double(J) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			Q.x = int(irint(A[X]*t3+B[X]*t2+C[X]*t+D[X]));
-			Q.y = int(irint(A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]));
+			Q.x = int(irint(A[U]*t3+B[U]*t2+C[U]*t+D[U]));
+			Q.y = int(irint(A[V]*t3+B[V]*t2+C[V]*t+D[V]));
 			if ( P == Q ) continue;
 			if ( PointOnSegPQ(P, Q, T) ) {
 				insert(--it, point);
@@ -2005,19 +2009,20 @@ CubicSpline::CalcCurveCache()
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = -0.5 * double(p.x) + 1.5 * double(p1.x)
+		enum { U = 0, V = 1 };
+		A[U] = -0.5 * double(p.x) + 1.5 * double(p1.x)
 			- 1.5 * double(p2.x) + 0.5 * double(p3.x);
-		B[X] = double(p.x) - 2.5 * double(p1.x)
+		B[U] = double(p.x) - 2.5 * double(p1.x)
 			+ 2.0 * double(p2.x) - 0.5 * double(p3.x);
-		C[X] = -0.5 * double(p.x) + 0.5 * double(p2.x);
-		D[X] = double(p1.x);
+		C[U] = -0.5 * double(p.x) + 0.5 * double(p2.x);
+		D[U] = double(p1.x);
 
-		A[Y] = -0.5 * double(p.y) + 1.5 * double(p1.y)
+		A[V] = -0.5 * double(p.y) + 1.5 * double(p1.y)
 			- 1.5 * double(p2.y) + 0.5 * double(p3.y);
-		B[Y] = double(p.y) - 2.5 * double(p1.y)
+		B[V] = double(p.y) - 2.5 * double(p1.y)
 			+ 2.0 * double(p2.y) - 0.5 * double(p3.y);
-		C[Y] = -0.5 * double(p.y) + 0.5 * double(p2.y);
-		D[Y] = double(p1.y);
+		C[V] = -0.5 * double(p.y) + 0.5 * double(p2.y);
+		D[V] = double(p1.y);
 
 #		if ! FORCE_CONSTANT_SPLINE_INCREMENT
 		// *very* crude estimate of suitable increment
@@ -2031,7 +2036,7 @@ CubicSpline::CalcCurveCache()
 		p2= p3; e = p2;
 
 		// Generate and store line endpoint approximation of segment.
-		CurvePt P(D[X], D[Y]);
+		CurvePt P(D[U], D[V]);
 		wxPoint wxpt = P;
 		UpdateBbox(wxpt);
 		UpdateCbox(P);
@@ -2041,8 +2046,8 @@ CubicSpline::CalcCurveCache()
 			double t  = double(T) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			CurvePt p(A[X]*t3+B[X]*t2+C[X]*t+D[X],
-				A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]);
+			CurvePt p(A[U]*t3+B[U]*t2+C[U]*t+D[U],
+				A[V]*t3+B[V]*t2+C[V]*t+D[V]);
 #			if 0
 			if ( p == P ) continue;
 #			else
@@ -2378,31 +2383,32 @@ BezierSpline::AddPoint(const SplinePoint& point)
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = double(p3.x) -
+		enum { U = 0, V = 1 };
+		A[U] = double(p3.x) -
 			3.0 * double(p2.x) + 3.0 * double(p1.x) - double(p.x);
-		B[X] = 3.0 * double(p2.x) -
+		B[U] = 3.0 * double(p2.x) -
 			6.0 * double(p1.x) + 3.0 * double(p.x);
-		C[X] = 3.0 * double(p1.x) - 3.0 * double(p.x);
-		D[X] = p.x;
+		C[U] = 3.0 * double(p1.x) - 3.0 * double(p.x);
+		D[U] = p.x;
 
-		A[Y] = double(p3.y) -
+		A[V] = double(p3.y) -
 			3.0 * double(p2.y) + 3.0 * double(p1.y) - double(p.y);
-		B[Y] = 3.0 * double(p2.y) -
+		B[V] = 3.0 * double(p2.y) -
 			6.0 * double(p1.y) + 3.0 * double(p.y);
-		C[Y] = 3.0 * double(p1.y) - 3.0 * double(p.y);
-		D[Y] = p.y;
+		C[V] = 3.0 * double(p1.y) - 3.0 * double(p.y);
+		D[V] = p.y;
 
 		wxPoint P;
 		// Generate and store line endpoint approximation of segment.
-		P.x = int(irint(D[X]));
-		P.y = int(irint(D[Y]));
+		P.x = int(irint(D[U]));
+		P.y = int(irint(D[V]));
 		for ( unsigned J = 1; J <= inc; J++ ) {
 			wxPoint Q;
 			double t  = double(J) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			Q.x = int(irint(A[X]*t3+B[X]*t2+C[X]*t+D[X]));
-			Q.y = int(irint(A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]));
+			Q.x = int(irint(A[U]*t3+B[U]*t2+C[U]*t+D[U]));
+			Q.y = int(irint(A[V]*t3+B[V]*t2+C[V]*t+D[V]));
 			if ( P == Q ) continue;
 			if ( PointOnSegPQ(P, Q, T) ) {
 				// Can't insert one point,
@@ -2514,22 +2520,23 @@ BezierSpline::CalcCurveCache()
 		// Generate interpolation coefficients.
 
 		double A[2], B[2], C[2], D[2];
-		A[X] = double(p3.x) -
+		enum { U = 0, V = 1 };
+		A[U] = double(p3.x) -
 			3.0 * double(p2.x) + 3.0 * double(p1.x) - double(p.x);
-		B[X] = 3.0 * double(p2.x) -
+		B[U] = 3.0 * double(p2.x) -
 			6.0 * double(p1.x) + 3.0 * double(p.x);
-		C[X] = 3.0 * double(p1.x) - 3.0 * double(p.x);
-		D[X] = p.x;
+		C[U] = 3.0 * double(p1.x) - 3.0 * double(p.x);
+		D[U] = p.x;
 
-		A[Y] = double(p3.y) -
+		A[V] = double(p3.y) -
 			3.0 * double(p2.y) + 3.0 * double(p1.y) - double(p.y);
-		B[Y] = 3.0 * double(p2.y) -
+		B[V] = 3.0 * double(p2.y) -
 			6.0 * double(p1.y) + 3.0 * double(p.y);
-		C[Y] = 3.0 * double(p1.y) - 3.0 * double(p.y);
-		D[Y] = p.y;
+		C[V] = 3.0 * double(p1.y) - 3.0 * double(p.y);
+		D[V] = p.y;
 
 		// Generate and store line endpoint approximation of segment.
-		CurvePt P(D[X], D[Y]);
+		CurvePt P(D[U], D[V]);
 		wxPoint wxpt = P;
 		UpdateBbox(wxpt);
 		UpdateCbox(P);
@@ -2547,8 +2554,8 @@ BezierSpline::CalcCurveCache()
 			double t  = double(T) / I;
 			double t2 = t * t;
 			double t3 = t * t2;
-			CurvePt p(A[X]*t3+B[X]*t2+C[X]*t+D[X],
-				A[Y]*t3+B[Y]*t2+C[Y]*t+D[Y]);
+			CurvePt p(A[U]*t3+B[U]*t2+C[U]*t+D[U],
+				A[V]*t3+B[V]*t2+C[V]*t+D[V]);
 #			if 0
 			if ( p == P ) continue;
 #			else

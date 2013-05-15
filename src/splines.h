@@ -307,8 +307,6 @@ public:
 		end_properties
 	};
 
-	enum { X, Y };
-
 	// empty(-ish) test for the several string fields, to avoid
 	// so many in-line if() tests
 	static wxString	EmptyFieldString(); // translated, like '_none_'

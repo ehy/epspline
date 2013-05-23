@@ -678,10 +678,11 @@
 			Figure~\ref{fig:sel_for_trans_a} was presented to
 			show a
 			``\nameref{fig:sel_for_trans_a}.''
-			Also, the spline object shown there is more
+			It also shows a \IXspline{} object that is more
 			elaborate than any in the earlier figures:
 			the single object shows several closed sub-curves
-			comprising the curve. \IXpov{} handles this well, as
+			comprising the whole object.
+			\IXpov{} handles this well, as
 			seen in figure~\ref{fig:subcurves_1}
 			(which is a \IXpov{} preview;
 			see \nameref{sssec:help_menu}).
@@ -692,10 +693,104 @@
 			\caption{Preview image of a discontinuous object.}
 			\label{fig:subcurves_1}
 			\end{figure}
+			
+			Creating a \IXarg{sub-curve} in a
+			\IXspline{} object is similar
+			to the initial creation of a new \IXspline{} object.
+			If necessary, review
+			``\nameref{ssec:creating_newobj}.''
+			A new \IXarg{sub-curve} cannot be started while
+			the object is already in edit mode; if it is,
+			then leave edit mode by depressing the \IXarg{shift}
+			\IXarg{key} and clicking with the primary button.
+			
+			Select an existing object with a primary button
+			click, and with the \IXarg{shift} \IXarg{key}
+			depressed another primary click will enter
+			edit mode. Now points are added with clicks
+			just as in the initial creation of an object,
+			but they will compose a new \IXarg{sub-curve}.
+			Add points just as described in
+			``\nameref{ssec:creating_newobj},'' and make
+			sure the \IXarg{sub-curve} is properly closed
+			in the manner required for the type of \IXspline{}.
+			Leave edit mode with shift-key+primary-click.
+			
+			A \IXarg{sub-curve} may be placed within another
+			\IXarg{sub-curve}, in which case it will be
+			rendered by \IXpov{} as a hole (and a
+			\IXarg{sub-curve} placed within a ``hole''
+			will be rendered as a `fill').
+			A \IXarg{sub-curve} may be placed so that it
+			is not within any other, in which case it will be
+			rendered as if it were a distinct object
+			(although it will still be part of the whole).
+			Also, a \IXarg{sub-curve} may be placed such
+			that its path crosses paths of other sub-curves,
+			and \IXpov{} will render these with `holes'
+			or `fills' at the intersections. Of course,
+			all the above may be combined.
 
 			\subsubsection{Guide Lines}%WX%5||||
 			\label{sssec:guide_lines}
+			\IXpkgu{} provides for simple \IXnewterm{guide} lines
+			in the drawing area, which display as thin
+			(one pixel wide) horizontal or vertical
+			red lines. These are saved with \IXpkg{}'s
+			files, so they are persistent, but they are
+			not exported as \IXarg{SDL} and have no effect
+			on the rendering of objects --- they are only
+			tools for editing in \IXpkg{}.
+			
+			To add a guide line, place the mouse pointer
+			over one of the graduated scales at the left
+			and top of the drawing area
+			(see ``\nameref{ssec:drawing_area}''),
+			hold the shift key
+			down, and `drag' with the mouse into the canvas
+			(the work area with the blue grid). Do not release
+			the mouse button until the new guide is at the
+			desired position (the shift key may be released
+			as soon as this action is initiated). A horizontal
+			guide is produced from the top scale, and a vertical
+			\IXarg{guide} from the left scale.
+			
+			If necessary, use the scroll bars to adjust the
+			view of the canvas before adding a guide. Existing guides
+			may be moved by dragging with the mouse. To
+			pick up a guide, the mouse pointer active point
+			must be placed directly over the line; since this
+			can be difficult, it might help to place guides
+			at incremental positions (e.g., a five pixel offset)
+			so that the mouse point coordinates displayed on the
+			status bar (see ``\nameref{ssec:status_bar}'')
+			can assist in positioning the pointer at such
+			intervals (irregular positions will be difficult
+			to remember).
+			
+			To remove a \IXarg{guide} line, drag it back to the
+			graduated scale and release it there.
+			
+			When moving a selected object or point, by default
+			the \IXarg{guide} lines are merely a visual guide,
+			but temporarily depressing the shift key will
+			provide a light `snapping' to the guide when a
+			point is in close proximity.
 
-			\subsubsection{Missing Features}%WX%5||||
-			\label{sssec:missing_todo}
+			%\subsubsection{Missing Features}%WX%5||||
+			%\label{sssec:missing_todo}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

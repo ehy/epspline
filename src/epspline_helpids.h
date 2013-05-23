@@ -58,23 +58,23 @@
 #define IDS_UsefulTransforms		"Useful Transforms"
 #define IDF_UsefulTransforms		"epsplinese5.html"
 
-#define IDI_Tips		416
-#define IDS_Tips		"Tips"
-#define IDF_Tips		"epsplinese6.html"
+#define IDI_MouseandKeyReference		416
+#define IDS_MouseandKeyReference		"Mouse and Key Reference"
+#define IDF_MouseandKeyReference		"epsplinese6.html"
 
 #define IDI_Licenses		202000
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		432
+#define IDI_GPL3_Section		496
 #define IDS_GPL3_Section		"GNU General Public License"
 #define IDF_GPL3_Section		"epsplinese7.html"
 
-#define IDI_GPL2_Section		496
+#define IDI_GPL2_Section		560
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
 #define IDF_GPL2_Section		"epsplinese8.html"
 
-#define IDI_FDL_Section		560
+#define IDI_FDL_Section		624
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese9.html"
 

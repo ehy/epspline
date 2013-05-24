@@ -102,6 +102,15 @@
 % coded comment for table of contents
 %WX%1|Contents|1000000000|HelpTOC|
 \tableofcontents
+\label{toc:tab_of_contents}
+
+\ifWX{
+	% parenthetical statement to appear on TOC page; WX help only
+	(If you arrived here from \nameref{sssec:help_menu},
+	but really want
+	\nameref{sec:mouse_key_ref}, then go
+	\hyperref[sec:mouse_key_ref]{here}.)
+}%\ifWX
 
 \ifnotWX{
 	%\addcontentsline{toc}{part}{Contents}

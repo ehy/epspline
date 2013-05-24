@@ -115,6 +115,7 @@ enum menu_and_toolbar_IDs {
 	Toggle_AA_Lines,
 	SaveClientImage,
 // Help
+	HelpHelpTableOfContents,
 
 	menu_tool_last
 };

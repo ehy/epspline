@@ -296,7 +296,12 @@
 			\hline
 			\textsc{Item}: & \textsc{Keys}: & \textsc{Action}:\\ \hline
 			\hline \hline
-			Help & Ctrl+H & show the \IXpkg{} online help\\ \hline
+			Help & Ctrl+H & show the \IXpkg{} online help
+				mouse and key reference\\ \hline
+			\hline
+			\hline
+			Help Contents & --- & show the \IXpkg{} online help
+				Table of Contents\\ \hline
 			\hline
 			Preview & --- & invoke \IXpov{} with temporary \IXarg{SDL} to view the work\\ \hline
 			\hline
@@ -311,10 +316,20 @@
 			\begin{description}
 			  \item[Help] This will show (or bring to the
 			  forefront, if already shown) a \IXnewterm{help viewer}
-			  window with the ``Contents'' Chapter visible.
+			  window showing a
+			  \hyperref[sec:mouse_key_ref]{reference}
+			  to mouse and key inputs
+			  and their actions.
 			  (The \IXarg{help viewer} is a non-trivial piece of
 			  software provided entirely by \IXarg{\emph{wxWidgets}},
 			  and much to its credit --- developers take note.)
+			  \item[Help Contents] This will show (or bring to the
+			  forefront, if already shown) a \IXarg{help viewer}
+			  window with the ``\nameref{toc:tab_of_contents}''
+			  chapter visible.
+			  (Since the reference, above, might be more useful
+			  to a familiar user, that appears first, and is also
+			  invoked from \nameref{ssec:tool_bar}.)
 			  \item[Preview] The \IXpov{} preview does not attempt
 			  to make a very nice rendering. It does attempt to
 			  make an image with a perspective that includes all

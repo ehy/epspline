@@ -1,16 +1,18 @@
 	This section briefly lists mouse and key
-	inputs and their actions, and
-	separately, actions and the associated inputs.
-
+	inputs and their actions.%, and
+	%separately, actions and the associated inputs.
+\ifWX{
+	(If you arrived here from \nameref{sssec:help_menu}
+	or \nameref{ssec:tool_bar} or \emph{hot-key}, but really want
+	\nameref{toc:tab_of_contents}, then go
+	\hyperref[toc:tab_of_contents]{here}.)
+}%\ifWX
 	General concepts are not discussed in this section,
 	nor is usage discussed in detail. If more explanation
 	is needed, go to the beginning of the
 	chapter~``\nameref{chap:using_epspline}.''
 	If even \IXpov{} is not known, go to
 	``\nameref{chap:introduction}.''
-	
-	The following lists are not ordered (or are in
-	arbitrary order).
 	
 		\subsection{Mouse and Key Input Actions}%WX%4||||
 		\label{ssec:input_to_action}
@@ -62,19 +64,39 @@
 		    \end{itemize}
 		  \item[Mouse Primary Button Drag] \hfill \\
 		    \begin{itemize}
-		      \item On a selected object, the
-		        object is moved; with the shift key
+		      \item If mouse active point is on a guide line,
+		        guide line is moved, or removed if dragged over
+		        corresponding graduated scale
+		      \item On a selected control point, the point
+		        is moved; with the shift key pressed,
+		        may `snap' point to a nearby guide line;
+		        in the \dtybeznl{} spline a group of associated
+		        points are effected unless control (command)
+		        key is depressed
+		      \item On a selected object \emph{not}
+		        in transform mode,
+		        the object is moved; with the shift key
 		        pressed, may `snap' an edge (of the bounding
 		        box) to a nearby guide line
-		      \item On a selected control point
+		      \item On a selected object \emph{in} transform mode,
+		        if the mouse active point is within a `handle'
+		        or lies on the bounding box, the
+		        transform is effected
+		    \end{itemize}
+		  \item[Backspace and Delete keys] \hfill \\
+		    \begin{itemize}
+		      \item A selected point is deleted;
+		        in the \dtybeznl{} spline the group of
+		        points associated with the selected point
+		        are deleted and remaining end-points are joined
+		      \item A selected object
+		        without a selected point is deleted
 		    \end{itemize}
 		\end{description}
 
-		\subsection{Actions' Mouse and Key Input}%WX%4||||
-		\label{ssec:action_to_input}
+		%\subsection{Actions' Mouse and Key Input}%WX%4||||
+		%\label{ssec:action_to_input}
 
-			%\subsubsection{Missing Features}%WX%5||||
-			%\label{sssec:missing_todo}
 
 
 

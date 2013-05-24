@@ -264,6 +264,8 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	// Help:
 	MNADD1(menuHelp, HelpHelp
 	, _("&Help\tCtrl-H"), _("Show application help"));
+	MNADD1NS(menuHelp, HelpHelpTableOfContents
+	, _("Help &Contents"), _("Show application help table of contents"));
 	menuHelp->AppendSeparator();
 	MNADD2(menuHelp, HelpDemo
 	, _("&Preview")
@@ -391,7 +393,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	tb->AddSeparator();
 	MENU2TOOLBAR(MenuOpts, tb, CycleUserScale, wxART_GO_TO_PARENT, _("Cycle Scale"));
 	MENU2TOOLBAR(menuHelp, tb, HelpDemo, wxART_TICK_MARK, _("Preview"));
-	MENU2TOOLBAR(menuHelp, tb, HelpHelp, wxART_HELP, _("Show application help"));
+	MENU2TOOLBAR(menuHelp, tb, HelpHelp, wxART_HELP, _("Show application help table of contents"));
 #endif // ..._APPDIST_ICONS
 
 	tb->Realize();
@@ -960,7 +962,12 @@ A_Frame::OnOption(wxCommandEvent& event)
 			canvas->Demo();
 			return;
 		case HelpHelp:
-			if ( ! wxGetApp().ShowHelp() ) {
+		case HelpHelpTableOfContents:
+			if ( ! wxGetApp().ShowHelp(
+					event.GetId() == HelpHelp ?
+					IDI_MouseKeyRef :
+					IDI_HelpTOC
+				) ) {
 				wxMessageBox(
 				 _("The help documents were not loaded successfully."),
 				 _("Help Is Not Available"),

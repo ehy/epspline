@@ -491,7 +491,7 @@ A_Canvas::OnKeyDown(wxKeyEvent& event)
 	if ( !D->sel ) {
 		switch ( event.m_keyCode ) {
 			case WXK_NEXT: case WXK_PRIOR:
-				if ( event.CmdDown() ) {
+				if ( event.AltDown() ) {
 					int x,y;
 					GetViewStart(&x, &y);
 					x += event.m_keyCode == WXK_PRIOR ? -page : page;
@@ -517,18 +517,18 @@ A_Canvas::OnKeyDown(wxKeyEvent& event)
 
 	switch ( event.m_keyCode ) {
 		case WXK_NEXT: case WXK_PRIOR:
-		case 'N':      case 'P':
+		case 'D':      case 'U':
 		case WXK_LEFT: case WXK_UP: case WXK_RIGHT: case WXK_DOWN:
 		case 'H':      case 'K':    case 'L':       case 'J':
 			int x, y;
 			switch ( event.m_keyCode ) {
-				case WXK_NEXT: case 'N':
-					x = event.CmdDown() ? page : 0;
-					y = event.CmdDown() ? 0 : page;
+				case WXK_NEXT: case 'D':
+					x = event.AltDown() ? page : 0;
+					y = event.AltDown() ? 0 : page;
 					break;
-				case WXK_PRIOR: case 'P':
-					x = event.CmdDown() ? -page : 0;
-					y = event.CmdDown() ? 0 : -page;
+				case WXK_PRIOR: case 'U':
+					x = event.AltDown() ? -page : 0;
+					y = event.AltDown() ? 0 : -page;
 					break;
 				case WXK_LEFT: case 'H':
 					y = 0; x = -arrow; break;

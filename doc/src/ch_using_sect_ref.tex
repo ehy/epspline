@@ -4,8 +4,8 @@
 \ifWX{
 	(If you arrived here from \nameref{sssec:help_menu}
 	or \nameref{ssec:tool_bar} or \emph{hot-key}, but really want
-	\nameref{toc:tab_of_contents}, then go
-	\hyperref[toc:tab_of_contents]{here}.)
+	\hyperref[chap:tab_of_contents]{the table of contents},
+	then go \hyperref[chap:tab_of_contents]{here}.)
 }%\ifWX
 	General concepts are not discussed in this section,
 	nor is usage discussed in detail. If more explanation
@@ -83,7 +83,7 @@
 		        or lies on the bounding box, the
 		        transform is effected
 		    \end{itemize}
-		  \item[Backspace and Delete keys] \hfill \\
+		  \item[Backspace and Delete Keys] \hfill \\
 		    \begin{itemize}
 		      \item A selected point is deleted;
 		        in the \dtybeznl{} spline the group of
@@ -91,6 +91,40 @@
 		        are deleted and remaining end-points are joined
 		      \item A selected object
 		        without a selected point is deleted
+		    \end{itemize}
+		  \item[Page Down and \emph{D},
+		  and Page Up and \emph{U} Keys] \hfill \\
+		    \begin{itemize}
+		      \item A selected point
+		        is moved by several pixels,
+		        horizontally if the \emph{alt} key is down,
+		        vertically otherwise
+		      \item A selected object without a
+		        selected point is moved by several pixels,
+		        horizontally if the \emph{alt} key is down,
+		        vertically otherwise
+		      \item With no selection the view of the canvas
+		        is scrolled by a large amount
+		        (page keys only, not
+		        \emph{D} or \emph{U}),
+		        horizontally if the \emph{alt} key is down,
+		        vertically otherwise
+		    \end{itemize}
+		  \item[Arrow Keys and \emph{H},
+		  \emph{J}, \emph{K},\emph{L} Keys] \hfill \\
+		    \begin{itemize}
+		      \item A selected point
+		        is moved by one pixel,
+		        horizontally if the \emph{alt} key is down,
+		        vertically otherwise
+		      \item A selected object without a
+		        selected point is moved by one pixel,
+		        horizontally if the \emph{alt} key is down,
+		        vertically otherwise
+		      \item With no selection the view of the canvas
+		        is scrolled by a small amount
+		        (arrow keys only, not
+		        \emph{H}, \emph{J}, \emph{K}, or \emph{L})
 		    \end{itemize}
 		\end{description}
 

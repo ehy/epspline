@@ -541,13 +541,12 @@ A_Canvas::OnKeyDown(wxKeyEvent& event)
 					x = 0; y = arrow; break;
 			}
 
-			if ( D->selpt ) {
+			if ( D->sel && D->selpt ) {
 				if ( movingpoint == false ) {
 					PushUndo();
 					movingpoint = true;
 				}
-				D->selpt->x += x;
-				D->selpt->y += y;
+				D->sel->MovePoint(*D->selpt, x, y);
 				Refresh();
 			} else if ( D->sel ) {
 				if ( movingsel == false ) {

@@ -1299,8 +1299,14 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 			}
 		}
 	} else { // ! shiftdown
+		// Will want member 'creating' set false *except*
+		// in minority of cases, which can set this true;
+		// 'creating' is assigned this value near end of scope
+		bool tmp_creating = false;
+	
 		if ( creating && D->cur ) { // editing curve, new point
 			D->cur->push_back(pt_mousedown);
+			tmp_creating = true;
 		} else if ( D->sel ) { // (de)select
 			if ( D->sel->PtInRect(pt_mousedown, refresh_pad) ) {
 				// (de)select point
@@ -1337,6 +1343,9 @@ A_Canvas::OnMouseLDown(wxMouseEvent& event)
 			}
 		}
 
+		// 'creating' gets this value, which may be changed per tests
+		creating = tmp_creating;
+	
 		if ( D->sel )
 			RefreshObjBox(D->sel, &dc);
 		if ( D->cur ) {
@@ -1959,6 +1968,11 @@ A_Canvas::Undo()
 		Refresh();
 		if ( !wasdirty )
 			SetDirty();
+		
+		// Currently, if 'creating' is true, it's not cleared
+		// elsewhere: make it false here -- needs more work
+		creating = false;
+		
 		UpdateStatusBar();
 	}
 }

@@ -22,6 +22,11 @@
 		        object is deselected
 		      \item Within the bounds of an object, when no object
 		        is selected, the object is selected
+		      \item Within the bounds of a selected object,
+		        if on a control point, selects any the point
+		      \item Within the bounds of a selected object,
+		        if \emph{not} on a control point,
+		        deselects any selected point
 		    \end{itemize}
 		  \item[Shift Key and Mouse Primary Button Click] \hfill \\
 		    \begin{itemize}
@@ -50,12 +55,18 @@
 		    \end{itemize}
 		  \item[Shift Key and Mouse Secondary Button Click] \hfill \\
 		    \begin{itemize}
-		      \item When a selected object is in transform mode,
-		        leaves transform mode
 		      \item When an object is selected but not in
-		        transform mode, the object pop-up menu is shown
-		      \item When no object is selected,
-		        the canvas (drawing area) pop-up menu is shown
+		        transform mode, enters transform mode
+		      \item When a selected object is in transform mode,
+		        cycles through scale, shear, and rotate modes
+		    \end{itemize}
+		  \item[Mouse Primary Button Drag] \hfill \\
+		    \begin{itemize}
+		      \item On a selected object, the
+		        object is moved; with the shift key
+		        pressed, may `snap' an edge (of the bounding
+		        box) to a nearby guide line
+		      \item On a selected control point
 		    \end{itemize}
 		\end{description}
 

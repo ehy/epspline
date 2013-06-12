@@ -1,4 +1,66 @@
-README.Makefile
+BUILD and INSTALL
+	This file is concerned with the main program. The documentation
+	is included both as source and as a pre-built ZIP file, so
+	that the ability to build the docs is not required to build
+	the program, yet the docs can be built from source if desired
+	(see doc/Makefile).
+	
+	The main dependency for epspline is the wxWidgets library.
+	
+MSWindows:
+	Presently, epspline will build (and work) against wxWidgets 2.8
+	with the Digital Mars compiler and STLPort (the cost-free
+	download tools). The source includes makefile.dmc and
+	src\makefile.dmc which will need to be edited to set the
+	paths to the wxWidgets headers and libraries. (Note that the
+	DMC tools work well with WINE under GNU/Linux.)
+	
+	Other native MSW compilers will almost certainly not be able
+	to use the DMC makefiles directly, but they might provide a
+	guide or starting point for writing makefiles for other tools,
+	or even to set up IDE projects. Also, successful compilation
+	might require some small source edits.
+	
+	MinGW builds epspline for MSWindows very nicely under Cygwin
+	or a Unix system using the main POSIX Makefiles. This is the
+	MSW build most tested by the original author. Unfortunately,
+	for someone not accustomed to Unix-like systems, installation
+	and use of Cygwin seems like it might be a steep requirement
+	(but might prove to be well worth the effort).
+	
+	Building with MinGW is much like using GCC on a Unix-like
+	system (as described below). These are the main points:
+	
+		* the make target is `mingw' which of course must be
+		  given to the make command
+		
+		* the wxWidgets libraries must be built with MinGW too,
+		  of course, and since the `wx-config' script from that
+		  is probably not in (or first in) $PATH, it's path must
+		  be assigned to the CF macro on the commandline.
+		
+		* it might important to use the same optimization option
+		  building the application that was used building the
+		  library (possibly not in all possible cases). The
+		  original author has built wxWidgets with -Os -static
+		  and found that using -O3 -static for epspline produced
+		  many dire warnings. (-Os is fine for epspline.)
+		
+		* the `install' target is not useful, but `clean',
+		`cleandepends', and `cleanall' are
+	
+	A MinGW make command might look like:
+	
+		% make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
+			CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw
+
+Unix/POSIX:
+	The build is accomplished with Makefiles that are written to
+	comply with POSIX.  Whenever possible, system commands invoked
+	in the rules, and the options given, are as described in The
+	Open Group's online POSIX documentation. It is also necessary
+	to invoke commands that are not specified by POSIX; the C++
+	compiler is notable among these.
 
 Command to build on OpenSolaris 0609 with SunStudio CC:
 time /usr/bin/make CXX=CC CXXFLAGS="-xO2 -include vector -include algorithm" WARN= INSTALLCMD=ginstall >&/dev/stdout >&../t-log

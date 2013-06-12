@@ -25,4 +25,16 @@ STATUS
 	it should still much easier than hand editing prisms and lathes.
 	
 	Users might find some bugs, but the author has not found any
-	catastrophic bugs, such as crashing
+	catastrophic bugs, such as crashing. One problematic build is
+	with the old wxGTK 2.6 on FreeBSD 9.0, from the FreeBSD ports.
+	Another is with wx 2.6 on Ubuntu 12.04 (2.6 on Ubuntu 10.04
+	worked as expected). In any case, the newer wxWidgets versions
+	are be preferable.
+	
+	Epspline should build against wxWidgets versions 2.6, 2.8, and
+	2.9 (and presumably 3.0; 2.9 is a development version toward 3.0).
+	Not all versions have been tried on all platforms.
+
+BUILDING, INSTALLING
+
+	See the INSTALL file.

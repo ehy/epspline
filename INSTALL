@@ -1,11 +1,41 @@
 BUILD and INSTALL
-	This file is concerned with the main program. The documentation
-	is included both as source and as a pre-built ZIP file, so
+
+Dependencies:
+	The documentation is included as a pre-built ZIP file, so
 	that the ability to build the docs is not required to build
 	the program, yet the docs can be built from source if desired
 	(see doc/Makefile).
 	
 	The main dependency for epspline is the wxWidgets library.
+	All the Unix(-like) systems that epspline has been tested
+	with provided wxWidgets in their package systems (some in more
+	than one, e.g., with OpenIndiana, the volunteer CSW packages
+	provide a wxWidgets that does not have problems seen in
+	the `pkg' provided package [botched character spacing in the
+	help viewer, probably a bug in a wxWidgets dependency]).
+	For MSWindows, or to build from source,
+	http://www.wxwidgets.org./downloads/ has the packages.
+	
+	Epspline is prepared to use message translations in the format
+	supported by wxWidgets, but there are, as of initial release,
+	no `real' translations. A file po/en_US/epspline.po is included
+	with the source archive. This is not a language (or even dialect)
+	translation, but merely provides a few typographical characters
+	such quotation marks, and the e-acute for `bezier', as the strings
+	in the source use ASCII only. Like the docs, the binary is
+	included for convenience, so that the GNU gettext tools need not
+	be present to build the program; but, if strings are changed
+	in the source, the Makefile will want to rebuild the message
+	catalog(s). (Hopefully, there will be some people willing to
+	contribute translations, and I apologize in advance that the
+	strings in the source have not been prepared as nicely as is
+	suggested in the gettext documentation.)
+	
+	The source uses a hash table with POV-Ray reserved strings
+	that has been generated with GNU gperf. The hash table source file
+	depends on src/pov_reserved_words.text, but this should not
+	need changing unless a new version of POV-Ray changes the list;
+	therefore, gperf should not be needed to build epspline.
 	
 MSWindows:
 	Presently, epspline will build (and work) against wxWidgets 2.8
@@ -19,7 +49,7 @@ MSWindows:
 	to use the DMC makefiles directly, but they might provide a
 	guide or starting point for writing makefiles for other tools,
 	or even to set up IDE projects. Also, successful compilation
-	might require some small source edits.
+	with other tools might require some small source edits.
 	
 	MinGW builds epspline for MSWindows very nicely under Cygwin
 	or a Unix system using the main POSIX Makefiles. This is the
@@ -47,9 +77,9 @@ MSWindows:
 		  many dire warnings. (-Os is fine for epspline.)
 		
 		* the `install' target is not useful, but `clean',
-		`cleandepends', and `cleanall' are
+		  `cleandepends', and `cleanall' are.
 	
-	A MinGW make command might look like:
+	A MinGW make command might look something like:
 	
 		% make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
 			CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw

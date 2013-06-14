@@ -160,6 +160,38 @@ FreeBSD:
 	Please avoid wx 2.6 if possible, especially the unicode build.
 
 OpenIndiana:
+	This is based on an OpenIndiana system on which uname -a says
+	``SunOS [hostname] 5.11 oi_151a7 i86pc i386 i86pc'' and which
+	has the SunStudio tools installed. If building with GCC (g++)
+	see the OpenSolaris entry.
+	
+	Epspline has been built and tested with two binary wxWidgets
+	packages: from the default repository using the `pkg' utility,
+	and with the package from the OpenCSW open source package
+	system (http://www.opencsw.org/). The former has one notable
+	bug -- that in the html help viewer the character spacing is
+	wrong. The latter seems to work well. Both wxWidgets packages
+	are built with Sun tools, and both of their wx-config scripts
+	will produce compiler options that g++ does not like; so, if
+	you wish to build against one of these packages with GCC, you
+	are on your own. Also, both wx-config scripts emit full paths
+	to CC (the C++ compiler), and they differ from each other, and
+	from the install directory of SunStudio on the author's system.
+	Therefore, the Makefile's default of CXX=`wx-config --cxx` is
+	unlikely to work and CXX=CC must be given on the make command
+	(of course, CXX may be given a full path).
+	
+	As mentioned elswhere, the Makefiles use POSIX command invocations
+	when possible. OpenIndiana (and OpenSolaris, and presumably the
+	closed commercial variant) has versions of commands under several
+	directories, and some are POSIXish and some are not. For example,
+	/usr/bin/grep does not accept -F, while /usr/{xpg4,gnu}/bin/grep
+	do. Interestingly, /usr/bin/make works fine, handling the .POSIX
+	special target as expected. In any case, as users of this system
+	probably know already, PATH should be set up as needed; in this
+	case, ensuring POSIXish commands are found first. The author
+	has /usr/xpg4/bin before /usr/gnu/bin which is before /usr/bin
+	(and also /opt/csw/bin before them all).
 
 Command to build on OpenSolaris 0609 with SunStudio CC:
 time /usr/bin/make CXX=CC CXXFLAGS="-xO2 -include vector -include algorithm" WARN= INSTALLCMD=ginstall >&/dev/stdout >&../t-log

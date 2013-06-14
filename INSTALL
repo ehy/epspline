@@ -15,6 +15,12 @@ Dependencies:
 	help viewer, probably a bug in a wxWidgets dependency]).
 	For MSWindows, or to build from source,
 	http://www.wxwidgets.org./downloads/ has the packages.
+	Note that on Unix-like systems epspline will probably
+	require the GTK2 build of wxWidgets. GTK2 is a configure
+	option in the source package; if your package system
+	provides wxWidgets then it very likely is the GTK version.
+	In fact, searching for a *wxgtk* package listing might be
+	better than searching for wxwidgets.
 	
 	Epspline is prepared to use message translations in the format
 	supported by wxWidgets, but there are, as of initial release,
@@ -83,6 +89,8 @@ MSWindows:
 	
 		% make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
 			CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw
+	
+	See ``Makefile Targets and Variables'' below.
 
 Unix/POSIX:
 	The build is accomplished with Makefiles that are written to
@@ -90,11 +98,161 @@ Unix/POSIX:
 	in the rules, and the options given, are as described in The
 	Open Group's online POSIX documentation. It is also necessary
 	to invoke commands that are not specified by POSIX; the C++
-	compiler is notable among these.
+	compiler is notable among these. The shell code in the the
+	rules might seem long and ugly, mostly because it is, but it
+	works with the several systems tested, and probably does not
+	stray from POSIX Bourne shell.
+	
+	Regardless of the portability of POSIX make, some systems will
+	need something more than a simple ``make'' invocation. Each
+	tested system is discussed separately below, based on defaults
+	in the Makefile. To change defaults, such as the installation
+	directory, see ``Makefile Targets and Variables'' below the
+	system discussions. The system discussions are sorted from
+	what the author has found to be the simplest to the least simple.
+	
+	If your Unix is not one discussed here, please try anyway --
+	if you have built (or simply have) wxWidgets, then it should
+	not be difficult to divine the magic spell.
+
+GNU/Linux (probably GNU/*):
+	With wxWidgets installed from a package system, a simple
+	``make && sudo make install'' should work. Check first
+	whether a separate *-dev package must be installed; e.g.,
+	libwxgtk2.8-dev on Debian or Ubuntu.
+
+NetBSD:
+	With wxWidgets installed from pkgsrc (or binary package from
+	`pkg_add', etc.), ``make && sudo make install'' should work.
+	Of course, /usr/pkg/bin (or the alternative used) must be
+	in $PATH, but if you're using NetBSD, you know all this.
+	Note that on the author's system the wx-config script is
+	emitting a runpath argument for the linker, but it's a
+	thing to watch for.
+
+OpenBSD:
+	With wxWidgets installed from ports, the only additional
+	concern is that, as of OpenBSD 4.9, make does not seem to
+	pass over the .POSIX target; i.e., invoking simply `make' will
+	do nothing and exit success. This is no problem: just do
+	``make all && sudo make install'' and it should work (this
+	is the only system found to require `make all'). As usual,
+	the linker will nag about a few unsafe string functions.
+
+FreeBSD:
+	This is based on FreeBSD 9.0 and associated ports. The ports
+	system has wxGTK 2.6, 2.8, and 2.9, and each^W 2.6 or 2.8
+	may be built in
+	the unicode or `ansi' version, and for any installation there
+	will be a wx configuration script with the version and text-
+	type encoded in the name: wxgtk2-2.6-config, wxgtk2-2.8-config,
+	wxgtk2u-2.6-config, wxgtk2u-2.8-config, wxgtk2u-2.9-config.
+	It seems that no default `wx-config' is maintained by the
+	ports system (of course, the author might have missed
+	something).
+	
+	Without a wx-config in $PATH, assigning the CF Makefile
+	variable is mandatory. Select an installed wx*config
+	(preferably the latest version* and preferably a unicode* build)
+	and ``make CF=wxGTK2<whatever>-config && sudo make install''
+	should work.
+	
+	Please avoid wx 2.6 if possible, especially the unicode build.
+
+OpenIndiana:
 
 Command to build on OpenSolaris 0609 with SunStudio CC:
 time /usr/bin/make CXX=CC CXXFLAGS="-xO2 -include vector -include algorithm" WARN= INSTALLCMD=ginstall >&/dev/stdout >&../t-log
 Command to build on OpenSolaris 0609 local-built wxWidgets, with GCC g++ (e.g. /usr/sfw/bin/c++):
 
 /usr/bin/make CF=/usr/local/bin/wx-config LDFLAGS="-Wl,-rpath=/usr/local/lib" >&/dev/stdout >&../t-log
+
+Makefile Targets and Variables:
+	
+	Targets first -- not a complete list, see Makefiles if you must:
+
+	all:
+		build the application; should be taken as the default target
+		by POSIX make (i.e., ignoring the magic .POSIX target), as
+		it appears first (after .POSIX)
+
+	install:
+		install the program and data; depends on all
+		
+	install_base:
+		like install, but does not install the XDG desktop items;
+		useful to speed up the install if it has been done before,
+		or if the XDG bits are unwanted
+
+	uninstall:
+		remove the program and data *ONLY IF* invoked from the source
+		directory used for install, because files to remove are
+		taken from paths saved under the `uninstall' directory
+		(directories created by install are not removed)
+
+	clean:
+		remove the program binary and object files, and possibly
+		*core, etc.
+
+	cleandepend cleandepends:
+		clean source dependency file (generated by `all')
+
+	mingw:
+		equivalent of `all', but builds the MSW version with MinGW
+
+	Now, the variables:
+
+	CF= (default `wx-config')
+		The most important of the variables. The Makefile
+		default for CF is ``wx-config'' but there may be more than
+		one of these, or in some cases the script is not named
+		``wx-config'' so set CF=<path_to_wx_config_script> as needed.
+
+	LIBS= (ignore this if using wx 2.8 or *earlier*)
+		***THIS*** has become equal to CF in importance IF you
+		are building against wxWidgets 2.9 or later -- it is
+		not needed for wx 2.8 and earlier, and *should* be
+		satisfied by wx-config, but the wx developers have seen
+		fit to make changes in the separation of the libraries,
+		and which libraries are default and which are not, and
+		the behavior of the wx-config script; and so, for wx 2.9
+		or greater, something like:
+		
+			LIBS='$$($(CF) --libs all)'
+			
+		*will* be needed on the make command, because epspline
+		uses a feature (AUI tab control) that was a default lib in
+		wx 2.8, but is not in wx 2.9 -- if epspline is still
+		maintained when wx 2.8 is obsolescent a future release
+		will have the Makefile favor the wx 2.9 way and this
+		file will make a note for wx 2.8
+	
+	PREFIX= (default /usr/local)
+		directory under which install is done (there are also
+		{BIN,DATA,HELPDATA,L10N}PREFIX variables with defaults
+		based on ${PREFIX}; see Makefile)
+
+	INSTALLCMD= (default `install')
+		BSD or GNU compatible install command, if `install' is not
+		so; e.g., on *Solaris, OpenIndiana ``ginstall'' will work
+		if available
+	
+	INSTALLOPTS= (default -c -s -m 555 -o 0 -g 0)
+		if you don't like the default, use this; also, if there is
+		no compatible $(INSTALLCMD), try giving options for another
+		`install' in this
+
+	LDFLAGS=
+		Extra arguments for your link editor; e.g. if your
+		wxWidgets shared objects are somewhere needing a
+		runtime path in the program binary
+
+	CXX= (default `$(CF) --cxx`)
+		use for a C++ compiler other that named by the wx-config
+		script, being sure it is compatible; e.g. CXX=clang++
+		or CXX=my-better-but-compatible-mingw or CXX=CC (SunStudio)
+
+	CXXFLAGS=
+		compilation options, usually optimizations, beyond those
+		named by the wx-config script
 

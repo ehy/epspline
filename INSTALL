@@ -1,290 +1,337 @@
 BUILD and INSTALL
 
 Dependencies:
-	The documentation is included as a pre-built ZIP file, so
-	that the ability to build the docs is not required to build
-	the program, yet the docs can be built from source if desired
-	(see doc/Makefile).
-	
-	The main dependency for epspline is the wxWidgets library.
-	All the Unix(-like) systems that epspline has been tested
-	with provided wxWidgets in their package systems (some in more
-	than one, e.g., with OpenIndiana, the volunteer CSW packages
-	provide a wxWidgets that does not have problems seen in
-	the `pkg' provided package [botched character spacing in the
-	help viewer, probably a bug in a wxWidgets dependency]).
-	For MSWindows, or to build from source,
-	http://www.wxwidgets.org./downloads/ has the packages.
-	Note that on Unix-like systems epspline will probably
-	require the GTK2 build of wxWidgets. GTK2 is a configure
-	option in the source package; if your package system
-	provides wxWidgets then it very likely is the GTK version.
-	In fact, searching for a *wxgtk* package listing might be
-	better than searching for wxwidgets.
-	
-	Epspline is prepared to use message translations in the format
-	supported by wxWidgets, but there are, as of initial release,
-	no `real' translations. A file po/en_US/epspline.po is included
-	with the source archive. This is not a language (or even dialect)
-	translation, but merely provides a few typographical characters
-	such quotation marks, and the e-acute for `bezier', as the strings
-	in the source use ASCII only. Like the docs, the binary is
-	included for convenience, so that the GNU gettext tools need not
-	be present to build the program; but, if strings are changed
-	in the source, the Makefile will want to rebuild the message
-	catalog(s). (Hopefully, there will be some people willing to
-	contribute translations, and I apologize in advance that the
-	strings in the source have not been prepared as nicely as is
-	suggested in the gettext documentation.)
-	
-	The source uses a hash table with POV-Ray reserved strings
-	that has been generated with GNU gperf. The hash table source file
-	depends on src/pov_reserved_words.text, but this should not
-	need changing unless a new version of POV-Ray changes the list;
-	therefore, gperf should not be needed to build epspline.
-	
+    The documentation is included as a pre-built ZIP file, so
+    that the ability to build the docs is not required to build
+    the program, yet the docs can be built from source if desired
+    (see doc/Makefile).
+    
+    The main dependency for epspline is the wxWidgets library.
+    All the Unix(-like) systems that epspline has been tested
+    with provided wxWidgets in their package systems (some in more
+    than one, e.g., with OpenIndiana, the volunteer CSW packages
+    provide a wxWidgets that does not have problems seen in
+    the `pkg' provided package [botched character spacing in the
+    help viewer, probably a bug in a wxWidgets dependency]).
+    For MSWindows, or to build from source,
+    http://www.wxwidgets.org./downloads/ has the packages.
+    Note that on Unix-like systems epspline will probably
+    require the GTK2 build of wxWidgets. GTK2 is a configure
+    option in the source package; if your package system
+    provides wxWidgets then it very likely is the GTK version.
+    In fact, searching for a *wxgtk* package listing might be
+    better than searching for wxwidgets.
+    
+    Epspline is prepared to use message translations in the format
+    supported by wxWidgets, but there are, as of initial release,
+    no `real' translations. A file po/en_US/epspline.po is included
+    with the source archive. This is not a language (or even dialect)
+    translation, but merely provides a few typographical characters
+    such quotation marks, and the e-acute for `bezier', as the strings
+    in the source use ASCII only. Like the docs, the binary is
+    included for convenience, so that the GNU gettext tools need not
+    be present to build the program; but, if strings are changed
+    in the source, the Makefile will want to rebuild the message
+    catalog(s). (Hopefully, there will be some people willing to
+    contribute translations, and I apologize in advance that the
+    strings in the source have not been prepared as nicely as is
+    suggested in the gettext documentation.)
+    
+    The source uses a hash table with POV-Ray reserved strings
+    that has been generated with GNU gperf. The hash table source file
+    depends on src/pov_reserved_words.text, but this should not
+    need changing unless a new version of POV-Ray changes the list;
+    therefore, gperf should not be needed to build epspline.
+    
 MSWindows:
-	Presently, epspline will build (and work) against wxWidgets 2.8
-	with the Digital Mars compiler and STLPort (the cost-free
-	download tools). The source includes makefile.dmc and
-	src\makefile.dmc which will need to be edited to set the
-	paths to the wxWidgets headers and libraries. (Note that the
-	DMC tools work well with WINE under GNU/Linux.)
-	
-	Other native MSW compilers will almost certainly not be able
-	to use the DMC makefiles directly, but they might provide a
-	guide or starting point for writing makefiles for other tools,
-	or even to set up IDE projects. Also, successful compilation
-	with other tools might require some small source edits.
-	
-	MinGW builds epspline for MSWindows very nicely under Cygwin
-	or a Unix system using the main POSIX Makefiles. This is the
-	MSW build most tested by the original author. Unfortunately,
-	for someone not accustomed to Unix-like systems, installation
-	and use of Cygwin seems like it might be a steep requirement
-	(but might prove to be well worth the effort).
-	
-	Building with MinGW is much like using GCC on a Unix-like
-	system (as described below). These are the main points:
-	
-		* the make target is `mingw' which of course must be
-		  given to the make command
-		
-		* the wxWidgets libraries must be built with MinGW too,
-		  of course, and since the `wx-config' script from that
-		  is probably not in (or first in) $PATH, it's path must
-		  be assigned to the CF macro on the commandline.
-		
-		* it might important to use the same optimization option
-		  building the application that was used building the
-		  library (possibly not in all possible cases). The
-		  original author has built wxWidgets with -Os -static
-		  and found that using -O3 -static for epspline produced
-		  many dire warnings. (-Os is fine for epspline.)
-		
-		* the `install' target is not useful, but `clean',
-		  `cleandepends', and `cleanall' are.
-	
-	A MinGW make command might look something like:
-	
-		% make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
-			CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw
-	
-	See ``Makefile Targets and Variables'' below.
+    Presently, epspline will build (and work) against wxWidgets 2.8
+    with the Digital Mars compiler and STLPort (the cost-free
+    download tools). The source includes makefile.dmc and
+    src\makefile.dmc which will need to be edited to set the
+    paths to the wxWidgets headers and libraries. (Note that the
+    DMC tools work well with WINE under GNU/Linux.)
+    
+    Other native MSW compilers will almost certainly not be able
+    to use the DMC makefiles directly, but they might provide a
+    guide or starting point for writing makefiles for other tools,
+    or even to set up IDE projects. Also, successful compilation
+    with other tools might require some small source edits.
+    
+    MinGW builds epspline for MSWindows very nicely under Cygwin
+    or a Unix system using the main POSIX Makefiles. This is the
+    MSW build most tested by the original author. Unfortunately,
+    for someone not accustomed to Unix-like systems, installation
+    and use of Cygwin seems like it might be a steep requirement
+    (but might prove to be well worth the effort).
+    
+    Building with MinGW is much like using GCC on a Unix-like
+    system (as described below). These are the main points:
+    
+        * the make target is `mingw' which of course must be
+          given to the make command
+        
+        * the wxWidgets libraries must be built with MinGW too,
+          of course, and since the `wx-config' script from that
+          is probably not in (or first in) $PATH, it's path must
+          be assigned to the CF macro on the commandline.
+        
+        * it might important to use the same optimization option
+          building the application that was used building the
+          library (possibly not in all possible cases). The
+          original author has built wxWidgets with -Os -static
+          and found that using -O3 -static for epspline produced
+          many dire warnings. (-Os is fine for epspline.)
+        
+        * the `install' target is not useful, but `clean',
+          `cleandepends', and `cleanall' are.
+    
+    A MinGW make command might look something like:
+    
+        % make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
+            CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw
+    
+    See ``Makefile Targets and Macros'' below.
 
 Unix/POSIX:
-	The build is accomplished with Makefiles that are written to
-	comply with POSIX.  Whenever possible, system commands invoked
-	in the rules, and the options given, are as described in The
-	Open Group's online POSIX documentation. It is also necessary
-	to invoke commands that are not specified by POSIX; the C++
-	compiler is notable among these. The shell code in the the
-	rules might seem long and ugly, mostly because it is, but it
-	works with the several systems tested, and probably does not
-	stray from POSIX Bourne shell.
-	
-	Regardless of the portability of POSIX make, some systems will
-	need something more than a simple ``make'' invocation. Each
-	tested system is discussed separately below, based on defaults
-	in the Makefile. To change defaults, such as the installation
-	directory, see ``Makefile Targets and Variables'' below the
-	system discussions. The system discussions are sorted from
-	what the author has found to be the simplest to the least simple.
-	
-	If your Unix is not one discussed here, please try anyway --
-	if you have built (or simply have) wxWidgets, then it should
-	not be difficult to divine the magic spell.
+    The build is accomplished with Makefiles that are written to
+    comply with POSIX.  Whenever possible, system commands invoked
+    in the rules, and the options given, are as described in The
+    Open Group's online POSIX documentation. It is also necessary
+    to invoke commands that are not specified by POSIX; the C++
+    compiler is notable among these. The shell code in the the
+    rules might seem long and ugly, mostly because it is, but it
+    works with the several systems tested, and probably does not
+    stray from POSIX Bourne shell.
+    
+    Regardless of the portability of POSIX make, some systems will
+    need something more than a simple ``make'' invocation. Each
+    tested system is discussed separately below, based on defaults
+    in the Makefile. To change defaults, such as the installation
+    directory, see ``Makefile Targets and Macros'' below the
+    system discussions. The system discussions are sorted from
+    what the author has found to be the simplest to the least simple.
+    
+    If your Unix is not one discussed here, please try anyway --
+    if you have built (or simply have) wxWidgets, then it should
+    not be difficult to divine the magic spell.
 
 GNU/Linux (probably GNU/*):
-	With wxWidgets installed from a package system, a simple
-	``make && sudo make install'' should work. Check first
-	whether a separate *-dev package must be installed; e.g.,
-	libwxgtk2.8-dev on Debian or Ubuntu.
+    With wxWidgets installed from a package system, a simple
+    ``make && sudo make install'' should work. Check first
+    whether a separate *-dev package must be installed; e.g.,
+    libwxgtk2.8-dev on Debian or Ubuntu.
 
 NetBSD:
-	With wxWidgets installed from pkgsrc (or binary package from
-	`pkg_add', etc.), ``make && sudo make install'' should work.
-	Of course, /usr/pkg/bin (or the alternative used) must be
-	in $PATH, but if you're using NetBSD, you know all this.
-	Note that on the author's system the wx-config script is
-	emitting a runpath argument for the linker, but it's a
-	thing to watch for.
+    With wxWidgets installed from pkgsrc (or binary package from
+    `pkg_add', etc.), ``make && sudo make install'' should work.
+    Of course, /usr/pkg/bin (or the alternative used) must be
+    in $PATH, but if you're using NetBSD, you know all this.
+    Note that on the author's system the wx-config script is
+    emitting a runpath argument for the linker, but it's a
+    thing to watch for.
 
 OpenBSD:
-	With wxWidgets installed from ports, the only additional
-	concern is that, as of OpenBSD 4.9, make does not seem to
-	pass over the .POSIX target; i.e., invoking simply `make' will
-	do nothing and exit success. This is no problem: just do
-	``make all && sudo make install'' and it should work (this
-	is the only system found to require `make all'). As usual,
-	the linker will nag about a few unsafe string functions.
+    With wxWidgets installed from ports, the only additional
+    concern is that, as of OpenBSD 4.9, make does not seem to
+    pass over the .POSIX target; i.e., invoking simply `make' will
+    do nothing and exit success. This is no problem: just do
+    ``make all && sudo make install'' and it should work (this
+    is the only system found to require `make all'). As usual,
+    the linker will nag about a few unsafe string functions.
 
 FreeBSD:
-	This is based on FreeBSD 9.0 and associated ports. The ports
-	system has wxGTK 2.6, 2.8, and 2.9, and each^W 2.6 or 2.8
-	may be built in
-	the unicode or `ansi' version, and for any installation there
-	will be a wx configuration script with the version and text-
-	type encoded in the name: wxgtk2-2.6-config, wxgtk2-2.8-config,
-	wxgtk2u-2.6-config, wxgtk2u-2.8-config, wxgtk2u-2.9-config.
-	It seems that no default `wx-config' is maintained by the
-	ports system (of course, the author might have missed
-	something).
-	
-	Without a wx-config in $PATH, assigning the CF Makefile
-	variable is mandatory. Select an installed wx*config
-	(preferably the latest version* and preferably a unicode* build)
-	and ``make CF=wxGTK2<whatever>-config && sudo make install''
-	should work.
-	
-	Please avoid wx 2.6 if possible, especially the unicode build.
+    This is based on FreeBSD 9.0 and associated ports. The ports
+    system has wxGTK 2.6, 2.8, and 2.9, and may be built in
+    the unicode or `ansi' version, and for any installation there
+    will be a wx configuration script with the version and text-
+    type encoded in the name: wxgtk2-2.6-config, wxgtk2-2.8-config,
+    wxgtk2u-2.6-config, wxgtk2u-2.8-config, wxgtk2u-2.9-config.
+    It seems that no default `wx-config' is maintained by the
+    ports system (of course, the author might have missed
+    something).
+    
+    Without a wx-config in $PATH, assigning the CF Makefile
+    macro is mandatory. Select an installed wx*config
+    (preferably the latest version and preferably a unicode build)
+    and ``make CF=wxGTK2<whatever>-config && sudo make install''
+    should work.
+    
+    Please avoid wx 2.6 if possible, especially the unicode build.
 
 OpenIndiana:
-	This is based on an OpenIndiana system on which uname -a says
-	``SunOS [hostname] 5.11 oi_151a7 i86pc i386 i86pc'' and which
-	has the SunStudio tools installed. If building with GCC (g++)
-	see the OpenSolaris entry.
-	
-	Epspline has been built and tested with two binary wxWidgets
-	packages: from the default repository using the `pkg' utility,
-	and with the package from the OpenCSW open source package
-	system (http://www.opencsw.org/). The former has one notable
-	bug -- that in the html help viewer the character spacing is
-	wrong. The latter seems to work well. Both wxWidgets packages
-	are built with Sun tools, and both of their wx-config scripts
-	will produce compiler options that g++ does not like; so, if
-	you wish to build against one of these packages with GCC, you
-	are on your own. Also, both wx-config scripts emit full paths
-	to CC (the C++ compiler), and they differ from each other, and
-	from the install directory of SunStudio on the author's system.
-	Therefore, the Makefile's default of CXX=`wx-config --cxx` is
-	unlikely to work and CXX=CC must be given on the make command
-	(of course, CXX may be given a full path).
-	
-	As mentioned elswhere, the Makefiles use POSIX command invocations
-	when possible. OpenIndiana (and OpenSolaris, and presumably the
-	closed commercial variant) has versions of commands under several
-	directories, and some are POSIXish and some are not. For example,
-	/usr/bin/grep does not accept -F, while /usr/{xpg4,gnu}/bin/grep
-	do. Interestingly, /usr/bin/make works fine, handling the .POSIX
-	special target as expected. In any case, as users of this system
-	probably know already, PATH should be set up as needed; in this
-	case, ensuring POSIXish commands are found first. The author
-	has /usr/xpg4/bin before /usr/gnu/bin which is before /usr/bin
-	(and also /opt/csw/bin before them all).
+    This is based on an OpenIndiana system on which uname -a says
+    ``SunOS [hostname] 5.11 oi_151a7 i86pc i386 i86pc'' and which
+    has the SunStudio tools installed -- sunstudio12u1. If building
+    with GCC (g++) see OpenSolaris below.
+    
+    Epspline has been built and tested with two binary wxWidgets
+    packages: with library/graphics/wxwidgets of the `pkg' utility,
+    and with the package from the OpenCSW open source package
+    system (http://www.opencsw.org/). The former has one notable
+    bug -- that in the html help viewer the character spacing is
+    wrong. The latter seems to work well. Both wxWidgets packages
+    are built with Sun CC, and both of their wx-config scripts
+    will produce compiler options that g++ does not like; so, if
+    you wish to build with GCC against one of these packages, you
+    are on your own. Also, both wx-config scripts emit full paths
+    to CC (the C++ compiler), and it might not be the path to CC
+    on your system. Therefore, the Makefile's default of
+    CXX=`wx-config --cxx` might not work and CXX=CC should be given
+    on the make commandline (of course, CXX may be given a full path).
+    
+    As mentioned elswhere, the Makefiles use POSIX command invocations
+    when possible. OpenIndiana (and OpenSolaris, and presumably the
+    closed commercial variant) has versions of commands under several
+    directories, and some are POSIXish and some are not. For example,
+    /usr/bin/grep does not accept -F, while /usr/{xpg4,gnu}/bin/grep
+    do. Interestingly, /usr/bin/make works fine, handling the .POSIX
+    special target as expected. In any case, as users of this system
+    probably know already, PATH should be set up as needed; in this
+    case, ensuring POSIXish commands are found first. The author
+    has /usr/xpg4/bin before /usr/gnu/bin which is before /usr/bin
+    (and also /opt/csw/bin before them all).
+    
+    Sun Studio tools have a locale bug that causes complaints like
+    ``"/tmp/ube.03192.6.s", line 6508 : Illegal character: <2f>''
+    on the author's system (oddly, not OpenSolaris, just OpenIndiana),
+    which has LANG=en_US.UTF-8. Invoking ``LANG=C make'' lets
+    compilation succeed.
+    
+    The native ``install'' command does not like the BSDish arguments
+    used in the Makefile, but OpenIndiana, and OpenSolaris, have a
+    ``ginstall'' command that works.
+    
+    So, ensuring $PATH leads to POSIX commands, a successful build
+    with pkg://wxwidgets should result from something like:
+    
+        % LANG=C make CXX=CC CXXFLAGS="-fast -xO3" \
+        && sudo make INSTALLCMD=ginstall install
 
-Command to build on OpenSolaris 0609 with SunStudio CC:
-time /usr/bin/make CXX=CC CXXFLAGS="-xO2 -include vector -include algorithm" WARN= INSTALLCMD=ginstall >&/dev/stdout >&../t-log
+    To use an alternative wxWidgets installation, such as one from
+    OpenCSW, the command might look like:
+    
+        % LANG=C make CXX=CC CXXFLAGS="-fast -xO3" \
+        CF=/opt/csw/bin/wx-config LDFLAGS="-R /opt/csw/lib" \
+        && sudo make INSTALLCMD=ginstall install
+
+    Note the addition of the CF macro to select a wx-config, and
+    if needed, LDFLAGS to add a runpath to the wx shared libraries.
+
+OpenSolaris:
+    This is based on an OpenSolaris system on which uname -a says
+    ``SunOS [hostname] 5.11 snv_111b i86pc i386 i86pc Solaris''
+    and which has GCC installed, as well as pkg://sunstudio12u1.
+    
+    To build with Sun CC, first read the OpenIndiana discussion
+    above. In addition to that, the author has found it necessary
+    to work around a compiler or STL bug by adding includes on the
+    commandline: CXXFLAGS="-include vector -include algorithm".
+    This seems to be because the STL templates use _T as a parameter
+    name, but wxWidgets defines a _T macro first, and CC gets
+    confused. Using -include lets CC see the template parameter
+    name first. In any case, the work-around has been working
+    for the author (and this bug has not appeared in OpenIndiana).
+
+    It does not seem necessary to use LANG=C, as in OpenIndiana,
+    even though the author's system assigns LANG the same value.
+
+    So, ensuring $PATH leads to POSIX commands, a successful build
+    with pkg://wxwidgets should result from something like:
+    
+        % make CXX=CC \
+        CXXFLAGS="-fast -xO3 -include vector -include algorithm" \
+        && sudo make INSTALLCMD=ginstall install
+
 Command to build on OpenSolaris 0609 local-built wxWidgets, with GCC g++ (e.g. /usr/sfw/bin/c++):
 
 /usr/bin/make CF=/usr/local/bin/wx-config LDFLAGS="-Wl,-rpath=/usr/local/lib" >&/dev/stdout >&../t-log
 
-Makefile Targets and Variables:
-	
-	Targets first -- not a complete list, see Makefiles if you must:
+Makefile Targets and Macros:
+    
+    Targets first -- not a complete list, see Makefiles if you must:
 
-	all:
-		build the application; should be taken as the default target
-		by POSIX make (i.e., ignoring the magic .POSIX target), as
-		it appears first (after .POSIX)
+    all:
+        build the application; should be taken as the default target
+        by POSIX make (i.e., ignoring the magic .POSIX target), as
+        it appears first (after .POSIX)
 
-	install:
-		install the program and data; depends on all
-		
-	install_base:
-		like install, but does not install the XDG desktop items;
-		useful to speed up the install if it has been done before,
-		or if the XDG bits are unwanted
+    install:
+        install the program and data; depends on all
+        
+    install_base:
+        like install, but does not install the XDG desktop items;
+        useful to speed up the install if it has been done before,
+        or if the XDG bits are unwanted
 
-	uninstall:
-		remove the program and data *ONLY IF* invoked from the source
-		directory used for install, because files to remove are
-		taken from paths saved under the `uninstall' directory
-		(directories created by install are not removed)
+    uninstall:
+        remove the program and data *ONLY IF* invoked from the source
+        directory used for install, because files to remove are
+        taken from paths saved under the `uninstall' directory
+        (directories created by install are not removed)
 
-	clean:
-		remove the program binary and object files, and possibly
-		*core, etc.
+    clean:
+        remove the program binary and object files, and possibly
+        *core, etc.
 
-	cleandepend cleandepends:
-		clean source dependency file (generated by `all')
+    cleandepend cleandepends:
+        clean source dependency file (generated by `all')
 
-	mingw:
-		equivalent of `all', but builds the MSW version with MinGW
+    mingw:
+        equivalent of `all', but builds the MSW version with MinGW
 
-	Now, the variables:
+    Now, the macros:
 
-	CF= (default `wx-config')
-		The most important of the variables. The Makefile
-		default for CF is ``wx-config'' but there may be more than
-		one of these, or in some cases the script is not named
-		``wx-config'' so set CF=<path_to_wx_config_script> as needed.
+    CF= (default `wx-config')
+        The most important of the macros. The Makefile
+        default for CF is ``wx-config'' but there may be more than
+        one of these, or in some cases the script is not named
+        ``wx-config'' so set CF=<path_to_wx_config_script> as needed.
 
-	LIBS= (ignore this if using wx 2.8 or *earlier*)
-		***THIS*** has become equal to CF in importance IF you
-		are building against wxWidgets 2.9 or later -- it is
-		not needed for wx 2.8 and earlier, and *should* be
-		satisfied by wx-config, but the wx developers have seen
-		fit to make changes in the separation of the libraries,
-		and which libraries are default and which are not, and
-		the behavior of the wx-config script; and so, for wx 2.9
-		or greater, something like:
-		
-			LIBS='$$($(CF) --libs all)'
-			
-		*will* be needed on the make command, because epspline
-		uses a feature (AUI tab control) that was a default lib in
-		wx 2.8, but is not in wx 2.9 -- if epspline is still
-		maintained when wx 2.8 is obsolescent a future release
-		will have the Makefile favor the wx 2.9 way and this
-		file will make a note for wx 2.8
-	
-	PREFIX= (default /usr/local)
-		directory under which install is done (there are also
-		{BIN,DATA,HELPDATA,L10N}PREFIX variables with defaults
-		based on ${PREFIX}; see Makefile)
+    LIBS= (ignore this if using wx 2.8 or *earlier*)
+        ***THIS*** has become equal to CF in importance IF you
+        are building against wxWidgets 2.9 or later -- it is
+        not needed for wx 2.8 and earlier, and *should* be
+        satisfied by wx-config, but the wx developers have seen
+        fit to make changes in the separation of the libraries,
+        and which libraries are default and which are not, and
+        the behavior of the wx-config script; and so, for wx 2.9
+        or greater, something like:
+        
+            LIBS='$$($(CF) --libs all)'
+            
+        *will* be needed on the make command, because epspline
+        uses a feature (AUI tab control) that was a default lib in
+        wx 2.8, but is not in wx 2.9 -- if epspline is still
+        maintained when wx 2.8 is obsolescent a future release
+        will have the Makefile favor the wx 2.9 way and this
+        file will make a note for wx 2.8
+    
+    PREFIX= (default /usr/local)
+        directory under which install is done (there are also
+        {BIN,DATA,HELPDATA,L10N}PREFIX macros with defaults
+        based on ${PREFIX}; see Makefile)
 
-	INSTALLCMD= (default `install')
-		BSD or GNU compatible install command, if `install' is not
-		so; e.g., on *Solaris, OpenIndiana ``ginstall'' will work
-		if available
-	
-	INSTALLOPTS= (default -c -s -m 555 -o 0 -g 0)
-		if you don't like the default, use this; also, if there is
-		no compatible $(INSTALLCMD), try giving options for another
-		`install' in this
+    INSTALLCMD= (default `install')
+        BSD or GNU compatible install command, if `install' is not
+        so; e.g., on *Solaris, OpenIndiana ``ginstall'' will work
+        if available
+    
+    INSTALLOPTS= (default -c -s -m 555 -o 0 -g 0)
+        if you don't like the default, use this; also, if there is
+        no compatible $(INSTALLCMD), try giving options for another
+        `install' in this
 
-	LDFLAGS=
-		Extra arguments for your link editor; e.g. if your
-		wxWidgets shared objects are somewhere needing a
-		runtime path in the program binary
+    LDFLAGS=
+        Extra arguments for your link editor; e.g. if your
+        wxWidgets shared objects are somewhere needing a
+        runtime path in the program binary
 
-	CXX= (default `$(CF) --cxx`)
-		use for a C++ compiler other that named by the wx-config
-		script, being sure it is compatible; e.g. CXX=clang++
-		or CXX=my-better-but-compatible-mingw or CXX=CC (SunStudio)
+    CXX= (default `$(CF) --cxx`)
+        use for a C++ compiler other that named by the wx-config
+        script, being sure it is compatible; e.g. CXX=clang++
+        or CXX=my-better-but-compatible-mingw or CXX=CC (SunStudio)
 
-	CXXFLAGS=
-		compilation options, usually optimizations, beyond those
-		named by the wx-config script
+    CXXFLAGS=
+        compilation options, usually optimizations, beyond those
+        named by the wx-config script
 

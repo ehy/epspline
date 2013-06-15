@@ -216,6 +216,10 @@ OpenIndiana:
 
     Note the addition of the CF macro to select a wx-config, and
     if needed, LDFLAGS to add a runpath to the wx shared libraries.
+    
+    If CC should not phone home, it is said that these might help:
+        export UT_NO_USAGE_TRACKING=1
+        export SUNW_NO_UPDATE_NOTIFY=1
 
 OpenSolaris:
     This is based on an OpenSolaris system on which uname -a says

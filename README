@@ -22,7 +22,7 @@ STATUS
 
 	Above, epspline was called ``simple'' which is a way of saying
 	that there is much more that it could do to be helpful, but
-	it should still much easier than hand editing prisms and lathes.
+	it should still be much easier than hand editing prisms and lathes.
 	Online help documentation is included. The author is not a doc-
 	umentation writer, but hopefully the help will provide the
 	necessary usage information.

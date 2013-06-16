@@ -167,9 +167,7 @@ OpenIndiana:
     Epspline has been built and tested with two binary wxWidgets
     packages: with library/graphics/wxwidgets of the `pkg' utility,
     and with the package from the OpenCSW open source package
-    system (http://www.opencsw.org/). The former has one notable
-    bug -- that in the html help viewer the character spacing is
-    wrong. The latter seems to work well. Both wxWidgets packages
+    system (http://www.opencsw.org/). Both wxWidgets packages
     are built with Sun CC, and both of their wx-config scripts
     will produce compiler options that g++ does not like; so, if
     you wish to build with GCC against one of these packages, you
@@ -179,23 +177,23 @@ OpenIndiana:
     CXX=`wx-config --cxx` might not work and CXX=CC should be given
     on the make commandline (of course, CXX may be given a full path).
     
-    As mentioned elswhere, the Makefiles use POSIX command invocations
+    As mentioned elsewhere, the Makefiles use POSIX command invocations
     when possible. OpenIndiana (and OpenSolaris, and presumably the
-    closed commercial variant) has versions of commands under several
+    closed commercial version) has versions of commands under several
     directories, and some are POSIXish and some are not. For example,
     /usr/bin/grep does not accept -F, while /usr/{xpg4,gnu}/bin/grep
     do. Interestingly, /usr/bin/make works fine, handling the .POSIX
-    special target as expected. In any case, as users of this system
+    special target as it should. In any case, as users of this system
     probably know already, PATH should be set up as needed; in this
     case, ensuring POSIXish commands are found first. The author
     has /usr/xpg4/bin before /usr/gnu/bin which is before /usr/bin
-    (and also /opt/csw/bin before them all).
+    (nothing from */sbin is used).
     
     Sun Studio tools have a locale bug that causes complaints like
     ``"/tmp/ube.03192.6.s", line 6508 : Illegal character: <2f>''
     on the author's system (oddly, not OpenSolaris, just OpenIndiana),
-    which has LANG=en_US.UTF-8. Invoking ``LANG=C make'' lets
-    compilation succeed.
+    which has LANG=en_US.UTF-8. Setting LANG=C make lets compilation
+    succeed.
     
     The native ``install'' command does not like the BSDish arguments
     used in the Makefile, but OpenIndiana, and OpenSolaris, have a
@@ -217,7 +215,7 @@ OpenIndiana:
     Note the addition of the CF macro to select a wx-config, and
     if needed, LDFLAGS to add a runpath to the wx shared libraries.
     
-    If CC should not phone home, it is said that these might help:
+    BTW, if CC should not send reports home, these might help:
         export UT_NO_USAGE_TRACKING=1
         export SUNW_NO_UPDATE_NOTIFY=1
 
@@ -246,9 +244,17 @@ OpenSolaris:
         CXXFLAGS="-fast -xO3 -include vector -include algorithm" \
         && sudo make INSTALLCMD=ginstall install
 
-Command to build on OpenSolaris 0609 local-built wxWidgets, with GCC g++ (e.g. /usr/sfw/bin/c++):
+    To build with GCC, assuming a wxWidgets built with GCC and
+    installed under /usr/local, and to install epspline under
+    /opt/povstuff, this should work:
+    
+        % make CXXFLAGS="-O3" PREFIX=/opt/povstuff \
+        CF=/usr/local/bin/wx-config \
+        LDFLAGS="-Wl,-rpath=/usr/local/lib" \
+        && sudo make INSTALLCMD=ginstall PREFIX=/opt/povstuff install
 
-/usr/bin/make CF=/usr/local/bin/wx-config LDFLAGS="-Wl,-rpath=/usr/local/lib" >&/dev/stdout >&../t-log
+    Note that PREFIX= is on both make commands. It is needed in the
+    program binary, and obviously in the install command.
 
 Makefile Targets and Macros:
     
@@ -313,7 +319,9 @@ Makefile Targets and Macros:
     PREFIX= (default /usr/local)
         directory under which install is done (there are also
         {BIN,DATA,HELPDATA,L10N}PREFIX macros with defaults
-        based on ${PREFIX}; see Makefile)
+        based on ${PREFIX}; see Makefile) -- this macro (and
+        similar) must be given on the build invocation of make
+        as well as the install invocation
 
     INSTALLCMD= (default `install')
         BSD or GNU compatible install command, if `install' is not

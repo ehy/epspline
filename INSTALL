@@ -24,7 +24,7 @@ Dependencies:
     
     Epspline is prepared to use message translations in the format
     supported by wxWidgets, but there are, as of initial release,
-    no `real' translations. A file po/en_US/epspline.po is included
+    no `real' translations. A file po/en_US/epspline.mo is included
     with the source archive. This is not a language (or even dialect)
     translation, but merely provides a few typographical characters
     such quotation marks, and the e-acute for `bezier', as the strings
@@ -75,9 +75,9 @@ MSWindows:
           is probably not in (or first in) $PATH, it's path must
           be assigned to the CF macro on the commandline.
         
-        * it might important to use the same optimization option
-          building the application that was used building the
-          library (possibly not in all possible cases). The
+        * it might be important to use the same compiler options
+          building the application that were used building the
+          wx library (possibly not in all possible cases). The
           original author has built wxWidgets with -Os -static
           and found that using -O3 -static for epspline produced
           many dire warnings. (-Os is fine for epspline.)

@@ -60,59 +60,6 @@
 #define APP_ICON_NAME "epspline"
 #endif
 
-// whether the xpm icons should be included
-#if     USE_APPDIST_ICONS
-#undef  INCLUDE_APPDIST_ICONS
-#define INCLUDE_APPDIST_ICONS 1
-#else
-#define INCLUDE_APPDIST_ICONS 0
-#endif
-
-#if  INCLUDE_APPDIST_ICONS
-#if defined(__WXMSW__) && defined(USE_OLD_MSW_ICONS)
-#include "art/ms/delete.xpm"
-#define	exit_xpm delete_xpm
-#include "art/ms/copy.xpm"
-#include "art/ms/cut.xpm"
-#include "art/ms/help.xpm"
-#include "art/ms/new.xpm"
-#include "art/ms/open.xpm"
-#include "art/ms/paste.xpm"
-#include "art/ms/find_dc2.xpm"
-#define	zoom_xpm find_dc2_xpm
-#include "art/ms/save.xpm"
-#include "art/ms/undo.xpm"
-#include "art/ms/redo.xpm"
-#include "art/ms/binoc.xpm"
-#define	demo_xpm binoc_xpm
-#else
-#include "art/dj/Exit.xpm"
-#define	exit_xpm Exit_xpm
-#include "art/dj/Copy.xpm"
-#define	copy_xpm Copy_xpm
-#include "art/dj/Cut.xpm"
-#define	cut_xpm Cut_xpm
-#include "art/Question.xpm"
-#define	help_xpm Question_xpm
-#include "art/dj/New.xpm"
-#define	new_xpm New_xpm
-#include "art/dj/Open.xpm"
-#define	open_xpm Open_xpm
-#include "art/dj/Paste.xpm"
-#define	paste_xpm Paste_xpm
-#include "art/dj/Magnify.xpm"
-#define	zoom_xpm Magnify_xpm
-#include "art/dj/Save.xpm"
-#define	save_xpm Save_xpm
-#include "art/dj/Undo.xpm"
-#define	undo_xpm Undo_xpm
-#include "art/dj/Redo.xpm"
-#define	redo_xpm Redo_xpm
-#include "art/dj/Binocular.xpm"
-#define	demo_xpm Binocular_xpm
-#endif
-#endif  // #if  INCLUDE_APPDIST_ICONS
-
 // A_Frame
 //
 
@@ -291,81 +238,12 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	tb->SetToolPacking(2);
 	tb->SetToolSeparation(5);
 
-#if INCLUDE_APPDIST_ICONS && \
-		(! defined(__WXGTK20__) || defined(USE_APPDIST_ICONS))
-	wxBitmap* bm;
-	bm = new wxBitmap(exit_xpm);
-	tb->AddTool(Xit_Quit, _("Exit"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Exit"), _("Quit this program"));
-	delete bm;
-	tb->AddSeparator();
-	bm = new wxBitmap(new_xpm);
-	tb->AddTool(NewTab, _("New Tab"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("New Tab"), _("Open a new tab"));
-	delete bm;
-	bm = new wxBitmap(open_xpm);
-	tb->AddTool(NewTabOpenCurves, _("Open Curves"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Open Curves"), _("Load curves from file in a new tab"));
-	delete bm;
-	bm = new wxBitmap(save_xpm);
-	tb->AddTool(SaveCurves, _("Save Curves"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Save Curves"), _("Save curves to file"));
-	delete bm;
-	tb->AddSeparator();
-	bm = new wxBitmap(paste_xpm);
-	tb->AddTool(EdPaste, _("Paste Curve"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Paste Curve"), _("Put copied curve"));
-	delete bm;
-	bm = new wxBitmap(copy_xpm);
-	tb->AddTool(EdCopy, _("Copy Curve"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Copy Curve"), _("Copy selected curve"));
-	delete bm;
-	bm = new wxBitmap(cut_xpm);
-	tb->AddTool(EdCut, _("Cut Curve"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Cut Curve"), _("Cut selected curve"));
-	delete bm;
-	tb->AddSeparator();
-	bm = new wxBitmap(undo_xpm);
-	tb->AddTool(EdUndo, _("Undo Change"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Undo Change"), _("Undo last change"));
-	delete bm;
-	bm = new wxBitmap(redo_xpm);
-	tb->AddTool(EdRedo, _("Redo Change"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Redo Change"), _("Redo undone change"));
-	delete bm;
-	tb->AddSeparator();
-	bm = new wxBitmap(zoom_xpm);
-	//tb->AddTool(SetUserScale, _("Set Scale"), *bm, wxNullBitmap, wxITEM_NORMAL
-	//	, _("Set Scale"), _("Set Scale of View"));
-	tb->AddTool(CycleUserScale, _("Cycle Scale")
-		, *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Cycle Scale"),
-		_("Cycle through normal, large, and small scale of view"));
-	delete bm;
-	bm = new wxBitmap(demo_xpm);
-	tb->AddTool(HelpDemo, _("Demo Curves")
-		, *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Demo Curves")
-		, _("Run Povray on a test file with the current curves"));
-	delete bm;
-	#if 0
-	bm = new wxBitmap(print_xpm);
-	tb->AddTool(FilePrint, _("Print"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Print"), _("Print Objects"));
-	delete bm;
-	#endif
-	tb->AddSeparator();
-	bm = new wxBitmap(help_xpm);
-	tb->AddTool(HelpHelp, _("Help"), *bm, wxNullBitmap, wxITEM_NORMAL
-		, _("Help"), _("Application help"));
-	delete bm;
-#else  // ..._APPDIST_ICONS
-#	undef  MENU2TOOLBAR
 	// wx bug (2.8): all of wxMenuItem::Get{Name,Text,Label{.Text}}
 	// are returning an empty string (GetHelp() is working); the
 	// GetLabel{,Text} functions work when used above (but that
 	// was before the item was added to wxMenu) -- so, default
 	// text is needed
+#	undef  MENU2TOOLBAR
 #	define MENU2TOOLBAR(mn, tb, id, art, txdef) do { \
 		wxMenuItem* mi = (mn)->FindItem(id); \
 		wxString tx = mi->GetItemLabelText(); \
@@ -394,7 +272,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	MENU2TOOLBAR(MenuOpts, tb, CycleUserScale, wxART_GO_TO_PARENT, _("Cycle Scale"));
 	MENU2TOOLBAR(menuHelp, tb, HelpDemo, wxART_TICK_MARK, _("Preview"));
 	MENU2TOOLBAR(menuHelp, tb, HelpHelp, wxART_HELP, _("Show application help table of contents"));
-#endif // ..._APPDIST_ICONS
+#	undef  MENU2TOOLBAR
 
 	tb->Realize();
 

@@ -31,19 +31,8 @@
 #include "wx/encconv.h"
 #endif
 
-#if USE_APPDIST_ICONS
-#	ifndef USE_DJ_ICONS
-#		if !defined(__WXMSW__) || !defined(USE_OLD_MSW_ICONS)
-#			define USE_DJ_ICONS 1
-#		endif
-#	endif
-#endif
-
 #include "GPL.inc"
 #include "FDL.inc"
-#if USE_DJ_ICONS
-#include "SFIL.inc"
-#endif
 #include "PERM.inc"
 
 static const wxChar tM[] =
@@ -111,15 +100,6 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szrMain->Add(pbok, 0, wxALIGN_CENTER, 0);
 	szrMain->Add(20, 20);
 	text += copyright;
-#if USE_DJ_ICONS
-	static const wxChar djcopyright[] = wxT("\n\n")
-		wxT("Toolbar icons (except question mark) are:\n")
-		wxT("Copyright (C) 1998 by Dean S. Jones\n")
-		wxT("dean@gallant.com www.gallant.com/icons.htm\n")
-		wxT("[See 'http://sourceforge.net/projects/icon-collection/'.]")
-		;
-	text += djcopyright;
-#endif
 	static const wxChar trademarks[] = wxT("\n\n")
 		wxT("As stated in the POV-Ray 3.6 for UNIX documentation:\n")
 		wxT("\"The terms 'POV-Ray', 'Persistence of Vision Ray Tracer',\n")
@@ -164,18 +144,6 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr->Add(ptxtc, 1, wxGROW, 1);
 	page->SetSizer(szr);
 	book->AddPage(page, _("Documentation License"), false);
-
-#if USE_DJ_ICONS
-	text = ch2wxs(SFIL__);
-	page = new wxPanel(book);
-	ptxtc = new wxTextCtrl(page, -1, text, wxDefaultPosition
-		, sz, wxTE_LEFT|wxHSCROLL|wxTE_READONLY|wxTE_MULTILINE);
-	ptxtc->SetStyle(0, text.Length(), tatt);
-	szr = new wxBoxSizer(wxHORIZONTAL);
-	szr->Add(ptxtc, 1, wxGROW, 1);
-	page->SetSizer(szr);
-	book->AddPage(page, _("Toolbar Icons License"), false);
-#endif
 
 	text = ch2wxs(PERM__);
 	page = new wxPanel(book);

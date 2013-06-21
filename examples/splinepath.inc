@@ -6,11 +6,11 @@
 #declare INCLUDED_splinepath_inc = 1;
 
 #declare Path_1_width = 377.000000;
-#declare Path_1_height = 344.543046;
-#declare Path_1_left = 308.000000;
-#declare Path_1_right = 685.000000;
-#declare Path_1_top = 32.000000;
-#declare Path_1_bottom = 376.543046;
+#declare Path_1_height = 408.000000;
+#declare Path_1_left = 303.000000;
+#declare Path_1_right = 680.000000;
+#declare Path_1_top = 38.000000;
+#declare Path_1_bottom = 446.000000;
 #declare Path_1_max_extent = max(Path_1_width, Path_1_height);
 
 /*
@@ -23,25 +23,25 @@
 #declare Path_1_SWEEP_MAX = 1.000000;
 #declare Path_1 =
 array[Path_1_ARRAY_COUNT] {
-  <493.598879, 32.000000>,
-  <539.999818, 85.479183>,
-  <626.999455, 61.885291>,
-  <598.000363, 156.285239>,
-  <685.000000, 203.472717>,
-  <598.000363, 250.684882>,
-  <626.999455, 345.084829>,
-  <539.999818, 321.490938>,
-  <493.114521, 376.543046>,
-  <453.000182, 321.490938>,
-  <366.000583, 345.084829>,
-  <394.999599, 250.684882>,
-  <308.000000, 203.472717>,
-  <394.999599, 156.285239>,
-  <366.000583, 61.885291>,
-  <453.000182, 85.479183>,
-  <493.598879, 32.000000>,
-  <539.999818, 85.479183>,
-  <626.999455, 61.885291>
+  <489.000000, 37.000000>,
+  <534.999818, 125.479183>,
+  <621.999455, 101.885291>,
+  <593.000363, 196.285239>,
+  <680.000000, 243.472717>,
+  <593.000363, 290.684882>,
+  <621.999455, 385.084829>,
+  <534.999818, 361.490938>,
+  <490.000000, 446.000000>,
+  <448.000182, 361.490938>,
+  <361.000583, 385.084829>,
+  <389.999599, 290.684882>,
+  <303.000000, 243.472717>,
+  <389.999599, 196.285239>,
+  <361.000583, 101.885291>,
+  <448.000182, 125.479183>,
+  <489.000000, 38.000000>,
+  <534.999818, 125.479183>,
+  <621.999455, 101.885291>
 }
 
 #declare Handle_width = 132.705067;
@@ -152,12 +152,12 @@ lathe { bezier_spline
 #end
 }
 
-#declare I_splinepath_inc_width = 870.000000;
-#declare I_splinepath_inc_height = 357.265625;
+#declare I_splinepath_inc_width = 865.000000;
+#declare I_splinepath_inc_height = 408.000000;
 #declare I_splinepath_inc_left = -185.000000;
-#declare I_splinepath_inc_right = 685.000000;
-#declare I_splinepath_inc_top = 32.000000;
-#declare I_splinepath_inc_bottom = 389.265625;
+#declare I_splinepath_inc_right = 680.000000;
+#declare I_splinepath_inc_top = 38.000000;
+#declare I_splinepath_inc_bottom = 446.000000;
 
 #end // #ifdef ( INCLUDED_splinepath_inc )
 

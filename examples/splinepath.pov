@@ -3,7 +3,7 @@
 	Sample derived from the simpler sample ``cup.pse.''
 	-
 	Since epspline will export a spline to a POV-Ray
-	array if the type of the spline is set to
+	array definition  if the type of the spline is set to
 	`undefined,' the point-data can be used in other
 	ways.  This sample uses the data to make a
 	``spline'' (distinct from prism or lathe), which
@@ -31,6 +31,13 @@ camera {
 #declare CupTexture = texture { pigment { color LightBlue } }
 #declare BoxTexture = texture { pigment { color DarkGreen } }
 
+// In splinepath.pse, from which splinepath.inc was exported,
+// a cubic spline was set as an `undefined' type in the
+// properties dialog (rather than prism or lathe) and so
+// epspline exported the points data as an array; the name
+// given (in the properties dialog) was ``Path_1''.
+// This sample was based on the cup sample, and so the cup
+// and handle are present too.
 #include "splinepath.inc"
 
 #declare CoffeeCupRaw = union {
@@ -51,7 +58,7 @@ camera {
 // The array cannot be subjected to `scale,' `translate,'
 // etc. wholesale, so use a macro to transform each point.
 #declare Path_scale = 27;
-#macro mk_spl_vec2 ( vec )
+#macro mk_spline_point ( vec )
 	#local iu = vec.u + (-Path_1_left - Path_1_width / 2);
 	#local iv = vec.v + (-Path_1_top - Path_1_height / 2);
 	< iu * Path_scale / Path_1_max_extent, -iv * Path_scale / Path_1_max_extent >
@@ -63,60 +70,35 @@ spline {
 	cubic_spline
 	#local ix = 0;
 	#while ( ix < Path_1_ARRAY_COUNT )
-		ix , mk_spl_vec2(Path_1[ix])
+		ix , mk_spline_point(Path_1[ix])
 		#local ix = ix + 1;
 	#end
 }
 
-// Simple distance macro
-#macro ds(v1, v2)
+// two u,v vectors, taken as endpoints of segment:
+// get length
+#macro seg_length ( v1, v2 )
 	#local iu = v2.u - v1.u;
 	#local iv = v2.v - v1.v;
-	sqrt(iu * iu + iv * iv);
-	//vlength(v2 - v1)
+	#local len = sqrt(iu * iu + iv * iv);
+	len
 #end
 
-// Joke's on me: I failed to notice that POV-Ray
-// provides atan2(o, a) and made this macro
-// unnecessarily (oddly, pov docs do not mention
-// atan(one_arg) and suggest using atan2 to get the
-// same result; but atan() is present -- anyway,
-// this macro is left in place, for optional use
-// . . . because it is slower?)
-#macro m_atan2 ( o, a )
-	// take angle as if segment is in 1st quadrant
-	#local tt = 0;
-	#if ( a != 0 )
-		#local tt = atan(abs(o / a));
-	#end
-	// test signs of a,o to find the segment's
-	// quadrant, and find real angle using q1 angle
-	// see POV-Ray function docs for `select'
-	#local tr = select(a,
-		select(o, tt + pi, pi - tt),
-		select(o, -pi / 2, 0, pi / 2),
-		select(o, pi * 2 - tt, tt)
-	);
-	tr
-#end
-
-// As well as translation along a path, a suitable
-// rotation might look nice
-#macro nang ( ov, nv )
-	// wanted: angle of segment between two u,v vectors
+// two u,v vectors, taken as endpoints of segment:
+// get angle
+#macro seg_angle ( ov, nv )
 	#local tu = nv.u - ov.u;
 	#local tv = nv.v - ov.v;
-	#if ( 0 )
-	#local tr = atan2(tv, tu);
-	#else
-	#local tr = m_atan2(tv, tu);
-	#end // if ( 1 )
-	// radians -> degrees
-	#local ta = tr * 180 / pi;
+	#local ang = atan2(tv, tu);
+	// radians -> degrees for the `rotate' transform
+	#local ang = degrees(ang);
 	// result
-	ta
+	ang
 #end
 
+// use spline object generated above to place objects;
+// also, use two consecutive points to find a rotation
+// for the cups
 #declare r_ang = -90;
 #declare bcup = 0.75;
 #declare ecup = Path_1_ARRAY_COUNT - 1.0;
@@ -128,11 +110,11 @@ spline {
 #while ( ix <= ecup )
 	#local t_vec = SplinePath_1(ix);
 	// Samples from spline may not be evenly spaced,
-	// so excess samples are taken and an object and
-	// cups only place at desired distance
-	#local tds = ds(t_vec, lvec);
+	// so excess samples are taken and an object is
+	// only placed at desired distance
+	#local tds = seg_length(t_vec, lvec);
 	#if ( tds >= spc )
-		#local rot = r_ang - nang(lvec, t_vec);
+		#local rot = r_ang - seg_angle(lvec, t_vec);
 		#local iu = t_vec.u;
 		#local iv = t_vec.v;
 		object {
@@ -145,7 +127,7 @@ spline {
 	#declare ix = ix + incr;
 #end
 
-// From original cup sample; left fro reference
+// From original cup sample; left for reference
 // somewhere to put the cup down:
 box { <-1, -0.25, -0.75> <1, 0, 0.75>
 	texture { BoxTexture }

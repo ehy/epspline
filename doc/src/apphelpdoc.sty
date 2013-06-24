@@ -130,6 +130,24 @@
 	\def\thisauthor{Ed Hynan}
 	\def\doccpyyear{2013}
 	\def\docreldate{July 1, 2013}
+
+	% https://en.wikibooks.org/wiki/LaTeX/Document_Structure#Book_structure
+	% Introduction can be presented as an unnumbered chapter; but,
+	% tex4ht is not handling this -- sections in the Intro are not
+	% either linked or inline
+	\ifMKhtml
+		\newcommand\putintro[2]{
+			\chapter{#1}
+			\label{#2}
+		}
+	\else
+		\newcommand\putintro[2]{
+			\chapter*{#1}
+			\label{#2}
+			\markboth{\MakeUppercase{#1}}{}
+			\addcontentsline{toc}{chapter}{#1}
+		}
+	\fi
 	
 	% defs for non text items such as images
 	% image note: png when transparency is needed,

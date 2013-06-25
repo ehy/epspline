@@ -241,7 +241,7 @@ mingw_l_y:
 # else fall back to -MM. Setting variable DEPSOPT is the best bet.
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
-depend dep :
+depend:
 	@$(RM) depend
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \
@@ -249,6 +249,15 @@ depend dep :
 		test X"$$CC" = XCC && MM="-xM1" || MM="-MM"; } ; \
 	$(CXXDEPS) $(CCFLAGS) $$MM $(SRCS) | \
 	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > depend
+
+dep: depend
+	mv depend dep
+	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < dep | \
+	sed -e 's;^\$$;\?\?&;' \
+	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' | tr '?' '\n' \
+	> depend
+	$(RM) dep
+
 
 # No capable tools on MSW to make dependency file.  Use Unix tools.
 # Actually, GNU tools, grep and sed are used below; word-edge-anchors
@@ -339,10 +348,10 @@ cleangenerated: clean
 	$(POV_WORDS_CPP) $(MESSAGES_POT)
 
 cleanall: clean cleandepends
-	-$(RM) $(SRCDIR)/lex.yy.c $(SRCDIR)/y.tab.c \
-	tags TAGS ID
+	-$(RM) $(SRCDIR)/lex.yy.c $(SRCDIR)/y.tab.c tags TAGS ID
 
-distclean: cleanall
+distclean: clean
+	-$(RM) $(SRCDIR)/lex.yy.c $(SRCDIR)/y.tab.c tags TAGS ID
 	:> $(UNINST_LIST)
 
 

@@ -2,8 +2,12 @@
 
 $(OBJDIR)\epspline.obj: epspline.cpp stdcc.h \
   epspline.h cfg.h \
-  cdata.h a_frame.h a_canvas.h splines.h util.h spline_props.h \
-  wxutil.h a_tabwnd.h a_ruler.h a_tabpage.h epspline_helpids.h clocall.h
+  cdata.h a_frame.h \
+  a_canvas.h splines.h util.h \
+  spline_props.h \
+  wxutil.h a_tabwnd.h \
+  a_ruler.h a_tabpage.h \
+  epspline_helpids.h clocall.h
 
 
 $(OBJDIR)\io.obj: io.cpp \
@@ -17,8 +21,10 @@ $(OBJDIR)\a_canvas.obj: a_canvas.cpp \
   clocnumeric.h clocall.h epspline.h \
   cfg.h stdcc.h \
   cdata.h a_canvas.h splines.h util.h spline_props.h \
-  wxutil.h a_frame.h a_tabwnd.h a_ruler.h a_tabpage.h epspline_helpids.h \
-  a_zoomdlg.h a_spintextdlg.h \
+  wxutil.h a_frame.h \
+  a_tabwnd.h \
+  a_ruler.h a_tabpage.h \
+  epspline_helpids.h a_zoomdlg.h a_spintextdlg.h \
   swap_vals.h drawlines.h
 
 
@@ -41,10 +47,12 @@ $(OBJDIR)\util.obj: util.cpp \
 
 
 $(OBJDIR)\a_frame.obj: a_frame.cpp \
-  a_frame.h epspline.h cfg.h stdcc.h \
+  a_frame.h \
+  epspline.h cfg.h stdcc.h \
   cdata.h a_canvas.h splines.h util.h spline_props.h \
-  wxutil.h a_tabwnd.h a_ruler.h a_tabpage.h epspline_helpids.h \
-  a_aboutbox.h ..\art\epspline.xpm ..\art\dj\Exit.xpm ..\art\dj\Copy.xpm \
+  wxutil.h a_tabwnd.h \
+  a_ruler.h a_tabpage.h \
+  epspline_helpids.h a_aboutbox.h ..\art\epspline.xpm
 
 
 $(OBJDIR)\a_ruler.obj: a_ruler.cpp \
@@ -64,7 +72,8 @@ $(OBJDIR)\a_tabwnd.obj: a_tabwnd.cpp \
   a_ruler.h a_canvas.h cfg.h \
   stdcc.h \
   splines.h util.h spline_props.h \
-  wxutil.h a_frame.h epspline.h \
+  wxutil.h a_frame.h \
+  epspline.h \
   cdata.h a_tabpage.h epspline_helpids.h
 
 
@@ -90,8 +99,7 @@ $(OBJDIR)\a_textctldlg.obj: a_textctldlg.cpp \
 
 
 $(OBJDIR)\a_aboutbox.obj: a_aboutbox.cpp \
-  GPL.inc FDL.inc SFIL.inc PERM.inc \
-  a_aboutbox.h \
+  GPL.inc FDL.inc PERM.inc a_aboutbox.h \
   cfg.h stdcc.h \
   epspline.h \
   cdata.h wxutil.h splines.h util.h spline_props.h \

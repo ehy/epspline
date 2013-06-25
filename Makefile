@@ -144,7 +144,7 @@ mingw exe msw epspline.exe: depend
 # for CC and uname==SunOS.
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
-src/depend :
+src/depend:
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXXDEPS="$(CXXDEPS)" DEPSOPT="$(DEPSOPT)" \
@@ -154,7 +154,20 @@ src/depend :
 	done
 	@echo "Succeeded making" $@
 
-depend dep : src/depend
+src/dep:
+	@for d in $(DIRS) ; do \
+		(cd $$d ; $(MAKE) -f $(MKFILE) \
+		CXXDEPS="$(CXXDEPS)" DEPSOPT="$(DEPSOPT)" \
+		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
+		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" dep ) ; \
+	done
+	@echo "Succeeded making" $@
+
+depend: src/depend
+	@echo "Succeeded making" $@
+
+dep: src/dep
 	@echo "Succeeded making" $@
 
 Release: all
@@ -350,7 +363,7 @@ distclean: distclean_po distclean_examples distclean_doc
 # Also will make zip file (in addition to tar.gz, not instead) if
 # "$(MKZIP)" is not empty.
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
-	examples-working
+	examples-working src-tmp
 dist archive distarchive: distclean
 	mkdir ../EXCL_TEMPD
 	for f in $(EXCLFILES) ; do \

@@ -25,19 +25,19 @@
 
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+    #include <wx/wx.h>
 
-#include "wx/process.h"
+#include <wx/process.h>
 #include <wx/filename.h>
 #ifdef __WXMSW__
-#include "wx/mimetype.h"
+#include <wx/mimetype.h>
 #endif
 #endif // WX_PRECOMP
 

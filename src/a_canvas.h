@@ -24,10 +24,10 @@
 #ifndef _A_CANVAS_H_
 #define _A_CANVAS_H_
 
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
-#include "wx/bitmap.h"
+#include <wx/wx.h>
+#include <wx/bitmap.h>
 #endif // WX_PRECOMP
 
 #include "cfg.h"

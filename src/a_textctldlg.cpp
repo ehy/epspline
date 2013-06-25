@@ -24,7 +24,7 @@
 // and the usual OK and Cancel buttons.
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -33,15 +33,15 @@
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWindows headers
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+    #include <wx/wx.h>
 #endif
 
 #ifdef __GNUG__
     #pragma implementation
 #endif
-#include "wx/spinbutt.h"
-#include "wx/textctrl.h"
-#include "wx/spinctrl.h"
+#include <wx/spinbutt.h>
+#include <wx/textctrl.h>
+#include <wx/spinctrl.h>
 #include "a_textctldlg.h"
 
 // A_Textctldialog

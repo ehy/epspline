@@ -22,7 +22,7 @@
 // A Frame for GUI application.
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -31,16 +31,16 @@
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWindows headers
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+    #include <wx/wx.h>
 #endif
 
-#include "wx/colordlg.h"
-#include "wx/toolbar.h"
+#include <wx/colordlg.h>
+#include <wx/toolbar.h>
 #if wxCHECK_VERSION(2, 4, 0)
-#include "wx/filename.h"
+#include <wx/filename.h>
 #endif
-#include "wx/artprov.h"
-#include "wx/utils.h"
+#include <wx/artprov.h>
+#include <wx/utils.h>
 
 #ifdef __GNUG__
     #pragma implementation

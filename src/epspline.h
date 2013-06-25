@@ -29,11 +29,11 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include "wx/intl.h"
-#include "wx/log.h"
-#include "wx/config.h"
-#include "wx/filename.h"
-#include "wx/html/helpctrl.h"
+#include <wx/intl.h>
+#include <wx/log.h>
+#include <wx/config.h>
+#include <wx/filename.h>
+#include <wx/html/helpctrl.h>
 #endif // WX_PRECOMP
 
 // common data, e.g. version

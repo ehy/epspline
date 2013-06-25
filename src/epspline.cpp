@@ -35,7 +35,7 @@
 #include "stdcc.h"
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -45,13 +45,13 @@
 // (this file is usually all you
 // need because it includes almost all "standard" wxWindows headers
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
-#include "wx/utils.h"
-#include "wx/filesys.h"
-#include "wx/fs_zip.h"
-#include "wx/stdpaths.h"
+#include <wx/wx.h>
+#include <wx/utils.h>
+#include <wx/filesys.h>
+#include <wx/fs_zip.h>
+#include <wx/stdpaths.h>
 #if wxCHECK_VERSION(2, 4, 0)
-#include "wx/filename.h"
+#include <wx/filename.h>
 #endif
 #endif // WX_PRECOMP
 

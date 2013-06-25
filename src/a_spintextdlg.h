@@ -26,9 +26,9 @@
 #ifndef _A_SPINTEXTDLG_H_
 #define _A_SPINTEXTDLG_H_
 
-#include "wx/wx.h"
-#include "wx/dialog.h"
-#include "wx/spinctrl.h"
+#include <wx/wx.h>
+#include <wx/dialog.h>
+#include <wx/spinctrl.h>
 
 #include "cfg.h"
 #include "stdcc.h"

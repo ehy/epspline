@@ -24,8 +24,8 @@
 #ifndef _A_RULER_H_
 #define _A_RULER_H_
 
-#include "wx/wx.h"
-#include "wx/window.h"
+#include <wx/wx.h>
+#include <wx/window.h>
 
 #ifdef __GNUG__
     #pragma interface

@@ -24,9 +24,9 @@
 #ifndef _A_TABPAGE_H_
 #define _A_TABPAGE_H_
 
-#include "wx/wx.h"
-#include "wx/panel.h"
-#include "wx/notebook.h"
+#include <wx/wx.h>
+#include <wx/panel.h>
+#include <wx/notebook.h>
 #include "a_ruler.h"
 #include "a_canvas.h"
 

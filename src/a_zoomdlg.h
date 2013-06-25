@@ -29,8 +29,8 @@
 #endif
 
 #include "a_spintextdlg.h"
-#include "wx/window.h"
-#include "wx/string.h"
+#include <wx/window.h>
+#include <wx/string.h>
 
 
 // Main frame

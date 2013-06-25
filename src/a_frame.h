@@ -24,11 +24,11 @@
 #ifndef _A_FRAME_H_
 #define _A_FRAME_H_
 
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
-#include "wx/frame.h"
-#include "wx/dnd.h"
+#include <wx/wx.h>
+#include <wx/frame.h>
+#include <wx/dnd.h>
 #endif // WX_PRECOMP
 
 #include "epspline.h"

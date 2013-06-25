@@ -26,9 +26,9 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
-#include "wx/dialog.h"
-#include "wx/notebook.h"
+#include <wx/wx.h>
+#include <wx/dialog.h>
+#include <wx/notebook.h>
 #endif // WX_PRECOMP
 
 #include "cfg.h"

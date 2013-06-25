@@ -24,7 +24,7 @@
 #ifndef _A_TABWND_H_
 #define _A_TABWND_H_
 
-#include "wx/wx.h"
+#include <wx/wx.h>
 
 // no aui in wx 2.6
 #if wxCHECK_VERSION(2, 8, 0)
@@ -34,7 +34,7 @@
 #endif
 
 #if USE_AUI_NOTEBOOK
-#	include "wx/aui/auibook.h"
+#	include <wx/aui/auibook.h>
 	typedef	wxAuiNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxAuiNotebookEvent
 #	define	TABWND_PAGE_T	wxWindow
@@ -45,7 +45,7 @@
 #		endif
 	const int wxAuiBaseTabCtrlId = 5380;
 #else
-#	include "wx/notebook.h"
+#	include <wx/notebook.h>
 	typedef	wxNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxNotebookEvent
 #	define	TABWND_PAGE_T	wxNotebookPage

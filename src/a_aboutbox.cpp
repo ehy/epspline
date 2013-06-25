@@ -27,8 +27,8 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
-#include "wx/encconv.h"
+#include <wx/wx.h>
+#include <wx/encconv.h>
 #endif
 
 #include "GPL.inc"

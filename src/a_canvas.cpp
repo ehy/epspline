@@ -29,20 +29,20 @@
 */
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #if wxCHECK_VERSION(2, 4, 0)
 #include <wx/filename.h>
 #endif
 #include <wx/dcbuffer.h>
-#include "wx/bitmap.h"
-#include "wx/rawbmp.h"
+#include <wx/bitmap.h>
+#include <wx/rawbmp.h>
 #endif // WX_PRECOMP
 
 #ifdef __GNUG__

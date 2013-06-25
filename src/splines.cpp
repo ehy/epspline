@@ -1321,8 +1321,22 @@ LinearSpline::CalcCurveCache()
 		}
 		UpdateBbox(p1);
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = 0.0;
@@ -1553,8 +1567,22 @@ QuadraticSpline::AddPoint(const SplinePoint& point)
 			close = true;
 		}
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = 0.0;
@@ -1658,8 +1686,22 @@ QuadraticSpline::CalcCurveCache()
 		}
 		UpdateBbox(p2);
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = 0.0;
@@ -1892,8 +1934,22 @@ CubicSpline::AddPoint(const SplinePoint& point)
 		// Get last (current) in set of points.
 		p3= *it;
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = -0.5 * double(p.x) + 1.5 * double(p1.x)
@@ -2006,8 +2062,22 @@ CubicSpline::CalcCurveCache()
 		p3 = *it++;
 		UpdateBbox(p3);
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = -0.5 * double(p.x) + 1.5 * double(p1.x)
@@ -2380,8 +2450,22 @@ BezierSpline::AddPoint(const SplinePoint& point)
 			close = true;
 		}
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = double(p3.x) -
@@ -2517,8 +2601,22 @@ BezierSpline::CalcCurveCache()
 		--l3;
 		last = p3;
 
-		// Generate interpolation coefficients.
-
+		/**
+		 * The following initializations of {A,B,C,D}[U,V]
+		 * are derived from code in prism.c from povray 3.1,
+		 * origionally 24 lines total including the four spline
+		 * types.
+		 * Those lines have been used with permission granted
+		 * in an email exchange with Chris Cason, POV-Team Co-ordinator,
+		 * 07 Apr 2000. In the origional distribution of this source
+		 * the top level directory contains the file 'POV_permission.txt'
+		 * which contains the email request and response.
+		 * 
+		 * *NOTE* that the POV-Ray code may _not_ be (re)used except
+		 * under the terms of the povray license, and the exception
+		 * granted the original author of this code does not imply that
+		 * povray code reuse is ``allowable under normal circumstances.''
+		 **/
 		double A[2], B[2], C[2], D[2];
 		enum { U = 0, V = 1 };
 		A[U] = double(p3.x) -

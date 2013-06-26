@@ -66,6 +66,14 @@
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
+#define IDI_GPL3_Section		480
+#define IDS_GPL3_Section		"GNU General Public License"
+#define IDF_GPL3_Section		"epsplinese7.html"
+
+#define IDI_GPL2_Section		544
+#define IDS_GPL2_Section		"GNU General Public License Version 2"
+#define IDF_GPL2_Section		"epsplinese8.html"
+
 #define IDI_FDL_Section		608
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese9.html"

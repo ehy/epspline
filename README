@@ -1,43 +1,43 @@
 EPSPLINE -- WHAT IS IT?
 
-	Epspline is a simple 2D graphical editor for the ``prism'' and
-	``lathe'' objects of the POV-Ray ray-tracer software. It is
-	not useful beyond POV-Ray projects (but, if you don't use POV-Ray
-	or don't know what it is, see http://www.povray.org/ -- there is
-	a good chance you will find it interesting).
-	
-	Epspline uses the wxWidgets library (http://www.wxwidgets.org/)
-	which provides cross-platform portability. At the time of the
-	first release, epspline should build and work on MSWindows,
-	OpenBSD, NetBSD, FreeBSD, GNU/Linux (Debian and Ubuntu currently
-	tested; others should be no problem), OpenSolaris (0609) and
-	OpenIndiana. Other systems supported by wxWidgets have not been
-	available to the author, and building epspline on those will
-	need work. The GTK version of wxWidgets is used on the Unix
-	systems mentioned above -- long ago the Motif and universal
-	versions of wxWidgets were tried and worked to some extent,
-	but they are probably not working now.
+    Epspline is a simple 2D graphical editor for the ``prism'' and
+    ``lathe'' objects of the POV-Ray ray-tracer software. It is
+    not useful beyond POV-Ray projects (but, if you don't use POV-Ray
+    or don't know what it is, see http://www.povray.org/ -- there is
+    a good chance you will find it interesting).
+    
+    Epspline uses the wxWidgets library (http://www.wxwidgets.org/)
+    which provides cross-platform portability. At the time of the
+    first release, epspline should build and work on MSWindows,
+    OpenBSD, NetBSD, FreeBSD, GNU/Linux (Debian and Ubuntu currently
+    tested; others should be no problem), OpenSolaris (0609) and
+    OpenIndiana. Other systems supported by wxWidgets have not been
+    available to the author, and building epspline on those will
+    need work. The GTK version of wxWidgets is used on the Unix
+    systems mentioned above -- long ago the Motif and universal
+    versions of wxWidgets were tried and worked to some extent,
+    but they are probably not working now.
 
 STATUS
 
-	Above, epspline was called ``simple'' which is a way of saying
-	that there is much more that it could do to be helpful, but
-	it should still be much easier than hand editing prisms and lathes.
-	Online help documentation is included. The author is not a doc-
-	umentation writer, but hopefully the help will provide the
-	necessary usage information.
-	
-	Users might find some bugs, but the author has not found any
-	catastrophic bugs, such as crashing. One problematic build is
-	with the old wxGTK 2.6 on FreeBSD 9.0, from the FreeBSD ports.
-	Another is with wx 2.6 on Ubuntu 12.04 (2.6 on Ubuntu 10.04
-	worked as expected). In any case, the newer wxWidgets versions
-	are be preferable.
-	
-	Epspline should build against wxWidgets versions 2.6, 2.8, and
-	2.9 (and presumably 3.0; 2.9 is a development version toward 3.0).
-	Not all versions have been tried on all platforms.
+    Above, epspline was called ``simple'' which is a way of saying
+    that there is much more that it could do to be helpful, but
+    it should still be much easier than hand editing prisms and lathes.
+    Online help documentation is included. The author is not a doc-
+    umentation writer, but hopefully the help will provide the
+    necessary usage information.
+    
+    Users might find some bugs, but the author has not found any
+    catastrophic bugs, such as crashing. One problematic build is
+    with the old wxGTK 2.6 on FreeBSD 9.0, from the FreeBSD ports.
+    Another is with wx 2.6 on Ubuntu 12.04 (2.6 on Ubuntu 10.04
+    worked as expected). In any case, the newer wxWidgets versions
+    are be preferable.
+    
+    Epspline should build against wxWidgets versions 2.6, 2.8, and
+    2.9 (and presumably 3.0; 2.9 is a development version toward 3.0).
+    Not all versions have been tried on all platforms.
 
 BUILDING, INSTALLING
 
-	See the INSTALL file.
+    See the INSTALL file.

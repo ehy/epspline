@@ -63,9 +63,9 @@
     #pragma implementation
 #endif
 
-#if ! NO_INVOKE_SETLOCALE
+#if INVOKE_STD_SETLOCALE || NO_USE_WXLOCALE
 #include <clocale>
-#endif // ! NO_INVOKE_SETLOCALE
+#endif // ! INVOKE_STD_SETLOCALE
 #include <typeinfo>
 
 #include "epspline.h"
@@ -116,7 +116,9 @@ AnApp::OnInit()
 	// will need to control some C-library functions,
 	// particularly string formatting of numeric data;
 	// otherwise let locale from environment be used
-#	if ! NO_INVOKE_SETLOCALE && NO_USE_WXLOCALE
+	// an instance of wxLocale should do std::setlocale(),
+	// but the the following can be used if needed:
+#	if INVOKE_STD_SETLOCALE || NO_USE_WXLOCALE
 	std::setlocale(LC_ALL, "");
 	// NOTE: the C++ locale object(s) are not used here:
 	// 1st) that would be the business of wxWidgets; and as of
@@ -175,46 +177,74 @@ AnApp::OnInit()
 
 	// possible args: wxLANGUAGE_DEFAULT, wxLOCALE_DONT_LOAD_DEFAULT
 	if ( ! app_locale.Init() ) {
-		wxLogError(wxT("(wx) 1st Locale initialization failed"));
+		// do not complain loudly; it will only be a nuisance
+		#if DEBUG
+		//wxLogError(wxT("(wx) 1st Locale initialization failed"));
 		std::fputs(
 			"epspline: 1st Locale initialization failed\n", stderr);
+		#else  // DEBUG
+		;
+		#endif // DEBUG
 	}
 
 	// Even if Init() above returns false, translations might
 	// still work, so keep at it.
-#	if wxCHECK_VERSION(2, 9, 0)
-	// Sigh. wx 2.9.4 wxTranslations has the bizarre logic in
+#	if wxCHECK_VERSION(2, 9, 1)
+	// Sigh. wx 2.9.? wxTranslations has the bizarre logic in
 	// AddCatalog() that if the app's string language matches
 	// the message cat language, then there is no need to load
-	// the catalog, so the method returns true w/o loading.
+	// the catalog, so the method returns true without loading!
 	// A comment from the wx source in src/common/translation.cpp:
     //    It is OK to not load catalog if the msgid language and m_language match,
     //    in which case we can directly display the texts embedded in program's
     //    source code:
+	//
+	// That is misguided, as source code strings are best constrained
+	// to ASCII, and so the translation mechanism might be used to load
+	// more desirable text even in the same locale as the
+	// source code language (by providing a message catalog, of course).
     //
     // Furthermore, the one-arg AddCatalog() calls the two-arg
-    // override, passing wxLANGUAGE_ENGLISH_US; therefore, messages
-    // for the en_US locale will never be loaded!
-    // Whoever came up with that seems not to realize that app
-    // embedded strings are best kept in 7-bit ASCII, and that even
-    // the world-despised Americans might benefit from characters
-    // beyond ASCII loaded with the i18n system.
+    // form, passing wxLANGUAGE_ENGLISH_US; therefore, messages
+    // for the en_US locale will never be loaded when the one-arg
+	// call is used!
     //
     // So, work around the anti-US code by using the two-arg
-    // AddCatalog() call with something that differs from the domain.
-    wxLanguage wxtrlang = wxLanguage(app_locale.GetLanguage());
-    if ( wxtrlang == wxLANGUAGE_ENGLISH ) {
-		wxtrlang = wxLANGUAGE_ENGLISH_US;
+    // AddCatalog() call to lie to wx that the source strings
+	// are *not* US English, so that it will load the messages
+	// even in the en_US locale.
+    wxLanguage src_lang = wxLanguage(app_locale.GetLanguage());
+    if ( src_lang == wxLANGUAGE_ENGLISH_US ) {
+#		if DEBUG
+		std::fprintf(stderr,"Got lang int %d -- base == %d, UK == %d, US == %d, default == %d, unknown == %d\n"
+		, int(src_lang)
+		, int(wxLANGUAGE_ENGLISH)
+		, int(wxLANGUAGE_ENGLISH_UK)
+		, int(wxLANGUAGE_ENGLISH_US)
+		, int(wxLANGUAGE_DEFAULT)
+		, int(wxLANGUAGE_UNKNOWN)
+		);
+#		endif // DEBUG
+		// wxLANGUAGE_ENGLISH seems to be used as equivalent to
+		// wxLANGUAGE_ENGLISH_UK; although the enum value differs
+		src_lang = wxLANGUAGE_ENGLISH;
 	} else {
-		wxtrlang = wxLANGUAGE_ENGLISH;
+		// if not in the en_US locale, then tell wx the truth
+		src_lang = wxLANGUAGE_ENGLISH_US;
 	}
-	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII), wxtrlang) ) {
-#	else  // wxCHECK_VERSION(2, 9, 0)
+	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII), src_lang) ) {
+#	else  // wxCHECK_VERSION(2, 9, 1)
 	if ( ! app_locale.AddCatalog(wxT(APPNAME_IN_ASCII)) ) {
-#	endif // wxCHECK_VERSION(2, 9, 0)
-		wxLogError(wxT("(wx) add initialization catalog failed"));
+#	endif // wxCHECK_VERSION(2, 9, 1)
+		// do not complain loudly; it will only be a nuisance when
+		// the cat really does not exist (rather than another error)
+		//wxLogError(wxT("(wx) add initialization catalog failed"));
+		#if DEBUG
 		std::fprintf(stderr,
 			"epspline: AddCatalog(%s) failed\n", APPNAME_IN_ASCII);
+		#else  // DEBUG
+		;
+		#endif // DEBUG
 	}
 	
 	// right from internat sample:

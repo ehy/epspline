@@ -30,8 +30,11 @@ L10NPREFIX = $(DATAPREFIX)
 L10_INSTALL_DIR = $(L10NPREFIX)/share/locale
 # wx doesn't mind a redundant optional search directory,
 # but leave this empty by default anyway
-#L10_INSTALL_DEF = -DL10N_INSTALL_PATH=\\\"$(L10_INSTALL_DIR)\\\"
-L10_INSTALL_DEF =
+# UPDATE for wx 2.9.5: the above 2 sentences were true up to
+# 2.9.4, but 2.9.5 is now botching-up the paths and needs this
+# set to succeed; it can still be set elsewise on make command line
+L10_INSTALL_DEF = -DL10N_INSTALL_PATH=\\\"$(L10_INSTALL_DIR)\\\"
+#L10_INSTALL_DEF =
 
 INSTALLCMD = install
 #INSTALLOPTS = -c -s -m 555 -o 0 -g 0

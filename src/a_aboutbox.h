@@ -31,9 +31,6 @@
 #include <wx/notebook.h>
 #endif // WX_PRECOMP
 
-#include "cfg.h"
-#include "stdcc.h"
-
 #ifdef __GNUG__
     #pragma interface
 #endif

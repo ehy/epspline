@@ -33,7 +33,11 @@
 
 #include "GPL.inc"
 #include "FDL.inc"
+// POV-Ray 3.7 was released under the Affero GPL; I think
+// the permission text will cause confusion now.
+#if _USE_POVRAY_PERMISSION_TEXT
 #include "PERM.inc"
+#endif
 
 static const wxChar tM[] =
 	wxT("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
@@ -43,6 +47,9 @@ static const wxChar tM[] =
 #ifdef __GNUG__
     #pragma implementation
 #endif
+
+#include "cfg.h"
+#include "stdcc.h"
 #include "a_aboutbox.h"
 #include "epspline.h"
 #include "wxutil.h"
@@ -55,8 +62,8 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	: wxDialog(parent, id, title)
 {
 	static const wxChar copyright[] = 
-		wxT(": an editor for POV-Ray prism and lathe objects\n")
-		wxT("Copyright (C) 2000-2013 Edward V. Hynan\n\n")
+		wxT(": an editor for POV-Ray prism and lathe objects.\n")
+		wxT("Copyright (C) 2000-2013 Edward V. Hynan.\n\n")
 		wxT("The GNU GENERAL PUBLIC LICENSE version 2 or\n")
 		wxT("greater is your license, granted by the author\n")
 		wxT("and copyright holder, to use, modify, and redistribute\n")
@@ -73,9 +80,17 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		fea.GetCount() > 0 ? fea[0] : wxFONTENCODING_DEFAULT
 		);
 	wxTextAttr tatt(*wxBLACK, *wxWHITE, font);
-	//wxString text(wxGetApp().GetAppTitle());
-	wxString text(wxT(APPCLASS_IN_ASCII));
+	wxString textwx, text;
 	int wi, hi, tw, th;
+
+	text.Printf(wxT("%s %s"),
+		wxT(APPCLASS_IN_ASCII), wxT(APPVERSIONSTR));
+
+	// TRANSLATORS: %1$s is 'Epspline <version quad>',
+	// %2$s 'wxWidgets <version>'.
+	textwx.Printf(_("\n\nThis %1$s was built with %2$s."),
+		text, wxVERSION_STRING);
+
 	::wxDisplaySize(&wi, &hi);
 	wi -= 256; hi -= 256;
 	GetTextExtent(wxString(tM), &tw, &th, 0, 0, &font);
@@ -107,6 +122,9 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		wxT("Raytracer Pty. Ltd.\"\n")
 		;
 	text += trademarks;
+
+	// add wx build info from string built above
+	text += textwx;
 
 	wxPanel* page = new wxPanel(book);
 	wxBoxSizer* szr     = new wxBoxSizer(wxVERTICAL);
@@ -145,6 +163,9 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	page->SetSizer(szr);
 	book->AddPage(page, _("Documentation License"), false);
 
+	// POV-Ray 3.7 was released under the Affero GPL; I think
+	// the permission text will cause confusion now.
+#	if _USE_POVRAY_PERMISSION_TEXT
 	text = ch2wxs(PERM__);
 	page = new wxPanel(book);
 	ptxtc = new wxTextCtrl(page, -1, text, wxDefaultPosition
@@ -154,6 +175,7 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr->Add(ptxtc, 1, wxGROW, 1);
 	page->SetSizer(szr);
 	book->AddPage(page, _("POV-Team Permission"), false);
+#	endif
 
 	SetSizer(szrMain);
 	SetAutoLayout(true);

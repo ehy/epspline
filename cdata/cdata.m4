@@ -73,7 +73,7 @@ dnl app version piece by piece
 define(appVMajor, `0')dnl
 define(appVMinor, `0')dnl
 define(appRMajor, `4')dnl
-define(appRMinor, `2')dnl
+define(appRMinor, `3')dnl
 define(appversionI,
 	eval(appVMajor<<24|appVMinor<<16|appRMajor<<8|appRMinor))dnl
 define(appversion, `appVMajor.appVMinor.appRMajor.appRMinor')dnl

@@ -88,7 +88,7 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 
 	// TRANSLATORS: %1$s is 'Epspline <version quad>',
 	// %2$s 'wxWidgets <version>'.
-	textwx.Printf(_("\n\nThis %1$s was built with %2$s."),
+	textwx.Printf(_("\n\nThis %1$s build uses %2$s."),
 		text, wxVERSION_STRING);
 
 	::wxDisplaySize(&wi, &hi);

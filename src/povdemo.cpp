@@ -462,7 +462,24 @@ PovDemoProc::SetupTmp()
     // but I don't know if it is OK as a default.
     // Update: change to add the arg by default, use of envvar
     // is to refrain from using the arg.
-    bool use_directcolor = true;
+    //
+    // Update 2013/11/20: POVRay 3.7 released a few days ago, and
+    // the Unix build uses SDL (might be an option) which does not
+    // accept the this argument, so the default is made false, and
+    // and envar added to make the the arg available -- and for fun
+    // the old code is left in place so that the user may use
+    // both envars and turn on and then off for no good reason.
+    bool use_directcolor = false;
+    if ( const char* p = std::getenv("POVRAY_USE_DIRECTCOLOR") ) {
+        wxString s(ch2wxs(p));
+        if ( s == wxT("1")
+            || ! s.CmpNoCase(wxT("yes"))
+            || ! s.CmpNoCase(wxT("true"))
+            || ! s.CmpNoCase(wxT("on"))
+            ) {
+			use_directcolor = true;
+        }
+    }
     if ( const char* p = std::getenv("POVRAY_NO_DIRECTCOLOR") ) {
         wxString s(ch2wxs(p));
         if ( s == wxT("1")

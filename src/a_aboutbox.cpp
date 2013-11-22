@@ -39,6 +39,10 @@
 #include "PERM.inc"
 #endif
 
+#ifndef EXCLUDE_ABOUTBOX_ART
+#include "aboutart.xpm"
+#endif
+
 static const wxChar tM[] =
 	wxT("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
 	wxT("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
@@ -86,10 +90,22 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	text.Printf(wxT("%s %s"),
 		wxT(APPCLASS_IN_ASCII), wxT(APPVERSIONSTR));
 
-	// TRANSLATORS: %1$s is 'Epspline <version quad>',
-	// %2$s 'wxWidgets <version>'.
-	textwx.Printf(_("\n\nThis %1$s build uses %2$s."),
-		text, wxVERSION_STRING);
+	textwx.Printf(
+		// HA! in wx2.8 the positional spec's take only the
+		// 1st char from the string; i.e., broken.
+		#if wxUSE_PRINTF_POS_PARAMS && wxCHECK_VERSION(3, 0, 0)
+		// TRANSLATORS: %1$s is 'Epspline <version quad>',
+		// %2$s 'wxWidgets <version>'.
+		_("\n\nThis %1$s build uses %2$s."),
+		#else
+		// TRANSLATORS: first %s is 'Epspline <version quad>',
+		// second %s 'wxWidgets <version>'. This string is a
+		// build-time alternate to the entry just above for
+		// when the positional %#$s cannot be used, so the
+		// translation cannot transpose the %s positions.
+		_("\n\nThis %s build uses %s."),
+		#endif
+		(const wxChar*)text, wxVERSION_STRING);
 
 	::wxDisplaySize(&wi, &hi);
 	wi -= 256; hi -= 256;
@@ -131,7 +147,13 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	wxStaticText* pstxt = new wxStaticText(page, -1, text);
 	// Added 2013/04/13
 	pstxt->SetFont(font);
-	//
+#ifndef EXCLUDE_ABOUTBOX_ART
+	// Added 2013/11/22
+	wxBitmap art_bmp(aboutart);
+	wxStaticBitmap* psbmp = new wxStaticBitmap(page, -1, art_bmp);
+	szr->Add(20, 20);
+	szr->Add(psbmp, 0, wxALIGN_CENTER, 0);
+#endif
 	szr->Add(20, 20);
 	szr->Add(pstxt, 0, wxALIGN_CENTER
 #	if ! wxCHECK_VERSION(2, 9, 0)

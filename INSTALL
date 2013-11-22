@@ -20,7 +20,12 @@ Dependencies:
     option in the source package; if your package system
     provides wxWidgets then it very likely is the GTK version.
     In fact, searching for a *wxgtk* package listing might be
-    better than searching for wxwidgets.
+    better than searching for wxwidgets. [Update: wx 3.0.0 is
+    released and has support for GTK3, which has been tested
+    briefly on two sytems, and generally works, but has small
+    problems with some GUI display elements, but the systems
+    are not very current and might have imperfect GTK3
+    integration with the desktop environment; YMMV.]
     
     Epspline is prepared to use message translations in the format
     supported by wxWidgets, but there are, as of initial release,
@@ -76,7 +81,7 @@ MSWindows:
           be assigned to the CF macro on the commandline.
         
         * it might be important to use the same compiler options
-          building the application that were used building the
+          for building the application that were used building the
           wx library (possibly not in all possible cases). The
           original author has built wxWidgets with -Os -static
           and found that using -O3 -static for epspline produced
@@ -89,7 +94,7 @@ MSWindows:
     
         % make CF=$PWD/../wxMSW_2.8.12_unicode_mingw-config \
             CXXFLAGS="-Os -static" LDFLAGS="$LDFLAGS -static" mingw
-    
+
     See ``Makefile Targets and Macros'' below.
 
 Unix/POSIX:
@@ -113,7 +118,8 @@ Unix/POSIX:
     
     If your Unix is not one discussed here, please try anyway --
     if you have built (or simply have) wxWidgets, then it should
-    not be difficult to divine the magic spell.
+    not be difficult to divine the magic spell (such a spell
+    often conjures a patch).
 
 GNU/Linux (probably GNU/*):
     With wxWidgets installed from a package system, a simple
@@ -153,7 +159,7 @@ FreeBSD:
     Without a wx-config in $PATH, assigning the CF Makefile
     macro is mandatory. Select an installed wx*config
     (preferably the latest version and preferably a unicode build)
-    and ``make CF=wxGTK2<whatever>-config && sudo make install''
+    and ``make CF=wxgtk<whatever>-config && sudo make install''
     should work.
     
     Please avoid wx 2.6 if possible, especially the unicode build.
@@ -297,24 +303,24 @@ Makefile Targets and Macros:
         one of these, or in some cases the script is not named
         ``wx-config'' so set CF=<path_to_wx_config_script> as needed.
 
-    LIBS= (ignore this if using wx 2.8 or *earlier*)
-        ***THIS*** has become equal to CF in importance IF you
-        are building against wxWidgets 2.9 or later -- it is
-        not needed for wx 2.8 and earlier, and *should* be
-        satisfied by wx-config, but the wx developers have seen
-        fit to make changes in the separation of the libraries,
-        and which libraries are default and which are not, and
-        the behavior of the wx-config script; and so, for wx 2.9
-        or greater, something like:
+    LIBS= (default `$(CF) --libs $(LIBSARG)')
+        The library auguments to the link-edit stage of the build
+        as necessary to use wxWidgets. If the current system needs
+        additional libraries made explicit, try the default shown
+        above on the make command line with additions prepended
+        or appended.
+    
+    LIBSARG= (default `std,aui')
+        Used in LIBS above; should be matched to wxWidgets libraries
+        actually used. It is a comma separated list of base names.
+        Starting with wxWidgets 3.0.0 it seems that ``wx-config --help''
+        will display the available library base names, near the
+        bottom of the output.
         
-            LIBS='$$($(CF) --libs all)'
-            
-        *will* be needed on the make command, because epspline
-        uses a feature (AUI tab control) that was a default lib in
-        wx 2.8, but is not in wx 2.9 -- if epspline is still
-        maintained when wx 2.8 is obsolescent a future release
-        will have the Makefile favor the wx 2.9 way and this
-        file will make a note for wx 2.8
+        Note for wxWidgets 2.6.x: there is no aui, so if you try
+        to use this version, this macro is necessary; try `std'.
+        Note also that since wxWidgets 3.0.0 is released, 2.6 will
+        probably have little or no testing.
     
     PREFIX= (default /usr/local)
         directory under which install is done (there are also

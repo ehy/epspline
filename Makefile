@@ -86,7 +86,8 @@ CF = wx-config
 # By default use compiler suggested by wx
 CXX = `$(CF) --cxx`
 CCFLAGS = `$(CF) --cxxflags` $(WARN) $(CFL) $(GUI)
-LIBS = `$(CF) --libs`
+LIBSARG = std,aui
+LIBS = `$(CF) --libs $(LIBSARG)`
 # mingw only: MSW binary resource compiler
 MSWRCC = `$(CF) --rescomp`
 
@@ -365,6 +366,7 @@ distclean: distclean_po distclean_examples distclean_doc
 # temp directory.
 # Also will make zip file (in addition to tar.gz, not instead) if
 # "$(MKZIP)" is not empty.
+MKZIP = itydoodah
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
 	examples-working
 dist archive distarchive: distclean

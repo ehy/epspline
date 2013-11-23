@@ -554,47 +554,45 @@ GetPovExecutable(wxString& dest)
 #ifdef __WXMSW__
 	// On MS, POVRay puts its type and command in the
 	// registry; this should find it
-	const t_ch ftype[] = wxT(".POV");
-
 	wxMimeTypesManager* mtm = wxTheMimeTypesManager;
-	//wxFileType* ft = mtm->GetFileTypeFromMimeType(ftype);
-	wxFileType* ft = mtm->GetFileTypeFromExtension(ftype);
-
+	wxFileType* ft = mtm->GetFileTypeFromExtension(wxT(".POV"));
 	if ( ft == NULL ) {
 		return false;
 	}
+
 	wxString cmd;
 	wxFileType::MessageParameters mp;
-	if ( ft->GetOpenCommand(&cmd, mp) == false ) {
-		delete ft;
+	bool ftr = ft->GetOpenCommand(&cmd, mp);
+	delete ft;
+	if ( ftr == false ) {
 		return false;
 	}
-	delete ft;
 
-	// returns something like:
+	// The mime-type thingy returns something like:
 	// "C:\Program Files\POV-Ray-3.1g\BIN\PVENGINE.EXE" /EDIT "FOO.POV"
 	// or "C:\Program Files\POV-Ray-3.1g\BIN\PVENGINE.EXE" /RENDER "FOO.POV"
 	// chop off the unwanted stuff (only want exe path).
-	int idx = cmd.Find(wxT(" /EDIT"));
-	if ( idx > 0 )
+	// POV 3.7: these are now appearing in lowercase
+	if ( int idx = cmd.Find(wxT(" /")) ) {
 		cmd.Remove(idx);
-	idx = cmd.Find(wxT(" /RENDER"));
-	if ( idx > 0 )
-		cmd.Remove(idx);
+	}
 
 	dest = cmd;
 	return true;
+
 #elif !defined(__WXMSW__) && !defined(__UNIX__)
+	// This is for-position-only, for platforms not currently
+	// tested, and will certainly need work for any of them
 	#ifdef HAVE_OLD_POVRAY
 	dest = ch2wxs(PovDemoProc::povexec);
 	#else
 	dest = ch2wxs(PovDemoProc::povexec_3_5);
 	#endif
 	return true;
+
 #elif defined(__UNIX__)
 	// On Unix, POVRay AFAIK registers no mime type during
-	// installation.  Do a quick PATH search.  Needs porting
-	// beyond Unix and MS.
+	// installation.  Do a quick PATH search.
 	const char* path;
 	if ( is_priviliged() == false ) {
 		path = std::getenv("PATH");
@@ -655,8 +653,9 @@ GetPovExecutable(wxString& dest)
 	}
 
 	return false;
+
 #else
-#   error "Where are we?"
+#   error "What platform is this? You must port this code!"
 #endif
 }
 

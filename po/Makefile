@@ -95,7 +95,7 @@ en_US/$(MOFILE): $(POTFILE)
 	{ $(RM) $$d-DONE; exit 1; }
 
 $(POTFILE): $(POTSRC)
-	@$(CMP) $@ $(POTSRC) || \
+	@$(CMP) $@ $(POTSRC) >/dev/null 2>&1 || \
 		{ test -f $(POTSRC) && $(CP) $(POTSRC) $@; }
 
 # Note that install: does not depend on all: or mk_mo_files: --

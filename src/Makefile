@@ -5,6 +5,7 @@
 
 RM  = rm -f
 CP  = cp -f
+CAT = cat
 # Hmm, had forgotten MKDIR, but it was def'd on all but NetBSD
 MKDIR = mkdir -p
 # posix make defines YACC and LEX
@@ -52,6 +53,9 @@ SRCDIR = .
 HDRDIR = .
 COMMDIR = .
 GENSRCDIR = $(SRCDIR)/../wxxrc
+CDATADIR  = $(SRCDIR)/../cdata
+# License header, e.g. to prepend generated files
+LICENSEHEAD = $(CDATADIR)/license.c.head
 
 # prebuilt files
 OKLEXER = $(SRCDIR)/ms_lexer.c
@@ -64,7 +68,9 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/a_zoomdlg.h $(HDRDIR)/a_spintextdlg.h \
 	$(HDRDIR)/a_textctldlg.h \
 	$(HDRDIR)/a_aboutbox.h \
+	$(HDRDIR)/a_glbprefsdlg.h \
 	$(HDRDIR)/spline_props.h \
+	$(HDRDIR)/globlal_prefs.h \
 	$(HDRDIR)/wxexio.h
 
 SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
@@ -74,7 +80,9 @@ SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
 	$(SRCDIR)/a_zoomdlg.cpp $(SRCDIR)/a_spintextdlg.cpp \
 	$(SRCDIR)/a_textctldlg.cpp \
 	$(SRCDIR)/a_aboutbox.cpp \
+	$(SRCDIR)/a_glbprefsdlg.cpp \
 	$(SRCDIR)/spline_props.cpp \
+	$(SRCDIR)/globlal_prefs.cpp \
 	$(SRCDIR)/wxexio.cpp
 
 OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
@@ -84,8 +92,10 @@ OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
 	$(OBJDIR)/a_textctldlg.o \
 	$(OBJDIR)/a_spintextdlg.o \
 	$(OBJDIR)/a_aboutbox.o \
-	$(OBJDIR)/wxexio.o \
+	$(OBJDIR)/a_glbprefsdlg.o \
 	$(OBJDIR)/spline_props.o \
+	$(OBJDIR)/globlal_prefs.o \
+	$(OBJDIR)/wxexio.o \
 	$(OBJDIR)/parser.o
 
 all: $(OBJDIR) epspline$(EXESUFFIX)
@@ -139,11 +149,27 @@ $(SRCDIR)/lexer.c: $(COMMDIR)/lexer.l
 	 echo Succeeded with $@ ; \
 	fi
 
-$(HDRDIR)/spline_props.h : $(GENSRCDIR)/spline_props.h
-	$(CP) $(HDRDIR)/spline_props.h $(GENSRCDIR)/spline_props.h
+# Sources generated with e.g. a GUI dialog editor, kept in other
+# directory, concatenated with licence to make file here
+$(HDRDIR)/spline_props.h : $(LICENSEHEAD) $(GENSRCDIR)/spline_props.h
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/spline_props.h \
+		> $(HDRDIR)/spline_props.h
 
-$(HDRDIR)/spline_props.cpp : $(GENSRCDIR)/spline_props.cpp
-	$(CP) $(HDRDIR)/spline_props.cpp $(GENSRCDIR)/spline_props.cpp
+$(SRCDIR)/spline_props.cpp : $(LICENSEHEAD) $(GENSRCDIR)/spline_props.cpp
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/spline_props.cpp \
+		> $(SRCDIR)/spline_props.cpp
+
+$(OBJDIR)/spline_props.o : $(SRCDIR)/spline_props.cpp $(HDRDIR)/spline_props.h
+
+$(HDRDIR)/globlal_prefs.h : $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.h
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.h \
+		> $(HDRDIR)/globlal_prefs.h
+
+$(SRCDIR)/globlal_prefs.cpp : $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.cpp
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.cpp \
+		> $(SRCDIR)/globlal_prefs.cpp
+
+$(OBJDIR)/globlal_prefs.o : $(SRCDIR)/globlal_prefs.cpp $(HDRDIR)/globlal_prefs.h
 
 # GNU gperf is used to make a hashed set of pov reserved words
 # which have been gathered from pov docs.  These words are in a
@@ -241,7 +267,7 @@ mingw_l_y:
 # else fall back to -MM. Setting variable DEPSOPT is the best bet.
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
-depend:
+depend: $(HDRS) $(SRCS)
 	@$(RM) depend
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \

@@ -109,6 +109,7 @@ enum menu_and_toolbar_IDs {
 	EdCutGlobal,
 	EdCopyAllGlobal,  // TODO
 	EdPasteGlobal,
+	EdGlobalPreferences,
 // Tools
 	SetUserScale,
 	CycleUserScale,
@@ -151,6 +152,10 @@ enum {
 	MenuOption_Last = Colour_BackgroundMode
 };
 #endif
+
+// Forward decl. of preferences dialog class
+class a_global_pref_dialog;
+
 
 // Main window; and, file drop target
 class A_Frame : public wxFrame {
@@ -281,6 +286,9 @@ public:
 protected:
 	A_Tabwnd*   tabwnd;
 	wxMenu* menuFile, * menuEdit, * menuHelp, * MenuOpts;
+	// preference dialog, not required to be modal, therefore
+	// not wanted on the stack
+	a_global_pref_dialog* prefs_dlg;
 	// whether to set canvas to do anit-aliasing
 	bool aadraw;
 

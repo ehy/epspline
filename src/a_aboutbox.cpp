@@ -40,7 +40,9 @@
 #endif
 
 #ifndef EXCLUDE_ABOUTBOX_ART
-#include "aboutart.xpm"
+namespace app_images {
+#	include "aboutart.xpm"
+};
 #endif
 
 static const wxChar tM[] =
@@ -77,12 +79,19 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		wxT("and copyright holder, to use, modify, and redistribute\n")
 		wxT("the documentation distributed with this software.")
 		;
+#if ! wxCHECK_VERSION(2, 6, 0)
+	// This diddling wxEncodingConverter is very old (c. 2000) and
+	// might never have been nec., although it has always worked;
+	// the ! wx 2.6 check precludes it from all current support
 	wxFontEncodingArray fea = wxEncodingConverter::GetPlatformEquivalents(
 		wxFONTENCODING_ISO8859_1);
 	wxFont font(10, wxMODERN, wxNORMAL, wxNORMAL, false, wxT(""), 
 		// Just hoping it's suitable
 		fea.GetCount() > 0 ? fea[0] : wxFONTENCODING_DEFAULT
 		);
+#else  // if ! wxCHECK_VERSION(2, 6, 0)
+	wxFont font(10, wxMODERN, wxNORMAL, wxNORMAL);
+#endif // if ! wxCHECK_VERSION(2, 6, 0)
 	wxTextAttr tatt(*wxBLACK, *wxWHITE, font);
 	wxString textwx, text;
 	int wi, hi, tw, th;
@@ -149,7 +158,7 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	pstxt->SetFont(font);
 #ifndef EXCLUDE_ABOUTBOX_ART
 	// Added 2013/11/22
-	wxBitmap art_bmp(aboutart);
+	wxBitmap art_bmp(app_images::aboutart);
 	wxStaticBitmap* psbmp = new wxStaticBitmap(page, -1, art_bmp);
 	szr->Add(20, 20);
 	szr->Add(psbmp, 0, wxALIGN_CENTER, 0);

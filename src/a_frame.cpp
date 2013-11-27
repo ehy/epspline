@@ -48,6 +48,7 @@
 #include "a_frame.h"
 #include "a_ruler.h"
 #include "a_aboutbox.h"
+#include "a_glbprefsdlg.h"
 
 // resources
 //
@@ -69,8 +70,10 @@ BEGIN_EVENT_TABLE(A_Frame, wxFrame)
 END_EVENT_TABLE()
 
 
-A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
-       : wxFrame((wxFrame*)NULL, -1, title, pos, size)
+A_Frame::A_Frame(
+	const wxString& title, const wxPoint& pos, const wxSize& size)
+	: wxFrame((wxFrame*)NULL, -1, title, pos, size)
+	, prefs_dlg(0)
 {
 	// set the frame icon
 	SetIcon(wxICON(epspline));
@@ -194,6 +197,9 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	, _("Move Down"), _("Move selected object down in stacking order"));
 	MNADD1(menuEdit, EdMoveUp
 	, _("Move Up"), _("Move selected object up in stacking order"));
+	menuEdit->AppendSeparator();
+	MNADD2NS(menuEdit, EdGlobalPreferences
+	, _("Pre&ferences"), _("Edit application preferences"));
 
 	// Tools:
 	MNADD0NS(MenuOpts, SetUserScale
@@ -370,6 +376,7 @@ A_Frame::A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size)
 
 A_Frame::~A_Frame()
 {
+	delete prefs_dlg;
 }
 
 A_Tabpage*
@@ -814,6 +821,12 @@ A_Frame::OnOption(wxCommandEvent& event)
 		case EdDel:
 			canvas->DelSelPt();
 			StatusBarAntiClobberHack();
+			break;
+		case EdGlobalPreferences:
+			if ( ! prefs_dlg ) {
+				prefs_dlg = new A_Prefs_dlg(this);
+			}
+			prefs_dlg->Show(true);
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();

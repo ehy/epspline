@@ -80,7 +80,7 @@ class global_pref_dialog : public wxDialog
 		
 		
 		wxStaticText* m_staticText2;
-		wxColourPickerCtrl* m_colourPicker1;
+		wxColourPickerCtrl* glb_gridcolor_picker;
 		
 		wxPanel* tab_pov_prefs;
 		
@@ -89,14 +89,18 @@ class global_pref_dialog : public wxDialog
 		
 		
 		wxStaticText* m_staticText3;
-		wxFilePickerCtrl* m_filePicker1;
+		wxFilePickerCtrl* glb_pov_picker;
 		
 		
 		
+		
+		wxButton* glb_restore_defs;
+		wxButton* glb_restore_conf;
 		wxStdDialogButtonSizer* dlg_button_sizer;
 		wxButton* dlg_button_sizerOK;
 		wxButton* dlg_button_sizerApply;
 		wxButton* dlg_button_sizerCancel;
+		
 		
 		
 		
@@ -108,6 +112,8 @@ class global_pref_dialog : public wxDialog
 		virtual void on_def_object_name_overflow( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_grid_color_select( wxColourPickerEvent& event ) { event.Skip(); }
 		virtual void on_POV_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
+		virtual void on_restore_defs( wxCommandEvent& event ) { event.Skip(); }
+		virtual void on_restore_conf( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_OK( wxCommandEvent& event ) { event.Skip(); }

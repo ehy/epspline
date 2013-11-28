@@ -39,6 +39,7 @@
 #if wxCHECK_VERSION(2, 4, 0)
 #include <wx/filename.h>
 #endif
+#include <wx/filedlg.h>
 #include <wx/artprov.h>
 #include <wx/utils.h>
 
@@ -702,31 +703,29 @@ A_Frame::OnOption(wxCommandEvent& event)
 			return;
 		case NewTabOpenCurves:
 			s = tabwnd->GetSelection();
-			if ( A_Tabpage* t = NewPage(wxT("[--]")) ) {
-				canvas = t->GetCanvas();
-				canvas->Open();
-				if  ( canvas->GetCurFileName() == wxT("") ) {
-					tabwnd->DeletePage(
-						tabwnd->GetPageCount() - 1);
-					if ( s >= 0 )
-						tabwnd->SetSelection(s);
-				} else
-					tabwnd->SetSelection(
-						tabwnd->GetPageCount() - 1);
-				// Argh! after this hack being MSW-only for sooo long,
-				// it has appeared (intermittently) under GTK with
-				// the wx 2.9.4 (devel); only when using AUI notebook,
-				// and DND'ing many files. Just make it unconditional.
-				#if 1 || defined(__WXMSW__)
-				// 'doze version doesn't layout new tabs
-				// until sized.  sheesh.  This causes
-				// a slight flash, but it has to be.
-				wxSize s(GetSize());
-				s.x -= 1;
-				SetSize(s);
-				s.x += 1;
-				SetSize(s);
-				#endif
+			{
+				A_Tabpage* t = GetCurPage();
+				if ( t != 0 )
+					canvas = t->GetCanvas();
+				
+				wxFileDialog d(this,
+					_("Please select one or more files"),
+					canvas ? canvas->GetCurDirName() : wxT(""),
+					canvas ? canvas->GetCurFileName() : wxT(""),
+					wxT("*.pse"),
+					wxFD_OPEN | wxFD_MULTIPLE);
+			
+				if ( d.ShowModal() == wxID_OK ) {
+					wxArrayString as;
+					d.GetPaths(as);
+					if ( Open_FileArray(as) < 1 ) {
+						if ( s >= 0 ) {
+							tabwnd->SetSelection(s);
+						} else if ( (s = tabwnd->GetPageCount())>0 ) {
+							tabwnd->SetSelection(s - 1);
+						}
+					}
+				}
 			}
 			return;
 		case HelpAbout:

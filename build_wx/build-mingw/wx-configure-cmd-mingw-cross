@@ -6,7 +6,6 @@
 
 # bash under cygwin is failing longjmps
 THESHELL=/bin/sh
-#THESHELL=/bin/zsh
 SHELL=$THESHELL
 
 # NOTE:
@@ -40,9 +39,7 @@ test X"$1" = X || {
 
 # set install prefix by hand
 # appended with "_${STEM}" below
-: ${PREFIX:=$HOME/wine64/drive_c/${LOGNAME}/evh/wx/wx-${WXVERS}}
-#PREFIX=$HOME/.wine/drive_c/wx-${WXVERS}
-#PREFIX=$HOME/local/wx-${WXVERS}
+: ${PREFIX:=$HOME/wine64/drive_c/users/${LOGNAME}/wx/wxMSW-${WXVERS}}
 
 SYS="$(uname)"
 
@@ -54,7 +51,7 @@ case "$SYS" in
 	#: ${ARCH:=i586}
 	#: ${STEM:=${ARCH}-mingw32msvc}
 	: ${ARCH:=x86_64}
-	: ${STEM:=${ARCH}-x86_64-w64-mingw32}
+	: ${STEM:=${ARCH}-w64-mingw32}
 
 	# As of 2.9.1 wxMSW still not 64 bit clean
 	: ${BITS:=64}
@@ -73,24 +70,6 @@ case "$SYS" in
 	# extra opts to get this compile to succeed
 	#XOPTS="--disable-whatever"
 	#XOPTS="--without-whatever"
-	;;
-FreeBSD )  # WARNING: only tested on FreeBSD
-	: ${ARCH:=""}
-	: ${STEM:=mingw32}
-
-	# As of 2.9.1 wxMSW still not 64 bit clean
-	: ${BITS:=32}
-	
-	# need a --build arg
-	# this default is likely wrong!
-	: ${BUILDARG:=i386-pc-freebsd}
-
-	# choose optimize level (or -g)
-	: ${OPT:="-O2"}
-
-	# GCC bits option
-	AFL="-m${BITS}"
-	test X = X"$MARCH" || AFL="$AFL -march=$MARCH"
 	;;
 [Cc][Yy][Gg][Ww][Ii][Nn]* )
 # Cygwin
@@ -124,9 +103,8 @@ FreeBSD )  # WARNING: only tested on FreeBSD
 	;;
 esac
 
-CFLAGS="${XCFL} ${OPT} ${AFL} ${STATIC}"
-CXXFLAGS="${XCFL} ${OPT} ${AFL} ${STATIC}"
-LDFLAGS="${STATIC}"
+CFLAGS="${XCFL} ${OPT} ${AFL} -static"
+CXXFLAGS="${XCFL} ${OPT} ${AFL} -static"
 CXX=${STEM}-g++
 CC=${STEM}-gcc
 CPP=${STEM}-cpp
@@ -151,16 +129,17 @@ test -r "$CF" || {
 	exit 1
 }
 
+#	--enable-unicode --enable-stl  \
+
 time $THESHELL $CF $XOPTS \
 	--prefix="${PREFIX}" \
-	--enable-unicode --disable-shared --enable-stl  \
-	--enable-dataobj --enable-optimise \
+	--disable-shared \
+	--disable-compat28 \
 	--with-msw --with-opengl \
 	--target=${STEM} \
 	--host=${STEM} \
 	--build=${BUILDARG} \
 	CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-	LDFLAGS="${LDFLAGS}" \
 	CXX="${CXX}" CC="${CC}" \
 	CPP="${CPP}" WINDRES="${WINDRES}" \
 	AR="${AR}" \

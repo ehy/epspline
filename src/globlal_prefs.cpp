@@ -115,8 +115,10 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	m_staticText2->Wrap( -1 );
 	fgSizer5->Add( m_staticText2, 0, wxALL, 5 );
 	
-	m_colourPicker1 = new wxColourPickerCtrl( tab_global_prefs, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
-	fgSizer5->Add( m_colourPicker1, 0, wxEXPAND, 5 );
+	glb_gridcolor_picker = new wxColourPickerCtrl( tab_global_prefs, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_USE_TEXTCTRL );
+	glb_gridcolor_picker->SetToolTip( _("Choose a color for the canvas background grid lines.") );
+	
+	fgSizer5->Add( glb_gridcolor_picker, 0, wxEXPAND, 5 );
 	
 	
 	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
@@ -158,8 +160,10 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	m_staticText3->Wrap( -1 );
 	fgSizer2->Add( m_staticText3, 0, wxALL, 5 );
 	
-	m_filePicker1 = new wxFilePickerCtrl( tab_pov_prefs, wxID_ANY, wxT("povray"), _("Select a POV-Ray executable file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_FILE_MUST_EXIST|wxFLP_USE_TEXTCTRL );
-	fgSizer2->Add( m_filePicker1, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	glb_pov_picker = new wxFilePickerCtrl( tab_pov_prefs, wxID_ANY, wxT("povray"), _("Select a POV-Ray executable file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_USE_TEXTCTRL );
+	glb_pov_picker->SetToolTip( _("Enter the file name of a POV-Ray executable, with a path if necessary, or select a full path to POV-Ray from a file selection dialog window.") );
+	
+	fgSizer2->Add( glb_pov_picker, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
 	
 	
 	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );
@@ -179,6 +183,27 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	dlg_base_sizer->Add( 20, 0, 1, 0, 5 );
 	
+	wxFlexGridSizer* fgSizer51;
+	fgSizer51 = new wxFlexGridSizer( 1, 5, 8, 8 );
+	fgSizer51->AddGrowableCol( 1 );
+	fgSizer51->AddGrowableCol( 2 );
+	fgSizer51->AddGrowableCol( 3 );
+	fgSizer51->SetFlexibleDirection( wxBOTH );
+	fgSizer51->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	
+	
+	fgSizer51->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	glb_restore_defs = new wxButton( this, wxID_ANY, _("Restore Defaults"), wxDefaultPosition, wxDefaultSize, 0 );
+	glb_restore_defs->SetToolTip( _("Restore values from built-in defaults.") );
+	
+	fgSizer51->Add( glb_restore_defs, 0, wxALL, 5 );
+	
+	glb_restore_conf = new wxButton( this, wxID_ANY, _("Restore Configured"), wxDefaultPosition, wxDefaultSize, 0 );
+	glb_restore_conf->SetToolTip( _("Restore values from configuration at startup.") );
+	
+	fgSizer51->Add( glb_restore_conf, 0, wxALL, 5 );
+	
 	dlg_button_sizer = new wxStdDialogButtonSizer();
 	dlg_button_sizerOK = new wxButton( this, wxID_OK );
 	dlg_button_sizer->AddButton( dlg_button_sizerOK );
@@ -187,7 +212,12 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	dlg_button_sizerCancel = new wxButton( this, wxID_CANCEL );
 	dlg_button_sizer->AddButton( dlg_button_sizerCancel );
 	dlg_button_sizer->Realize();
-	dlg_base_sizer->Add( dlg_button_sizer, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
+	fgSizer51->Add( dlg_button_sizer, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
+	
+	
+	fgSizer51->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	dlg_base_sizer->Add( fgSizer51, 1, wxEXPAND, 5 );
 	
 	
 	dlg_base_sizer->Add( 20, 0, 1, 0, 5 );
@@ -210,8 +240,10 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
 	glb_def_name->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
 	glb_def_name->Connect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
-	m_colourPicker1->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
-	m_filePicker1->Connect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
+	glb_gridcolor_picker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_pov_picker->Connect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
+	glb_restore_defs->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_defs ), NULL, this );
+	glb_restore_conf->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );
 	dlg_button_sizerApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_apply ), NULL, this );
 	dlg_button_sizerCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_cancel ), NULL, this );
 	dlg_button_sizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_OK ), NULL, this );
@@ -223,8 +255,10 @@ global_pref_dialog::~global_pref_dialog()
 	this->Disconnect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
 	glb_def_name->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
 	glb_def_name->Disconnect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
-	m_colourPicker1->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
-	m_filePicker1->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
+	glb_gridcolor_picker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_pov_picker->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
+	glb_restore_defs->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_defs ), NULL, this );
+	glb_restore_conf->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );
 	dlg_button_sizerApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_apply ), NULL, this );
 	dlg_button_sizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_cancel ), NULL, this );
 	dlg_button_sizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_OK ), NULL, this );

@@ -146,6 +146,9 @@ OpenBSD:
     the linker will nag about a few unsafe string functions.
 
 FreeBSD:
+    UPDATE: wxWidgets 2.6 is no longer supported; see README.
+    Reference to 2.6 below is merely historical.
+
     This is based on FreeBSD 9.0 and associated ports. The ports
     system has wxGTK 2.6, 2.8, and 2.9, and may be built in
     the unicode or `ansi' version, and for any installation there
@@ -163,6 +166,8 @@ FreeBSD:
     should work.
     
     Please avoid wx 2.6 if possible, especially the unicode build.
+    UPDATE: wxWidgets 2.6 is no longer supported; see README.
+    Reference to 2.6 above is merely historical.
 
 OpenIndiana:
     This is based on an OpenIndiana system on which uname -a says
@@ -317,11 +322,6 @@ Makefile Targets and Macros:
         will display the available library base names, near the
         bottom of the output.
         
-        Note for wxWidgets 2.6.x: there is no aui, so if you try
-        to use this version, this macro is necessary; try `std'.
-        Note also that since wxWidgets 3.0.0 is released, 2.6 will
-        probably have little or no testing.
-    
     PREFIX= (default /usr/local)
         directory under which install is done (there are also
         {BIN,DATA,HELPDATA,L10N}PREFIX macros with defaults

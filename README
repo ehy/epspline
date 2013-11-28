@@ -37,6 +37,14 @@ STATUS
     Epspline should build against wxWidgets versions 2.6, 2.8, and
     2.9 (and presumably 3.0; 2.9 is a development version toward 3.0).
     Not all versions have been tried on all platforms.
+    
+    UPDATE: as of the second release of Epspline, version 0.0.4.3,
+    wxWidgets 2.6 is no longer supported. Epspline is now using
+    classes that first appeared in wxWidgets 2.8. Also, this is
+    being written a short time after the release of wxWidgets 3.0.0,
+    and Epspline is being developed against that as well as
+    wxWidgets 2.8; therefore, every mention of 2.6 above, and of 2.9
+    (which is a development version of 3.0), is merely historical.
 
 BUILDING, INSTALLING
 

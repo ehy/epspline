@@ -1,0 +1,24 @@
+#! /bin/sh
+
+#WXVERS=2.8.12
+#WXVERS=2.9.4
+WXVERS=3.0.0
+export WXVERS
+ARCH=x86_64
+#ARCH=i686
+STEM=${ARCH}-w64-mingw32
+#BITS=32
+BITS=64
+export ARCH
+export STEM
+export BITS
+PREFIX=/home/evh/wine64/drive_c/users/evh/wx/wxMSW-${WXVERS}-${ARCH}
+export PREFIX
+XOPTS="--enable-graphics_ctx"
+export XOPTS
+OPT="-Os"
+export OPT
+time /bin/sh ./wx-configure-cmd-mingw-cross
+
+exit $?
+

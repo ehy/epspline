@@ -19,3 +19,22 @@
  * MA 02110-1301, USA.
  */
 
+/**
+ * To manage the application settings/preferences/options;
+ * should receive stored configuration, and changes, and
+ * where appropriate signal code elsewhere of a change.
+ * 
+ * Also, accomadate the preferences dialog window which is
+ * designed to modeless, and has an "Apply" button which should
+ * show changes immediately, but such changes should be stored
+ * in a 'tentative' state because the dialog has a "Cancel" button
+ * that should do as it says. "OK" button should remove tentative
+ * state from changes. Dialog also has restore app defaults, and
+ * restore initial saved configuration, and these should be provided
+ * for in the settings manager
+ **/
+
+#ifndef _A_PREFSMANAGER_H_
+#define _A_PREFSMANAGER_H_
+
+#endif  // _A_PREFSMANAGER_H_

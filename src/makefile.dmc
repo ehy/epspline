@@ -51,7 +51,10 @@ HDRS = $(HDRDIR)\\a_canvas.h $(HDRDIR)\\a_frame.h $(HDRDIR)\\a_ruler.h \
 	$(HDRDIR)\\a_zoomdlg.h $(HDRDIR)\\a_spintextdlg.h \
 	$(HDRDIR)\\a_textctldlg.h \
 	$(HDRDIR)\\a_aboutbox.h \
+	$(HDRDIR)\\a_prefs_manager.h \
+	$(HDRDIR)\\a_glbprefsdlg.h \
 	$(HDRDIR)\\spline_props.h \
+	$(HDRDIR)\\globlal_prefs.h \
 	$(HDRDIR)\\wxexio.h
 
 SRCS = $(SRCDIR)\\epspline.cpp $(SRCDIR)\\io.cpp $(SRCDIR)\\a_canvas.cpp \
@@ -61,7 +64,10 @@ SRCS = $(SRCDIR)\\epspline.cpp $(SRCDIR)\\io.cpp $(SRCDIR)\\a_canvas.cpp \
 	$(SRCDIR)\\a_zoomdlg.cpp $(SRCDIR)\\a_spintextdlg.cpp \
 	$(SRCDIR)\\a_textctldlg.cpp \
 	$(SRCDIR)\\a_aboutbox.cpp \
+	$(SRCDIR)\\a_prefs_manager.cpp \
+	$(SRCDIR)\\a_glbprefsdlg.cpp \
 	$(SRCDIR)\\spline_props.cpp \
+	$(SRCDIR)\\globlal_prefs.cpp \
 	$(SRCDIR)\\wxexio.cpp
 
 OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
@@ -71,7 +77,10 @@ OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
 	$(OBJDIR)\\a_textctldlg.obj \
 	$(OBJDIR)\\a_spintextdlg.obj \
 	$(OBJDIR)\\a_aboutbox.obj \
-	$(OBJDIR)\\spline_props.obj \
+	$(OBJDIR)\\a_prefs_manager.o \
+	$(OBJDIR)\\a_glbprefsdlg.o \
+	$(OBJDIR)\\spline_props.o \
+	$(OBJDIR)\\globlal_prefs.o \
 	$(OBJDIR)\\wxexio.obj
 
 PARSER_SRC = $(SRCDIR)\\ms_parse.c

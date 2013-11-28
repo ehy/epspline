@@ -37,4 +37,15 @@
 #ifndef _A_PREFSMANAGER_H_
 #define _A_PREFSMANAGER_H_
 
+class A_Prefs_Manager {
+public:
+
+protected:
+
+private:	
+	
+public:
+	
+};
+
 #endif  // _A_PREFSMANAGER_H_

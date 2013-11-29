@@ -31,18 +31,32 @@
  * that should do as it says. "OK" button should remove tentative
  * state from changes. Dialog also has restore app defaults, and
  * restore initial saved configuration, and these should be provided
- * for in the settings manager
+ * for in the settings manager.
  **/
 
 #ifndef _A_PREFSMANAGER_H_
 #define _A_PREFSMANAGER_H_
+
+// Enumaration of preference settings
+enum {
+	global_prefs_first,
+
+	// colors
+	canvas_background_color,
+	canvas_guides_color,
+	canvas_grid_color,
+	// bools, toggles
+	canvas_grid_show
+
+	global_prefs_last
+};
 
 class A_Prefs_Manager {
 public:
 
 protected:
 
-private:	
+private:
 	
 public:
 	

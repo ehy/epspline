@@ -46,7 +46,7 @@ enum {
 	canvas_guides_color,
 	canvas_grid_color,
 	// bools, toggles
-	canvas_grid_show
+	canvas_grid_show,
 
 	global_prefs_last
 };

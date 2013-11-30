@@ -178,11 +178,11 @@ A_Ruler::ClearTickLine(wxDC& dc)
 
 	wxPen op = dc.GetPen();
 #	if wxCHECK_VERSION(2, 9, 0)
-	wxRasterOperationMode
+	wxRasterOperationMode of = dc.GetLogicalFunction();
 #	else
-	int
+	int of = dc.GetLogicalFunction();
 #	endif
-		of = dc.GetLogicalFunction();
+
 	dc.SetPen(*wxGREY_PEN);
 	dc.SetLogicalFunction(wxINVERT);
 

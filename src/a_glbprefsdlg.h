@@ -26,11 +26,21 @@
 
 // forward decl. of main window class
 class A_Frame;
+// forward decl. preferences manager class
+class A_Prefs_Manager;
 
 // Dialog for global preferences, with data validation
 typedef class a_global_pref_dialog : public global_pref_dialog {
+	// allow prefs manager any access
+	friend	class A_Prefs_Manager;
+	A_Prefs_Manager*	pm;
+
 public:
-	a_global_pref_dialog(A_Frame* parent, wxWindowID id = wxID_ANY);
+	a_global_pref_dialog(
+		A_Frame* parent,
+		A_Prefs_Manager* prefs_manager,
+		wxWindowID id = wxID_ANY
+	);
 	~a_global_pref_dialog();
 
 protected:

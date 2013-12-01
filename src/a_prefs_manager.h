@@ -25,41 +25,55 @@
  * where appropriate signal code elsewhere of a change.
  * 
  * Also, accomadate the preferences dialog window which is
- * designed to modeless, and has an "Apply" button which should
+ * designed to be modeless, and has an "Apply" button which should
  * show changes immediately, but such changes should be stored
  * in a 'tentative' state because the dialog has a "Cancel" button
  * that should do as it says. "OK" button should remove tentative
  * state from changes. Dialog also has restore app defaults, and
  * restore initial saved configuration, and these should be provided
  * for in the settings manager.
+ * 
+ * The class is not virtual nor are its methods: it should have
+ * one instance that stands on its own and if more functionality
+ * is needed then edit this class rather than subclass.
  **/
 
 #ifndef _A_PREFSMANAGER_H_
 #define _A_PREFSMANAGER_H_
 
-// Enumaration of preference settings
-enum {
-	global_prefs_first,
+#include "cfg.h"
+#include "stdcc.h"
 
-	// colors
-	canvas_background_color,
-	canvas_guides_color,
-	canvas_grid_color,
-	// bools, toggles
-	canvas_grid_show,
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+#include <wx/intl.h>
+#include <wx/config.h>
+#include <wx/filename.h>
+#endif // WX_PRECOMP
 
-	global_prefs_last
-};
+// common data, e.g. version
+#include "cdata.h"
+
+// Forward decl. of preferences dialog class
+class a_global_pref_dialog;
+
 
 class A_Prefs_Manager {
 public:
+	A_Prefs_Manager(wxConfigBase* pconfig);
+	~A_Prefs_Manager();
 
 protected:
+	A_Prefs_Manager()  {}
 
+	wxConfigBase*			pcfg;
+	a_global_pref_dialog*	pdlg;
 private:
 	
 public:
-	
+	void show_prefs_dialog(bool show);
+	void delete_prefs_dialog();
+	void update_from_dialog();
 };
 
 #endif  // _A_PREFSMANAGER_H_

@@ -49,7 +49,7 @@
 #include "a_frame.h"
 #include "a_ruler.h"
 #include "a_aboutbox.h"
-#include "a_glbprefsdlg.h"
+#include "a_prefs_manager.h"
 
 // resources
 //
@@ -74,7 +74,6 @@ END_EVENT_TABLE()
 A_Frame::A_Frame(
 	const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame((wxFrame*)NULL, -1, title, pos, size)
-	, prefs_dlg(0)
 {
 	// set the frame icon
 	SetIcon(wxICON(epspline));
@@ -377,7 +376,9 @@ A_Frame::A_Frame(
 
 A_Frame::~A_Frame()
 {
-	delete prefs_dlg;
+	// Because this instance is the parent of the preference dialog,
+	// this must trigger its deletion before this is gone.
+	wxGetApp().delete_prefs_dialog();
 }
 
 A_Tabpage*
@@ -822,10 +823,7 @@ A_Frame::OnOption(wxCommandEvent& event)
 			StatusBarAntiClobberHack();
 			break;
 		case EdGlobalPreferences:
-			if ( ! prefs_dlg ) {
-				prefs_dlg = new A_Prefs_dlg(this);
-			}
-			prefs_dlg->Show(true);
+			wxGetApp().show_prefs_dialog(true);
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();

@@ -270,7 +270,8 @@ mingw_l_y:
 # else fall back to -MM. Setting variable DEPSOPT is the best bet.
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
-depend: $(HDRS) $(SRCS)
+#depend: $(HDRS) $(SRCS)
+depend:
 	@$(RM) depend
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \

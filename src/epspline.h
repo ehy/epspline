@@ -29,6 +29,7 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
+#include <wx/app.h>
 #include <wx/intl.h>
 #include <wx/log.h>
 #include <wx/config.h>
@@ -63,6 +64,9 @@
     #pragma interface
 #endif
 
+// the preferences manager class
+class A_Prefs_Manager;
+
 // app class
 //
 
@@ -92,6 +96,9 @@ public:
 
 	wxMBConv* GetAppMBConv() { return app_mbconv; }
 	const wxMBConv* GetAppMBConv() const { return app_mbconv; }
+
+	// get the preferences manager class
+	A_Prefs_Manager* GetPrefsManager() { return pprefsmng; }
 
 	// Show wx help window, if help_ok indicates setup is OK.
 	bool  IsHelpOK() const { return help_ok; }
@@ -173,6 +180,17 @@ protected:
 
 	// setup the the Display data commented above
 	void GetDisplayData();
+
+	// Manager for app-global preferences. Instance of this owns an
+	// instance of a modeless preferences dialog window. The dialog
+	// window should be deleted in its parent top window dtor, and not
+	// after; hence, delete_prefs_dialog() for the main window's use.
+	A_Prefs_Manager*		pprefsmng;
+public:
+	void					delete_prefs_dialog();
+	// this is for the main window to show the prefs dialog
+	void					show_prefs_dialog(bool show);
+
 };
 
 DECLARE_APP(AnApp)

@@ -23,8 +23,10 @@
 #include "a_frame.h"
 
 a_global_pref_dialog::a_global_pref_dialog(
-	A_Frame* parent, wxWindowID id)
-	: global_pref_dialog(parent, id)
+	A_Frame* parent,
+	A_Prefs_Manager* prefs_manager,
+	wxWindowID id)
+	: global_pref_dialog(parent, id), pm(prefs_manager)
 {
 }
 

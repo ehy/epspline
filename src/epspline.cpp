@@ -71,6 +71,7 @@
 #include "epspline.h"
 #include "a_frame.h"
 #include "clocall.h"
+#include "a_prefs_manager.h"
 
 #if defined(__WXMSW__)
 #if defined(__SC__) || defined(__DMC__)
@@ -385,6 +386,8 @@ AnApp::OnInit()
 	wxSize S;
 	S.x = int(pConfig->Read(wxT("w"), 800L));
 	S.y = int(pConfig->Read(wxT("h"), 600L));
+	
+	pprefsmng = new A_Prefs_Manager(pConfig);
 
 	// this might be useful on some Unix systems
 	SetUseBestVisual(true);
@@ -430,6 +433,7 @@ AnApp::OnInit()
 int
 AnApp::OnExit()
 {
+	delete pprefsmng;
 	delete wxConfigBase::Set(0);
 	return 0;
 }
@@ -490,6 +494,22 @@ AnApp::GetCfgPtr(wxString path) const
 	}
 
 	return 0;
+}
+
+void
+AnApp::delete_prefs_dialog()
+{
+	if ( pprefsmng ) {
+		pprefsmng->delete_prefs_dialog();
+	}
+}
+
+void
+AnApp::show_prefs_dialog(bool show)
+{
+	if ( pprefsmng ) {
+		pprefsmng->show_prefs_dialog(show);
+	}
 }
 
 bool

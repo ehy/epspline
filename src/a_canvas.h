@@ -183,21 +183,15 @@ protected:
 	};
 
 public:
+	A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa = true);
+	virtual ~A_Canvas();
+
 	typedef DataState::data_type_obj data_type_obj;
 	typedef DataState::data_type_ptr data_type_ptr;
 	typedef DataState::data_type_ref data_type_ref;
 	typedef DataState::datatype      datatype;
 	typedef DataState::data_store    data_store;
 	typedef DataState::itr_t         itr_t;
-
-private:
-	// TODO: finish this! At least dropping files should work.
-	static void DragCallback(wxWindow* wndCB, wxMouseEvent& e, A_Ruler* r);
-	void        DragCallbackHandler(wxMouseEvent& e, A_Ruler* r);
-
-public:
-	A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa = true);
-	virtual ~A_Canvas();
 
 	// take a device context and paint to region(s) passed
 	// in wxRegion& re -- intended as core of OnPaint handler --
@@ -247,6 +241,9 @@ public:
 	// a default padding for various Refresh() calls
 	// sdotsz is a constant from splines.h
 	static const unsigned refresh_pad = (sdotsz + 1) / 2 + 1;
+	
+	// call on prefs update; will refresh
+	void PreferenceChanged();
 
 	void DrawSelPt();
 	void DrawSelPt(wxDC& dc);
@@ -380,7 +377,7 @@ protected:
 	// there is no portably working way to draw into wxBitmap raw data
 	// (don't even mention wxPixelData!')
 	void DrawGridOnRast(wxImage& im, const wxRect& r,
-		int wid = def_grid_space,
+		bool do_draw_grid = true, int wid = def_grid_space,
 		wxColour bg = wxColour(0xFF, 0xFF, 0xFF),  // backround color
 		wxColour rlc = wxColour(0xFF, 0x00, 0x00), // rules color
 		wxColour grc = wxColour(0xE0, 0xE0, 0xFF)  // grid color
@@ -476,6 +473,10 @@ protected:
 	{m_sel->Enable(IC_move_up, b); enableEdMoveUp(b);}
 
 private:
+	// handle guide-drag on/off graduated scales
+	static void DragCallback(wxWindow* wndCB, wxMouseEvent& e, A_Ruler* r);
+	void        DragCallbackHandler(wxMouseEvent& e, A_Ruler* r);
+
 	DECLARE_EVENT_TABLE()
 };
 

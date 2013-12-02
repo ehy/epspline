@@ -28,19 +28,20 @@
 #include <wx/gdicmn.h>
 #endif // WX_PRECOMP
 
-
+/* from header, here for reference:
 struct prefs_set {
 	// for this struct:
 	bool is_set;
 	// colors
-	unsigned long canvas_background_color;
-	unsigned long canvas_guides_color;
-	unsigned long canvas_grid_color;
+	wxString canvas_background_color;
+	wxString canvas_guides_color;
+	wxString canvas_grid_color;
 	// bools, toggles
 	bool canvas_grid_show;
 	// strings
 	wxString povexec;
 };
+*/
 
 // A_Prefs_Manager will need to work with several data, but
 // they needn't be class members, not even static; global
@@ -53,9 +54,9 @@ namespace {
 	// app defaults
 	prefs_set defs = {
 		true,
-		0x00FFFFFFlu,
-		0x00FF0000lu,
-		0x00E0E0FFlu,
+		wxT("#FFFFFF"),
+		wxT("#FF0000"),
+		wxT("#E0E0FF"),
 		true,
 #ifdef __WXMSW__
 		wxT("pvengine.exe")
@@ -69,6 +70,8 @@ namespace {
 	prefs_set last;
 	// tentative, after dialog "Apply"
 	prefs_set aply;
+	// set to current set. for return from static method
+	prefs_set current;
 };
 
 A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
@@ -78,23 +81,22 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 	cfgs.is_set = false;
 	
 	wxString ent,	s_res;
-	long			l_res;
 	bool			b_res;
 	
 	ent = wxT("iface/colors/canvas_bg");
-	if ( pcfg->Read(ent, &l_res) ) {
+	if ( pcfg->Read(ent, &s_res) ) {
 		cfgs.is_set = true;
-		cfgs.canvas_background_color = (unsigned long)l_res;
+		cfgs.canvas_background_color = s_res;
 	}
 	ent = wxT("iface/colors/canvas_guides");
-	if ( pcfg->Read(ent, &l_res) ) {
+	if ( pcfg->Read(ent, &s_res) ) {
 		cfgs.is_set = true;
-		cfgs.canvas_guides_color = (unsigned long)l_res;
+		cfgs.canvas_guides_color = s_res;
 	}
 	ent = wxT("iface/colors/canvas_grid");
-	if ( pcfg->Read(ent, &l_res) ) {
+	if ( pcfg->Read(ent, &s_res) ) {
 		cfgs.is_set = true;
-		cfgs.canvas_grid_color = (unsigned long)l_res;
+		cfgs.canvas_grid_color = s_res;
 	}
 	ent = wxT("iface/opts/draw_show");
 	if ( pcfg->Read(ent, &b_res) ) {
@@ -112,6 +114,9 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 
 	aply = cfgs;
 	aply.is_set = false;
+	
+	// for external use:
+	current = cfgs.is_set ? cfgs : defs;
 }
 
 A_Prefs_Manager::~A_Prefs_Manager()
@@ -128,11 +133,11 @@ A_Prefs_Manager::~A_Prefs_Manager()
 		wxString ent;
 		
 		ent = wxT("iface/colors/canvas_bg");
-		pcfg->Write(ent, long(cfgs.canvas_background_color));
+		pcfg->Write(ent, cfgs.canvas_background_color);
 		ent = wxT("iface/colors/canvas_guides");
-		pcfg->Write(ent, long(cfgs.canvas_guides_color));
+		pcfg->Write(ent, cfgs.canvas_guides_color);
 		ent = wxT("iface/colors/canvas_grid");
-		pcfg->Write(ent, long(cfgs.canvas_grid_color));
+		pcfg->Write(ent, cfgs.canvas_grid_color);
 		ent = wxT("iface/opts/draw_show");
 		pcfg->Write(ent, cfgs.canvas_grid_show);
 		ent = wxT("preview/povray_exec");
@@ -150,7 +155,7 @@ A_Prefs_Manager::update_from_dialog()
 	wxString item;
 	// the wx docs discourage taking a value from the text control
 	// part of a file (or color) picker as that will allow user error,
-	// which is good advice. but for the povray preference the user
+	// which is good advice. but for the povray exec preference the user
 	// is allowed to enter a simple filename w/o slash that will
 	// be searched in $PATH, or on MSW used to replace the path
 	// returned by the mime-type manager for ".POV".
@@ -164,6 +169,52 @@ A_Prefs_Manager::update_from_dialog()
 		cfgs.is_set = (cfgs.povexec != item);
 	}
 	cfgs.povexec = item;
+	
+	// colors
+	wxColour clr;
+	long clr_flags;
+	clr_flags = wxC2S_NAME|wxC2S_CSS_SYNTAX|wxC2S_HTML_SYNTAX;
+
+	// grid color picker
+	clr = pdlg->glb_gridcolor_picker->GetColour();
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item.Trim(true); item.Trim(false);
+	if ( item.IsEmpty() ) {
+		item = defs.canvas_grid_color;
+	}
+	if ( ! cfgs.is_set ) {
+		cfgs.is_set = (cfgs.canvas_grid_color != item);
+	}
+	cfgs.canvas_grid_color = item;
+
+}
+
+void
+A_Prefs_Manager::update__to__dialog()
+{
+	if ( pdlg == 0 ) {
+		return;
+	}
+	
+	// colors : note we are prefering a color name if possible.
+	wxColour clr;
+	long clr_flags;
+	clr_flags = wxC2S_NAME|wxC2S_CSS_SYNTAX|wxC2S_HTML_SYNTAX;
+
+	// grid color picker
+	clr = cfgs.canvas_grid_color;
+	pdlg->glb_gridcolor_picker->SetColour(clr.GetAsString(clr_flags));
+
+	// pov exec is special: the file picker only wants an abspath
+	// so only place it directly in the picker control if it is
+	// abs, exists, and for good measure, is executable; elsewise
+	// put it in the picker's text control part for user's pleasure
+	wxFileName fn(cfgs.povexec);
+	if ( fn.IsAbsolute() && fn.IsFileExecutable() ) {
+		pdlg->glb_pov_picker->SetPath(cfgs.povexec);
+	} else {
+		pdlg->glb_pov_picker->GetTextCtrl()->SetValue(cfgs.povexec);
+	}
 }
 
 void
@@ -187,8 +238,26 @@ A_Prefs_Manager::show_prefs_dialog(bool show)
 			return;
 		}
 		pdlg = new A_Prefs_dlg(pw, this);
-		pdlg->glb_pov_picker->SetPath(cfgs.povexec);
+		
+		update__to__dialog();
 	}
 	
 	pdlg->Show(show);
+}
+
+void
+A_Prefs_Manager::force_updates()
+{
+	A_Frame* pw =
+		dynamic_cast<A_Frame*>(wxGetApp().GetTopWindow());
+	if ( pw == 0 ) {
+		return;
+	}
+	pw->PreferenceChanged();
+}
+
+/*static*/ const prefs_set*
+A_Prefs_Manager::get_prefs_set()
+{
+	return current.is_set ? &current : 0;
 }

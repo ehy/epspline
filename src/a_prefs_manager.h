@@ -57,6 +57,19 @@
 // Forward decl. of preferences dialog class
 class a_global_pref_dialog;
 
+// C-like struct for the set of preferences
+struct prefs_set {
+	// for this struct:
+	bool is_set;
+	// colors
+	wxString canvas_background_color;
+	wxString canvas_guides_color;
+	wxString canvas_grid_color;
+	// bools, toggles
+	bool canvas_grid_show;
+	// strings
+	wxString povexec;
+};
 
 class A_Prefs_Manager {
 public:
@@ -74,6 +87,12 @@ public:
 	void show_prefs_dialog(bool show);
 	void delete_prefs_dialog();
 	void update_from_dialog();
+	void update__to__dialog();
+	
+	void force_updates();
+	
+	// for app classes to get current prefs
+	static const prefs_set* get_prefs_set();
 };
 
 #endif  // _A_PREFSMANAGER_H_

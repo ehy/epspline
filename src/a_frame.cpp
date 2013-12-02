@@ -970,6 +970,18 @@ A_Frame::SelectColour(wxColour& c)
 	return false;
 }
 
+// call on prefs update; will refresh
+void
+A_Frame::PreferenceChanged()
+{
+	std::vector<A_Tabpage*> v;
+	GetAllPagePtrs(v);
+	std::vector<A_Tabpage*>::iterator i = v.begin();
+	while ( i != v.end() ) {
+		(*i++)->GetCanvas()->PreferenceChanged();
+	}
+}
+
 // return number successfully opened
 unsigned
 A_Frame::Open_FileArray(const wxArrayString& af)

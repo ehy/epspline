@@ -181,6 +181,9 @@ public:
 	void     ErrorBox(const wxString& msg, const wxString& titletail =
 			 _("Error")) const;
 
+	// call on prefs update; will refresh
+	void PreferenceChanged();
+
 	// Menu/Toolbar stuff:
 	// {en,dis}able helpers
 	void enableExportCurves(bool b) {menuFile->Enable(ExportCurves, b);}

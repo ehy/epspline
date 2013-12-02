@@ -70,6 +70,7 @@
 #include "a_tabwnd.h"
 #include "a_ruler.h"
 #include "a_zoomdlg.h"
+#include "a_prefs_manager.h"
 
 #include "swap_vals.h"
 #include "drawlines.h"
@@ -201,8 +202,16 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	scalecursor = new wxCursor(wxCURSOR_SIZING);
 	shearcursor = new wxCursor(wxCURSOR_SIZENWSE);
 	rotatecursor = new wxCursor(wxCURSOR_BULLSEYE);
-	SetBackgroundColour(wxColour(255,255,255));
 	curcursor = arrowcursor;
+	
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	wxColour clr(pfs ? pfs->canvas_background_color : wxT("#FFFFFF"));
+	SetBackgroundColour(clr);
+	
+	if ( pfs ) {
+		wxColour tclr(pfs->canvas_guides_color);
+		guidepen = wxPen(tclr, 1, wxSOLID);
+	}
 
 	m_pop = new wxMenu(_("Curves"), wxMENU_TEAROFF);
 	m_pop->Append(IC_set_linear, _("Set Linear Spline"),
@@ -250,6 +259,26 @@ A_Canvas::~A_Canvas()
 	delete shearcursor;
 	delete rotatecursor;
 	delete arrowcursor;
+}
+
+// call on prefs update; will refresh
+void
+A_Canvas::PreferenceChanged()
+{
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	if ( ! pfs ) {
+		return;
+	}
+	
+	wxColour clr;
+
+	clr = wxColour(pfs->canvas_background_color);
+	SetBackgroundColour(clr);
+	
+	clr = wxColour(pfs->canvas_guides_color);
+	guidepen = wxPen(clr, 1, wxSOLID);
+	
+	Refresh();
 }
 
 void
@@ -2845,7 +2874,9 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	dc.SetPen(wxNullPen);
 	dc.DrawRectangle(r.x, r.y, r.width, r.height);
 
-	wxColour clr(0xE0,0xE0,0xFF);
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	wxColour clr(pfs ? pfs->canvas_grid_color : wxT("#E0E0FF"));
+
 	#if defined(__WXGTK__) && 0
 	wxPen    np(clr, 1, wxSHORT_DASH);
 	#else
@@ -2947,7 +2978,17 @@ A_Canvas::ImagePaint(wxImage** ipp, wxRect& logrc, double thickness)
 
 	logrc = rr;
 
-	DrawGridOnRast(*ip, rr, def_grid_space);
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	if ( pfs ) {
+		wxColour bg (pfs->canvas_background_color); // backround color
+		wxColour rlc(pfs->canvas_guides_color); // rules color
+		wxColour grc(pfs->canvas_grid_color); // grid color
+		bool dr_do = pfs->canvas_grid_show;
+
+		DrawGridOnRast(*ip, rr, dr_do, def_grid_space, bg, rlc, grc);
+	} else {
+		DrawGridOnRast(*ip, rr);
+	}
 
 	aap::draw_device dr(*ip);
 	aap::pxl px(0, 0, 0);
@@ -3098,7 +3139,9 @@ A_Canvas::PrepareDC(wxDC& dc)
 // there is no portably working way to draw into wxBitmap raw data
 // (don't even mention wxPixelData!')
 void
-A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
+A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
+	bool do_draw_grid,
+	int wid,
 	wxColour bg,  // backround color
 	wxColour rlc, // rules color
 	wxColour grc  // grid color
@@ -3158,7 +3201,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r, int wid,
 	}
 
 	// draw grid lines
-	if ( wid > 0 ) {
+	if ( do_draw_grid && wid > 0 ) {
 		cR = grc.Red();
 		cG = grc.Green();
 		cB = grc.Blue();

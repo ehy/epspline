@@ -77,18 +77,28 @@ public:
 	~A_Prefs_Manager();
 
 protected:
+private:
 	A_Prefs_Manager()  {}
 
 	wxConfigBase*			pcfg;
 	a_global_pref_dialog*	pdlg;
-private:
+
+	void read_config();
+	void update_from_dialog(prefs_set& pset);
+	void update__to__dialog(prefs_set& pset);
+
+	friend class a_global_pref_dialog;
+	// event handler overides in dialog call these
+	void on_init_dlg(wxInitDialogEvent& event);
+	void on_restore_defs(wxCommandEvent& event);
+	void on_restore_conf(wxCommandEvent& event);
+	void on_apply(wxCommandEvent& event);
+	void on_cancel(wxCommandEvent& event);
+	void on_OK(wxCommandEvent& event);
 	
 public:
 	void show_prefs_dialog(bool show);
 	void delete_prefs_dialog();
-	void update_from_dialog();
-	void update__to__dialog();
-	
 	void force_updates();
 	
 	// for app classes to get current prefs

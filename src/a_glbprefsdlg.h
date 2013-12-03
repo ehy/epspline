@@ -45,14 +45,13 @@ public:
 
 protected:
 	// Virtual event handler overides
-	virtual void on_def_object_name( wxCommandEvent& event ) { event.Skip(); }
-	virtual void on_def_object_name_overflow( wxCommandEvent& event ) { event.Skip(); }
-	virtual void on_grid_color_select( wxColourPickerEvent& event ) { event.Skip(); }
-	virtual void on_POV_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
-	virtual void on_init_dlg( wxInitDialogEvent& event ) { event.Skip(); }
-	virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
-	virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
-	virtual void on_OK( wxCommandEvent& event ) { event.Skip(); }
+	virtual void on_init_dlg(wxInitDialogEvent& event);
+	virtual void on_POV_file_select(wxFileDirPickerEvent& event);
+	virtual void on_restore_defs(wxCommandEvent& event);
+	virtual void on_restore_conf(wxCommandEvent& event);
+	virtual void on_apply(wxCommandEvent& event);
+	virtual void on_cancel(wxCommandEvent& event);
+	virtual void on_OK(wxCommandEvent& event);
                  
 private:
 } A_Prefs_dlg;

@@ -109,8 +109,7 @@ class PovDemoProc : public wxProcess {
 	bool SetupTmp();
 	bool writepov(FILE* f);
 public:
-	static const char povexec [] ;
-	static const char povexec_3_5 [] ;
+	static const wxString povexec;
 
 	PovDemoProc(std::list<SplineBase*>& lst, A_Canvas& canvas);
 	~PovDemoProc();
@@ -118,21 +117,13 @@ public:
 	const wxString& GetCommand() const {return cmd;}
 	bool Okay() const {return ok;}
 
-	void OnTerminate(int pid, int status) ; //const;
+	void OnTerminate(int pid, int status);
 };
 
 #ifdef __WXMSW__
-// On doze, a default that will be useless unless user maintains PATH.
-// Note that povray.exe is the console version, pvengine.exe the GUI
-// version -- which we want so we see the rendering in a window
-const char PovDemoProc::povexec [] = "pvengine.exe";
-const char PovDemoProc::povexec_3_5 [] = "pvengine.exe";
+const wxString PovDemoProc::povexec(wxT("pvengine.exe"));
 #else
-// Unix, so long as this binary is in path . . .
-// x-povray was the name of the X enabled binary in povray 3.1,
-// but since 3.5 (at least) X is detected by one binary named povray
-const char PovDemoProc::povexec [] = "x-povray";
-const char PovDemoProc::povexec_3_5 [] = "povray";
+const wxString PovDemoProc::povexec(wxT("povray"));
 #endif
 
 PovDemoProc::PovDemoProc(std::list<SplineBase*>& lst, A_Canvas& canvas)
@@ -449,11 +440,10 @@ PovDemoProc::SetupTmp()
 			, pexec.c_str(), itmp2.c_str(), outf.c_str());
 	else {
 		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s")
-			, ch2wxs(povexec_3_5).c_str()
+			, povexec.c_str()
 			, itmp2.c_str(), outf.c_str());
 	}
 
-#	ifdef wx_x
 	// Added 10-2012 -- the Unix Povray X preview window under
 	// new (last few years) compositing/window managers (e.g.
     // KDE, compiz, etc) has unwanted transparency, at least
@@ -493,7 +483,6 @@ PovDemoProc::SetupTmp()
 	if ( use_directcolor ) {
 		cmd += wxT(" -visual DirectColor");
 	}
-#	endif
 
 #	ifndef _PATH_BSHELL
 #	define _PATH_BSHELL "/bin/sh"
@@ -515,7 +504,7 @@ PovDemoProc::SetupTmp()
 			, pexec.c_str(), itmp2.c_str(), outf.c_str());
 	else {
 		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s /NR")
-			, ch2wxs(povexec).c_str()
+			, povexec.c_str()
 			, itmp2.c_str(), outf.c_str());
 	}
 
@@ -583,11 +572,8 @@ GetPovExecutable(wxString& dest)
 #elif !defined(__WXMSW__) && !defined(__UNIX__)
 	// This is for-position-only, for platforms not currently
 	// tested, and will certainly need work for any of them
-	#ifdef HAVE_OLD_POVRAY
-	dest = ch2wxs(PovDemoProc::povexec);
-	#else
-	dest = ch2wxs(PovDemoProc::povexec_3_5);
-	#endif
+	dest = PovDemoProc::povexec;
+
 	return true;
 
 #elif defined(__UNIX__)
@@ -604,17 +590,13 @@ GetPovExecutable(wxString& dest)
 #	endif
 	}
 
+	wxString px(PovDemoProc::povexec);
 	if ( path == NULL ) {
-		#ifdef HAVE_OLD_POVRAY
-		dest = ch2wxs(PovDemoProc::povexec);
-		#else
-		dest = ch2wxs(PovDemoProc::povexec_3_5);
-		#endif
+		dest = px;
 		return true;
 	}
 
-	wxString p(ch2wxs(path)), px(ch2wxs(PovDemoProc::povexec))
-		, px35(ch2wxs(PovDemoProc::povexec_3_5));
+	wxString p(ch2wxs(path));
 	for (int n = 0; n < 64; n++) { // no test nec., just paranoid
 		wxString d(p.BeforeFirst(wxT(':')));
 		bool brk = (d == p);
@@ -622,11 +604,6 @@ GetPovExecutable(wxString& dest)
 		if ( d.Last() == wxT(':') )
 			d.RemoveLast();
 
-		// if both pov 3.1 and later are installed, we will find
-		// the older `x-povray' first, but that should be OK as
-		// long as our file output is compatible.  Don't want
-		// to find `povray' first because if it's an old (3.1)
-		// version it won't display on X.
 		struct stat sb;
 		if ( !stat(wxs2fn(d+SEPC+px), &sb) ) {
 			// S_IX* check is not complete, but
@@ -638,16 +615,7 @@ GetPovExecutable(wxString& dest)
 				return true;
 			}
 		}
-		if ( !stat(wxs2fn(d+SEPC+px35),&sb) ) {
-			// S_IX* check is not complete, but
-			// if we can't execute it, handle error
-			// at execution attempt
-			if ( S_ISREG(sb.st_mode) &&
-				sb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH) ) {
-				dest = d + SEPC + px35;
-				return true;
-			}
-		}
+
 		if ( brk )
 			break;
 	}

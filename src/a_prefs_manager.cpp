@@ -19,14 +19,14 @@
  * MA 02110-1301, USA.
  */
 
+#ifndef WX_PRECOMP
+#include <wx/gdicmn.h>
+#endif // WX_PRECOMP
+
 #include "a_prefs_manager.h"
 #include "a_glbprefsdlg.h"
 #include "epspline.h"
 #include "a_frame.h"
-
-#ifndef WX_PRECOMP
-#include <wx/gdicmn.h>
-#endif // WX_PRECOMP
 
 /* from header, here for reference:
 struct prefs_set {
@@ -77,37 +77,7 @@ namespace {
 A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 	: pcfg(pconfig), pdlg(0)
 {
-	cfgs = defs;
-	cfgs.is_set = false;
-	
-	wxString ent,	s_res;
-	bool			b_res;
-	
-	ent = wxT("iface/colors/canvas_bg");
-	if ( pcfg->Read(ent, &s_res) ) {
-		cfgs.is_set = true;
-		cfgs.canvas_background_color = s_res;
-	}
-	ent = wxT("iface/colors/canvas_guides");
-	if ( pcfg->Read(ent, &s_res) ) {
-		cfgs.is_set = true;
-		cfgs.canvas_guides_color = s_res;
-	}
-	ent = wxT("iface/colors/canvas_grid");
-	if ( pcfg->Read(ent, &s_res) ) {
-		cfgs.is_set = true;
-		cfgs.canvas_grid_color = s_res;
-	}
-	ent = wxT("iface/opts/draw_show");
-	if ( pcfg->Read(ent, &b_res) ) {
-		cfgs.is_set = true;
-		cfgs.canvas_grid_show = b_res;
-	}
-	ent = wxT("preview/povray_exec");
-	if ( pcfg->Read(ent, &s_res) ) {
-		cfgs.is_set = true;
-		cfgs.povexec = s_res;
-	}
+	read_config();
 
 	last = cfgs;
 	last.is_set = false;
@@ -146,7 +116,43 @@ A_Prefs_Manager::~A_Prefs_Manager()
 }
 
 void
-A_Prefs_Manager::update_from_dialog()
+A_Prefs_Manager::read_config()
+{
+	cfgs = defs;
+	cfgs.is_set = false;
+	
+	wxString ent,	s_res;
+	bool			b_res;
+	
+	ent = wxT("iface/colors/canvas_bg");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.canvas_background_color = s_res;
+	}
+	ent = wxT("iface/colors/canvas_guides");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.canvas_guides_color = s_res;
+	}
+	ent = wxT("iface/colors/canvas_grid");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.canvas_grid_color = s_res;
+	}
+	ent = wxT("iface/opts/draw_show");
+	if ( pcfg->Read(ent, &b_res) ) {
+		cfgs.is_set = true;
+		cfgs.canvas_grid_show = b_res;
+	}
+	ent = wxT("preview/povray_exec");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.povexec = s_res;
+	}
+}
+
+void
+A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 {
 	if ( pdlg == 0 ) {
 		return;
@@ -165,10 +171,10 @@ A_Prefs_Manager::update_from_dialog()
 	if ( item.IsEmpty() ) {
 		item = defs.povexec;
 	}
-	if ( ! cfgs.is_set ) {
-		cfgs.is_set = (cfgs.povexec != item);
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.povexec != item);
 	}
-	cfgs.povexec = item;
+	pset.povexec = item;
 	
 	// colors
 	wxColour clr;
@@ -182,15 +188,15 @@ A_Prefs_Manager::update_from_dialog()
 	if ( item.IsEmpty() ) {
 		item = defs.canvas_grid_color;
 	}
-	if ( ! cfgs.is_set ) {
-		cfgs.is_set = (cfgs.canvas_grid_color != item);
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.canvas_grid_color != item);
 	}
-	cfgs.canvas_grid_color = item;
+	pset.canvas_grid_color = item;
 
 }
 
 void
-A_Prefs_Manager::update__to__dialog()
+A_Prefs_Manager::update__to__dialog(prefs_set& pset)
 {
 	if ( pdlg == 0 ) {
 		return;
@@ -202,18 +208,18 @@ A_Prefs_Manager::update__to__dialog()
 	clr_flags = wxC2S_NAME|wxC2S_CSS_SYNTAX|wxC2S_HTML_SYNTAX;
 
 	// grid color picker
-	clr = cfgs.canvas_grid_color;
+	clr = pset.canvas_grid_color;
 	pdlg->glb_gridcolor_picker->SetColour(clr.GetAsString(clr_flags));
 
 	// pov exec is special: the file picker only wants an abspath
 	// so only place it directly in the picker control if it is
 	// abs, exists, and for good measure, is executable; elsewise
 	// put it in the picker's text control part for user's pleasure
-	wxFileName fn(cfgs.povexec);
+	wxFileName fn(pset.povexec);
 	if ( fn.IsAbsolute() && fn.IsFileExecutable() ) {
-		pdlg->glb_pov_picker->SetPath(cfgs.povexec);
+		pdlg->glb_pov_picker->SetPath(pset.povexec);
 	} else {
-		pdlg->glb_pov_picker->GetTextCtrl()->SetValue(cfgs.povexec);
+		pdlg->glb_pov_picker->GetTextCtrl()->SetValue(pset.povexec);
 	}
 }
 
@@ -221,7 +227,7 @@ void
 A_Prefs_Manager::delete_prefs_dialog()
 {
 	if ( pdlg ) {
-		update_from_dialog();
+		//update_from_dialog(cfgs);
 		pdlg->Show(false);
 		delete pdlg;
 		pdlg = 0;
@@ -238,10 +244,19 @@ A_Prefs_Manager::show_prefs_dialog(bool show)
 			return;
 		}
 		pdlg = new A_Prefs_dlg(pw, this);
-		
-		update__to__dialog();
 	}
 	
+	update__to__dialog(cfgs);
+
+	last = cfgs;
+	last.is_set = true;
+
+	aply = cfgs;
+	aply.is_set = true;
+	
+	// for external use:
+	current = cfgs.is_set ? cfgs : defs;
+		
 	pdlg->Show(show);
 }
 
@@ -260,4 +275,48 @@ A_Prefs_Manager::force_updates()
 A_Prefs_Manager::get_prefs_set()
 {
 	return current.is_set ? &current : 0;
+}
+
+// The dialog's virtual event handlers call these 'on_*' procs.
+void
+A_Prefs_Manager::on_init_dlg(wxInitDialogEvent& event)
+{
+}
+
+void
+A_Prefs_Manager::on_restore_defs(wxCommandEvent& event)
+{
+	update__to__dialog(defs);
+}
+
+void
+A_Prefs_Manager::on_restore_conf(wxCommandEvent& event)
+{
+	read_config();
+	update__to__dialog(cfgs);
+}
+
+void
+A_Prefs_Manager::on_apply(wxCommandEvent& event)
+{
+	update_from_dialog(aply);
+	if ( aply.is_set ) {
+		current = aply;
+		force_updates();
+	}
+}
+
+void
+A_Prefs_Manager::on_cancel(wxCommandEvent& event)
+{
+	update__to__dialog(last);
+	current = aply = cfgs = last;
+	force_updates();
+}
+
+void
+A_Prefs_Manager::on_OK(wxCommandEvent& event)
+{
+	on_apply(event);
+	cfgs = aply = last = current;
 }

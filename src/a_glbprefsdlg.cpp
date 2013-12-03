@@ -20,6 +20,7 @@
  */
 
 #include "a_glbprefsdlg.h"
+#include "a_prefs_manager.h"
 #include "a_frame.h"
 
 a_global_pref_dialog::a_global_pref_dialog(
@@ -32,4 +33,47 @@ a_global_pref_dialog::a_global_pref_dialog(
 
 a_global_pref_dialog::~a_global_pref_dialog()
 {
+}
+
+void
+a_global_pref_dialog::on_init_dlg(wxInitDialogEvent& event)
+{
+	pm->on_init_dlg(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_POV_file_select(wxFileDirPickerEvent& event)
+{
+	//pm->on_POV_file_select(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_restore_defs(wxCommandEvent& event)
+{
+	pm->on_restore_defs(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_restore_conf(wxCommandEvent& event)
+{
+	pm->on_restore_conf(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_apply(wxCommandEvent& event)
+{
+	pm->on_apply(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_cancel(wxCommandEvent& event)
+{
+	pm->on_cancel(event);
+	event.Skip();
+}
+void
+a_global_pref_dialog::on_OK(wxCommandEvent& event)
+{
+	pm->on_OK(event);
+	event.Skip();
 }

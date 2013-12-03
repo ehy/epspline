@@ -104,6 +104,7 @@ class PovDemoProc : public wxProcess {
 	A_Canvas&          can;    // For Export() method
 	wxString           cmd;
 	wxString           itmp, otmp, itmp2;
+	wxString           errmsg;
 	bool               ok;
 
 	bool SetupTmp();
@@ -114,8 +115,10 @@ public:
 	PovDemoProc(std::list<SplineBase*>& lst, A_Canvas& canvas);
 	~PovDemoProc();
 
-	const wxString& GetCommand() const {return cmd;}
+	wxString GetCommand() const {return cmd;}
 	bool Okay() const {return ok;}
+
+	wxString GetErrMsg() const {return errmsg;}
 
 	void OnTerminate(int pid, int status);
 };
@@ -360,6 +363,7 @@ PovDemoProc::SetupTmp()
 
 	int fd = gettmpfd(pc, A_SIZE(pc));
 	if ( fd < 0 ) {
+		errmsg = _("internal error [SetupTmp() 00]");
 		::perror("PovDemoProc::SetupTmp() 00");
 		return false;
 	}
@@ -373,6 +377,7 @@ PovDemoProc::SetupTmp()
 	fd = open(wxs2fn(outf), O_RDWR|O_CREAT|O_EXCL, 0600);
 #endif
 	if ( fd < 0 ) {
+		errmsg = _("internal error [SetupTmp() 05]");
 		::perror("PovDemoProc::SetupTmp() 05");
 		::remove(wxs2fn(otmp));
 		return false;
@@ -384,6 +389,7 @@ PovDemoProc::SetupTmp()
 	fd = gettmpfd(pc, A_SIZE(pc));
 	f.assign(::fdopen(fd, "r+"));
 	if ( ! f ) {
+		errmsg = _("internal error [SetupTmp() 10]");
 		::perror("PovDemoProc::SetupTmp() 10");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -399,6 +405,7 @@ PovDemoProc::SetupTmp()
 	int e0 = ::ferror(f);
 	int e1 = ::fclose(f.release());
 	if ( e0 || e1 ) {
+		errmsg = _("internal error [SetupTmp() 20]");
 		::perror("PovDemoProc::SetupTmp() 20");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -409,6 +416,7 @@ PovDemoProc::SetupTmp()
 	fd = gettmpfd(pc, A_SIZE(pc));
 	f.assign(::fdopen(fd, "r+"));
 	if ( ! f ) {
+		errmsg = _("internal error [SetupTmp() 30]");
 		::perror("PovDemoProc::SetupTmp() 30");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -425,6 +433,7 @@ PovDemoProc::SetupTmp()
 	e0 = ::ferror(f);
 	e1 = ::fclose(f.release());
 	if ( e0 || e1 ) {
+		errmsg = _("internal error [SetupTmp() 40]");
 		::perror("PovDemoProc::SetupTmp() 40");
 		::remove(wxs2fn(otmp));
 		::remove(wxs2fn(outf));
@@ -434,15 +443,19 @@ PovDemoProc::SetupTmp()
 	}
 
 	wxString pexec;
-#ifdef __UNIX__
-	if ( GetPovExecutable(pexec) )
-		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s")
-			, pexec.c_str(), itmp2.c_str(), outf.c_str());
-	else {
-		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s")
-			, povexec.c_str()
-			, itmp2.c_str(), outf.c_str());
+	if ( ! GetPovExecutable(pexec) ) {
+		errmsg =
+		_("POV-Ray not found or not executable -- check preferences");
+		::remove(wxs2fn(otmp));
+		::remove(wxs2fn(outf));
+		::remove(wxs2fn(itmp));
+		::remove(wxs2fn(itmp2));
+		return false;
 	}
+
+#ifdef __UNIX__
+	cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s")
+		, pexec.c_str(), itmp2.c_str(), outf.c_str());
 
 	// Added 10-2012 -- the Unix Povray X preview window under
 	// new (last few years) compositing/window managers (e.g.
@@ -498,15 +511,8 @@ PovDemoProc::SetupTmp()
 
 #else // __UNIX__
 
-	// I don't know if the following is suitable beyond MSWindows
-	if ( GetPovExecutable(pexec) )
-		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s /NR")
-			, pexec.c_str(), itmp2.c_str(), outf.c_str());
-	else {
-		cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s /NR")
-			, povexec.c_str()
-			, itmp2.c_str(), outf.c_str());
-	}
+	cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s /NR")
+		, pexec.c_str(), itmp2.c_str(), outf.c_str());
 
 #endif // __UNIX__
 
@@ -537,9 +543,56 @@ PovDemoProc::OnTerminate(int pid, int status) // const
 	delete this;
 }
 
+namespace {
+	// POV-Ray from user prefs -- no init arg, set through `SetPovPref'
+	// externally by e.g., preference manager
+	wxString povcfg;
+};
+
+void
+SetPovPref(wxString cfg)
+{
+	povcfg = cfg;
+}
+
+wxString
+GetPovPref()
+{
+	return povcfg;
+}
+
 bool
 GetPovExecutable(wxString& dest)
 {
+	// POV-Ray from user prefs
+	wxString cfgpov = GetPovPref();
+	// if it's same as default, empty it as if it was not set;
+	// note comparison is case sensitive, but this should ultimately
+	// not matter on case-insensitive fs, such as on MSW
+	if ( cfgpov == PovDemoProc::povexec ) {
+		cfgpov.Empty();
+	}
+	
+	if ( ! cfgpov.IsEmpty() ) {
+		wxFileName fn(cfgpov);
+		if ( ! fn.IsOk() ) {
+			// bad arg
+			return false;
+		}
+		
+		// has a path part?
+		if ( ! fn.GetPathWithSep().IsEmpty() ) {
+			// if path was given user wants a specific executable
+			if ( fn.IsFileExecutable() ) {
+				dest = cfgpov;
+				return true;
+			}
+			return false;
+		}
+		// path was not present; arg will be considered name only
+		// to be used in OS-specific lookup below
+	}
+
 #ifdef __WXMSW__
 	// On MS, POVRay puts its type and command in the
 	// registry; this should find it
@@ -564,6 +617,24 @@ GetPovExecutable(wxString& dest)
 	// POV 3.7: these are now appearing in lowercase
 	if ( int idx = cmd.Find(wxT(" /")) ) {
 		cmd.Remove(idx);
+		cmd.Trim(true);
+	}
+
+	// if user pref was given as name only, consider it a substitute
+	// for the exe named in the return from the type-manager above
+	if ( ! cfgpov.IsEmpty() ) {
+		bool lqu = cmd.StartsWith(wxT("\""), &cmd);
+		bool rqu = cmd.EndsWith(wxT("\""), &cmd);
+
+		wxFileName fn(cmd);
+		cmd = fn.GetPathWithSep() + cfgpov;
+
+		if ( lqu ) {
+			cmd = wxString(wxT("\"")) + cmd;
+		}
+		if ( rqu ) {
+			cmd += wxT("\"");
+		}
 	}
 
 	dest = cmd;
@@ -572,32 +643,37 @@ GetPovExecutable(wxString& dest)
 #elif !defined(__WXMSW__) && !defined(__UNIX__)
 	// This is for-position-only, for platforms not currently
 	// tested, and will certainly need work for any of them
-	dest = PovDemoProc::povexec;
+	if ( cfgpov.IsEmpty() ) {
+		dest = PovDemoProc::povexec;
+	} else {
+		dest = cfgpov;
+	}
 
 	return true;
 
 #elif defined(__UNIX__)
 	// On Unix, POVRay AFAIK registers no mime type during
 	// installation.  Do a quick PATH search.
-	const char* path;
+	const char* path = 0;
+
 	if ( is_priviliged() == false ) {
 		path = std::getenv("PATH");
-	} else {
+	}
+	
+	if ( path == 0 ) {
 #	ifdef _PATH_DEFPATH
 		path = _PATH_DEFPATH;
 #	else
-		path = "/usr/bin:/bin:/usr/X11R6/bin";
+		// certainly not suitable all-around, but we shouldn't
+		// be here in any case
+		path = "/usr/bin:/usr/X11/bin:/usr/X11R6/bin:/bin";
 #	endif
 	}
 
-	wxString px(PovDemoProc::povexec);
-	if ( path == NULL ) {
-		dest = px;
-		return true;
-	}
-
+	wxString px(cfgpov.IsEmpty() ? PovDemoProc::povexec : cfgpov);
 	wxString p(ch2wxs(path));
-	for (int n = 0; n < 64; n++) { // no test nec., just paranoid
+
+	for (int n = 0; n < 64; n++) { // 64 is arbitrary
 		wxString d(p.BeforeFirst(wxT(':')));
 		bool brk = (d == p);
 		p.Remove(0, d.Len()+1);
@@ -629,21 +705,22 @@ GetPovExecutable(wxString& dest)
 
 // The only public interface: proto in util.h
 long
-DoPovDemo(A_Canvas& canvas, std::list<SplineBase*>& lst)
+DoPovDemo(A_Canvas& canvas, std::list<SplineBase*>& lst, wxString* e)
 {
 	long ret = 0;
 	int flags = 0;
 #ifdef wxEXEC_ASYNC
 	flags |= wxEXEC_ASYNC;
 #endif
-#if defined(__UNIX__) && 0
-	flags |= wxEXEC_MAKE_GROUP_LEADER;
-#endif
+
 	PovDemoProc* p = new PovDemoProc(lst, canvas);
 	if ( p->Okay() ) {
 		ret = wxExecute(p->GetCommand(), flags, p);
 	} else {
-	    fprintf(stderr, "FAILED: %s\n", wxs2ch(p->GetCommand()));
+		if ( e ) {
+			*e = p->GetErrMsg();
+		}
+	    //fprintf(stderr, "FAILED: %s\n", wxs2ch(p->GetCommand()));
 		delete p;
 		return false;
 	}

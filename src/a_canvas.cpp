@@ -2641,12 +2641,15 @@ void
 A_Canvas::Demo()
 {
 	if ( D && D->lst.size() ) {
-		long r = DoPovDemo(*this, D->lst);
+		wxString err;
+		long r = DoPovDemo(*this, D->lst, &err);
 		// Note that test for 0 as failure is only for
 		// async exec; had sync been used return would
 		// be exit status.
 		if ( r == 0 ) {
-			ErrorBox(_("The POV-Ray preview failed"));
+			ErrorBox(
+				err.IsEmpty() ? 
+				wxString(_("The POV-Ray preview failed")) : err);
 		}
 	}
 }

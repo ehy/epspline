@@ -533,7 +533,8 @@ public:
 
 // Quick  demo
 // TODO: put this in proper place
-long DoPovDemo(A_Canvas& canvas, A_Canvas::data_store& lst);
+long
+DoPovDemo(A_Canvas& canvas, A_Canvas::data_store& lst, wxString* err = 0);
 
 #endif  // _A_CANVAS_H_
 

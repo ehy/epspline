@@ -27,24 +27,13 @@
 #include "a_glbprefsdlg.h"
 #include "epspline.h"
 #include "a_frame.h"
+#include "util.h"
 
-/* from header, here for reference:
-struct prefs_set {
-	// for this struct:
-	bool is_set;
-	// colors
-	wxString canvas_background_color;
-	wxString canvas_guides_color;
-	wxString canvas_grid_color;
-	// bools, toggles
-	bool canvas_grid_show;
-	// strings
-	wxString povexec;
-};
-*/
+// hack proto: this is defined in povdemo.cpp
+void SetPovPref(wxString cfg);
 
 // A_Prefs_Manager will need to work with several data, but
-// they needn't be class members, not even static; global
+// they needn't be class members, not even static; using global
 // data limited to this translation unit by anon. namespace
 // will keep the class definition smaller. Note there should
 // be only one instance of A_Prefs_Manager, and if ever this
@@ -53,15 +42,15 @@ struct prefs_set {
 namespace {
 	// app defaults
 	prefs_set defs = {
-		true,
-		wxT("#FFFFFF"),
-		wxT("#FF0000"),
-		wxT("#E0E0FF"),
-		true,
+		true,				// is_set -- internal use
+		wxT("#FFFFFF"),		// canvas_background_color
+		wxT("#FF0000"),		// canvas_guides_color
+		wxT("#E0E0FF"),		// canvas_grid_color
+		true,				// bool canvas_grid_show
 #ifdef __WXMSW__
-		wxT("pvengine.exe")
+		wxT("pvengine.exe")	// povexec -- pathname or basename
 #else
-		wxT("povray")
+		wxT("povray")		// see above
 #endif
 	};
 	// from config at start
@@ -87,14 +76,15 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 	
 	// for external use:
 	current = cfgs.is_set ? cfgs : defs;
+
+	// this is not queried on init code; it must be set
+	if ( current.is_set && current.povexec != defs.povexec ) {
+		SetPovPref(current.povexec);
+	}
 }
 
 A_Prefs_Manager::~A_Prefs_Manager()
 {
-	if ( aply.is_set ) {
-		last = aply;
-	}
-
 	if ( last.is_set  ) {
 		cfgs = last;
 	}
@@ -227,7 +217,6 @@ void
 A_Prefs_Manager::delete_prefs_dialog()
 {
 	if ( pdlg ) {
-		//update_from_dialog(cfgs);
 		pdlg->Show(false);
 		delete pdlg;
 		pdlg = 0;
@@ -246,19 +235,11 @@ A_Prefs_Manager::show_prefs_dialog(bool show)
 		pdlg = new A_Prefs_dlg(pw, this);
 	}
 	
-	update__to__dialog(cfgs);
+	update__to__dialog(last);
 
-	last = cfgs;
-	last.is_set = true;
-
-	aply = cfgs;
-	aply.is_set = true;
-	
-	// for external use:
-	current = cfgs.is_set ? cfgs : defs;
-		
 	pdlg->Show(show);
 }
+
 
 void
 A_Prefs_Manager::force_updates()
@@ -269,6 +250,10 @@ A_Prefs_Manager::force_updates()
 		return;
 	}
 	pw->PreferenceChanged();
+	
+	if ( current.is_set ) {
+		SetPovPref(current.povexec);
+	}
 }
 
 /*static*/ const prefs_set*
@@ -292,7 +277,6 @@ A_Prefs_Manager::on_restore_defs(wxCommandEvent& event)
 void
 A_Prefs_Manager::on_restore_conf(wxCommandEvent& event)
 {
-	read_config();
 	update__to__dialog(cfgs);
 }
 
@@ -310,7 +294,8 @@ void
 A_Prefs_Manager::on_cancel(wxCommandEvent& event)
 {
 	update__to__dialog(last);
-	current = aply = cfgs = last;
+	current = last;
+	current.is_set = true;
 	force_updates();
 }
 
@@ -318,5 +303,8 @@ void
 A_Prefs_Manager::on_OK(wxCommandEvent& event)
 {
 	on_apply(event);
-	cfgs = aply = last = current;
+	if ( aply.is_set ) {
+		last = aply;
+		aply.is_set = false;
+	}
 }

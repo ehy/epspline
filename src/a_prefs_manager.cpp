@@ -47,6 +47,7 @@ namespace {
 		wxT("#FF0000"),		// canvas_guides_color
 		wxT("#E0E0FF"),		// canvas_grid_color
 		true,				// bool canvas_grid_show
+		wxT(".inc"),		// xsuffix (default extension)
 #ifdef __WXMSW__
 		wxT("pvengine.exe")	// povexec -- pathname or basename
 #else
@@ -100,6 +101,8 @@ A_Prefs_Manager::~A_Prefs_Manager()
 		pcfg->Write(ent, cfgs.canvas_grid_color);
 		ent = wxT("iface/opts/draw_show");
 		pcfg->Write(ent, cfgs.canvas_grid_show);
+		ent = wxT("user/export_suffix");
+		pcfg->Write(ent, cfgs.xsuffix);
 		ent = wxT("preview/povray_exec");
 		pcfg->Write(ent, cfgs.povexec);
 	}
@@ -134,6 +137,11 @@ A_Prefs_Manager::read_config()
 		cfgs.is_set = true;
 		cfgs.canvas_grid_show = b_res;
 	}
+	ent = wxT("user/export_suffix");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.xsuffix = s_res;
+	}
 	ent = wxT("preview/povray_exec");
 	if ( pcfg->Read(ent, &s_res) ) {
 		cfgs.is_set = true;
@@ -149,6 +157,8 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 	}
 
 	wxString item;
+	bool bval;
+
 	// the wx docs discourage taking a value from the text control
 	// part of a file (or color) picker as that will allow user error,
 	// which is good advice. but for the povray exec preference the user
@@ -165,6 +175,24 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 		pset.is_set = (pset.povexec != item);
 	}
 	pset.povexec = item;
+	
+	// suffix/extension
+	item = pdlg->glb_def_suffix->GetValue();
+	item.Trim(true); item.Trim(false);
+	if ( item.IsEmpty() ) {
+		item = defs.xsuffix;
+	}
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.xsuffix != item);
+	}
+	pset.xsuffix = item;
+	
+	// canvas_grid_show -- draw grid chackbox
+	bval = pdlg->glb_draw_grid->GetValue();
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.canvas_grid_show != bval);
+	}
+	pset.canvas_grid_show = bval;
 	
 	// colors
 	wxColour clr;
@@ -183,6 +211,30 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 	}
 	pset.canvas_grid_color = item;
 
+	// guides color picker
+	clr = pdlg->glb_guidescolor_picker->GetColour();
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item.Trim(true); item.Trim(false);
+	if ( item.IsEmpty() ) {
+		item = defs.canvas_guides_color;
+	}
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.canvas_guides_color != item);
+	}
+	pset.canvas_guides_color = item;
+
+	// background color picker
+	clr = pdlg->glb_backgroundcolor_picker->GetColour();
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item.Trim(true); item.Trim(false);
+	if ( item.IsEmpty() ) {
+		item = defs.canvas_background_color;
+	}
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.canvas_background_color != item);
+	}
+	pset.canvas_background_color = item;
+
 }
 
 void
@@ -192,6 +244,12 @@ A_Prefs_Manager::update__to__dialog(prefs_set& pset)
 		return;
 	}
 	
+	// suffix/extension
+	pdlg->glb_def_suffix->SetValue(pset.xsuffix);
+	
+	// canvas_grid_show -- draw grid chackbox
+	pdlg->glb_draw_grid->SetValue(pset.canvas_grid_show);
+	
 	// colors : note we are prefering a color name if possible.
 	wxColour clr;
 	long clr_flags;
@@ -200,6 +258,14 @@ A_Prefs_Manager::update__to__dialog(prefs_set& pset)
 	// grid color picker
 	clr = pset.canvas_grid_color;
 	pdlg->glb_gridcolor_picker->SetColour(clr.GetAsString(clr_flags));
+
+	// guides color picker
+	clr = pset.canvas_guides_color;
+	pdlg->glb_guidescolor_picker->SetColour(clr.GetAsString(clr_flags));
+
+	// background color picker
+	clr = pset.canvas_background_color;
+	pdlg->glb_backgroundcolor_picker->SetColour(clr.GetAsString(clr_flags));
 
 	// pov exec is special: the file picker only wants an abspath
 	// so only place it directly in the picker control if it is

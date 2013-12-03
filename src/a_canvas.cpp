@@ -2529,8 +2529,25 @@ A_Canvas::ExportAs()
 	if ( D->sFdir == wxT("") )
 		D->sFdir = wxGetApp().GetLastDlgDir();
 
-	wxFileDialog d(a_frame, _("Please provide a name"), D->sFdir
-        , D->sFname, wxT("*.*"), wxSAVE | wxOVERWRITE_PROMPT);
+	wxString sfx;
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	if ( pfs ) {
+		sfx = wxString(wxT("*")) + pfs->xsuffix;
+	} else {
+		sfx = wxString(wxT("*.*"));
+	}
+	
+	wxString fn = D->sFname;
+	if ( fn.IsEmpty() ) {
+		wxFileName tfn(GetCurFileName());
+		fn = tfn.GetName();
+		if ( pfs ) {
+			fn += pfs->xsuffix;
+		}
+	}
+
+	wxFileDialog d(a_frame, _("Provide a name for export"), D->sFdir
+        , fn, sfx, wxSAVE | wxOVERWRITE_PROMPT);
 
 	if ( d.ShowModal() == wxID_OK ) {
 		D->sFdir = d.GetDirectory();
@@ -2873,21 +2890,26 @@ A_Canvas::DrawGrid(wxDC& dc, const wxRect& R, int wid, int pad)
 void
 A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 {
+	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
+	wxColour grclr(pfs ? pfs->canvas_grid_color : wxT("#E0E0FF"));
+	wxColour guclr(pfs ? pfs->canvas_guides_color : wxT("#FF0000"));
+	wxColour bgclr(pfs ? pfs->canvas_background_color : wxT("#FFFFFF"));
+	bool drawgrid = pfs ? pfs->canvas_grid_show : true;
+
 	wxPen op = dc.GetPen();
+	wxBrush ob = dc.GetBrush();
 	dc.SetPen(wxNullPen);
+	dc.SetBrush(wxBrush(bgclr));
 	dc.DrawRectangle(r.x, r.y, r.width, r.height);
 
-	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
-	wxColour clr(pfs ? pfs->canvas_grid_color : wxT("#E0E0FF"));
-
 	#if defined(__WXGTK__) && 0
-	wxPen    np(clr, 1, wxSHORT_DASH);
+	wxPen    np(grclr, 1, wxSHORT_DASH);
 	#else
-	wxPen    np(clr, 1, wxSOLID);
+	wxPen    np(grclr, 1, wxSOLID);
 	#endif
 	dc.SetPen(np);
 
-	if ( wid > 0 ) {
+	if ( drawgrid && wid > 0 ) {
 		int xs = wid;
 		int ys = wid;
 		int offs = r.x - (r.x % xs); // - 1;
@@ -2933,6 +2955,7 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	}
 
 	dc.SetPen(op);
+	dc.SetBrush(ob);
 }
 
 void

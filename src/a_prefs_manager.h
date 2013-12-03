@@ -68,6 +68,7 @@ struct prefs_set {
 	// bools, toggles
 	bool canvas_grid_show;
 	// strings
+	wxString xsuffix;
 	wxString povexec;
 };
 

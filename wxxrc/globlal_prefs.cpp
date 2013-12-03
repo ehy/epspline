@@ -24,8 +24,6 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	dlg_notebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	tab_global_prefs = new wxPanel( dlg_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	tab_global_prefs->SetToolTip( _("Application settings") );
-	
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxVERTICAL );
 	
@@ -50,19 +48,33 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	fgSizer3->Add( 8, 16, 1, wxEXPAND, 5 );
 	
-	m_staticText9 = new wxStaticText( tab_global_prefs, wxID_ANY, _("Default name for new objects:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( tab_global_prefs, wxID_ANY, _("Default extension/suffix for exports:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
 	fgSizer3->Add( m_staticText9, 0, wxALL, 5 );
 	
-	glb_def_name = new wxTextCtrl( tab_global_prefs, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
-	glb_def_name->SetMaxLength( 128 ); 
-	glb_def_name->SetValidator( wxTextValidator( wxFILTER_INCLUDE_CHAR_LIST, &glb_def_name_validator ) );
-	glb_def_name->SetToolTip( _("Default name of new objects (#declare . . .)") );
+	glb_def_suffix = new wxTextCtrl( tab_global_prefs, wxID_ANY, _(".inc"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	glb_def_suffix->SetMaxLength( 64 ); 
+	glb_def_suffix->SetValidator( wxTextValidator( wxFILTER_EXCLUDE_CHAR_LIST, &glb_def_suffix_validator ) );
+	glb_def_suffix->SetToolTip( _("Default extension/suffix used when choosing a filename for export to POV-Ray SDL; note that a leading '.' is not added automatically") );
 	
-	fgSizer3->Add( glb_def_name, 0, wxEXPAND, 5 );
+	fgSizer3->Add( glb_def_suffix, 0, wxEXPAND, 5 );
 	
 	
 	fgSizer3->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	
+	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText4 = new wxStaticText( tab_global_prefs, wxID_ANY, _("Draw grid lines on canvas background:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	fgSizer3->Add( m_staticText4, 0, wxALL, 5 );
+	
+	glb_draw_grid = new wxCheckBox( tab_global_prefs, wxID_ANY, _("Check to draw grid"), wxDefaultPosition, wxDefaultSize, 0 );
+	glb_draw_grid->SetValue(true); 
+	fgSizer3->Add( glb_draw_grid, 0, wxALL, 5 );
+	
+	
+	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	bSizer5->Add( fgSizer3, 1, wxEXPAND, 5 );
 	
@@ -102,15 +114,43 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
 	
+	
+	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	m_staticText21 = new wxStaticText( tab_global_prefs, wxID_ANY, _("Choose guides color:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText21->Wrap( -1 );
+	fgSizer5->Add( m_staticText21, 0, wxALL, 5 );
+	
+	glb_guidescolor_picker = new wxColourPickerCtrl( tab_global_prefs, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_USE_TEXTCTRL );
+	glb_guidescolor_picker->SetToolTip( _("Choose a color for the canvas guide lines.") );
+	
+	fgSizer5->Add( glb_guidescolor_picker, 0, wxEXPAND, 5 );
+	
+	
+	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	
+	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	m_staticText22 = new wxStaticText( tab_global_prefs, wxID_ANY, _("Choose background color:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText22->Wrap( -1 );
+	fgSizer5->Add( m_staticText22, 0, wxALL, 5 );
+	
+	glb_backgroundcolor_picker = new wxColourPickerCtrl( tab_global_prefs, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_USE_TEXTCTRL );
+	glb_backgroundcolor_picker->SetToolTip( _("Choose a color for the canvas background.") );
+	
+	fgSizer5->Add( glb_backgroundcolor_picker, 0, wxEXPAND, 5 );
+	
+	
+	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
+	
 	bSizer5->Add( fgSizer5, 1, wxEXPAND, 5 );
 	
 	tab_global_prefs->SetSizer( bSizer5 );
 	tab_global_prefs->Layout();
 	bSizer5->Fit( tab_global_prefs );
-	dlg_notebook->AddPage( tab_global_prefs, _("Global Preferences"), false );
+	dlg_notebook->AddPage( tab_global_prefs, _("Global Preferences"), true );
 	tab_pov_prefs = new wxPanel( dlg_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	tab_pov_prefs->SetToolTip( _("POV-Ray Settings") );
-	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
@@ -152,7 +192,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	tab_pov_prefs->SetSizer( bSizer2 );
 	tab_pov_prefs->Layout();
 	bSizer2->Fit( tab_pov_prefs );
-	dlg_notebook->AddPage( tab_pov_prefs, _("POV-Ray Settings"), true );
+	dlg_notebook->AddPage( tab_pov_prefs, _("POV-Ray Settings"), false );
 	
 	dlg_base_sizer->Add( dlg_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -217,9 +257,11 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	// Connect Events
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
-	glb_def_name->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
-	glb_def_name->Connect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
+	glb_def_suffix->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
+	glb_def_suffix->Connect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
 	glb_gridcolor_picker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_guidescolor_picker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_backgroundcolor_picker->Connect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
 	glb_pov_picker->Connect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
 	glb_restore_defs->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_defs ), NULL, this );
 	glb_restore_conf->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );
@@ -232,9 +274,11 @@ global_pref_dialog::~global_pref_dialog()
 {
 	// Disconnect Events
 	this->Disconnect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
-	glb_def_name->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
-	glb_def_name->Disconnect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
+	glb_def_suffix->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
+	glb_def_suffix->Disconnect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
 	glb_gridcolor_picker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_guidescolor_picker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
+	glb_backgroundcolor_picker->Disconnect( wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEventHandler( global_pref_dialog::on_grid_color_select ), NULL, this );
 	glb_pov_picker->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( global_pref_dialog::on_POV_file_select ), NULL, this );
 	glb_restore_defs->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_defs ), NULL, this );
 	glb_restore_conf->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );

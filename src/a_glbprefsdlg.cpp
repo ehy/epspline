@@ -42,12 +42,6 @@ a_global_pref_dialog::on_init_dlg(wxInitDialogEvent& event)
 	event.Skip();
 }
 void
-a_global_pref_dialog::on_POV_file_select(wxFileDirPickerEvent& event)
-{
-	//pm->on_POV_file_select(event);
-	event.Skip();
-}
-void
 a_global_pref_dialog::on_restore_defs(wxCommandEvent& event)
 {
 	pm->on_restore_defs(event);

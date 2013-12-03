@@ -46,7 +46,6 @@ public:
 protected:
 	// Virtual event handler overides
 	virtual void on_init_dlg(wxInitDialogEvent& event);
-	virtual void on_POV_file_select(wxFileDirPickerEvent& event);
 	virtual void on_restore_defs(wxCommandEvent& event);
 	virtual void on_restore_conf(wxCommandEvent& event);
 	virtual void on_apply(wxCommandEvent& event);

@@ -39,6 +39,7 @@
 #include <wx/settings.h>
 #include <wx/textctrl.h>
 #include <wx/valtext.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/statline.h>
 #include <wx/clrpicker.h>
@@ -71,7 +72,11 @@ class global_pref_dialog : public wxDialog
 		
 		
 		wxStaticText* m_staticText9;
-		wxTextCtrl* glb_def_name;
+		wxTextCtrl* glb_def_suffix;
+		
+		
+		wxStaticText* m_staticText4;
+		wxCheckBox* glb_draw_grid;
 		
 		wxStaticLine* m_staticline1;
 		
@@ -81,6 +86,14 @@ class global_pref_dialog : public wxDialog
 		
 		wxStaticText* m_staticText2;
 		wxColourPickerCtrl* glb_gridcolor_picker;
+		
+		
+		wxStaticText* m_staticText21;
+		wxColourPickerCtrl* glb_guidescolor_picker;
+		
+		
+		wxStaticText* m_staticText22;
+		wxColourPickerCtrl* glb_backgroundcolor_picker;
 		
 		wxPanel* tab_pov_prefs;
 		
@@ -120,7 +133,7 @@ class global_pref_dialog : public wxDialog
 		
 	
 	public:
-		wxString glb_def_name_validator; 
+		wxString glb_def_suffix_validator; 
 		
 		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~global_pref_dialog();

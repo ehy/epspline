@@ -197,7 +197,11 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 	// colors
 	wxColour clr;
 	long clr_flags;
+	#if wxCHECK_VERSION(2, 8, 12)
 	clr_flags = wxC2S_NAME|wxC2S_CSS_SYNTAX|wxC2S_HTML_SYNTAX;
+	#else
+	clr_flags = wxC2S_HTML_SYNTAX;
+	#endif
 
 	// grid color picker
 	clr = pdlg->glb_gridcolor_picker->GetColour();
@@ -253,7 +257,11 @@ A_Prefs_Manager::update__to__dialog(prefs_set& pset)
 	// colors : note we are prefering a color name if possible.
 	wxColour clr;
 	long clr_flags;
+	#if wxCHECK_VERSION(2, 8, 12)
 	clr_flags = wxC2S_NAME|wxC2S_CSS_SYNTAX|wxC2S_HTML_SYNTAX;
+	#else
+	clr_flags = wxC2S_HTML_SYNTAX;
+	#endif
 
 	// grid color picker
 	clr = pset.canvas_grid_color;

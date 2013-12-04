@@ -89,7 +89,8 @@ private:
 	void update__to__dialog(prefs_set& pset);
 
 	friend class a_global_pref_dialog;
-	// event handler overides in dialog call these
+	// event handler overides in friend dialog call these
+	void on_close_event(wxCloseEvent& event);
 	void on_init_dlg(wxInitDialogEvent& event);
 	void on_restore_defs(wxCommandEvent& event);
 	void on_restore_conf(wxCommandEvent& event);

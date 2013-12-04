@@ -36,6 +36,13 @@ a_global_pref_dialog::~a_global_pref_dialog()
 }
 
 void
+a_global_pref_dialog::on_close_event(wxCloseEvent& event)
+{
+	pm->on_close_event(event);
+	// let pm decide on Skip()
+	//event.Skip();
+}
+void
 a_global_pref_dialog::on_init_dlg(wxInitDialogEvent& event)
 {
 	pm->on_init_dlg(event);

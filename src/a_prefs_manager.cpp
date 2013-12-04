@@ -291,9 +291,10 @@ void
 A_Prefs_Manager::delete_prefs_dialog()
 {
 	if ( pdlg ) {
-		pdlg->Show(false);
-		delete pdlg;
+		a_global_pref_dialog*	tmp = pdlg;
 		pdlg = 0;
+		tmp->Show(false);
+		tmp->Destroy();
 	}
 }
 
@@ -308,9 +309,19 @@ A_Prefs_Manager::show_prefs_dialog(bool show)
 		}
 		pdlg = new A_Prefs_dlg(pw, this);
 	}
-	
-	update__to__dialog(last);
 
+	if ( ! pdlg->IsShown() && show ) {
+		update__to__dialog(last);
+	}
+	
+	if ( pdlg->IsIconized() && show ) {
+		pdlg->Iconize(false);
+	}
+	
+	if ( pdlg->IsMaximized() && show ) {
+		pdlg->Maximize(false);
+	}
+	
 	pdlg->Show(show);
 }
 
@@ -337,6 +348,22 @@ A_Prefs_Manager::get_prefs_set()
 }
 
 // The dialog's virtual event handlers call these 'on_*' procs.
+void
+A_Prefs_Manager::on_close_event(wxCloseEvent& event)
+{
+	current = last;
+	current.is_set = true;
+	force_updates();
+
+	if ( event.CanVeto() == false ) {
+		fputs("epspline: event.CanVeto() == false\n", stderr);
+		delete_prefs_dialog();
+	} else {
+		update__to__dialog(last);
+		event.Skip();
+	}
+}
+
 void
 A_Prefs_Manager::on_init_dlg(wxInitDialogEvent& event)
 {

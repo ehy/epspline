@@ -106,6 +106,26 @@ wxMBConv* app_global_mbconv;
 IMPLEMENT_APP(AnApp)
 
 // `Main program'
+
+	// WX macro to setup event handling
+	// Added 2013/12/04 for MSW shutdown event handling with
+	// EVT_END_SESSION() -- w/o this MSW7 queries and barfs
+BEGIN_EVENT_TABLE(AnApp, wxApp)
+ EVT_CLOSE       (AnApp::OnEndSession)
+END_EVENT_TABLE()
+
+
+void
+AnApp::OnEndSession(wxCloseEvent& e)
+{
+	fprintf(stderr,"epspline: OnEndSession, logoff == %d\n",
+		e.GetLoggingOff() ? 1 : 0);
+	A_Frame* pw = dynamic_cast<A_Frame*>(GetTopWindow());
+	if ( pw ) {
+		pw->Close(true);
+	}
+}
+
 bool
 AnApp::OnInit()
 {

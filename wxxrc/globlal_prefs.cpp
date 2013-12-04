@@ -71,7 +71,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	glb_draw_grid = new wxCheckBox( tab_global_prefs, wxID_ANY, _("Check to draw grid"), wxDefaultPosition, wxDefaultSize, 0 );
 	glb_draw_grid->SetValue(true); 
-	fgSizer3->Add( glb_draw_grid, 0, wxALL, 5 );
+	fgSizer3->Add( glb_draw_grid, 0, wxALIGN_CENTER_VERTICAL, 5 );
 	
 	
 	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -256,6 +256,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( global_pref_dialog::on_close_event ) );
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
 	glb_def_suffix->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
 	glb_def_suffix->Connect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );
@@ -273,6 +274,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 global_pref_dialog::~global_pref_dialog()
 {
 	// Disconnect Events
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( global_pref_dialog::on_close_event ) );
 	this->Disconnect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( global_pref_dialog::on_init_dlg ) );
 	glb_def_suffix->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( global_pref_dialog::on_def_object_name ), NULL, this );
 	glb_def_suffix->Disconnect( wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEventHandler( global_pref_dialog::on_def_object_name_overflow ), NULL, this );

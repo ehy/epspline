@@ -72,6 +72,13 @@ class A_Prefs_Manager;
 
 // wxApp derived application class.
 class AnApp : public wxApp {
+
+	// WX macro to setup event handling
+	// Added 2013/12/04 for MSW shutdown event handling with
+	// EVT_END_SESSION() -- w/o this MSW7 queries and barfs
+	DECLARE_EVENT_TABLE()
+
+	void OnEndSession(wxCloseEvent& e);
 public:
 	virtual bool OnInit();
 	virtual int OnExit();

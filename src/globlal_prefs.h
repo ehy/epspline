@@ -120,6 +120,7 @@ class global_pref_dialog : public wxDialog
 		
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
 		virtual void on_init_dlg( wxInitDialogEvent& event ) { event.Skip(); }
 		virtual void on_def_object_name( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_def_object_name_overflow( wxCommandEvent& event ) { event.Skip(); }
@@ -135,7 +136,7 @@ class global_pref_dialog : public wxDialog
 	public:
 		wxString glb_def_suffix_validator; 
 		
-		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxDEFAULT_DIALOG_STYLE );
+		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX|wxSTAY_ON_TOP );
 		~global_pref_dialog();
 	
 };

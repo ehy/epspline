@@ -34,9 +34,9 @@
             <property name="name">global_pref_dialog</property>
             <property name="pos"></property>
             <property name="size">640,605</property>
-            <property name="style">wxDEFAULT_DIALOG_STYLE</property>
+            <property name="style">wxCAPTION|wxCLOSE_BOX|wxSTAY_ON_TOP</property>
             <property name="subclass"></property>
-            <property name="title">Preferences</property>
+            <property name="title">Epspline Preferences</property>
             <property name="tooltip"></property>
             <property name="validator_data_type"></property>
             <property name="validator_style">wxFILTER_NONE</property>
@@ -48,7 +48,7 @@
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
             <event name="OnChar"></event>
-            <event name="OnClose"></event>
+            <event name="OnClose">on_close_event</event>
             <event name="OnEnterWindow"></event>
             <event name="OnEraseBackground"></event>
             <event name="OnHibernate"></event>
@@ -463,7 +463,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">5</property>
-                                                <property name="flag">wxALL</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxCheckBox" expanded="1">
                                                     <property name="bg"></property>

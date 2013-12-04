@@ -1,118 +1,144 @@
 
 
 $(OBJDIR)\epspline.obj: epspline.cpp stdcc.h \
-  epspline.h cfg.h \
-  cdata.h a_frame.h \
-  a_canvas.h splines.h util.h \
-  spline_props.h \
-  wxutil.h a_tabwnd.h \
-  a_ruler.h a_tabpage.h \
-  epspline_helpids.h clocall.h
+ epspline.h cfg.h \
+ cdata.h a_frame.h \
+ a_canvas.h splines.h util.h \
+ spline_props.h \
+ wxutil.h a_tabwnd.h \
+ a_ruler.h a_tabpage.h \
+ epspline_helpids.h clocall.h a_prefs_manager.h
 
 
 $(OBJDIR)\io.obj: io.cpp \
-  wxexio.h exio.h wxutil.h \
-  splines.h cfg.h stdcc.h \
-  util.h spline_props.h \
-  clocnumeric.h clocall.h
+ wxexio.h exio.h wxutil.h \
+ splines.h cfg.h stdcc.h \
+ util.h spline_props.h \
+ clocnumeric.h clocall.h
 
 
 $(OBJDIR)\a_canvas.obj: a_canvas.cpp \
-  clocnumeric.h clocall.h epspline.h \
-  cfg.h stdcc.h \
-  cdata.h a_canvas.h splines.h util.h spline_props.h \
-  wxutil.h a_frame.h \
-  a_tabwnd.h \
-  a_ruler.h a_tabpage.h \
-  epspline_helpids.h a_zoomdlg.h a_spintextdlg.h \
-  swap_vals.h drawlines.h
+ clocnumeric.h clocall.h epspline.h cfg.h \
+ stdcc.h \
+ cdata.h a_canvas.h splines.h util.h spline_props.h \
+ wxutil.h a_frame.h \
+ a_tabwnd.h \
+ a_ruler.h a_tabpage.h \
+ epspline_helpids.h a_zoomdlg.h a_spintextdlg.h \
+ a_prefs_manager.h swap_vals.h \
+ drawlines.h
 
 
 $(OBJDIR)\splines.obj: splines.cpp \
-  clocnumeric.h clocall.h splines.h \
-  cfg.h stdcc.h \
-  util.h \
-  spline_props.h \
-  wxutil.h
+ clocnumeric.h clocall.h splines.h cfg.h \
+ stdcc.h \
+ util.h \
+ spline_props.h \
+ wxutil.h
 
 
 $(OBJDIR)\splineprops.obj: splineprops.cpp \
-  cfg.h stdcc.h \
-  splines.h util.h spline_props.h \
+ cfg.h stdcc.h \
+ splines.h util.h spline_props.h \
 
 
 $(OBJDIR)\util.obj: util.cpp \
-  epspline.h cfg.h stdcc.h \
-  cdata.h util.h wxutil.h splines.h spline_props.h \
+ epspline.h cfg.h stdcc.h \
+ cdata.h util.h wxutil.h splines.h spline_props.h \
 
 
 $(OBJDIR)\a_frame.obj: a_frame.cpp \
-  a_frame.h \
-  epspline.h cfg.h stdcc.h \
-  cdata.h a_canvas.h splines.h util.h spline_props.h \
-  wxutil.h a_tabwnd.h \
-  a_ruler.h a_tabpage.h \
-  epspline_helpids.h a_aboutbox.h ..\art\epspline.xpm
+ a_frame.h \
+ epspline.h cfg.h stdcc.h \
+ cdata.h a_canvas.h splines.h util.h spline_props.h \
+ wxutil.h a_tabwnd.h \
+ a_ruler.h a_tabpage.h \
+ epspline_helpids.h a_aboutbox.h a_prefs_manager.h ..\art\epspline.xpm
 
 
 $(OBJDIR)\a_ruler.obj: a_ruler.cpp \
-  cfg.h stdcc.h \
-  a_ruler.h util.h
+ cfg.h stdcc.h \
+ a_ruler.h util.h
 
 
 $(OBJDIR)\povdemo.obj: povdemo.cpp \
-  splines.h cfg.h stdcc.h \
-  util.h \
-  spline_props.h \
-  a_canvas.h wxutil.h clocnumeric.h clocall.h
+ splines.h cfg.h stdcc.h \
+ util.h \
+ spline_props.h \
+ a_canvas.h wxutil.h clocnumeric.h clocall.h
 
 
 $(OBJDIR)\a_tabwnd.obj: a_tabwnd.cpp \
-  a_tabwnd.h \
-  a_ruler.h a_canvas.h cfg.h \
-  stdcc.h \
-  splines.h util.h spline_props.h \
-  wxutil.h a_frame.h \
-  epspline.h \
-  cdata.h a_tabpage.h epspline_helpids.h
+ a_tabwnd.h \
+ a_ruler.h a_canvas.h cfg.h stdcc.h \
+ splines.h util.h spline_props.h \
+ wxutil.h a_frame.h \
+ epspline.h \
+ cdata.h a_tabpage.h epspline_helpids.h
 
 
 $(OBJDIR)\a_tabpage.obj: a_tabpage.cpp \
-  a_tabpage.h \
-  a_ruler.h a_canvas.h cfg.h \
-  stdcc.h \
-  splines.h util.h spline_props.h \
-  wxutil.h
+ a_tabpage.h \
+ a_ruler.h a_canvas.h cfg.h stdcc.h \
+ splines.h util.h spline_props.h \
+ wxutil.h
 
 
 $(OBJDIR)\a_zoomdlg.obj: a_zoomdlg.cpp \
-  a_zoomdlg.h a_spintextdlg.h \
-  cfg.h stdcc.h \
+ a_zoomdlg.h a_spintextdlg.h \
+ cfg.h stdcc.h \
 
 
 $(OBJDIR)\a_spintextdlg.obj: a_spintextdlg.cpp \
-  a_spintextdlg.h cfg.h stdcc.h \
+ a_spintextdlg.h cfg.h stdcc.h \
 
 
 $(OBJDIR)\a_textctldlg.obj: a_textctldlg.cpp \
-  a_textctldlg.h cfg.h stdcc.h \
+ a_textctldlg.h cfg.h stdcc.h \
 
 
 $(OBJDIR)\a_aboutbox.obj: a_aboutbox.cpp \
-  GPL.inc FDL.inc PERM.inc a_aboutbox.h \
-  cfg.h stdcc.h \
-  epspline.h \
-  cdata.h wxutil.h splines.h util.h spline_props.h \
+ GPL.inc FDL.inc aboutart.xpm cfg.h \
+ stdcc.h \
+ a_aboutbox.h \
+ epspline.h \
+ cdata.h wxutil.h splines.h util.h spline_props.h \
+
+
+$(OBJDIR)\a_prefs_manager.obj: a_prefs_manager.cpp \
+ a_prefs_manager.h cfg.h stdcc.h \
+ cdata.h \
+ a_glbprefsdlg.h globlal_prefs.h \
+ epspline.h \
+ a_frame.h \
+ a_canvas.h splines.h util.h spline_props.h \
+ wxutil.h a_tabwnd.h \
+ a_ruler.h a_tabpage.h \
+ epspline_helpids.h
+
+
+$(OBJDIR)\a_glbprefsdlg.obj: a_glbprefsdlg.cpp a_glbprefsdlg.h globlal_prefs.h \
+ a_prefs_manager.h cfg.h stdcc.h \
+ cdata.h \
+ a_frame.h \
+ epspline.h \
+ a_canvas.h splines.h util.h spline_props.h \
+ wxutil.h a_tabwnd.h \
+ a_ruler.h a_tabpage.h \
+ epspline_helpids.h
 
 
 $(OBJDIR)\spline_props.obj: spline_props.cpp spline_props.h \
 
 
+$(OBJDIR)\globlal_prefs.obj: globlal_prefs.cpp globlal_prefs.h \
+
+
 $(OBJDIR)\wxexio.obj: wxexio.cpp \
-  wxutil.h splines.h cfg.h \
-  stdcc.h \
-  util.h \
-  spline_props.h \
-  wxexio.h exio.h
+ wxutil.h splines.h cfg.h \
+ stdcc.h \
+ util.h \
+ spline_props.h \
+ wxexio.h exio.h
 
 

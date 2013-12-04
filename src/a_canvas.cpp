@@ -205,7 +205,7 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	curcursor = arrowcursor;
 	
 	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
-	wxColour clr(pfs ? pfs->canvas_background_color : wxT("#FFFFFF"));
+	wxColour clr(pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
 	SetBackgroundColour(clr);
 	
 	if ( pfs ) {
@@ -2891,9 +2891,9 @@ void
 A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 {
 	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
-	wxColour grclr(pfs ? pfs->canvas_grid_color : wxT("#E0E0FF"));
-	wxColour guclr(pfs ? pfs->canvas_guides_color : wxT("#FF0000"));
-	wxColour bgclr(pfs ? pfs->canvas_background_color : wxT("#FFFFFF"));
+	wxColour grclr(pfs ? pfs->canvas_grid_color : ch2wxs("#E0E0FF"));
+	wxColour guclr(pfs ? pfs->canvas_guides_color : ch2wxs("#FF0000"));
+	wxColour bgclr(pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
 	bool drawgrid = pfs ? pfs->canvas_grid_show : true;
 
 	wxPen op = dc.GetPen();

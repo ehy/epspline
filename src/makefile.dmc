@@ -77,10 +77,10 @@ OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
 	$(OBJDIR)\\a_textctldlg.obj \
 	$(OBJDIR)\\a_spintextdlg.obj \
 	$(OBJDIR)\\a_aboutbox.obj \
-	$(OBJDIR)\\a_prefs_manager.o \
-	$(OBJDIR)\\a_glbprefsdlg.o \
-	$(OBJDIR)\\spline_props.o \
-	$(OBJDIR)\\globlal_prefs.o \
+	$(OBJDIR)\\a_prefs_manager.obj \
+	$(OBJDIR)\\a_glbprefsdlg.obj \
+	$(OBJDIR)\\spline_props.obj \
+	$(OBJDIR)\\globlal_prefs.obj \
 	$(OBJDIR)\\wxexio.obj
 
 PARSER_SRC = $(SRCDIR)\\ms_parse.c
@@ -151,6 +151,15 @@ $(OBJDIR)\\util.obj: $(SRCDIR)\\util.cpp
 
 $(OBJDIR)\\wxexio.obj: $(SRCDIR)\\wxexio.cpp
 	$(CC) $(CFLAGS) -mn -cpp -c -owxexio.obj wxexio.cpp
+
+$(OBJDIR)\\a_prefs_manager.obj: $(SRCDIR)\\a_prefs_manager.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -oa_prefs_manager.obj a_prefs_manager.cpp
+
+$(OBJDIR)\\a_glbprefsdlg.obj: $(SRCDIR)\\a_glbprefsdlg.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -oa_glbprefsdlg.obj a_glbprefsdlg.cpp
+
+$(OBJDIR)\\globlal_prefs.obj: $(SRCDIR)\\globlal_prefs.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -ogloblal_prefs.obj globlal_prefs.cpp
 
 epspline.exe : $(OBJECTS) parser epspline.def epspline.res
 	$(CC) $(LDFLAGS) -o$@ $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res $(LIBS)

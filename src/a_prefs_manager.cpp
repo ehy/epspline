@@ -205,7 +205,7 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 
 	// grid color picker
 	clr = pdlg->glb_gridcolor_picker->GetColour();
-	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : ch2wxs("");
 	item.Trim(true); item.Trim(false);
 	if ( item.IsEmpty() ) {
 		item = defs.canvas_grid_color;
@@ -217,7 +217,7 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 
 	// guides color picker
 	clr = pdlg->glb_guidescolor_picker->GetColour();
-	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : ch2wxs("");
 	item.Trim(true); item.Trim(false);
 	if ( item.IsEmpty() ) {
 		item = defs.canvas_guides_color;
@@ -229,7 +229,7 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 
 	// background color picker
 	clr = pdlg->glb_backgroundcolor_picker->GetColour();
-	item = clr.IsOk() ? clr.GetAsString(clr_flags) : wxT("");
+	item = clr.IsOk() ? clr.GetAsString(clr_flags) : ch2wxs("");
 	item.Trim(true); item.Trim(false);
 	if ( item.IsEmpty() ) {
 		item = defs.canvas_background_color;

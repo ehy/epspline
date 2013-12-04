@@ -711,8 +711,8 @@ A_Frame::OnOption(wxCommandEvent& event)
 				
 				wxFileDialog d(this,
 					_("Please select one or more files"),
-					canvas ? canvas->GetCurDirName() : wxT(""),
-					canvas ? canvas->GetCurFileName() : wxT(""),
+					canvas ? canvas->GetCurDirName() : ch2wxs(""),
+					canvas ? canvas->GetCurFileName() : ch2wxs(""),
 					wxT("*.pse"),
 					wxFD_OPEN | wxFD_MULTIPLE);
 			

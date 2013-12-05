@@ -181,6 +181,8 @@ $(OBJDIR)/globlal_prefs.o : $(SRCDIR)/globlal_prefs.cpp $(HDRDIR)/globlal_prefs.
 # note that pov_reserved_words.cpp is not compiled alone, it is
 # included in util.cpp
 POV_WORDS_NAM = pov_reserved_words
+POV_WORDS_3_6 = $(SRCDIR)/pov-3.6_reserved_words.text
+POV_WORDS_3_7 = $(SRCDIR)/pov-3.7_reserved_words.text
 POV_WORDS_SRC = $(SRCDIR)/$(POV_WORDS_NAM).text
 POV_WORDS_CPP = $(SRCDIR)/$(POV_WORDS_NAM).cpp
 $(POV_WORDS_CPP) : $(POV_WORDS_SRC)
@@ -190,6 +192,13 @@ $(POV_WORDS_CPP) : $(POV_WORDS_SRC)
 	--class-name=pov_reserved_words --seven-bit --compare-lengths \
 	--readonly-tables --enum --includes $(POV_WORDS_SRC) || exit 1; }
 	@echo Succeeded with $@
+
+$(POV_WORDS_SRC) : $(POV_WORDS_3_6) $(POV_WORDS_3_7)
+	$(CAT) $(POV_WORDS_3_6) $(POV_WORDS_3_7) \
+		| $(SORT) | $(UNIQ) \
+		> $(POV_WORDS_SRC)
+	@echo Succeeded with $@
+
 # An additional dependency:
 util.o : $(POV_WORDS_CPP)
 

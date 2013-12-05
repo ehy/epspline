@@ -80,11 +80,9 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 	// for external use:
 	current = cfgs.is_set ? cfgs : defs;
 
-	// this is not queried on init code; it must be set
-	if ( current.is_set && current.povexec != defs.povexec ) {
-		SetPovPref(current.povexec);
-		SetPovOpts(current.povopts);
-	}
+	// these are not queried on init code; must be set
+	SetPovPref(current.povexec);
+	SetPovOpts(current.povopts);
 }
 
 A_Prefs_Manager::~A_Prefs_Manager()

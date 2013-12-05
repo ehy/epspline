@@ -740,7 +740,7 @@ DoPovDemo(A_Canvas& canvas, std::list<SplineBase*>& lst, wxString* e)
 		if ( e ) {
 			*e = p->GetErrMsg();
 		}
-	    //fprintf(stderr, "FAILED: %s\n", wxs2ch(p->GetCommand()));
+	    //fprintf(stderr, "FAILED: '%s'\n", wxs2ch(p->GetCommand()));
 		delete p;
 		return false;
 	}

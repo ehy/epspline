@@ -170,7 +170,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	tab_global_prefs->SetSizer( bSizer5 );
 	tab_global_prefs->Layout();
 	bSizer5->Fit( tab_global_prefs );
-	dlg_notebook->AddPage( tab_global_prefs, _("Global Preferences"), true );
+	dlg_notebook->AddPage( tab_global_prefs, _("Global Preferences"), false );
 	tab_pov_prefs = new wxPanel( dlg_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
@@ -215,7 +215,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	m_staticText31->Wrap( -1 );
 	fgSizer2->Add( m_staticText31, 0, wxALL, 5 );
 	
-	glb_pov_opts = new wxTextCtrl( tab_pov_prefs, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	glb_pov_opts = new wxTextCtrl( tab_pov_prefs, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
 	glb_pov_opts->SetToolTip( _("Modify the default POV-Ray options here: for example, if you are using POV-Ray with an X Window System desktop environment and the POV-Ray preview has unwanted transparency, try -visual DirectColor; or add +W<integer> +H<integer> to set preview dimensions.") );
 	
 	fgSizer2->Add( glb_pov_opts, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
@@ -228,7 +228,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	tab_pov_prefs->SetSizer( bSizer2 );
 	tab_pov_prefs->Layout();
 	bSizer2->Fit( tab_pov_prefs );
-	dlg_notebook->AddPage( tab_pov_prefs, _("POV-Ray Settings"), false );
+	dlg_notebook->AddPage( tab_pov_prefs, _("POV-Ray Settings"), true );
 	
 	dlg_base_sizer->Add( dlg_notebook, 1, wxEXPAND | wxALL, 5 );
 	

@@ -105,14 +105,14 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		#if wxUSE_PRINTF_POS_PARAMS && wxCHECK_VERSION(3, 0, 0)
 		// TRANSLATORS: %1$s is 'Epspline <version quad>',
 		// %2$s 'wxWidgets <version>'.
-		_("\n\nThis %1$s build uses %2$s."),
+		_("\n\nThis is %1$s using %2$s."),
 		#else
 		// TRANSLATORS: first %s is 'Epspline <version quad>',
 		// second %s 'wxWidgets <version>'. This string is a
 		// build-time alternate to the entry just above for
 		// when the positional %#$s cannot be used, so the
 		// translation cannot transpose the %s positions.
-		_("\n\nThis %s build uses %s."),
+		_("\n\nThis is %s using %s."),
 		#endif
 		fmtcst(text), wxVERSION_STRING);
 

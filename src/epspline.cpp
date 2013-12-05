@@ -111,7 +111,7 @@ IMPLEMENT_APP(AnApp)
 	// Added 2013/12/04 for MSW shutdown event handling with
 	// EVT_END_SESSION() -- w/o this MSW7 queries and barfs
 BEGIN_EVENT_TABLE(AnApp, wxApp)
- EVT_CLOSE       (AnApp::OnEndSession)
+ EVT_END_SESSION (AnApp::OnEndSession)
 END_EVENT_TABLE()
 
 

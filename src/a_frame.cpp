@@ -376,9 +376,6 @@ A_Frame::A_Frame(
 
 A_Frame::~A_Frame()
 {
-	// Because this instance is the parent of the preference dialog,
-	// this must trigger its deletion before this is gone.
-	wxGetApp().delete_prefs_dialog();
 }
 
 A_Tabpage*
@@ -635,6 +632,10 @@ A_Frame::OnQuit(wxCloseEvent& e)
 		}
 	}
 
+	// Because this instance is the parent of the preference dialog,
+	// this must trigger its deletion before this is gone.
+	wxGetApp().delete_prefs_dialog();
+
 	if ( wxConfigBase* pConfig = wxGetApp().GetCfgPtr() ) {
 		// save state -- per display where applicable
 		long mn, mx;
@@ -656,7 +657,8 @@ A_Frame::OnQuit(wxCloseEvent& e)
 
 	// Do not quit help browser window: prevents config data save.
 	// With wx 2.6 it is necessary to quit help or it lingers.
-#	if ! wxCHECK_VERSION(2, 8, 0)
+	// UPDATE 12-04-13: testing EVT_END_SESSION -- seems to need it
+#	if ! wxCHECK_VERSION(2, 8, 0) || defined(__WXMSW__)
 	wxGetApp().QuitHelp();
 #	endif
 

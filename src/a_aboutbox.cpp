@@ -114,12 +114,7 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		// translation cannot transpose the %s positions.
 		_("\n\nThis %s build uses %s."),
 		#endif
-		// Argh!!!
-		#if wxCHECK_VERSION(2, 9, 0)
-		text, wxVERSION_STRING);
-		#else
-		(const wxChar*)text, wxVERSION_STRING);
-		#endif
+		fmtcst(text), wxVERSION_STRING);
 
 	::wxDisplaySize(&wi, &hi);
 	wi -= 256; hi -= 256;

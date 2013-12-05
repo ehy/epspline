@@ -354,6 +354,24 @@ PovDemoProc::writepov(FILE* f)
 	return true;
 }
 
+namespace {
+	// POV-Ray from user prefs -- no init arg, set through `SetPovOpts'
+	// externally by e.g., preference manager
+	wxString povopts;
+};
+
+void
+SetPovOpts(wxString cfg)
+{
+	povopts = cfg;
+}
+
+wxString
+GetPovOpts()
+{
+	return povopts;
+}
+
 bool
 PovDemoProc::SetupTmp()
 {
@@ -453,9 +471,11 @@ PovDemoProc::SetupTmp()
 		return false;
 	}
 
+	wxString opts = GetPovOpts();
+
 #ifdef __UNIX__
-	cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s")
-		, pexec.c_str(), itmp2.c_str(), outf.c_str());
+	cmd.Printf(wxT("%s %s +FN +I%s +O%s")
+		, fmtcst(pexec), fmtcst(opts), fmtcst(itmp2), fmtcst(outf));
 
 	// Added 10-2012 -- the Unix Povray X preview window under
 	// new (last few years) compositing/window managers (e.g.
@@ -511,8 +531,8 @@ PovDemoProc::SetupTmp()
 
 #else // __UNIX__
 
-	cmd.Printf(wxT("%s +D +P +Q9 +A +FN +I%s +O%s /NR")
-		, pexec.c_str(), itmp2.c_str(), outf.c_str());
+	cmd.Printf(wxT("%s %s +FN +I%s +O%s /NR")
+		, fmtcst(pexec), fmtcst(opts), fmtcst(itmp2), fmtcst(outf));
 
 #endif // __UNIX__
 
@@ -666,7 +686,7 @@ GetPovExecutable(wxString& dest)
 #	else
 		// certainly not suitable all-around, but we shouldn't
 		// be here in any case
-		path = "/usr/bin:/usr/X11/bin:/usr/X11R6/bin:/bin";
+		path = "/usr/bin:/usr/X11R6/bin:/usr/X11/bin:/bin";
 #	endif
 	}
 

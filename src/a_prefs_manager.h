@@ -70,6 +70,7 @@ struct prefs_set {
 	// strings
 	wxString xsuffix;
 	wxString povexec;
+	wxString povopts;
 };
 
 class A_Prefs_Manager {

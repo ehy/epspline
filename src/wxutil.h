@@ -182,18 +182,6 @@ inline void FixupRect(wxRect& r) {
 	if ( r.y < 0 ) { r.height += r.y; r.y = 0; }
 }
 
-// This checks its argument against the set of POV-Ray reserved words,
-// as found in the v. 3.6 html documentation.  Those words are all
-// in ASCII.  The argument "len" is the string length of "word" or the
-// number of initial characters to check, and if it is 0, length
-// will by found within the function, e.g. by strlen().
-bool check_identifier(const char* word, size_t len = 0);
-// This version will prompt for a new string if need be, check the
-// new string, and if OK assign it to the wxString referred to by "word"
-// and return true, or if the user cancels then return false.
-// Recurse as necessary.
-bool check_identifier(wxString& word);
-
 // For unicode builds: (NOTE 18.10.2012: had used wxConvLibc, which uses
 // C library conversion if locale in environment is set well -- and
 // they do indeed work, verified elsewhere -- but for some reason 
@@ -217,6 +205,27 @@ inline wxString ch2wxs(const char* str)
 {
 	return app_global_mbconv->cMB2WX(str);
 }
+
+// wx version > 2.8: lots of incompatible wxString changes --
+// macro for 'cast' of wxString arg to variadic wxString::Format
+// of wxString::Printf
+#if wxCHECK_VERSION(2, 9, 0)
+#define fmtcst(wxs) (wxs)
+#else
+#define fmtcst(wxs) (const wxChar*)(wxs)
+#endif
+
+// This checks its argument against the set of POV-Ray reserved words,
+// as found in the v. 3.6 html documentation.  Those words are all
+// in ASCII.  The argument "len" is the string length of "word" or the
+// number of initial characters to check, and if it is 0, length
+// will by found within the function, e.g. by strlen().
+bool check_identifier(const char* word, size_t len = 0);
+// This version will prompt for a new string if need be, check the
+// new string, and if OK assign it to the wxString referred to by "word"
+// and return true, or if the user cancels then return false.
+// Recurse as necessary.
+bool check_identifier(wxString& word);
 
 // This string is the subset of ASCII accepted in POV-Ray IDs
 extern const wxChar pov_chars_OK[];

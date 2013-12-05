@@ -54,7 +54,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	glb_def_suffix = new wxTextCtrl( tab_global_prefs, wxID_ANY, _(".inc"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
 	glb_def_suffix->SetMaxLength( 64 ); 
-	glb_def_suffix->SetValidator( wxTextValidator( wxFILTER_EXCLUDE_CHAR_LIST, &glb_def_suffix_validator ) );
+	glb_def_suffix->SetValidator( wxTextValidator( wxFILTER_NONE, &glb_def_suffix_validator ) );
 	glb_def_suffix->SetToolTip( _("Default extension/suffix used when choosing a filename for export to POV-Ray SDL; note that a leading '.' is not added automatically") );
 	
 	fgSizer3->Add( glb_def_suffix, 0, wxEXPAND, 5 );
@@ -183,6 +183,21 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	glb_pov_picker->SetToolTip( _("Enter the file name of a POV-Ray executable, with a path if necessary, or select a full path to POV-Ray from a file selection dialog window.") );
 	
 	fgSizer2->Add( glb_pov_picker, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	
+	
+	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	
+	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );
+	
+	m_staticText31 = new wxStaticText( tab_pov_prefs, wxID_ANY, _("POV-Ray options (switches):"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+	m_staticText31->Wrap( -1 );
+	fgSizer2->Add( m_staticText31, 0, wxALL, 5 );
+	
+	glb_pov_opts = new wxTextCtrl( tab_pov_prefs, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	glb_pov_opts->SetToolTip( _("Modify the default POV-Ray options here: for example, if you are using POV-Ray with an X Window System desktop environment and the POV-Ray preview has unwanted transparency, try -visual DirectColor; or add +W<integer> +H<integer> to set preview dimensions.") );
+	
+	fgSizer2->Add( glb_pov_opts, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	
 	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );

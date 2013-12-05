@@ -29,8 +29,9 @@
 #include "a_frame.h"
 #include "util.h"
 
-// hack proto: this is defined in povdemo.cpp
+// hack protos: these are defined in povdemo.cpp
 void SetPovPref(wxString cfg);
+void SetPovOpts(wxString cfg);
 
 // A_Prefs_Manager will need to work with several data, but
 // they needn't be class members, not even static; using global
@@ -49,10 +50,11 @@ namespace {
 		true,				// bool canvas_grid_show
 		wxT(".inc"),		// xsuffix (default extension)
 #ifdef __WXMSW__
-		wxT("pvengine.exe")	// povexec -- pathname or basename
+		wxT("pvengine.exe"),// povexec -- pathname or basename
 #else
-		wxT("povray")		// see above
+		wxT("povray"),		// see above
 #endif
+		wxT("+D +P +Q9 +A")	// povopts;
 	};
 	// from config at start
 	prefs_set cfgs;
@@ -81,6 +83,7 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 	// this is not queried on init code; it must be set
 	if ( current.is_set && current.povexec != defs.povexec ) {
 		SetPovPref(current.povexec);
+		SetPovOpts(current.povopts);
 	}
 }
 
@@ -105,6 +108,8 @@ A_Prefs_Manager::~A_Prefs_Manager()
 		pcfg->Write(ent, cfgs.xsuffix);
 		ent = wxT("preview/povray_exec");
 		pcfg->Write(ent, cfgs.povexec);
+		ent = wxT("preview/povray_options");
+		pcfg->Write(ent, cfgs.povopts);
 	}
 }
 
@@ -147,6 +152,11 @@ A_Prefs_Manager::read_config()
 		cfgs.is_set = true;
 		cfgs.povexec = s_res;
 	}
+	ent = wxT("preview/povray_options");
+	if ( pcfg->Read(ent, &s_res) ) {
+		cfgs.is_set = true;
+		cfgs.povopts = s_res;
+	}
 }
 
 void
@@ -175,6 +185,14 @@ A_Prefs_Manager::update_from_dialog(prefs_set& pset)
 		pset.is_set = (pset.povexec != item);
 	}
 	pset.povexec = item;
+
+	// pov options text field
+	item = pdlg->glb_pov_opts->GetValue();
+	item.Trim(true); item.Trim(false);
+	if ( ! pset.is_set ) {
+		pset.is_set = (pset.povopts != item);
+	}
+	pset.povopts = item;
 	
 	// suffix/extension
 	item = pdlg->glb_def_suffix->GetValue();
@@ -285,6 +303,9 @@ A_Prefs_Manager::update__to__dialog(prefs_set& pset)
 	} else {
 		pdlg->glb_pov_picker->GetTextCtrl()->SetValue(pset.povexec);
 	}
+
+	// pov options text field
+	pdlg->glb_pov_opts->SetValue(pset.povopts);
 }
 
 void
@@ -338,6 +359,7 @@ A_Prefs_Manager::force_updates()
 	
 	if ( current.is_set ) {
 		SetPovPref(current.povexec);
+		SetPovOpts(current.povopts);
 	}
 }
 

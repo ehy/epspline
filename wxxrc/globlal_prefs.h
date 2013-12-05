@@ -84,6 +84,10 @@ class global_pref_dialog : public wxDialog
 		wxFilePickerCtrl* glb_pov_picker;
 		
 		
+		wxStaticText* m_staticText31;
+		wxTextCtrl* glb_pov_opts;
+		
+		
 		
 		
 		wxButton* glb_restore_defs;
@@ -115,7 +119,7 @@ class global_pref_dialog : public wxDialog
 	public:
 		wxString glb_def_suffix_validator; 
 		
-		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX|wxSTAY_ON_TOP );
+		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX );
 		~global_pref_dialog();
 	
 };

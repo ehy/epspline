@@ -110,10 +110,31 @@ IMPLEMENT_APP(AnApp)
 	// WX macro to setup event handling
 	// Added 2013/12/04 for MSW shutdown event handling with
 	// EVT_END_SESSION() -- w/o this MSW7 queries and barfs
-BEGIN_EVENT_TABLE(AnApp, wxApp)
- EVT_END_SESSION (AnApp::OnEndSession)
+BEGIN_EVENT_TABLE		(AnApp, wxApp)
+ EVT_QUERY_END_SESSION	(AnApp::OnQueryEndSession)
+ EVT_END_SESSION		(AnApp::OnEndSession)
 END_EVENT_TABLE()
 
+// These On*EndSession seem to be mostly for MSW's shutdown message
+// handling; there doesn't seem to be an equivalent in the
+// GTK build, or generally a X Window System desktop environment?
+// These are a PITA because I do not know how to get Wine to
+// cause these events.
+void
+AnApp::OnQueryEndSession(wxCloseEvent& e)
+{
+	fputs("OnQueryEndSession \n", stderr);
+	A_Frame* pw = dynamic_cast<A_Frame*>(GetTopWindow());
+	if ( pw == 0 ) {
+		return;
+	}
+	// arg has reversed sense of e.CanVeto()
+	bool pre_cancel = pw->PreOnQuit(e.CanVeto() == false);
+
+	if ( e.CanVeto() && pre_cancel == false ) {
+		e.Veto(true);
+	}
+}
 
 void
 AnApp::OnEndSession(wxCloseEvent& e)

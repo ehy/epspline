@@ -160,6 +160,7 @@ public:
 	A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size);
 	virtual ~A_Frame();
 
+	bool PreOnQuit(bool force);
 	void OnQuit(wxCloseEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnOption(wxCommandEvent& event);

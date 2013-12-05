@@ -78,7 +78,12 @@ class AnApp : public wxApp {
 	// EVT_END_SESSION() -- w/o this MSW7 queries and barfs
 	DECLARE_EVENT_TABLE()
 
+	// These On*EndSession seem to be mostly for MSW's shutdown message
+	// handling; there doesn't seem to be an equivalent in the
+	// GTK build, or generally a X Window System desktop environment?
+	void OnQueryEndSession(wxCloseEvent& e);
 	void OnEndSession(wxCloseEvent& e);
+
 public:
 	virtual bool OnInit();
 	virtual int OnExit();

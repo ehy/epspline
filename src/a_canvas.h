@@ -263,6 +263,7 @@ public:
 	void Open(wxString filename);
 	void Open();
 	void Close();
+	void ForceSave(bool namechange = true);
 	void Save();
 	void SaveAs();
 	void Demo();

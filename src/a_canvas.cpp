@@ -2479,6 +2479,39 @@ A_Canvas::SaveAs()
 }
 
 void
+A_Canvas::ForceSave(bool namechange)
+{
+	SetClean();
+
+	if ( !D->lst.size() && !D->hguides.size() && !D->vguides.size() ) {
+		return;
+	}
+	
+	wxString nc(namechange ? wxT("save_forced_") : wxT(""));
+	wxString f(GetCurFileName());
+	wxString d(GetCurDirName());
+
+	wxFileName fn;
+	if ( f.IsEmpty() ) {
+		fn = wxFileName(wxFileName::CreateTempFileName(d + nc));
+	} else {
+		fn = wxFileName(d, nc + f);
+	}
+
+	wxString t = fn.GetFullPath();
+	wxString* ps = filecomment.empty() ? 0 : &filecomment;
+	errno = 0;
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+		// possibly useful under Unix
+		std::fprintf(stderr, "Epspline: failed forced save of '%s'\n",
+			wxs2ch(t));
+	} else {
+		std::fprintf(stderr, "Epspline: did forced save to '%s'\n",
+			wxs2ch(t));
+	}
+}
+
+void
 A_Canvas::Save()
 {
 	if ( !D->lst.size() && !D->hguides.size() && !D->vguides.size() ) {
@@ -2493,7 +2526,7 @@ A_Canvas::Save()
 	wxString t = GetCurFullpath();
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
 	errno = 0;
-	if ( !WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
 		int e = errno;
 		wxString msg(_("Failed saving to \""));
 		

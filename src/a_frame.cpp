@@ -579,17 +579,18 @@ A_Frame::GetPageNum(const A_Tabpage* p)
 	return std::numeric_limits<unsigned>::max();
 }
 
-void
-A_Frame::OnQuit(wxCloseEvent& e)
+bool
+A_Frame::PreOnQuit(bool force)
 {
 	wxString names(wxT(""));
 	unsigned ndirt = 0;
 	std::vector<A_Tabpage*> v;
+	std::vector<A_Tabpage*>::iterator i;
 
 	GetAllPagePtrs(v);
-	std::vector<A_Tabpage*>::iterator i = v.begin();
-	while ( i != v.end() ) {
-		A_Tabpage* t = *i++;
+
+	for ( i = v.begin(); i != v.end(); i++ ) {
+		A_Tabpage* t = *i;
 
 		if ( t->GetCanvas()->IsDirty() ) {
 			wxString fn(t->GetCanvas()->GetCurFullpath());
@@ -601,35 +602,58 @@ A_Frame::OnQuit(wxCloseEvent& e)
 		}
 	}
 
-	if ( ndirt ) {
-		int bstyle = wxCENTRE|wxICON_QUESTION|wxYES_NO;
-		wxString msg(_("There are unsaved changes to \n"));
-		msg += names + _("\nDo you want to save the data?");
-		if ( e.CanVeto() ) {
-			bstyle |= wxCANCEL;
-			msg += _("\n(Select Cancel to continue.)");
+	// dirty data and cannot cancel:
+	if ( ndirt != 0 && force ) {
+		// in the forced case, even a message dialog is N.G., as
+		// testing under MSW has shown (cannot even click button
+		// fast enough under logoff/shutdown), so try to force
+		// save of dirty data.
+		for ( i = v.begin(); i != v.end(); i++ ) {
+			A_Tabpage* t = *i;
+			if ( t->GetCanvas()->IsDirty() ) {
+				t->GetCanvas()->ForceSave();
+			}
 		}
-		wxString ttl = wxGetApp().GetAppTitle() + _(": save?");
+	// dirty data and *can* cancel:
+	} else if ( ndirt != 0 ) {
+		int bstyle = wxCENTRE|wxICON_QUESTION|wxYES_NO|wxCANCEL;
+		wxString msg(_("There are unsaved changes to these:\n"));
+		msg += names + _("\nDo you want to save the data?");
+		msg += _("\n(Select Cancel to continue.)");
+
+		wxString ttl = wxGetApp().GetAppTitle() + _(": save changes?");
 		int rep = ::wxMessageBox(msg, ttl, bstyle, this);
 
 		switch ( rep ) {
 		case wxYES:
-			i = v.begin();
-			while ( i != v.end() ) {
-				A_Tabpage* t = *i++;
-				if ( t->GetCanvas()->IsDirty() )
+			for ( i = v.begin(); i != v.end(); i++ ) {
+				A_Tabpage* t = *i;
+				if ( t->GetCanvas()->IsDirty() ) {
 					t->GetCanvas()->Save();
+				}
 			}
 			break;
 		case wxNO:
 			break;
 		case wxCANCEL:
-			if ( e.CanVeto() ) {
-				e.Veto(true);
-				return;
-			}
-			break;
+		default:
+			// cancel
+			return false;
 		}
+	}
+
+	return true;
+}
+
+void
+A_Frame::OnQuit(wxCloseEvent& e)
+{
+	// arg has reversed sense of e.CanVeto()
+	bool pre_cancel = PreOnQuit(e.CanVeto() == false);
+
+	if ( e.CanVeto() && pre_cancel == false ) {
+		e.Veto(true);
+		return;
 	}
 
 	// Because this instance is the parent of the preference dialog,
@@ -658,6 +682,8 @@ A_Frame::OnQuit(wxCloseEvent& e)
 	// Do not quit help browser window: prevents config data save.
 	// With wx 2.6 it is necessary to quit help or it lingers.
 	// UPDATE 12-04-13: testing EVT_END_SESSION -- seems to need it
+	// on MSW on shutdown/logoff or illegal mem access at 0xFFFFFFFF
+	// or something like that occurs.
 #	if ! wxCHECK_VERSION(2, 8, 0) || defined(__WXMSW__)
 	wxGetApp().QuitHelp();
 #	endif

@@ -2487,7 +2487,15 @@ A_Canvas::ForceSave(bool namechange)
 		return;
 	}
 	
-	wxString nc(namechange ? wxT("save_forced_") : wxT(""));
+	// TRANSLATORS: "save_forced_" is a prefix prepended on a file name
+	// when the app is forced to close at logoff or shutdown or such,
+	// and the app cannot prompt the user to save changes: the changes
+	// are not written to the original file because they might not be
+	// wanted, yet the changes should not be lost because they might
+	// be wanted -- so they are (optionally) saved in a new file with
+	// this prefix, and hopefully the user will see these files and be
+	// prompted by this prefix to check them.
+	wxString nc(namechange ? _("save_forced_") : wxT(""));
 	wxString f(GetCurFileName());
 	wxString d(GetCurDirName());
 

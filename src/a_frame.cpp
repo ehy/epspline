@@ -505,6 +505,23 @@ A_Frame::NewPage(wxString title)
 	return pagewnd;
 }
 
+void
+A_Frame::ErrorBox(const wxString& msg, const wxString& titletail)
+const
+{
+	//wxString ttl = wxGetApp().GetAppTitle();
+	wxString ttl = wxGetApp().GetBinName();
+
+	if ( titletail != wxT("") ) {
+		ttl += _(":  ");
+		ttl += titletail;
+	}
+
+	wxMessageBox(msg, ttl
+		, wxCENTRE | wxICON_EXCLAMATION | wxOK
+		, const_cast<A_Frame*>(this));
+}
+
 A_Tabpage*
 A_Frame::GetNumPage(unsigned num)
 {
@@ -532,23 +549,6 @@ A_Frame::GetCurPage()
 		return 0;
 
 	return GetNumPage(unsigned(n));
-}
-
-void
-A_Frame::ErrorBox(const wxString& msg, const wxString& titletail)
-const
-{
-	//wxString ttl = wxGetApp().GetAppTitle();
-	wxString ttl = wxGetApp().GetBinName();
-
-	if ( titletail != wxT("") ) {
-		ttl += _(":  ");
-		ttl += titletail;
-	}
-
-	wxMessageBox(msg, ttl
-		, wxCENTRE | wxICON_EXCLAMATION | wxOK
-		, const_cast<A_Frame*>(this));
 }
 
 void
@@ -580,6 +580,25 @@ A_Frame::GetPageNum(const A_Tabpage* p)
 }
 
 bool
+A_Frame::QueryDirtyData()
+{
+	std::vector<A_Tabpage*> v;
+	std::vector<A_Tabpage*>::iterator i;
+
+	GetAllPagePtrs(v);
+
+	for ( i = v.begin(); i != v.end(); i++ ) {
+		A_Tabpage* t = *i;
+
+		if ( t->GetCanvas()->IsDirty() ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool
 A_Frame::PreOnQuit(bool force)
 {
 	wxString names(wxT(""));
@@ -593,7 +612,8 @@ A_Frame::PreOnQuit(bool force)
 		A_Tabpage* t = *i;
 
 		if ( t->GetCanvas()->IsDirty() ) {
-			wxString fn(t->GetCanvas()->GetCurFullpath());
+			wxString fn(wxT("\t"));
+			fn += t->GetCanvas()->GetCurFullpath();
 			if ( ndirt ) {
 				names += wxT("\n");
 			}
@@ -617,8 +637,8 @@ A_Frame::PreOnQuit(bool force)
 	// dirty data and *can* cancel:
 	} else if ( ndirt != 0 ) {
 		int bstyle = wxCENTRE|wxICON_QUESTION|wxYES_NO|wxCANCEL;
-		wxString msg(_("There are unsaved changes to these:\n"));
-		msg += names + _("\nDo you want to save the data?");
+		wxString msg(_("There are unsaved changes to:\n\n"));
+		msg += names + _("\n\nDo you want to save the data?");
 		msg += _("\n(Select Cancel to continue.)");
 
 		wxString ttl = wxGetApp().GetAppTitle() + _(": save changes?");
@@ -965,6 +985,46 @@ A_Frame::StatusBarAntiClobberHack()
 		// set current text as saved text;
 		// now it's clobbered with itself
 		wxFrameBase::m_oldStatusText = s;
+	}
+}
+
+// this should provide set names of all dialog windows that
+// are given this as parent -- a hand maintained list of app's
+// dialogs, will not include message dialogs or pickers etc.
+void
+A_Frame::GetDialogNames(wxArrayString& out)
+{
+	static const wxChar* l[] = {
+		wxT("global_pref_dialog"),
+		wxT("spline_properties")
+	};
+
+	out.Clear();
+	out.Alloc(A_SIZE(l));
+	
+	for ( size_t i = 0; i < A_SIZE(l); i++ ) {
+		out.Add(l[i]);
+	}
+}
+
+// for shutdown; close shown dialogs
+void
+A_Frame::CloseDialogs()
+{
+	wxArrayString dlgs;
+	
+	GetDialogNames(dlgs);
+	
+	for ( size_t i = 0; i < dlgs.Count(); i++ ) {
+		wxDialog* dp = dynamic_cast<wxDialog*>
+			(wxWindow::FindWindowByName(dlgs[i], this));
+		if ( dp ) {
+			if ( dp->IsModal() ) {
+				dp->EndModal(wxID_OK);
+			} else {
+				dp->Close(true);
+			}
+		}
 	}
 }
 

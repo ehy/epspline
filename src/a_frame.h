@@ -160,11 +160,20 @@ public:
 	A_Frame(const wxString& title, const wxPoint& pos, const wxSize& size);
 	virtual ~A_Frame();
 
+	bool QueryDirtyData();
 	bool PreOnQuit(bool force);
 	void OnQuit(wxCloseEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnOption(wxCommandEvent& event);
 	void OnMouseLeave(wxMouseEvent& e);
+
+	// this should provide set names of all dialog windows that
+	// are given this as parent -- a hand maintained list of app's
+	// dialogs, will not include message dialogs or pickers etc.
+	void GetDialogNames(wxArrayString& out);
+
+	// for shutdown; close shown dialogs
+	void CloseDialogs();
 
 	void SetTitlePrefix(const wxString& pre);
 	bool SelectColour(wxColour& c);
@@ -179,7 +188,7 @@ public:
 
 	// ErrorBox is obvious, but ``titletail'' should be short,
 	// As it is appended to app title string.
-	void     ErrorBox(const wxString& msg, const wxString& titletail =
+	void ErrorBox(const wxString& msg, const wxString& titletail =
 			 _("Error")) const;
 
 	// call on prefs update; will refresh
@@ -268,11 +277,8 @@ public:
 		GetToolBar()->EnableTool(HelpDemo, b);
 	}
 	void enableHelpAbout(bool b) {menuHelp->Enable(HelpAbout, b);}
-	// A hack to work-around bug in long help display in status bar.
-	// See comments in the method definition.
-	void StatusBarAntiClobberHack();
 
-// Sheesh!
+protected:
 #	if wxCHECK_VERSION(2, 9, 0)
 	wxMappingMode         mapMode;
 #	else
@@ -283,12 +289,14 @@ public:
 	int         xLogicalOrigin;
 	int         yLogicalOrigin;
 	bool        xAxisReversed, yAxisReversed;
-
-protected:
 	A_Tabwnd*   tabwnd;
 	wxMenu* menuFile, * menuEdit, * menuHelp, * MenuOpts;
 	// whether to set canvas to do anit-aliasing
 	bool aadraw;
+
+	// A hack to work-around bug in long help display in status bar.
+	// See comments in the method definition.
+	void StatusBarAntiClobberHack();
 
 	A_Tabpage* NewPage(wxString title);
 	A_Tabpage* GetCurPage();

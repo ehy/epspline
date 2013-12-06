@@ -123,15 +123,18 @@ END_EVENT_TABLE()
 void
 AnApp::OnQueryEndSession(wxCloseEvent& e)
 {
-	fputs("OnQueryEndSession \n", stderr);
 	A_Frame* pw = dynamic_cast<A_Frame*>(GetTopWindow());
 	if ( pw == 0 ) {
 		return;
 	}
-	// arg has reversed sense of e.CanVeto()
-	bool pre_cancel = pw->PreOnQuit(e.CanVeto() == false);
 
-	if ( e.CanVeto() && pre_cancel == false ) {
+	// do not try to show save query dialogs here: makes a mess
+	// of MSW logoff/shutdown; but DO try to shutdown open dialogs:
+	pw->CloseDialogs();
+
+	bool dirt = pw->QueryDirtyData();
+
+	if ( e.CanVeto() && dirt ) {
 		e.Veto(true);
 	}
 }
@@ -139,8 +142,6 @@ AnApp::OnQueryEndSession(wxCloseEvent& e)
 void
 AnApp::OnEndSession(wxCloseEvent& e)
 {
-	fprintf(stderr,"epspline: OnEndSession, logoff == %d\n",
-		e.GetLoggingOff() ? 1 : 0);
 	A_Frame* pw = dynamic_cast<A_Frame*>(GetTopWindow());
 	if ( pw ) {
 		pw->Close(true);

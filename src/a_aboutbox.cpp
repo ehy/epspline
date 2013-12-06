@@ -79,6 +79,9 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		wxT("and copyright holder, to use, modify, and redistribute\n")
 		wxT("the documentation distributed with this software.")
 		;
+
+	SetName(wxT("about_data_dialog"));
+
 #if ! wxCHECK_VERSION(2, 6, 0)
 	// This diddling wxEncodingConverter is very old (c. 2000) and
 	// might never have been nec., although it has always worked;

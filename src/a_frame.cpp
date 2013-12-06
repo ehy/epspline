@@ -997,6 +997,7 @@ void
 A_Frame::GetDialogNames(wxArrayString& out)
 {
 	static const wxChar* l[] = {
+		wxT("about_data_dialog"),
 		wxT("global_pref_dialog"),
 		wxT("spline_properties")
 	};

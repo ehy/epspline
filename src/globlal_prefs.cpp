@@ -30,7 +30,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxDialog( parent, id, title, pos, size, style, name )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	

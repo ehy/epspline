@@ -119,7 +119,7 @@ class global_pref_dialog : public wxDialog
 	public:
 		wxString glb_def_suffix_validator; 
 		
-		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX );
+		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX, const wxString& name = wxT("global_pref_dialog") );
 		~global_pref_dialog();
 	
 };

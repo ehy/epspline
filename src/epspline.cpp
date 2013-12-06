@@ -131,6 +131,7 @@ AnApp::OnQueryEndSession(wxCloseEvent& e)
 	// do not try to show save query dialogs here: makes a mess
 	// of MSW logoff/shutdown; but DO try to shutdown open dialogs:
 	pw->CloseDialogs();
+	QuitHelp();
 
 	bool dirt = pw->QueryDirtyData();
 

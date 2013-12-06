@@ -601,6 +601,9 @@ A_Frame::QueryDirtyData()
 bool
 A_Frame::PreOnQuit(bool force)
 {
+	// close open dialogs
+	CloseDialogs();
+
 	wxString names(wxT(""));
 	unsigned ndirt = 0;
 	std::vector<A_Tabpage*> v;
@@ -612,8 +615,7 @@ A_Frame::PreOnQuit(bool force)
 		A_Tabpage* t = *i;
 
 		if ( t->GetCanvas()->IsDirty() ) {
-			wxString fn(wxT("\t"));
-			fn += t->GetCanvas()->GetCurFullpath();
+			wxString fn(t->GetCanvas()->GetCurFullpath());
 			if ( ndirt ) {
 				names += wxT("\n");
 			}
@@ -1018,6 +1020,7 @@ A_Frame::CloseDialogs()
 	for ( size_t i = 0; i < dlgs.Count(); i++ ) {
 		wxDialog* dp = dynamic_cast<wxDialog*>
 			(wxWindow::FindWindowByName(dlgs[i], this));
+
 		if ( dp ) {
 			if ( dp->IsModal() ) {
 				dp->EndModal(wxID_OK);

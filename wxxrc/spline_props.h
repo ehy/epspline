@@ -84,7 +84,7 @@ class spline_properties : public wxDialog
 		wxString txt_transform_validator; 
 		wxString txt_predefined_validator; 
 		
-		spline_properties( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Spline Properties"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		spline_properties( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Spline Properties"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE, const wxString& name = wxT("spline_properties") );
 		~spline_properties();
 	
 };

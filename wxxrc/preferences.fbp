@@ -43,7 +43,7 @@
             <property name="validator_type">wxDefaultValidator</property>
             <property name="validator_variable"></property>
             <property name="window_extra_style"></property>
-            <property name="window_name"></property>
+            <property name="window_name">global_pref_dialog</property>
             <property name="window_style"></property>
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>

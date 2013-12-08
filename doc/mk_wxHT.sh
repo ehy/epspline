@@ -26,7 +26,7 @@ GPAT="%WX%"
 # this file must exist; check against override error:
 test -f "$DEFTOPIC" || DEFTOPIC="${PNAME}.html"
 
-: ${FMAP:=${PNAME}_fn.map}}
+: ${FMAP:=${PNAME}_fn.map}
 : ${CURID:=0}
 : ${INCID:=16}
 

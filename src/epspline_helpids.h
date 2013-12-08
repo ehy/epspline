@@ -50,33 +50,37 @@
 #define IDS_TheMainWindowInterface		"The Main Window Interface"
 #define IDF_TheMainWindowInterface		"epsplinese3.html"
 
-#define IDI_CreatingandEditing		192
+#define IDI_Preferences		192
+#define IDS_Preferences		"Preferences"
+#define IDF_Preferences		"epsplinese4.html"
+
+#define IDI_CreatingandEditing		240
 #define IDS_CreatingandEditing		"Creating and Editing"
-#define IDF_CreatingandEditing		"epsplinese4.html"
+#define IDF_CreatingandEditing		"epsplinese5.html"
 
-#define IDI_UsefulTransforms		368
+#define IDI_UsefulTransforms		416
 #define IDS_UsefulTransforms		"Useful Transforms"
-#define IDF_UsefulTransforms		"epsplinese5.html"
+#define IDF_UsefulTransforms		"epsplinese6.html"
 
-#define IDI_MouseKeyRef		416
+#define IDI_MouseKeyRef		464
 #define IDS_MouseKeyRef		"Mouse and Key Reference"
-#define IDF_MouseKeyRef		"epsplinese6.html"
+#define IDF_MouseKeyRef		"epsplinese7.html"
 
 #define IDI_Licenses		202000
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		480
+#define IDI_GPL3_Section		528
 #define IDS_GPL3_Section		"GNU General Public License"
-#define IDF_GPL3_Section		"epsplinese7.html"
+#define IDF_GPL3_Section		"epsplinese8.html"
 
-#define IDI_GPL2_Section		544
+#define IDI_GPL2_Section		592
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
-#define IDF_GPL2_Section		"epsplinese8.html"
+#define IDF_GPL2_Section		"epsplinese9.html"
 
-#define IDI_FDL_Section		608
+#define IDI_FDL_Section		656
 #define IDS_FDL_Section		"GNU Free Documentation License"
-#define IDF_FDL_Section		"epsplinese9.html"
+#define IDF_FDL_Section		"epsplinese10.html"
 
 #define IDI_ListFigures		3000000000
 #define IDS_ListFigures		"List of Figures"

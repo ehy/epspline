@@ -1,0 +1,37 @@
+	\IXpkgu{} 
+	The elements of the \IXarg{interface} presented by \IXpkg{}
+	have an arrangement that has been common in
+	windowing systems for many years, and will probably
+	seem familiar to most users. Most individual elements are common,
+	but a few are specific to A few are similar
+	to common elements in most windowed applications,
+	but with some difference in behavior.
+
+	The main groups of \IXarg{interface} elements are
+	discussed briefly, from the top down in order of appearance,
+	in the following subsections. An image of the main window
+	is shown in figure~\ref{fig:bezier_linked_control_points}.
+
+		\subsection{Global Preferences}%WX%4||||
+		\label{ssec:prefs_global}
+		The \IXnewterm{title bar} is not actually part of
+		the interface provided by an application. It is
+		created and managed, if it exists at all, by a
+		component of the windowing system. When present,
+		it is usually similar for most applications. Some
+		windowing systems (or system configurations) do not
+		attach a \IXarg{title bar} to the application window,
+		and may use another graphical device such as a
+		single `bar' at the top of the screen that will
+		change to represent any window that has the \emph{focus}.
+		
+		Regardless of the way in which a \IXarg{title bar}
+		might be presented, an application such as \IXpkg{}
+		has little control over it. The presence and position
+		of buttons on the \IXarg{title bar}, for example,
+		are a feature of the system. \IXpkgu{} only sets
+		the text of the title.
+
+		\subsection{POV-Ray Settings}%WX%4||||
+		\label{ssec:prefs_povray}
+		The \IXarg{menu} ``bar'' consists of the labels, arranged

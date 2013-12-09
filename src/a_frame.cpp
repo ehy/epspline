@@ -400,12 +400,7 @@ A_Frame::NewPage(wxString title)
 	dc.GetTextExtent(wxString(wxT("00000")), &sz.x, &sz.y);
 	dc.SetFont(of);
 	sz.y = sz.x;
-	#if defined(__WXMSW__)
-	// The MS build seems to need this to get the 3d look . . .
-	int style = wxDOUBLE_BORDER;
-	#else
-	int style = wxRAISED_BORDER;
-	#endif
+
 	// . . . for these the GetTextExtent hack is insufficient:
 	#if defined(__WXMSW__) || defined(__WXX11__)
 	sz.x += 6;
@@ -456,15 +451,33 @@ A_Frame::NewPage(wxString title)
 		scrollunit, scrollunit,
 		scrollunit * vitualfactor, scrollunit * vitualfactor);
 
+	// Style used in 'rulers': these were chosen long ago, but have
+	// been producing nice results until wx 2.9.x, when things began
+	// to change: the GTK2 border with wx 3.0.0 is not "raised" but
+	// is just a thick white outline taking too much space.
+	// The MSW build still displays as wanted.
+	#if defined(__WXMSW__)
+	// The MS build seems to need this to get the 3d look . . .
+	int style = wxDOUBLE_BORDER;
+	#elif wxCHECK_VERSION(2, 9, 5) // comment above: 1st seen in 2.9.5
+	// no border looks OK after just a moment getting used to it;
+	// I think the 'flat look' is the current rage in design, too.
+	int style = wxBORDER_NONE; // new names, 'BORDER' comes first
+	#else
+	int style = wxRAISED_BORDER;
+	#endif
+	const int ticks_offs = 2;
+
 	// top-left button
-	wxWindow* tlbut = new wxWindow(pagewnd, -1
-			, wxDefaultPosition, sz, style);
+	wxWindow* tlbut = new ruler_parent_class
+		(pagewnd, -1, wxDefaultPosition, sz, style);
 	szrTop->Add(tlbut
 		, 0, wxALIGN_LEFT|wxALIGN_TOP, 0);
 	// top ruler
 	A_Ruler* hr = new A_Ruler(pagewnd
 		, -1, fnt, fclr, tclr
 		, wxDefaultPosition, sz, style);
+	hr->SetInitOffs(ticks_offs);
 	hr->SetType(rlr_horz);
 	szrTop->Add(hr, 1
 		, wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP|wxGROW
@@ -474,6 +487,7 @@ A_Frame::NewPage(wxString title)
 	A_Ruler* vr = new A_Ruler(pagewnd
 		, -1, fnt, fclr, tclr
 		, wxDefaultPosition, sz, style);
+	vr->SetInitOffs(ticks_offs);
 	vr->SetType(rlr_vert);
 	szrBot->Add(vr, 0
 		, wxGROW|wxALIGN_LEFT|wxALIGN_TOP|wxALIGN_BOTTOM

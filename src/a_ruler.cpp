@@ -61,7 +61,7 @@ A_Ruler::A_Ruler(wxWindow* parent, wxWindowID id
 		, const wxFont& GradFont, wxColor FontColor, wxColor TickColor
 		, const wxPoint& pos , const wxSize& size, long style)
 	: ruler_parent_class(parent, id, pos, size, style)
-	, type(rlr_horz), initoffs(0), linepos(0), scalepct(100)
+	, type(rlr_horz), initoffs(1), linepos(0), scalepct(100)
 	, gotmldown(false), shift_down(false)
 {
 	fnt = GradFont;
@@ -170,8 +170,8 @@ A_Ruler::ClearTickLine(wxDC& dc)
 	int w0, h0, w1, h1;
 	GetSize(&w1, &h1);
 	GetClientSize(&w0, &h0);
-	w1 -= w0; w1 /= 2; w1 += 1;
-	h1 -= h0; h1 /= 2; h1 += 1;
+	w1 -= w0; w1 /= 2;
+	h1 -= h0; h1 /= 2;
 
 	w0 = dc.DeviceToLogicalXRel(w0);
 	h0 = dc.DeviceToLogicalYRel(h0);
@@ -291,7 +291,7 @@ A_Ruler::DrawRules(wxDC& dc, const wxRect& R)
 	dc.SetTextForeground(fclr);
 
 	if ( type == rlr_horz ) {
-		int adj = w0 + 1 + initoffs;
+		int adj = w0 + initoffs;
 		int offs = r.x - (r.x % xs) - adj;
 		int cnt = ((r.width + r.x) - offs) / xs;
 		int ltop = h1 / 2;
@@ -329,8 +329,8 @@ A_Ruler::DrawRules(wxDC& dc, const wxRect& R)
 			}
 		}
 	} else if ( type == rlr_vert ) {
-		int adj = h0 + 1 + initoffs;
-		int offs = r.y - (r.y % ys) - h0 - 1;
+		int adj = h0 + initoffs;
+		int offs = r.y - (r.y % ys) - adj;
 		int cnt = ((r.height + r.y) - offs) / ys;
 		int ltop = w1 / 2;
 		wxString n;
@@ -340,7 +340,7 @@ A_Ruler::DrawRules(wxDC& dc, const wxRect& R)
 			int tt = t % 100;
 			switch ( tt ) {
 				case 75: case 50: case 25: case  0:
-					n = wxT(""); n << (t * 100 / scalepct);;
+					n = wxT(""); n << (t * 100 / scalepct);
 					dc.GetTextExtent(n, &w0, &h0);
 					if ( tt == 25 || tt == 75 ) {
 						dc.DrawLine(ltop+ltop/2,

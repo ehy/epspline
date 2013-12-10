@@ -1768,6 +1768,7 @@ A_Canvas::GetTransCtrRect(wxRect& r)
 void
 A_Canvas::DrawTransCtr(wxDC& dc, bool clear, bool draw, wxPoint pt)
 {
+#if ! defined(__WXGTK3__)
 #	if wxCHECK_VERSION(2, 9, 0)
 	wxRasterOperationMode
 #	else
@@ -1795,6 +1796,43 @@ A_Canvas::DrawTransCtr(wxDC& dc, bool clear, bool draw, wxPoint pt)
 	dc.SetLogicalFunction(of);
 	dc.SetPen(op);
 	dc.SetBrush(ob);
+#else // ! defined(__WXGTK3__)
+	/**
+	 * wxWidgets 3.0.0 GTK3 is *BROKEN* in several ways including
+	 * graphics logical ops (e.g., wxINVERT) that do nothing, and
+	 * pens (wxPen) set with width of 1 drawing at two or three pixels.
+	 * So, more ugly preprocessor macros with workarounds; why not?
+	 **/
+	static bool paint_forced = false;
+	if ( paint_forced )
+		return;
+
+	if ( clear ) {
+		paint_forced = true;
+		Refresh(true);
+		Update();
+		paint_forced = false;
+	}
+	if ( draw ) {
+		wxRasterOperationMode of = dc.GetLogicalFunction();
+		wxPen op = dc.GetPen();
+		wxBrush ob = dc.GetBrush();
+		wxBrush br(wxColour(0,0,0), wxTRANSPARENT);
+	
+		dc.SetLogicalFunction(wxCOPY);
+		dc.SetPen(*wxBLACK_PEN);
+		dc.SetBrush(br);
+
+		dc.DrawCircle(pt.x, pt.y, szhandles);
+		dc.DrawCircle(pt.x, pt.y, szhandles/2);
+		transctrpt = pt;
+
+		dc.SetLogicalFunction(of);
+		dc.SetPen(op);
+		dc.SetBrush(ob);
+	}
+
+#endif // ! defined(__WXGTK3__)
 }
 
 void

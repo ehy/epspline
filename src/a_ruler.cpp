@@ -167,7 +167,9 @@ A_Ruler::ClearTickLine(wxDC& dc)
 	if ( !linepos )
 		return;
 
+#if ! defined(__WXGTK3__)
 	int w0, h0, w1, h1;
+
 	GetSize(&w1, &h1);
 	GetClientSize(&w0, &h0);
 	w1 -= w0; w1 /= 2;
@@ -197,6 +199,24 @@ A_Ruler::ClearTickLine(wxDC& dc)
 	dc.SetPen(op);
 	dc.SetLogicalFunction(of);
 
+#else // defined(__WXGTK3__)
+	/**
+	 * wxWidgets 3.0.0 GTK3 is *BROKEN* in several ways including
+	 * graphics logical ops (e.g., wxINVERT) that do nothing, and
+	 * pens (wxPen) set with width of 1 drawing at two or three pixels.
+	 * So, more ugly preprocessor macros with workarounds; why not?
+	 **/
+	static bool paint_forced = false;
+	if ( paint_forced )
+		return;
+	paint_forced = true;
+
+	Refresh(true);
+	Update();
+
+	paint_forced = false;
+#endif // defined(__WXGTK3__)
+
 	linepos = 0;
 }
 
@@ -221,7 +241,43 @@ A_Ruler::DrawTickLine(wxDC& dc, int w)
 
 	// Trick Clear...() into drawing.
 	linepos = w;
+#if ! defined(__WXGTK3__)
 	ClearTickLine(dc);
+#else // ! defined(__WXGTK3__)
+	/**
+	 * wxWidgets 3.0.0 GTK3 is *BROKEN* in several ways including
+	 * graphics logical ops (e.g., wxINVERT) that do nothing, and
+	 * pens (wxPen) set with width of 1 drawing at two or three pixels.
+	 * So, more ugly preprocessor macros with workarounds; why not?
+	 **/
+	int w0, h0, w1, h1;
+	GetSize(&w1, &h1);
+	GetClientSize(&w0, &h0);
+	w1 -= w0; w1 /= 2;
+	h1 -= h0; h1 /= 2;
+
+	w0 = dc.DeviceToLogicalXRel(w0);
+	h0 = dc.DeviceToLogicalYRel(h0);
+
+	wxPen op = dc.GetPen();
+
+	wxRasterOperationMode of = dc.GetLogicalFunction();
+
+	dc.SetPen(*wxBLACK_PEN);
+	dc.SetLogicalFunction(wxCOPY);
+
+	if ( type == rlr_horz ) {
+		int p = dc.DeviceToLogicalXRel(linepos - w1);
+		dc.DrawLine(p, 0, p, h0);
+	} else {
+		int p = dc.DeviceToLogicalYRel(linepos - h1);
+		dc.DrawLine(0, p, w0, p);
+	}
+
+	dc.SetPen(op);
+	dc.SetLogicalFunction(of);
+#endif // ! defined(__WXGTK3__)
+
 	// And this beacuse Clear...() sets linepos 0.
 	linepos = w;
 }
@@ -256,8 +312,16 @@ A_Ruler::OnPaint(wxPaintEvent& WXUNUSED(event))
 		ri++;
 	}
 
+	/**
+	 * wxWidgets 3.0.0 GTK3 is *BROKEN* in several ways including
+	 * graphics logical ops (e.g., wxINVERT) that do nothing, and
+	 * pens (wxPen) set with width of 1 drawing at two or three pixels.
+	 * So, more ugly preprocessor macros with workarounds; why not?
+	 **/
+#if ! defined(__WXGTK3__)
 	if ( cl )
 		ClearTickLine(dc);
+#endif
 }
 
 void

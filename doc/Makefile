@@ -71,7 +71,7 @@ TEMPDPD	=	TEMP_PDF
 TEMPDDV	=	TEMP_DVI
 ALLTEMPD=	$(TEMPDHL) $(TEMPDHT) $(TEMPDPD) $(TEMPDDV)
 ALLGEN	=	$(WXDOCF) $(WXHEADER) $(HWDOCF) $(PDF) $(PS) $(DVI) $(LISTING)
-NO_DIST	=	$(HWDOCF) $(PDF) $(PS) $(DVI) $(LISTING)
+NO_DIST	=	$(HWDOCF) $(PS) $(DVI) $(LISTING)
 
 # the general root of an installtion -- frequently (but not
 # necessarily) /usr/local on Unix-like systems
@@ -86,7 +86,7 @@ INSTALLCMD = install
 INSTALLOPTS = -c -m 444
 INSTALLDIR = $(DATAPREFIX)/share/$(NAME)/doc
 
-all: wxdoc
+all: pdf wxdoc
 
 # dvi not working; rest OK
 dvi: $(DVI)
@@ -198,8 +198,12 @@ $(PS): $(PDF)
 	$(PDFTOPS) $(PDF) $@
 
 INSTALL_EXCLUDES =
-INST_LIST = $(WXDOCF)
+INST_LIST = $(WXDOCF) $(PDF)
 # Maintain $(UNINST_LIST)
+# Note: install target does not list dependencies: it is
+# allowed to fail by the main Makefile, and should not
+# try to build dependencies since the build requirements
+# will probably not be satisfied on everywhere
 install:
 	@$(RM) $(UNINST_LIST)-tmp || exit 0
 	@if test -e $(UNINST_LIST); then \

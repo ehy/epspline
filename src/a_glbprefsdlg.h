@@ -51,6 +51,7 @@ protected:
 	virtual void on_restore_conf(wxCommandEvent& event);
 	virtual void on_apply(wxCommandEvent& event);
 	virtual void on_cancel(wxCommandEvent& event);
+	virtual void on_help( wxCommandEvent& event );
 	virtual void on_OK(wxCommandEvent& event);
                  
 private:

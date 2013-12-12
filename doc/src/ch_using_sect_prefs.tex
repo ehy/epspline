@@ -1,16 +1,47 @@
-	\IXpkgu{} 
-	The elements of the \IXarg{interface} presented by \IXpkg{}
-	have an arrangement that has been common in
-	windowing systems for many years, and will probably
-	seem familiar to most users. Most individual elements are common,
-	but a few are specific to A few are similar
-	to common elements in most windowed applications,
-	but with some difference in behavior.
+	\IXpkgu{} provides a \IXarg{dialog} window with which
+	a set of \IXarg{preferences} can be set. This dialog window is
+	invoked by selecting the edit menu
+	(see \nameref{sssec:edit_menu}), ``Preferences'' item.
+	The dialog window uses a \IXnewterm{tabbed} interface, and
+	each \IXarg{tab} contains related settings.
 
-	The main groups of \IXarg{interface} elements are
-	discussed briefly, from the top down in order of appearance,
-	in the following subsections. An image of the main window
-	is shown in figure~\ref{fig:bezier_linked_control_points}.
+	Five buttons near the bottom of the \IXarg{dialog} window
+	affect the preferences and the window. These are explained
+	in the table \nameref{tab:prefs_dialog_buttons}. Note that
+	the buttons listed in the table as ``Help,'' ``Apply,'' ``Cancel,''
+	and ``OK,'' might have different lables and appear in a
+	different order depending on the current platform or theme
+	(or translation).
+	
+	\begin{table}[htbp]
+	\centering
+	\textsf{
+	\begin{tabular}[c]{ | l || p{6.33cm} | }
+	\hline
+	\textsc{Button}: & \textsc{Effect}:\\ \hline
+	\hline \hline
+	Restore Defaults & set \IXpkg{} defaults in all items\\ \hline
+	Restore Configured & set values from stored configuration in all items\\ \hline
+	\hline
+	Help & show the help viewer window displaying this section\\ \hline
+	Apply & put current values in effect, and leave the dialog window showing\\ \hline
+	Cancel & dismiss the dialog window, and discard changed values\\ \hline
+	OK & put current values in effect, dismiss the dialog window, and save the values in stored configuration\\ \hline
+	\end{tabular}
+	}%\textsf
+	\caption{The Buttons of the Preferences Dialog Window}
+	\label{tab:prefs_dialog_buttons}
+	\end{table}
+
+	The \IXarg{dialog} window is designed to allow interaction
+	with the main window (see \nameref{sec:window_interface})
+	while the \IXarg{dialog} window remains present. (The
+	system might force the \IXarg{dialog} to remain above
+	the main window, but it can be moved aside.) Changes to settings
+	can be tried and changed again without dismissing the dialog
+	and invoking it again from the \IXarg{menu} using the ``Apply''
+	button. Finally, affect or discard changes with ``OK''
+	or ``Cancel.''
 
 		\subsection{Global Preferences}%WX%4||||
 		\label{ssec:prefs_global}

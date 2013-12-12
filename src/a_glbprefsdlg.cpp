@@ -67,6 +67,12 @@ a_global_pref_dialog::on_apply(wxCommandEvent& event)
 	event.Skip();
 }
 void
+a_global_pref_dialog::on_help(wxCommandEvent& event)
+{
+	pm->on_help(event);
+	event.Skip();
+}
+void
 a_global_pref_dialog::on_cancel(wxCommandEvent& event)
 {
 	pm->on_cancel(event);

@@ -97,6 +97,7 @@ private:
 	void on_restore_conf(wxCommandEvent& event);
 	void on_apply(wxCommandEvent& event);
 	void on_cancel(wxCommandEvent& event);
+	void on_help(wxCommandEvent& event);
 	void on_OK(wxCommandEvent& event);
 	
 public:

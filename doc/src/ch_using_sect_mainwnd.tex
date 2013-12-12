@@ -121,13 +121,16 @@
 			  to overwrite the current file with changes. (Note that
 			  the file name suffix `.inc' is commonly used for
 			  such \IXarg{SDL} fragments, but it is not required by
-			  \IXpov{}.)
+			  \IXpov{}. It is possible to set a preferred suffix in
+			  the \nameref{sec:ch_global_prefs} \IXarg{dialog},
+			  \nameref{ssec:prefs_povray} section.)
 			\end{description}
 
 			\subsubsection{The Edit Menu}%xxxWX%5||||
 			\label{sssec:edit_menu}
 			This \IXarg{menu} provides items that
-			affect or change the current data.
+			affect or change the current data, or in the case of
+			\IXnewterm{preferences}, display or application settings.
 
 			\begin{table}[htbp]
 			\centering
@@ -149,6 +152,8 @@
 			\hline
 			Down & --- & move the selected object down in $z$-order\\ \hline
 			Up & --- & move the selected object up in $z$-order\\ \hline
+			\hline
+			Preferences & --- & invoke the dialog window for setting preferences\\ \hline
 			\end{tabular}
 			}%\textsf
 			\caption{The Items of the Edit Menu}
@@ -188,6 +193,8 @@
 			  \IXpov{} will render the objects, and will only affect
 			  the order in which the objects appear in exported
 			  \IXarg{SDL}.
+			  \item[Preferences] This item has its own section,
+			  \nameref{sec:ch_global_prefs}.
 			\end{description}
 			
 			A final note on the ``clipboard'': it's an omission

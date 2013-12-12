@@ -110,14 +110,13 @@ class global_pref_dialog : public wxDialog
 		
 		
 		
-		
 		wxButton* glb_restore_defs;
 		wxButton* glb_restore_conf;
 		wxStdDialogButtonSizer* dlg_button_sizer;
 		wxButton* dlg_button_sizerOK;
 		wxButton* dlg_button_sizerApply;
 		wxButton* dlg_button_sizerCancel;
-		
+		wxButton* dlg_button_sizerHelp;
 		
 		
 		
@@ -134,6 +133,7 @@ class global_pref_dialog : public wxDialog
 		virtual void on_restore_conf( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
+		virtual void on_help( wxCommandEvent& event ) { event.Skip(); }
 		virtual void on_OK( wxCommandEvent& event ) { event.Skip(); }
 		
 	

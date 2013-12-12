@@ -218,25 +218,25 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	dlg_base_sizer->Add( 20, 0, 1, 0, 5 );
 	
 	wxFlexGridSizer* fgSizer51;
-	fgSizer51 = new wxFlexGridSizer( 1, 5, 8, 8 );
-	fgSizer51->AddGrowableCol( 1 );
-	fgSizer51->AddGrowableCol( 2 );
-	fgSizer51->AddGrowableCol( 3 );
+	fgSizer51 = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer51->AddGrowableCol( 0 );
 	fgSizer51->SetFlexibleDirection( wxBOTH );
 	fgSizer51->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	
-	fgSizer51->Add( 0, 0, 1, wxEXPAND, 5 );
+	wxBoxSizer* bSizer3;
+	bSizer3 = new wxBoxSizer( wxVERTICAL );
 	
 	glb_restore_defs = new wxButton( this, wxID_ANY, _("Restore Defaults"), wxDefaultPosition, wxDefaultSize, 0 );
 	glb_restore_defs->SetToolTip( _("Restore values from built-in defaults.") );
 	
-	fgSizer51->Add( glb_restore_defs, 0, wxALL, 5 );
+	bSizer3->Add( glb_restore_defs, 0, wxALL, 5 );
 	
 	glb_restore_conf = new wxButton( this, wxID_ANY, _("Restore Configured"), wxDefaultPosition, wxDefaultSize, 0 );
 	glb_restore_conf->SetToolTip( _("Restore values from configuration at startup.") );
 	
-	fgSizer51->Add( glb_restore_conf, 0, wxALL, 5 );
+	bSizer3->Add( glb_restore_conf, 0, wxALL, 5 );
+	
+	fgSizer51->Add( bSizer3, 1, wxALL|wxEXPAND, 5 );
 	
 	dlg_button_sizer = new wxStdDialogButtonSizer();
 	dlg_button_sizerOK = new wxButton( this, wxID_OK );
@@ -245,13 +245,12 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	dlg_button_sizer->AddButton( dlg_button_sizerApply );
 	dlg_button_sizerCancel = new wxButton( this, wxID_CANCEL );
 	dlg_button_sizer->AddButton( dlg_button_sizerCancel );
+	dlg_button_sizerHelp = new wxButton( this, wxID_HELP );
+	dlg_button_sizer->AddButton( dlg_button_sizerHelp );
 	dlg_button_sizer->Realize();
-	fgSizer51->Add( dlg_button_sizer, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxEXPAND|wxRIGHT, 5 );
+	fgSizer51->Add( dlg_button_sizer, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 	
-	
-	fgSizer51->Add( 0, 0, 1, wxEXPAND, 5 );
-	
-	dlg_base_sizer->Add( fgSizer51, 1, wxEXPAND, 5 );
+	dlg_base_sizer->Add( fgSizer51, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	dlg_base_sizer->Add( 20, 0, 1, 0, 5 );
@@ -283,6 +282,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	glb_restore_conf->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );
 	dlg_button_sizerApply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_apply ), NULL, this );
 	dlg_button_sizerCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_cancel ), NULL, this );
+	dlg_button_sizerHelp->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_help ), NULL, this );
 	dlg_button_sizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_OK ), NULL, this );
 }
 
@@ -301,5 +301,6 @@ global_pref_dialog::~global_pref_dialog()
 	glb_restore_conf->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_restore_conf ), NULL, this );
 	dlg_button_sizerApply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_apply ), NULL, this );
 	dlg_button_sizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_cancel ), NULL, this );
+	dlg_button_sizerHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_help ), NULL, this );
 	dlg_button_sizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_OK ), NULL, this );
 }

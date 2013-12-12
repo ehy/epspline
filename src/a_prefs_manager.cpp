@@ -28,6 +28,8 @@
 #include "epspline.h"
 #include "a_frame.h"
 #include "util.h"
+// help topic IDs
+#include "epspline_helpids.h"
 
 // hack protos: these are defined in povdemo.cpp
 void SetPovPref(wxString cfg);
@@ -428,4 +430,10 @@ A_Prefs_Manager::on_OK(wxCommandEvent& event)
 		last = aply;
 		aply.is_set = false;
 	}
+}
+
+void
+A_Prefs_Manager::on_help(wxCommandEvent& event)
+{
+	wxGetApp().ShowHelp(IDI_Preferences);
 }

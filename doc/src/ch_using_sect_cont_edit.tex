@@ -57,7 +57,7 @@
 		\label{fig:props_dlg}
 		\end{figure}
 		
-		The ``Spline Properties'' dialog fields are as follows:
+		The ``Spline Properties'' \IXarg{dialog} fields are as follows:
 		\begin{description}
 		  \item[(label)] A label stating the type of \IXspline{}.
 		  \item[Object Name] A text entry field: a name
@@ -107,8 +107,11 @@
 			the user must be certain that anything added here
 			is valid SDL. The contents will be added near the
 			end of the object definition.
-		  \item[(buttons)] Dismiss the dialog window, either
-			cancelling or effecting any changes that were made.
+		  \item[(buttons)] For ``OK'' and ``Cancel,''
+			dismiss the dialog window, either
+			effecting or cancelling any changes that were made.
+			For ``Help,'' dismiss the dialog window with changes lost
+			and display the help viewer showing this section.
 		\end{description}
 
 		Obviously, some object properties should be set

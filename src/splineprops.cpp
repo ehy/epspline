@@ -88,16 +88,13 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 			break;
 		case wxID_HELP:
 			wxGetApp().ShowHelp(_help_sect);
-			// Not trying to show help while blocked on modal dialog,
-			// it ends itself, which is probably un{expect,want}ed,
-			// so recurse and show the dialog again. It's ugly, and
-			// changes are lost, but the only safe alternatives I see
-			// are to remove help button from dialog, or let it
-			// dismiss itself and leave it to user to invoke the
-			// dialog again. Let's try this for now. Maybe the
-			// silly user can repeat this until stack is exhausted,
-			// just for fun.
-			r = SetSplineProps(s, parent);
+			//r = SetSplineProps(s, parent);
+			r = pd.ShowModal();
+			if ( r == wxID_OK ) {
+				s->SetProps(pd);
+			} else if ( r == wxID_HELP ) {
+				wxGetApp().ShowHelp(_help_sect);
+			}
 			break;
 		case wxID_CANCEL:
 		default:

@@ -114,24 +114,35 @@ public:
 
 	// Show wx help window, if help_ok indicates setup is OK.
 	bool  IsHelpOK() const { return help_ok; }
+
 	bool ShowHelp() {
 		if ( help_ok ) {
 			help->DisplayContents();
 		}
 		return help_ok;
 	}
+
 	bool ShowHelp(int id) {
 		if ( help_ok ) {
 			help->Display(id);
 		}
 		return help_ok;
 	}
+
 	bool ShowHelp(const wxString& s) {
 		if ( help_ok ) {
 			help->Display(s);
 		}
 		return help_ok;
 	}
+
+	bool SearchHelpGeneral(const wxString& s) {
+		if ( help_ok ) {
+			return help->KeywordSearch(s);
+		}
+		return help_ok;
+	}
+
 	void QuitHelp() { help->Quit(); }
 
 	// Try to determine if the display/user IO server is on

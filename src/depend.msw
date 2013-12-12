@@ -39,7 +39,9 @@ $(OBJDIR)\splines.obj: splines.cpp \
 
 $(OBJDIR)\splineprops.obj: splineprops.cpp \
  cfg.h stdcc.h \
- splines.h util.h spline_props.h \
+ epspline.h \
+ cdata.h splines.h util.h spline_props.h \
+ epspline_helpids.h
 
 
 $(OBJDIR)\util.obj: util.cpp \

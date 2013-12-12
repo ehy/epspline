@@ -214,8 +214,10 @@ spline_properties::spline_properties( wxWindow* parent, wxWindowID id, const wxS
 	m_sdbSizer1->AddButton( m_sdbSizer1OK );
 	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
+	m_sdbSizer1Help = new wxButton( this, wxID_HELP );
+	m_sdbSizer1->AddButton( m_sdbSizer1Help );
 	m_sdbSizer1->Realize();
-	gbSizer1->Add( m_sdbSizer1, wxGBPosition( 10, 0 ), wxGBSpan( 1, 2 ), wxEXPAND, 5 );
+	gbSizer1->Add( m_sdbSizer1, wxGBPosition( 10, 0 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
 	bSizer1->Add( gbSizer1, 1, wxEXPAND, 5 );
 	
@@ -236,8 +238,13 @@ spline_properties::spline_properties( wxWindow* parent, wxWindowID id, const wxS
 	this->SetSizer( fgSizer2 );
 	this->Layout();
 	fgSizer2->Fit( this );
+	
+	// Connect Events
+	m_sdbSizer1Help->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( spline_properties::on_help ), NULL, this );
 }
 
 spline_properties::~spline_properties()
 {
+	// Disconnect Events
+	m_sdbSizer1Help->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( spline_properties::on_help ), NULL, this );
 }

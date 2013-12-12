@@ -131,7 +131,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</property>
                     <property name="proportion">1</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer1</property>
                         <property name="orient">wxVERTICAL</property>
@@ -813,7 +813,7 @@
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND</property>
                             <property name="proportion">1</property>
-                            <object class="wxGridBagSizer" expanded="0">
+                            <object class="wxGridBagSizer" expanded="1">
                                 <property name="empty_cell_size"></property>
                                 <property name="flexible_direction">wxBOTH</property>
                                 <property name="growablecols">2</property>
@@ -1726,14 +1726,14 @@
                                     <property name="border">5</property>
                                     <property name="colspan">2</property>
                                     <property name="column">0</property>
-                                    <property name="flag">wxEXPAND</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="row">10</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxStdDialogButtonSizer" expanded="1">
                                         <property name="Apply">0</property>
                                         <property name="Cancel">1</property>
                                         <property name="ContextHelp">0</property>
-                                        <property name="Help">0</property>
+                                        <property name="Help">1</property>
                                         <property name="No">0</property>
                                         <property name="OK">1</property>
                                         <property name="Save">0</property>
@@ -1744,7 +1744,7 @@
                                         <event name="OnApplyButtonClick"></event>
                                         <event name="OnCancelButtonClick"></event>
                                         <event name="OnContextHelpButtonClick"></event>
-                                        <event name="OnHelpButtonClick"></event>
+                                        <event name="OnHelpButtonClick">on_help</event>
                                         <event name="OnNoButtonClick"></event>
                                         <event name="OnOKButtonClick"></event>
                                         <event name="OnSaveButtonClick"></event>

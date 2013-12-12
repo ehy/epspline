@@ -215,10 +215,13 @@ Section "appclass help documents" SecDoc
   SetOutPath "$INSTDIR\mswhelpdir"
   
   File "../doc/help.zip"
+  File "../doc/epspline.pdf"
 
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
 	"installed help documents" "$INSTDIR\mswhelpdir\help.zip"
+  WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
+	"installed help PDF file" "$INSTDIR\mswhelpdir\epspline.pdf"
   
 SectionEnd
 
@@ -326,6 +329,7 @@ Section "Uninstall"
   ${unregisterExtension} genFileExtS genFileDescS
 
   Delete "$INSTDIR\mswhelpdir\help.zip"
+  Delete "$INSTDIR\mswhelpdir\epspline.pdf"
   Delete "$INSTDIR\en\appname.mo"
   Delete "$INSTDIR\en_US\appname.mo"
   Delete "$INSTDIR\mswsrc_dir\${SRC_ZIP}"

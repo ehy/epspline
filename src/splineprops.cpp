@@ -36,14 +36,32 @@
 
 #include "cfg.h"
 #include "stdcc.h"
+#include "epspline.h"
 #include "splines.h"
 #include "spline_props.h"
 
+namespace {
+	// Dialog subclass for virtual oaverrides
+	class _props_dlg : public spline_properties {
+	public:
+		_props_dlg(wxWindow* parent) : spline_properties(parent) {}
+		~_props_dlg() {}
+	
+	protected:
+		// Virtual event handler overides
+		virtual void on_help( wxCommandEvent& event ) {
+			event.Skip();
+			wxGetApp().ShowHelp(wxT("properties of objects"));
+		}
+	                 
+	private:
+	};
+}; // namespace
 
 int
 SetSplineProps(SplineBase* s, wxWindow* parent)
 {
-	spline_properties pd(parent);
+	_props_dlg pd(parent);
 	s->InitPropsDialog(pd);
 	pd.Centre(wxBOTH);
 

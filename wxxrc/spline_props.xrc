@@ -358,7 +358,7 @@
 							<object class="sizeritem">
 								<cellpos>10,0</cellpos>
 								<cellspan>1,2</cellspan>
-								<flag>wxEXPAND</flag>
+								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxStdDialogButtonSizer">
 									<object class="button">
@@ -373,6 +373,13 @@
 										<border>5</border>
 										<object class="wxButton" name="wxID_CANCEL">
 											<label>&amp;Cancel</label>
+										</object>
+									</object>
+									<object class="button">
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+										<border>5</border>
+										<object class="wxButton" name="wxID_HELP">
+											<label>&amp;Help</label>
 										</object>
 									</object>
 								</object>

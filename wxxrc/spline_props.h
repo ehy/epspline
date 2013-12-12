@@ -58,9 +58,14 @@ class spline_properties : public wxDialog
 		wxStdDialogButtonSizer* m_sdbSizer1;
 		wxButton* m_sdbSizer1OK;
 		wxButton* m_sdbSizer1Cancel;
+		wxButton* m_sdbSizer1Help;
 		
 		
 		
+		
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void on_help( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

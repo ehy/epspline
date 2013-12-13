@@ -1,8 +1,8 @@
 	\IXpkgu{} provides a \IXarg{dialog} window with which
-	a set of \IXarg{preferences} can be set. This dialog window is
+	a set of \IXnewterm{preferences} can be set. This dialog window is
 	invoked by selecting the edit menu
 	(see \nameref{sssec:edit_menu}), ``Preferences'' item.
-	The dialog window uses a \IXnewterm{tabbed} interface, and
+	The dialog window uses a \IXnewterm{tab} type interface, and
 	each \IXarg{tab} contains related settings.
 
 	Five buttons near the bottom of the \IXarg{dialog} window
@@ -39,30 +39,109 @@
 	system might force the \IXarg{dialog} to remain above
 	the main window, but it can be moved aside.) Changes to settings
 	can be tried and changed again without dismissing the dialog
-	and invoking it again from the \IXarg{menu} using the ``Apply''
+	using the ``Apply''
 	button. Finally, effect or discard changes with ``OK''
 	or ``Cancel.''
+	
+	Each \IXarg{tab} of the \IXarg{dialog} is discussed in the
+	following sections. (The \IXarg{preferences} \IXarg{dialog}
+	was added in \IXpkg{} 0.0.4.3, and is sparse. More items
+	may be added in future releases.)
 
 		\subsection{Global Preferences}%WX%4||||
 		\label{ssec:prefs_global}
-		The \IXnewterm{title bar} is not actually part of
-		the interface provided by an application. It is
-		created and managed, if it exists at all, by a
-		component of the windowing system. When present,
-		it is usually similar for most applications. Some
-		windowing systems (or system configurations) do not
-		attach a \IXarg{title bar} to the application window,
-		and may use another graphical device such as a
-		single `bar' at the top of the screen that will
-		change to represent any window that has the \emph{focus}.
+		This \IXarg{tab} contains controls for settings that
+		apply to \IXpkg{}'s appearance or behavior.
+		Miscellaneous items appear first followed by
+		\IXarg{interface} \IXarg{color} controls.
+		The miscellaneous items are:
 		
-		Regardless of the way in which a \IXarg{title bar}
-		might be presented, an application such as \IXpkg{}
-		has little control over it. The presence and position
-		of buttons on the \IXarg{title bar}, for example,
-		are a feature of the system. \IXpkgu{} only sets
-		the text of the title.
+			\begin{description}
+			  \item[Default extension/suffix for exports] The
+			  suffix offered in the file name \IXarg{dialog}
+			  displayed when the ``Export As'' \IXarg{menu}
+			  item is selected to choose a name for the
+			  \IXpov{} \IXarg{SDL} form of your work.
+			  If this item is set, the leading \emph{dot}
+			  (`.') should be included as it will not be
+			  added automatically. This allows a different
+			  separator character, or none at all, to be used.
+			  \item[Draw grid lines on canvas background] By
+			  default the \IXarg{drawing area} will have a
+			  grid of lines meant to help with alignment, and
+			  to resemble \IXarg{graph paper}. If a blank
+			  \IXarg{canvas} is preferred, the grid can be
+			  disabled with this item.
+			\end{description}
 
-		\subsection{POV-Ray Settings}%WX%4||||
+			The \IXarg{color} selection controls combine a
+			text field, and a `picker' widget that is invoked
+			with the button to the right of the text field.
+			The picker will be conventional for the current
+			platform, and will not be described here. The text
+			field will accept a number of common color names in
+			English (it's uncertain whether these names are
+			subject to translation), or as red/green/blue values
+			specified in either CSS-like or HTML-like form.
+			For example, \texttt{rgb(255, 31, 15)} or
+			\texttt{\#FF1F0F}
+			respectively. The \IXarg{color} control items are:
+			\begin{description}
+			  \item[Choose background grid color] If the
+			  background grid is enabled, it will be drawn
+			  with the \IXarg{color} selected here.
+			  \item[Choose guides color] Horizontal or vertical
+			  guide lines can be drawn onto the \IXarg{canvas}
+			  from the scales to the left and top of the
+			  \IXarg{drawing area} (see \nameref{ssec:guide_lines}).
+			  The color of these guide lines is selected here.
+			  \item[Choose background color] The underlying
+			  color of the
+			  \IXarg{drawing area} is selected with this item.
+			\end{description}
+
+		\subsection{\dtypovhdr{} Settings}%WX%4||||
 		\label{ssec:prefs_povray}
-		The \IXarg{menu} ``bar'' consists of the labels, arranged
+		Naturally, \IXpov{} is used to display a preview of
+		the current work (see \nameref{sssec:help_menu}).
+		This \IXarg{tab} provides settings that apply to
+		the invocation of \IXpov{}.
+		The \IXpov{} settings are:
+
+			\begin{description}
+			  \item[\IXpov{} executable file] An alternative may
+			  be given here. If this text field contains a file system
+			  path rather than a name alone, \IXpkg{} will attempt
+			  to use the path directly. If the field contains a name
+			  only, the behavior differs for Unix-like systems and
+			  MS Windows systems. Under Unix, the executable will be
+			  searched for in \texttt{\$PATH} from \IXpkg{}'s
+			  environment, as would be expected. Under MS Windows,
+			  the given name will be substituted in the result of
+			  a query for the `.POV' file type application. In fact,
+			  under MS Windows, the default value ``povray'' is
+			  actually just a placeholder. The `.POV' type should
+			  be associated with the executable set by the \IXpov{}
+			  installer program. If the \IXpov{} directory contains
+			  alternative names, one can be given here. If \IXpov{}
+			  was not formally installed (for example, a local build
+			  from source) a full path may be given here. \IXpkgu{}
+			  does not attempt to search a PATH from the environment
+			  under MS Windows.
+			  \item[\IXpov{} options (switches)] \IXpov{} command
+			  options may be set in this text field. The default
+			  is `\texttt{+D +P +Q9 +A}' and at least
+			  \texttt{+D} and \texttt{+P} should be left in place.
+			  Note that if you are using a \IXpov{} version less
+			  than 3.7 under Unix, then you might want to add
+			  `\texttt{-visual DirectColor}' to avoid unwanted
+			  transparency in the preview window, but \emph{do not}
+			  give that option for \IXpov{} for Unix version 3.7 or
+			  greater, or under MS Windows. This field should be most
+			  useful for \texttt{+W} and \texttt{+H}
+			  (width and height).
+			\end{description}
+
+	It is expected that more settings will be added to the
+	\IXarg{preference} \IXarg{dialog} if further development
+	of \IXpkg{} is warranted.

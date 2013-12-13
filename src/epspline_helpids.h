@@ -138,10 +138,6 @@
 #define IDS_GlobalPreferences		"Global Preferences"
 #define IDF_GlobalPreferences		"epsplinese7.html#x15-330002.5.1"
 
-#define IDI_POVRaySettings		448
-#define IDS_POVRaySettings		"POV-Ray Settings"
-#define IDF_POVRaySettings		"epsplinese7.html#x15-340002.5.2"
-
 #define IDI_MouseKeyRef		464
 #define IDS_MouseKeyRef		"Mouse and Key Reference"
 #define IDF_MouseKeyRef		"epsplinese8.html"

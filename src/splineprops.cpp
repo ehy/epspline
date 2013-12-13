@@ -43,8 +43,10 @@
 #include "epspline_helpids.h"
 
 namespace {
-	const int _help_sect = IDI_ContinuedEditing;
-	// Dialog subclass for virtual oaverrides
+	//const int _help_sect = IDI_ContinuedEditing;
+	const int _help_sect = IDI_ObjectProperties;
+
+	// Dialog subclass for virtual overrides
 	class _props_dlg : public spline_properties {
 	public:
 		_props_dlg(wxWindow* parent) : spline_properties(parent) {}
@@ -93,6 +95,7 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 			if ( r == wxID_OK ) {
 				s->SetProps(pd);
 			} else if ( r == wxID_HELP ) {
+				r = wxID_CANCEL;
 				wxGetApp().ShowHelp(_help_sect);
 			}
 			break;

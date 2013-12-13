@@ -135,18 +135,26 @@ puttail () {
 	eval ${2}=\""${t1}"\"
 }
 
+fmap_prep () {
+	printf '%s' "$*" | sed \
+		-e 's/<[^<]*>//g'
+}
+
 mk_fmap () {
 	:> "$FMAP"
 	for HTF in *.html ; do
 		HTIT="$(grep -F '<title>' $HTF | head -n 1)"
 		test X = X"$HTIT" || {
 			HTIT="${HTIT#*<title>}"; HTIT="${HTIT%%</title>*}"
+			HTIT=$(fmap_prep "$HTIT")
 			test X = X"$HTIT" || \
 				printf '%s:%s\n' "$HTF" "$HTIT" >> "$FMAP"
 		}
 	done
 }
 
+# The pattern matching here depends completely on tool output:
+# htlatex followed by tidy. If something changes, this breaks.
 mk_fmap_2nd () {
 	for HTF2 in *.html ; do
 		OIFS="$IFS"; IFS="" 
@@ -156,7 +164,10 @@ mk_fmap_2nd () {
 				MTCH="${PHRZ%%\"*}"
 				test X = X"$MTCH" && continue
 				PHRZ="${PHRZ#*</a>}"; PHRZ="${PHRZ%%</h*}"
+				PHRZ=$(fmap_prep "$PHRZ")
 				test X = X"$PHRZ" && continue
+				# exists already, <title>
+				#grep -Eq ":${PHRZ}[[:space:]]\*$" < "$FMAP" && continue
 				printf '%s#%s:%s\n' "$HTF2" "$MTCH" "$PHRZ" >> "$FMAP"
 			done
 		IFS="$OIFS"
@@ -178,7 +189,7 @@ get_fmap () {
 			sed -e 's/<[^><]*>//g' -e 's/[ 	][ 	]*/\[ 	\]\[ 	\]\*/g')
 			;;
 	esac
-	RES=$(grep "$SPAT" "$FMAP") || {
+	RES=$(grep "$SPAT[ 	]*$" "$FMAP") || {
 		dbg "no pattern \"$SPAT\" for arg \"$1\" in file \"$FMAP\""
 		return 1
 	}

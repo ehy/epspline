@@ -241,6 +241,11 @@
 		\def\dtybeznl{\mbox{\dtybezierl}}
 	\fi
 
+	% conditional attributes: wx HTML script mk_wxHT.sh
+	% cannot handle broken strings that `tidy' seems to create (?)
+	\ifelseWX{\def\dtypkghdr{\dtythispkgnameu{}}}
+		{\def\dtypkghdr{\dtypkgu{}}}
+
 	% typeset terms with index entries:
 	%
 	% set arg inline and in index

@@ -113,9 +113,9 @@ $(WXDOCF): $(INPALL)
 		$(MKHT) $(INP) $(MKHTARG) && \
 		$(TEX) $(TEX4dx) && $(MKIDX) $(NAME).4dx && \
 		$(MKHT) $(INP) $(MKHTARG) && \
+		{ $$TIDY $(HCHKARGS) *.html; test 2 -gt $$? && true ; } && \
 		DEFTOPIC="epsplineli1.html" PNAME=$(NAME) HNAME=$@ DBG=yes \
 			../$(MK_ADDL) $(INP) && \
-		{ $$TIDY $(HCHKARGS) *.html; test 2 -gt $$? && true ; } && \
 		{ $(CMP) ../$(WXHEADER) $(WXHEADER) || \
 			$(CP) $(WXHEADER) .. ; } && \
 		$(ZIP) $(ZIPARGS) $@ $(ZIPDOCF) && \

@@ -45,13 +45,13 @@ public:
 
 protected:
 	// Virtual event handler overides
-	virtual void on_close_event( wxCloseEvent& event );
+	virtual void on_close_event(wxCloseEvent& event);
 	virtual void on_init_dlg(wxInitDialogEvent& event);
 	virtual void on_restore_defs(wxCommandEvent& event);
 	virtual void on_restore_conf(wxCommandEvent& event);
 	virtual void on_apply(wxCommandEvent& event);
 	virtual void on_cancel(wxCommandEvent& event);
-	virtual void on_help( wxCommandEvent& event );
+	virtual void on_help(wxCommandEvent& event);
 	virtual void on_OK(wxCommandEvent& event);
                  
 private:

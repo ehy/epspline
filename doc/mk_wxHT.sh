@@ -139,10 +139,27 @@ mk_fmap () {
 	:> "$FMAP"
 	for HTF in *.html ; do
 		HTIT="$(grep -F '<title>' $HTF | head -n 1)"
-		test X = X"$HTIT" && continue
-		HTIT="${HTIT#*<title>}"; HTIT="${HTIT%%</title>*}"
-		test X = X"$HTIT" && continue
-		printf '%s:%s\n' "$HTF" "$HTIT" >> "$FMAP"
+		test X = X"$HTIT" || {
+			HTIT="${HTIT#*<title>}"; HTIT="${HTIT%%</title>*}"
+			test X = X"$HTIT" || \
+				printf '%s:%s\n' "$HTF" "$HTIT" >> "$FMAP"
+		}
+	done
+}
+
+mk_fmap_2nd () {
+	for HTF2 in *.html ; do
+		OIFS="$IFS"; IFS="" 
+		grep -E '<h[0-9][[:space:]]+.*<a[[:space:]]name=' "$HTF2" | \
+			while read -r MTCH ; do
+				PHRZ="${MTCH#*<a name=\"}"
+				MTCH="${PHRZ%%\"*}"
+				test X = X"$MTCH" && continue
+				PHRZ="${PHRZ#*</a>}"; PHRZ="${PHRZ%%</h*}"
+				test X = X"$PHRZ" && continue
+				printf '%s#%s:%s\n' "$HTF2" "$MTCH" "$PHRZ" >> "$FMAP"
+			done
+		IFS="$OIFS"
 	done
 }
 
@@ -256,6 +273,7 @@ EOF
 
 # make map filenames <-> titles
 mk_fmap
+mk_fmap_2nd
 # default output
 POF=$HHC_FD
 # initial .hhc level

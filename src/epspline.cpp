@@ -143,11 +143,6 @@ AnApp::OnQueryEndSession(wxCloseEvent& e)
 void
 AnApp::OnEndSession(wxCloseEvent& e)
 {
-	if ( A_Prefs_Manager* tmpp = pprefsmng ) {
-		pprefsmng = 0;
-		delete tmpp;
-	}
-
 	if ( A_Frame* pw = dynamic_cast<A_Frame*>(GetTopWindow()) ) {
 		pw->Close(true);
 	}

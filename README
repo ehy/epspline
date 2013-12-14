@@ -24,7 +24,7 @@ STATUS
     that there is much more that it could do to be helpful, but
     it should still be much easier than hand editing prisms and lathes.
     Online help documentation is included. The author is not a doc-
-    umentation writer, but hopefully the help will provide the
+    umentation writer, but hopefully the help docs will provide the
     necessary usage information.
     
     Users might find some bugs, but the author has not found any
@@ -45,6 +45,11 @@ STATUS
     and Epspline is being developed against that as well as
     wxWidgets 2.8; therefore, every mention of 2.6 above, and of 2.9
     (which is a development version of 3.0), is merely historical.
+    Now wxWidgets 3.0.0 has many improvements, prefer it over 2.8 if
+    you can, but for the GTK build, prefer GTK2 over GTK3. The GTK3
+    build has problems, such as some common graphics operations
+    failing to have an effect. Epspline has had a few workarounds
+    added for wxGTK3, but its sparkling beauty is not unblemished.
 
 BUILDING, INSTALLING
 

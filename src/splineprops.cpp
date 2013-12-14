@@ -90,7 +90,9 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 			break;
 		case wxID_HELP:
 			wxGetApp().ShowHelp(_help_sect);
-			//r = SetSplineProps(s, parent);
+			// Make this attempt to show the dialog again GTK only,
+			// under MSW the modal dialog blocks the help viewer.
+			#if defined(__WXGTK__)
 			r = pd.ShowModal();
 			if ( r == wxID_OK ) {
 				s->SetProps(pd);
@@ -98,6 +100,7 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 				r = wxID_CANCEL;
 				wxGetApp().ShowHelp(_help_sect);
 			}
+			#endif // defined(__WXGTK__)
 			break;
 		case wxID_CANCEL:
 		default:

@@ -89,6 +89,8 @@ A_Prefs_Manager::A_Prefs_Manager(wxConfigBase* pconfig)
 
 A_Prefs_Manager::~A_Prefs_Manager()
 {
+	delete_prefs_dialog();
+
 	if ( last.is_set  ) {
 		cfgs = last;
 	}

@@ -92,7 +92,8 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 			wxGetApp().ShowHelp(_help_sect);
 			// Make this attempt to show the dialog again GTK only,
 			// under MSW the modal dialog blocks the help viewer.
-			#if defined(__WXGTK__)
+			// Update: blocks under some GTK too, e.g. FBSD 9.0, wx 2.9
+			#if defined(__WXGTK__) && 0
 			r = pd.ShowModal();
 			if ( r == wxID_OK ) {
 				s->SetProps(pd);

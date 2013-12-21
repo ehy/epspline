@@ -163,7 +163,11 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	// This size diddle was needed w/ wx3.0.0, GTK3 on Xubuntu 13.10;
 	// hopefully harmless elsewhere (N.G. wx2.8).
 #if wxCHECK_VERSION(3, 0, 0)
-	pstxt->SetInitialSize(pstxt->GetTextExtent(text));
+	{
+		wxSize tsz = pstxt->GetTextExtent(text);
+		tsz.y += 10;
+		pstxt->SetInitialSize(tsz);
+	}
 #endif // ! wxCHECK_VERSION(3, 0, 0)
 	pstxt->Wrap(-1);
 	pstxt->SetLabel(text);

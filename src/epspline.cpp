@@ -453,6 +453,7 @@ AnApp::OnInit()
 		wxHF_DEFAULT_STYLE|wxHF_OPEN_FILES);
 #	endif // wxCHECK_VERSION(2, 8, 0)
 	// add help book(s) (zip file[s])
+	help->UseConfig(pConfig);
 	wxFileName helpbook(resourcedir, wxT(HELP_BOOK_NAME));
 	helpbook.AppendDir(wxT(HELP_DOC_SUBDIR));
 	help_ok = help->AddBook(helpbook);
@@ -467,6 +468,9 @@ AnApp::OnInit()
 			std::fprintf(stderr, "%s: failed loading help \"%s\"\n",
 				wxs2ch(fn), wxs2ch(h));
 		}
+	}
+	if ( false && help_ok ) {
+		help->ReadCustomization(pConfig);
 	}
 
 	return TRUE;

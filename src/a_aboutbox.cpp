@@ -157,6 +157,13 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	// Info & license page
 	wxPanel* page = new wxPanel(book);
 	wxBoxSizer* szr     = new wxBoxSizer(wxVERTICAL);
+#ifndef EXCLUDE_ABOUTBOX_ART
+	// Added 2013/11/22
+	wxBitmap art_bmp(app_images::aboutart);
+	wxStaticBitmap* psbmp = new wxStaticBitmap(page, -1, art_bmp);
+	szr->Add(20, 20);
+	szr->Add(psbmp, 0, wxALIGN_CENTER, 0);
+#endif
 	wxStaticText* pstxt = new wxStaticText(page, -1, wxString());
 	// Added 2013/04/13, updated 2013/12/21
 	pstxt->SetFont(font);
@@ -171,13 +178,6 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 #endif // ! wxCHECK_VERSION(3, 0, 0)
 	pstxt->Wrap(-1);
 	pstxt->SetLabel(text);
-#ifndef EXCLUDE_ABOUTBOX_ART
-	// Added 2013/11/22
-	wxBitmap art_bmp(app_images::aboutart);
-	wxStaticBitmap* psbmp = new wxStaticBitmap(page, -1, art_bmp);
-	szr->Add(20, 20);
-	szr->Add(psbmp, 0, wxALIGN_CENTER, 0);
-#endif
 	szr->Add(20, 20);
 	szr->Add(pstxt, 1, wxALIGN_CENTER_HORIZONTAL
 #if ! wxCHECK_VERSION(2, 9, 0)

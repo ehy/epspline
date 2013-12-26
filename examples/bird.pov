@@ -6,26 +6,15 @@
 //
 // 12-2013 Ed Hynan
 
+// POV-Ray 3.7 makes some new demands, among which are #version
+// as a first statement, and an expicit assumed_gamma
+#version 3.7;
+global_settings{ assumed_gamma 1.0 }
+
 #include "colors.inc"
 #include "metals.inc"
 #include "woods.inc"
 #include "textures.inc"
-
-#ifndef ( UseAreaLight )
-#declare UseAreaLight = 1;
-#end
-
-#if ( UseAreaLight )
-	light_source {
-		<-20, 20, -30>
-		color White
-		area_light <5, 0, 0>, <0, 0, 5>, 5, 5
-		adaptive 1
-		jitter
-	}
-#else
-	light_source { <20, 20, -20> color White }
-#end
 
 camera {
 	location <0, 1.75, -0.25>
@@ -124,7 +113,6 @@ difference {
 #end
 
 #if ( UseChisels )
-#include "skies.inc"
 #declare Chisels_as_include = 1;
 #include "chisel0.pov"
 
@@ -148,7 +136,53 @@ object {
 	translate <-0.8, 0.0, .0>
 }
 
+#end
 
+// Optionally place a lamp or two -- mostly for
+// some reflection on chisel blades, so mostly --
+// possibly all -- outside of view.
+// Set 0 for now: not getting what I wanted, no more time
+#ifndef ( UseLamps )
+#declare UseLamps = 0;
+#end
+
+#if ( UseLamps )
+
+#declare Lamps_as_include = 1;
+#declare UseOilLampLightSource = 1;
+#declare UseFlame = 0;
+#declare TestLamp = 0;
+#declare UseLampLightSource = 1;
+#declare LampGlobeTexture = texture { Glass3 }
+//#declare LampGlobeTexture = texture { pigment { color Red } }
+#declare LampBodyTexture = texture { Brass_Metal }
+#declare LampKnobTexture = texture { Silver_Metal }
+#declare LampFlameTexture = texture {
+	pigment { Yellow }
+	finish { ambient .8 diffuse .2 }
+}
+
+#include "lamp.pov"
+
+object {
+	OilLamp
+	scale 1
+	translate < -0.0, 0.0, -2.25 >
+	rotate y * 15
+}
+
+#else
+
+// light source iff no lamp
+light_source {
+	<-20, 20, -30>
+	color White
+	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
+	adaptive 1
+	jitter
+}
+
+#include "skies.inc"
 sky_sphere {
 	S_Cloud2
 }

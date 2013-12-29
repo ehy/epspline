@@ -43,7 +43,6 @@
 #include "epspline_helpids.h"
 
 namespace {
-	//const int _help_sect = IDI_ContinuedEditing;
 	const int _help_sect = IDI_ObjectProperties;
 
 	// Dialog subclass for virtual overrides
@@ -80,7 +79,6 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 	_props_dlg pd(parent);
 
 	s->InitPropsDialog(pd);
-	//pd.Centre(wxBOTH);
 
 	int r = pd.ShowModal();
 

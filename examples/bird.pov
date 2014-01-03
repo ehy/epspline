@@ -8,8 +8,18 @@
 
 // POV-Ray 3.7 makes some new demands, among which are #version
 // as a first statement, and an expicit assumed_gamma
+#version version;
+#if ( version >= 3.7 )
+#if ( version > 3.7 )
 #version 3.7;
+#end
 global_settings{ assumed_gamma 1.0 }
+#else // 3.7
+// FPO. This is the 1st sample made w/ POV 3.7; attempting
+// to get similar results w/ 3.6 is a matter for another
+// time -- gamma does not do it.
+global_settings{ assumed_gamma 2.2 }
+#end
 
 #include "colors.inc"
 #include "metals.inc"
@@ -20,8 +30,19 @@ camera {
 	location <0, 1.75, -0.25>
 	//location <0, 0.25, -1.75>
 	look_at <0, 0.25, 0>
+	//look_at <0, 04, 0>
 	right x * image_width / image_height
 	angle 45
+}
+
+#declare LightOffs = 10; // 5; // or 10 or 20
+// light source iff no lamp
+light_source {
+	<-LightOffs, LightOffs, -LightOffs * 1.5>
+	color White
+	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
+	adaptive 1
+	jitter
 }
 
 #macro tint_textureFA(clr, mul, filt, trans, basic)
@@ -171,21 +192,75 @@ object {
 	rotate y * 15
 }
 
-#else
+#end // Lamp
 
-// light source iff no lamp
-light_source {
-	<-20, 20, -30>
-	color White
-	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
-	adaptive 1
-	jitter
-}
-
-#include "skies.inc"
-sky_sphere {
-	S_Cloud2
-}
-
+#ifndef ( UseWalls )
+#declare UseWalls = 1;
 #end
+
+// Ceiling and walls; not seen directly, but just something
+// for reflective surfaces.
+#declare UseBrickWall = UseChisels;
+#if ( UseBrickWall )
+#declare BrickWallDistance = LightOffs * 1.5 + 5;
+#declare BrickWallSize = 1.251;
+#declare BrickWallAngle = -20;
+
+#declare BrickWallTexture = texture {
+	pigment {
+		brick Gray60, <136/255, 75/255, 75/255>
+		brick_size <8,3,4.5>*BrickWallSize mortar .5*BrickWallSize
+	}
+	normal {
+		//brick 0.5
+		brick normal {
+			granite 0.125
+		}, normal {
+			average
+			normal_map {
+				[0.3  granite .35]
+				[0.8  dents .3]
+			}
+		}
+		brick_size <8,3,4.5>*BrickWallSize mortar .5*BrickWallSize
+	}
+	finish {
+		diffuse 0.4
+		ambient 0.30
+	}
+}
+
+#macro BrickWalls_put(num)
+	#local cnt = 0;
+	#local ang = 360 / num;
+	#while ( cnt < num )
+		plane { z, BrickWallDistance
+			texture {
+				BrickWallTexture
+			}
+			hollow
+			rotate y * (BrickWallAngle + ang * cnt)
+		}
+		#local cnt = cnt + 1;
+	#end
+#end // #macro BrickWalls_put(num)
+
+BrickWalls_put(4)
+
+#declare CeilingScale = BrickWallDistance * 2;
+#declare CeilingAngle = BrickWallAngle;
+
+// simple ceiling for reflection
+plane { +y, LightOffs + 25
+	texture {
+		pigment {
+			checker color Tan, color Thistle scale 0.10
+		}
+		scale <CeilingScale, 1, CeilingScale>
+	}
+	hollow
+	rotate y * CeilingAngle
+}
+
+#end // Walls
 

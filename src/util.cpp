@@ -64,6 +64,7 @@ extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #endif
 #endif
 
+#include <iomanip>
 #include <sstream>
 #include <cstring>
 #include <cmath>
@@ -633,7 +634,7 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 
 	// Ouch, this was missing, must have deleted it; returns
 	// nothing without it!
-	out += so.str();
+	out = so.str();
 
 	return out;
 }

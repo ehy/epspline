@@ -370,26 +370,35 @@ MKZIP = itydoodah
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
 	examples-working
 dist archive distarchive: distclean
-	mkdir ../EXCL_TEMPD
+	mkdir ../EXCL_TEMPD || { echo FAIL mkdir ../EXCL_TEMPD; exit 1; }; \
 	for f in $(EXCLFILES) ; do \
 		test -e "$$f" && $(MV) "$$f" ../EXCL_TEMPD ; \
-	done
+	done; \
+	_ST=0; \
 	V=$$(/bin/sh ./version.sh) || { \
-		echo FAILED to get version from ./version.sh; exit 1; } ; \
-	TD="epspline-$${V}"; PD="$$(pwd)"; D="$${PD##*/}"; TF="$$TD.tar.gz"; \
-	( cd .. && { \
-		test X"$$D" = X"$$TD" || \
-			{ $(MV) "$$D" "$$TD" && trap "$(MV) $$TD $$D" 0; }; \
-		} && {\
-		tar cvf - "$$TD" | gzip --best > "$$TF" && \
-		ls -l "$$TF" || \
-			{ echo FAILED making $$TF; exit 1; }; \
-		test X"$(MKZIP)" = X && exit 0; TZ="$$TD.zip"; \
-		$(RM) "$$TZ"; zip -9 -db -o -r "$$TZ" "$$TD" || \
-			{ echo FAILED making $$TZ; exit 1; }; \
-		exit 0; } ; ) || \
-	{ echo FAILED making "$$TF" in $@; exit 1; }
-	for f in ../EXCL_TEMPD/* ; do $(MV) "$$f" . ; done
-	{ test -d ../EXCL_TEMPD/.git && \
-		for f in ../EXCL_TEMPD/.??* ; do $(MV) "$$f" . ; done; true; }
-	rmdir ../EXCL_TEMPD
+		echo FAILED to get version from ./version.sh; _ST=1; } ; \
+	test 0 -eq $$_ST && { \
+		TD="epspline-$${V}"; PD="$$(pwd)"; D="$${PD##*/}"; TF="$$TD.tar.gz"; \
+		( cd .. && { \
+			test X"$$D" = X"$$TD" || \
+				{ $(MV) "$$D" "$$TD" && trap "$(MV) $$TD $$D" 0; }; \
+			} && { \
+				tar cvf - "$$TD" | gzip --best > "$$TF" && \
+				ls -l "$$TF" || { echo FAILED making $$TF; exit 1; }; \
+				test X"$(MKZIP)" = X || { \
+					TZ="$$TD.zip"; \
+					$(RM) "$$TZ"; zip -9 -db -o -r "$$TZ" "$$TD" || \
+						{ echo FAILED making $$TZ; exit 1; }; \
+				}; \
+			}; \
+			exit 0; \
+		) || \
+		{ echo FAILED making "$$TF" in $@; _ST=1; }; \
+	}; \
+	for f in ../EXCL_TEMPD/* ../EXCL_TEMPD/.??* ; do \
+		test -e "$$f" || continue; \
+		$(MV) "$$f" . ; \
+	done; rmdir ../EXCL_TEMPD; \
+	test 0 -eq $$_ST && echo SUCCEEDED $@ || echo FAILED $@; \
+	exit $$_ST
+	

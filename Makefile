@@ -378,7 +378,8 @@ dist archive distarchive: distclean
 	V=$$(/bin/sh ./version.sh) || { \
 		echo FAILED to get version from ./version.sh; _ST=1; } ; \
 	test 0 -eq $$_ST && { \
-		TD="epspline-$${V}"; PD="$$(pwd)"; D="$${PD##*/}"; TF="$$TD.tar.gz"; \
+		TD="epspline-$${V}"; PD="$$(pwd)"; \
+		D="$${PD##*/}"; TF="$$TD.tar.gz"; \
 		( cd .. && { \
 			test X"$$D" = X"$$TD" || \
 				{ $(MV) "$$D" "$$TD" && trap "$(MV) $$TD $$D" 0; }; \

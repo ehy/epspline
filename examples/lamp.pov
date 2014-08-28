@@ -14,6 +14,10 @@
 #declare Use_Radiosity = 0;
 #end
 
+#ifndef ( Lamps_as_include )
+#declare Lamps_as_include = 0;
+#end
+
 #ifndef ( TestLamp )
 #declare TestLamp = 1;
 #end
@@ -54,7 +58,10 @@
 	<LampFlame_left+((LampFlame_right-LampFlame_left)/2)
 	, 0
 	, LampFlame_top+((LampFlame_bottom-LampFlame_top)/2)>
-	color <1.0, 1.0, 0.5>
+	color < 1, 1, 0.5 >
+	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
+	adaptive 1
+	jitter
 	looks_like { LampFlame }
 	fade_distance 1.7
 	fade_power 1.4
@@ -106,6 +113,7 @@
 	translate <0, 1, 0>
 }
 
+#if ( Lamps_as_include = 0 )
 #if ( TestLamp )
 global_settings{
 	max_trace_level 7
@@ -132,4 +140,5 @@ box { <-.75, 0, .75> <.75, 1.5, .85>
 box { <-.75, 0, .75> <.75, -.1, -.75>
 	texture { Blood_Marble scale .25 }
 }
-#end
+#end // #if ( TestLamp )
+#end // #if ( Lamps_as_include = 0 )

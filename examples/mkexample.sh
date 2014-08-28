@@ -7,14 +7,17 @@ P=${0##*/}
 W=800
 H=600
 
-: ${ADDLARG:="-visual DirectColor"}
+# -visual is n.g. for povray 3.7 with SDL
+#: ${ADDLARG:="-visual DirectColor"}
 : ${OTYPE:=".png"}
+: ${POVRAY:="povray"}
 
 # POSIX sh getopts
-while getopts h:w: opt; do
+while getopts h:w:d opt; do
   case $opt in
     h ) H="$OPTARG" ;;
     w ) W="$OPTARG" ;;
+    d ) ADDLARG="$ADDLARG -visual DirectColor" ;;
     * ) echo $P: bad arg "\"$OPTARG\"" 1>&2; exit 1 ;;
   esac
 done
@@ -32,4 +35,4 @@ test -f "$N" && test -r "$N" || {
 
 OBN="${N%.*}"
 
-exec povray +D +X3 +P +FN +A0.2 +Q9 +W$W +H$H -I"$N" -O"$OBN"-${W}x${H}${OTYPE} ${ADDLARG}
+exec $POVRAY +D +X3 +P +FN +A0.2 +Q9 +W$W +H$H -I"$N" -O"$OBN"-${W}x${H}${OTYPE} ${ADDLARG}

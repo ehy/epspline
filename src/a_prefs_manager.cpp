@@ -378,7 +378,6 @@ A_Prefs_Manager::on_close_event(wxCloseEvent& event)
 	force_updates();
 
 	if ( event.CanVeto() == false ) {
-		fputs("epspline: event.CanVeto() == false\n", stderr);
 		delete_prefs_dialog();
 	} else {
 		update__to__dialog(last);

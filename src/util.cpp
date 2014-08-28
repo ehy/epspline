@@ -64,6 +64,7 @@ extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #endif
 #endif
 
+#include <iomanip>
 #include <sstream>
 #include <cstring>
 #include <cmath>
@@ -600,7 +601,9 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 {
 	std::istringstream si(in);
 	std::ostringstream so;
-	
+
+	so << std::setbase(16) << std::uppercase << std::setfill('0');
+
 	char c;
 	while ( si.get(c) ) {
 		// char and unsigned char (and signed char) are
@@ -609,10 +612,10 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 		// of signedness of char
 		union { char c; unsigned char u; } uc;
 		uc.c = c;
-		if ( uc.u > 127 || ! (std::isprint(c) || std::isspace(c)) ) {
-			char buf[8];
-			::snprintf(buf, 8, "\\\\x%02X", unsigned(uc.u));
-			so << buf;
+		// problem: std::iscntrl(c) is true for '\t'
+		if ( c != '\t' && (uc.u > 127 || std::iscntrl(c)
+				|| ! (std::isprint(c) || std::isspace(c)) ) ) {
+			so << "\\\\x" << std::setw(2) << unsigned(uc.u);
 			continue;
 		}
 		if ( esc ) {
@@ -628,6 +631,10 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 		}
 		so.put(c);
 	}
-	
+
+	// Ouch, this was missing, must have deleted it; returns
+	// nothing without it!
+	out = so.str();
+
 	return out;
 }

@@ -43,7 +43,6 @@
 #include "epspline_helpids.h"
 
 namespace {
-	//const int _help_sect = IDI_ContinuedEditing;
 	const int _help_sect = IDI_ObjectProperties;
 
 	// Dialog subclass for virtual overrides
@@ -80,7 +79,6 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 	_props_dlg pd(parent);
 
 	s->InitPropsDialog(pd);
-	//pd.Centre(wxBOTH);
 
 	int r = pd.ShowModal();
 
@@ -90,17 +88,9 @@ SetSplineProps(SplineBase* s, wxWindow* parent)
 			break;
 		case wxID_HELP:
 			wxGetApp().ShowHelp(_help_sect);
-			// Make this attempt to show the dialog again GTK only,
-			// under MSW the modal dialog blocks the help viewer.
-			#if defined(__WXGTK__)
-			r = pd.ShowModal();
-			if ( r == wxID_OK ) {
-				s->SetProps(pd);
-			} else if ( r == wxID_HELP ) {
-				r = wxID_CANCEL;
-				wxGetApp().ShowHelp(_help_sect);
-			}
-			#endif // defined(__WXGTK__)
+			// do not show the dialog again -- tried it and it's
+			// N.G. -- modal dialog *might* block interaction with
+			// help window; oddly, it sometimes doesn't.
 			break;
 		case wxID_CANCEL:
 		default:

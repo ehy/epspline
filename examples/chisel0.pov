@@ -1,4 +1,14 @@
 
+#ifndef ( Chisels_as_include )
+#declare Chisels_as_include = 0;
+#end
+#if ( Chisels_as_include )
+#declare DoScene = 0;
+#else
+#declare DoScene = 1;
+#end
+
+#if ( DoScene )
 #include "colors.inc"
 #include "metals.inc"
 #include "woods.inc"
@@ -8,8 +18,8 @@
 global_settings {
 	max_trace_level 12
 }
+#end // #if ( DoScene )
 
-#declare Use_AreaLight = 1;
 // Declare textures before including epspline .inc file.
 #declare ChiselBladeTexture = texture { T_Chrome_2C }
 
@@ -78,27 +88,21 @@ global_settings {
 }
 
 // After textures include epspline .inc file.
-#include "chisel.inc"
+#include "chisel0.inc"
 
+#if ( DoScene )
+#declare CAM_YOFF = -0.175;
 camera {
-	location <0, 2, -3>
-	look_at  <0, 0,  0>
+	location <0, 2 + CAM_YOFF, -3>
+	look_at  <0, 0 + CAM_YOFF,  0>
 	right x * (image_width / image_height)
 }
 
-#if ( Use_AreaLight )
-light_source {
-	<-4, 4, -6>
-	color White
-	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
-	adaptive 1
-	jitter
-}
-#else
 light_source { <-2, 4, -3> color White }
 light_source { <-30, 40, -33> color White }
-#end
+#end // #if ( DoScene )
 
+#if ( 0 )
 #declare blade_unit_raw = object {
 	ChiselBladeProfile
 	translate <
@@ -108,7 +112,20 @@ light_source { <-30, 40, -33> color White }
 	>
 	scale <1.0,1.75*ChiselHandle_height,1.0>
 	translate y*-1.75*ChiselHandle_height
-}
+}   
+#else
+#declare blade_unit_raw = object {
+	ChiselBladeProfile
+	translate <
+		-ChiselBladeProfile_left-(ChiselBladeProfile_width/2)
+		, 0
+		, -ChiselBladeProfile_top-(ChiselBladeProfile_height/2)
+	>
+	scale <1.0,7.75*ChiselHandle_height,1.0>
+	translate y * 3.750 * ChiselHandle_height
+}   
+#end
+
 
 #declare blade_unit_tang_cutter = object {
 	TangForm
@@ -162,6 +179,16 @@ light_source { <-30, 40, -33> color White }
 #declare blade_unit_grind_tang_cut = difference {
 	object { blade_unit_tang_cut }
 	object { blade_unit_grind_cutter }
+	// trim just a little of the top roughly perpendicular
+	// to the grind -- these translations are trial & error
+	plane {
+		y 0
+		rotate x*-55.5
+		translate <0, -2.0*(ChiselHandle_height+GrindForm_height),
+			ChiselHandle_height + -GrindForm_height + 20.00>
+		hollow
+		texture { ChiselBladeTexture }
+	}
 }
 
 #declare blade_unit = object {
@@ -280,6 +307,7 @@ light_source { <-30, 40, -33> color White }
 	}
 }
 
+#if ( DoScene )
 // Place some Chisels
 object {
 	Chisel0
@@ -334,4 +362,5 @@ plane { y, -2.5
 sky_sphere {
 	S_Cloud2
 }
+#end // #if ( DoScene )
 

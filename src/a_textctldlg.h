@@ -24,7 +24,7 @@
 // and the usual OK and Cancel buttons.
 
 #ifndef _A_TEXTCTLDLG_H_
-#define _A_TEXTCTLDLG_H
+#define _A_TEXTCTLDLG_H_
 
 #include <wx/wx.h>
 #include <wx/dialog.h>

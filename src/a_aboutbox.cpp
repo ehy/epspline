@@ -154,11 +154,9 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	// add wx build info from string built above
 	text += textwx;
 
+	// Info & license page
 	wxPanel* page = new wxPanel(book);
 	wxBoxSizer* szr     = new wxBoxSizer(wxVERTICAL);
-	wxStaticText* pstxt = new wxStaticText(page, -1, text);
-	// Added 2013/04/13
-	pstxt->SetFont(font);
 #ifndef EXCLUDE_ABOUTBOX_ART
 	// Added 2013/11/22
 	wxBitmap art_bmp(app_images::aboutart);
@@ -166,17 +164,34 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr->Add(20, 20);
 	szr->Add(psbmp, 0, wxALIGN_CENTER, 0);
 #endif
+	wxStaticText* pstxt = new wxStaticText(page, -1, wxString());
+	// Added 2013/04/13, updated 2013/12/21
+	pstxt->SetFont(font);
+	// This size diddle was needed w/ wx3.0.0, GTK3 on Xubuntu 13.10;
+	// hopefully harmless elsewhere (N.G. wx2.8).
+#if wxCHECK_VERSION(3, 0, 0)
+	{
+		wxSize tsz = pstxt->GetTextExtent(text);
+		tsz.y += 10;
+		pstxt->SetInitialSize(tsz);
+	}
+#endif // ! wxCHECK_VERSION(3, 0, 0)
+	pstxt->Wrap(-1);
+	pstxt->SetLabel(text);
 	szr->Add(20, 20);
-	szr->Add(pstxt, 0, wxALIGN_CENTER
-#	if ! wxCHECK_VERSION(2, 9, 0)
+	szr->Add(pstxt, 1, wxALIGN_CENTER_HORIZONTAL
+#if ! wxCHECK_VERSION(2, 9, 0)
 		|wxADJUST_MINSIZE, 0);
-#	else // ! wxCHECK_VERSION(2, 9, 0)
-		, 0);
-#	endif // ! wxCHECK_VERSION(2, 9, 0)
+#else // ! wxCHECK_VERSION(2, 9, 0)
+		, 1);
+#endif // ! wxCHECK_VERSION(2, 9, 0)
 	szr->Add(20, 20);
 	page->SetSizer(szr);
+	page->SetAutoLayout(true);
+	page->Fit();
 	book->AddPage(page, _("Copyrights"), true);
 
+	// GPL license page
 	text = ch2wxs(GPL__);
 	page = new wxPanel(book);
 	wxTextCtrl* ptxtc = new wxTextCtrl(page, -1, text, wxDefaultPosition
@@ -185,8 +200,11 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr = new wxBoxSizer(wxHORIZONTAL);
 	szr->Add(ptxtc, 1, wxGROW, 1);
 	page->SetSizer(szr);
+	page->SetAutoLayout(true);
+	page->Fit();
 	book->AddPage(page, _("Source Code License"), false);
 
+	// FDL license page
 	text = ch2wxs(FDL__);
 	page = new wxPanel(book);
 	ptxtc = new wxTextCtrl(page, -1, text, wxDefaultPosition
@@ -195,11 +213,14 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr = new wxBoxSizer(wxHORIZONTAL);
 	szr->Add(ptxtc, 1, wxGROW, 1);
 	page->SetSizer(szr);
+	page->SetAutoLayout(true);
+	page->Fit();
 	book->AddPage(page, _("Documentation License"), false);
 
 	// POV-Ray 3.7 was released under the Affero GPL; I think
 	// the permission text will cause confusion now.
-#	if _USE_POVRAY_PERMISSION_TEXT
+#if _USE_POVRAY_PERMISSION_TEXT
+	// POV-Team permission page
 	text = ch2wxs(PERM__);
 	page = new wxPanel(book);
 	ptxtc = new wxTextCtrl(page, -1, text, wxDefaultPosition
@@ -208,11 +229,13 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	szr = new wxBoxSizer(wxHORIZONTAL);
 	szr->Add(ptxtc, 1, wxGROW, 1);
 	page->SetSizer(szr);
+	page->SetAutoLayout(true);
+	page->Fit();
 	book->AddPage(page, _("POV-Team Permission"), false);
-#	endif
+#endif
 
 	SetSizer(szrMain);
-	SetAutoLayout(true);
+	//SetAutoLayout(true);
 	Fit();
 }
 

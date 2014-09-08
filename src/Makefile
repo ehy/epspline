@@ -42,11 +42,11 @@ UNINST_LIST = ../uninstall/src_uninstall-list
 LEXYACCFAIL = SunOS Linux
 LEXYACCOK   = OpenBSD FreeBSD NetBSD
 
-# CFLAGS (environment overridden) are used in the parser.o
+# PARSERCFLAGS are used in the parser.o
 # compile; the _LINUX def is inherited with the lexer and parser
 # and wxExio code pulled from an old version of wxWindows --
 # it's not actually only used on GNU/Linux here.
-CFLAGS = $(CCFLAGS) -D_LINUX=1
+PARSERCFLAGS = $(CCFLAGS) -D_LINUX=1
 
 OBJDIR = .
 SRCDIR = .
@@ -116,7 +116,7 @@ $(OBJDIR):
 
 
 $(OBJDIR)/parser.o: $(SRCDIR)/parser.c $(SRCDIR)/lexer.c
-	$(CCLEX) -c $(CFLAGS) -I. -o $@ $(SRCDIR)/parser.c
+	$(CCLEX) -c $(PARSERCFLAGS) -I. -o $@ $(SRCDIR)/parser.c
 
 $(SRCDIR)/parser.c: $(COMMDIR)/parser.y $(SRCDIR)/lexer.c
 	@$(RM) y.tab.c

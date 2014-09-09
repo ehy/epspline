@@ -169,7 +169,11 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 	pstxt->SetFont(font);
 	// This size diddle was needed w/ wx3.0.0, GTK3 on Xubuntu 13.10;
 	// hopefully harmless elsewhere (N.G. wx2.8).
-#if wxCHECK_VERSION(3, 0, 0)
+	// Update: no, not harmless elsewhere -- whacked on MS --
+	// and even wx 3.0.1 w/ gtk2 needs something because descenders
+	// on last line are cut -- make it gtk only
+#if wxCHECK_VERSION(3, 0, 0) && \
+	(defined(__WXGTK__) || defined(__WXGTK3__))
 	{
 		wxSize tsz = pstxt->GetTextExtent(text);
 		tsz.y += 10;

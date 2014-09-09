@@ -121,6 +121,19 @@ Unix/POSIX:
     not be difficult to divine the magic spell (such a spell
     often conjures a patch).
 
+    NOTE: as of wxWidgets 3.0.x the increasingly popular clang(++)
+	compiler will require an extra option in CXXFLAGS to get a
+	successful build: -std=c++11.  So far this has not been needed
+	with GCC/g++ which seems to accept the newer C++ features now
+	used in wx by default, but in the future . . . who knows?  For
+	clang++ use:
+
+	  make CXX=clang++ CXXFLAGS="$CXXFLAGS -std=c++11" <other args>
+
+	which should succeed.  Unfortunately specifying the newer standard
+	raises deprecation warnings from the Epspline code, which had
+	previously compiled without warnings, but they are not critical.
+
 GNU/Linux (probably GNU/*):
     With wxWidgets installed from a package system, a simple
     ``make && sudo make install'' should work. Check first

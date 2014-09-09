@@ -36,7 +36,7 @@
 #endif	/* #ifndef VENDORNAME */
 
 #ifndef	APPVERSIONSTR
-#define	APPVERSIONSTR		"0.0.4.3p1"	/* application version as string */
+#define	APPVERSIONSTR		"0.0.4.3p2"	/* application version as string */
 #endif	/* #ifndef APPVERSIONSTR */
 
 #ifndef	APPVERSION

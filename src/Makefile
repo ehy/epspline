@@ -69,9 +69,11 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/a_textctldlg.h \
 	$(HDRDIR)/a_aboutbox.h \
 	$(HDRDIR)/a_prefs_manager.h \
+	$(HDRDIR)/a_bgimg_manager.h \
 	$(HDRDIR)/a_glbprefsdlg.h \
 	$(HDRDIR)/spline_props.h \
 	$(HDRDIR)/globlal_prefs.h \
+	$(HDRDIR)/bg_image_dlg.h \
 	$(HDRDIR)/wxexio.h
 
 SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
@@ -82,9 +84,11 @@ SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
 	$(SRCDIR)/a_textctldlg.cpp \
 	$(SRCDIR)/a_aboutbox.cpp \
 	$(SRCDIR)/a_prefs_manager.cpp \
+	$(SRCDIR)/a_bgimg_manager.cpp \
 	$(SRCDIR)/a_glbprefsdlg.cpp \
 	$(SRCDIR)/spline_props.cpp \
 	$(SRCDIR)/globlal_prefs.cpp \
+	$(SRCDIR)/bg_image_dlg.cpp \
 	$(SRCDIR)/wxexio.cpp
 
 OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
@@ -95,9 +99,11 @@ OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
 	$(OBJDIR)/a_spintextdlg.o \
 	$(OBJDIR)/a_aboutbox.o \
 	$(OBJDIR)/a_prefs_manager.o \
+	$(OBJDIR)/a_bgimg_manager.o \
 	$(OBJDIR)/a_glbprefsdlg.o \
 	$(OBJDIR)/spline_props.o \
 	$(OBJDIR)/globlal_prefs.o \
+	$(OBJDIR)/bg_image_dlg.o \
 	$(OBJDIR)/wxexio.o \
 	$(OBJDIR)/parser.o
 
@@ -173,6 +179,16 @@ $(SRCDIR)/globlal_prefs.cpp : $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.cpp
 		> $(SRCDIR)/globlal_prefs.cpp
 
 $(OBJDIR)/globlal_prefs.o : $(SRCDIR)/globlal_prefs.cpp $(HDRDIR)/globlal_prefs.h
+
+$(HDRDIR)/bg_image_dlg.h : $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.h
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.h \
+		> $(HDRDIR)/bg_image_dlg.h
+
+$(SRCDIR)/bg_image_dlg.cpp : $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.cpp
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.cpp \
+		> $(SRCDIR)/bg_image_dlg.cpp
+
+$(OBJDIR)/bg_image_dlg.o : $(SRCDIR)/bg_image_dlg.cpp $(HDRDIR)/bg_image_dlg.h
 
 # GNU gperf is used to make a hashed set of pov reserved words
 # which have been gathered from pov docs.  These words are in a

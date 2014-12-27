@@ -39,8 +39,8 @@ bg_img_dlg::bg_img_dlg(
 	const wxPoint& pos = wxDefaultPosition,
 	const wxSize& size = wxDefaultSize,
 	long style = wxDEFAULT_DIALOG_STYLE)
-: bg_image(manager->parent_wnd(), id, title, wxPoint& pos, size, style)
-, mng(manager)
+	: bg_image(manager->parent_wnd(), id, title, pos, size, style)
+	, mng(manager)
 {
 }
 
@@ -97,7 +97,7 @@ bg_img_dlg::on_offs_y(wxCommandEvent& event)
 }
 
 void
-bg_img_dlg::on_file select(wxFileDirPickerEvent& event)
+bg_img_dlg::on_file_select(wxFileDirPickerEvent& event)
 {
 
 }

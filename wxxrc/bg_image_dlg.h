@@ -87,7 +87,7 @@ namespace ns_bg_img_dlg
 			virtual void on_height( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_x( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_y( wxCommandEvent& event ) { event.Skip(); }
-			virtual void on_file select( wxFileDirPickerEvent& event ) { event.Skip(); }
+			virtual void on_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
 			virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_help( wxCommandEvent& event ) { event.Skip(); }

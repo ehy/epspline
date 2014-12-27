@@ -56,7 +56,7 @@ namespace ns_bg_img_dlg {
 		virtual void on_height(wxCommandEvent& event);
 		virtual void on_offs_x(wxCommandEvent& event);
 		virtual void on_offs_y(wxCommandEvent& event);
-		virtual void on_file select(wxFileDirPickerEvent& event);
+		virtual void on_file_select(wxFileDirPickerEvent& event);
 		virtual void on_apply(wxCommandEvent& event);
 		virtual void on_cancel(wxCommandEvent& event);
 		virtual void on_help(wxCommandEvent& event);

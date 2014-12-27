@@ -1,15 +1,149 @@
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jan 29 2014)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
+/*
+ * Copyright (c) 2013 Ed Hynan
+ *
+ * This file is part of Epspline
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ */
 
-#include "bg_image_dlg.h"
+#include "cfg.h"
+#include "stdcc.h"
+#include "epspline.h"
+#include "splines.h"
+#include "spline_props.h"
+// help topic IDs
+#include "epspline_helpids.h"
 
+#include "a_bgimg_manager.h"
+
+// The generated dialog base is in namespace "ns_bg_img_dlg",
+// and derive with that ns.
+namespace ns_bg_img_dlg {
+bg_img_dlg::bg_img_dlg(
+	bgimg_manager* manager,
+	wxWindowID id = wxID_ANY,
+	const wxString& title = _("Background Image"),
+	const wxPoint& pos = wxDefaultPosition,
+	const wxSize& size = wxDefaultSize,
+	long style = wxDEFAULT_DIALOG_STYLE)
+: bg_image(manager->parent_wnd(), id, title, wxPoint& pos, size, style)
+, mng(manager)
+{
+}
+
+bg_img_dlg::~bg_img_dlg()
+{
+}
+
+void
+bg_img_dlg::on_copy_opt(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_flip_horz(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_flip_vert(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_greyscale(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_width(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_height(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_offs_x(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_offs_y(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_file select(wxFileDirPickerEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_apply(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_cancel(wxCommandEvent& event)
+{
+
+}
+
+void
+bg_img_dlg::on_help(wxCommandEvent& event)
+{
+	// Should not invoke help viewer from modal window;
+	// what grief we might cause the event processor.
+	// It seemed to work with wxGTK 2.8, probably
+	// accidentally and temporarily; in 3.0.0 the
+	// dialog would never show again, who knows what
+	// might happen on MSW.
+	// So, if modal, just end returning help ID.
+	if ( IsModal() ) {
+		EndModal(wxID_HELP);
+	} else {
+		wxGetApp().ShowHelp(_help_sect);
+		event.Skip();
+	}
+}
+
+void
+bg_img_dlg::on_ok(wxCommandEvent& event)
+{
+
+}
+// END class bg_img_dlg methods
+
+}; // END namespace ns_bg_img_dlg
+
+/*
 ///////////////////////////////////////////////////////////////////////////
-using namespace ns_bg_img_dlg;
-
+// impl. -- REFRENCE, TEMPORARY
 bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -230,3 +364,4 @@ bg_image::~bg_image()
 	button_sizer1Help->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_help ), NULL, this );
 	button_sizer1OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_ok ), NULL, this );
 }
+*/

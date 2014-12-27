@@ -13,7 +13,7 @@
         <property name="help_provider">none</property>
         <property name="internationalize">1</property>
         <property name="name">Dialogs</property>
-        <property name="namespace"></property>
+        <property name="namespace">&quot;ns_bg_img_dlg&quot;</property>
         <property name="path">.</property>
         <property name="precompiled_header"></property>
         <property name="relative_path">1</property>

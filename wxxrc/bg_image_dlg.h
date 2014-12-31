@@ -25,6 +25,7 @@
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/spinctrl.h>
+#include <wx/slider.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
 #include <wx/gbsizer.h>
@@ -59,6 +60,11 @@ namespace ns_bg_img_dlg
 			wxStaticLine* m_staticline51;
 			wxStaticText* m_staticText311;
 			wxStaticLine* m_staticline511;
+			wxStaticLine* m_staticline11;
+			wxStaticText* m_staticText7;
+			wxStaticLine* m_staticline12;
+			wxStaticText* m_staticText8;
+			wxStaticLine* m_staticline13;
 			wxStaticText* m_staticText6;
 			wxStaticLine* m_staticline7;
 			wxStdDialogButtonSizer* button_sizer1;
@@ -82,6 +88,8 @@ namespace ns_bg_img_dlg
 			virtual void on_height( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_x( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_y( wxCommandEvent& event ) { event.Skip(); }
+			virtual void on_hsv_s_scroll( wxScrollEvent& event ) { event.Skip(); }
+			virtual void on_hsv_v_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
 			virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
@@ -100,6 +108,8 @@ namespace ns_bg_img_dlg
 			wxSpinCtrl* spin_hi;
 			wxSpinCtrl* spin_offsx;
 			wxSpinCtrl* spin_offsy;
+			wxSlider* hsv_s;
+			wxSlider* hsv_v;
 			wxFilePickerCtrl* selector_file;
 			
 			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );

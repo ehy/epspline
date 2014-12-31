@@ -75,7 +75,7 @@
 							<style>wxRA_SPECIFY_ROWS</style>
 							<tooltip>Option to copy image with the .pse file: copy the original without changes (changes will be lost), or copy with changes (changes will be available in future, even if original file is not), or make no copy (changes will be lost).</tooltip>
 							<label>Copy Options:</label>
-							<selection>0</selection>
+							<selection>1</selection>
 							<content>
 								<item>Copy Original</item>
 								<item>Copy Changes</item>
@@ -161,7 +161,7 @@
 						<object class="wxGridBagSizer">
 							<vgap>0</vgap>
 							<hgap>0</hgap>
-							<growablecols>3</growablecols>
+							<growablecols>5</growablecols>
 							<growablerows>5</growablerows>
 							<object class="sizeritem">
 								<cellpos>0,0</cellpos>
@@ -325,8 +325,91 @@
 								</object>
 							</object>
 							<object class="sizeritem">
+								<cellpos>0,3</cellpos>
+								<cellspan>2,1</cellspan>
+								<flag>wxEXPAND | wxALL</flag>
+								<border>5</border>
+								<object class="wxStaticLine" name="m_staticline11">
+									<style>wxLI_VERTICAL</style>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<cellpos>0,4</cellpos>
+								<cellspan>1,1</cellspan>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText7">
+											<label>HSV Saturation:</label>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxSlider" name="hsv_s">
+											<style>wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_HORIZONTAL</style>
+											<tooltip>Adjust HSV (Hue Saturation Value) saturation.</tooltip>
+											<value>0</value>
+											<min>-100</min>
+											<max>100</max>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND | wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticLine" name="m_staticline12">
+											<style>wxLI_HORIZONTAL</style>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<cellpos>1,4</cellpos>
+								<cellspan>1,1</cellspan>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText8">
+											<label>HSV Value:</label>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_TOP|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxSlider" name="hsv_v">
+											<style>wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_HORIZONTAL</style>
+											<tooltip>Adjust HSV (Hue Saturation Value) value.</tooltip>
+											<value>0</value>
+											<min>-100</min>
+											<max>100</max>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND | wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticLine" name="m_staticline13">
+											<style>wxLI_HORIZONTAL</style>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
 								<cellpos>2,0</cellpos>
-								<cellspan>1,3</cellspan>
+								<cellspan>1,5</cellspan>
 								<flag>wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxBoxSizer">
@@ -364,7 +447,7 @@
 							</object>
 							<object class="sizeritem">
 								<cellpos>4,0</cellpos>
-								<cellspan>1,3</cellspan>
+								<cellspan>1,5</cellspan>
 								<flag>wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
 								<border>5</border>
 								<object class="wxStdDialogButtonSizer">

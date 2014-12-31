@@ -24,6 +24,7 @@
 #ifndef _WXUTIL_H_
 #define _WXUTIL_H_
 
+#include <wx/image.h>
 #include "splines.h"
 #include "util.h"
 
@@ -55,6 +56,17 @@ extern void* io_sanitise_spline_point_data;
 inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }
+
+// simplistc HSV adjustment, originally for background image
+// double args are -1.0,1.0
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage* wximg_adjhsv(wxImage* img, double h, double s, double v);
+
+// simple conversion to greyscale -- may be replaced
+// with something, time permitting
+// originally for background image
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage* get_grey_wximg(wxImage* src, bool use_alt = false);
 
 bool IntersectRect(const wxRect& r0, const wxRect& r1);
 

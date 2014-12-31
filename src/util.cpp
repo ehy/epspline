@@ -64,6 +64,7 @@ extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #endif
 #endif
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
@@ -109,6 +110,83 @@ newwstrdup(const wchar_t* str)
 	if ( !str ) return 0;
 	wchar_t* p = new wchar_t[std::wcslen(str) + 1];
 	return p ? std::wcscpy(p, str) : 0;
+}
+
+// simplistc HSV adjustment, originally for background image
+// double args are -1.0,1.0
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage*
+wximg_adjhsv(wxImage* img, double h, double s, double v)
+{
+	if ( ! img ) {
+		return 0;
+	}
+
+	const unsigned pixwid = 3;
+	int wi = img->GetWidth(), hi = img->GetHeight();
+
+	if ( wi < 1 || hi < 1 ) {
+		return img;
+	}
+
+	unsigned char* p = img->GetData();
+
+	if ( ! p ) {
+		return img;
+	}
+
+	unsigned char* e = p + (unsigned(wi) * pixwid * unsigned(hi));
+
+	// this is the simplistic part . . .
+#	define _adjcomp(v, a) \
+	( \
+		std::min(1.0, std::max(0.0, v * (1.0 + a))) \
+	)
+
+	while ( p < e ) {
+		wxImage::HSVValue hsv =
+			wxImage::RGBtoHSV(wxImage::RGBValue(p[0], p[1], p[2]));
+
+		wxImage::RGBValue rgb =
+			wxImage::HSVtoRGB(wxImage::HSVValue(
+				_adjcomp(hsv.hue, h),
+				_adjcomp(hsv.saturation, s),
+				_adjcomp(hsv.value, v)
+			)
+		);
+
+		p[0] = rgb.red;
+		p[1] = rgb.green;
+		p[2] = rgb.blue;
+
+		p += pixwid;
+	}
+
+	return img;
+}
+
+// simple conversion to greyscale -- may be replaced
+// with something, time permitting
+// originally for background image
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage*
+get_grey_wximg(wxImage* src, bool use_alt)
+{
+	const double alt_r = 0.2126;
+	const double alt_b = 0.0722;
+	const double alt_g = 1.0 - alt_b - alt_r;
+	
+	wxImage* dest;
+
+	if ( use_alt ) {
+		dest = new wxImage(src->ConvertToGreyscale(
+			alt_r, alt_g, alt_b
+		));
+	} else {
+		dest = new wxImage(src->ConvertToGreyscale());
+	}
+
+	return dest;
 }
 
 int

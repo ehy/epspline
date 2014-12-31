@@ -40,6 +40,8 @@ public:
 	typedef unsigned long 	dim_type;
 	// image offset type
 	typedef signed	 short 	off_type;
+	// image HSV adj. type
+	typedef signed	 short 	hsv_type;
 
 protected:
 	friend dialog_type;
@@ -70,7 +72,9 @@ protected:
 		arg_offsx = 0x400,
 		arg_offsy = 0x800,
 		// color transforms
-		conv_grey = 0x4000,
+		conv_grey = 0x1000,
+		conv_hsvs = 0x2000,
+		conv_hsvv = 0x4000,
 		// test if transform is set
 		trans_mask = 0xFFF0,
 		// end tag -- just for comma
@@ -88,8 +92,8 @@ protected:
 
 		dim_type origwidth, origheight;
 		dim_type modswidth, modsheight;
-	
 		off_type off_x, off_y;
+		hsv_type hsv_s, hsv_v;
 
 		datastruct() {
 			parms = params_null;
@@ -100,6 +104,8 @@ protected:
 			modsheight = 0;
 			off_x = 0;
 			off_y = 0;
+			hsv_s = 0;
+			hsv_v = 0;
 		}
 
 		datastruct(const datastruct& o) {
@@ -115,6 +121,8 @@ protected:
 			modsheight = o.modsheight;
 			off_x = o.off_x;
 			off_y = o.off_y;
+			hsv_s = o.hsv_s;
+			hsv_v = o.hsv_v;
 			return *this;
 		}
 
@@ -127,7 +135,9 @@ protected:
 				modswidth == o.modswidth &&
 				modsheight == o.modsheight &&
 				off_x == o.off_x &&
-				off_y == o.off_y
+				off_y == o.off_y &&
+				hsv_s == o.hsv_s &&
+				hsv_v == o.hsv_v
 			);
 		}
 	};
@@ -239,6 +249,14 @@ protected:
 	void set_arg_offsy(bool b = true) {
 		set_params(b ? (parms() | arg_offsy) : (parms() & ~arg_offsy));
 	}
+	bool get_conv_hsvs() { return parms() & conv_hsvs; }
+	void set_conv_hsvs(bool b = true) {
+		set_params(b ? (parms() | conv_hsvs) : (parms() & ~conv_hsvs));
+	}
+	bool get_conv_hsvv() { return parms() & conv_hsvv; }
+	void set_conv_hsvv(bool b = true) {
+		set_params(b ? (parms() | conv_hsvv) : (parms() & ~conv_hsvv));
+	}
 	bool get_conv_grey() { return parms() & conv_grey; }
 	void set_conv_grey(bool b = true) {
 		set_params(b ? (parms() | conv_grey) : (parms() & ~conv_grey));
@@ -280,6 +298,8 @@ namespace ns_bg_img_dlg {
 		virtual void on_height(wxCommandEvent& event);
 		virtual void on_offs_x(wxCommandEvent& event);
 		virtual void on_offs_y(wxCommandEvent& event);
+		virtual void on_hsv_s_scroll(wxScrollEvent& event);
+		virtual void on_hsv_v_scroll(wxScrollEvent& event);
 		virtual void on_file_select(wxFileDirPickerEvent& event);
 		virtual void on_close_event(wxCloseEvent& event);
 		virtual void on_init_dlg(wxInitDialogEvent& event);

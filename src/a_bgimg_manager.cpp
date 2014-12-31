@@ -24,15 +24,11 @@
 #include "epspline.h"
 #include "splines.h"
 #include "spline_props.h"
+#include "wxutil.h"
 // help topic IDs
 #include "epspline_helpids.h"
 
 #include "a_bgimg_manager.h"
-
-// simple conversion to greyscale -- may be replaced
-// with something, time permitting
-static wxImage*
-get_grey_wximg(wxImage* src, bool use_alt = false);
 
 // bg image manager methods
 bgimg_manager::bgimg_manager()
@@ -133,9 +129,11 @@ bgimg_manager::get_mod_image()
 	}
 
 	if ( data_std == data_save ) {
-		// no transforms pending, give what we got
-		if ( mods_img || img ) {
-			return mods_img ? mods_img : img;
+		// no transforms pending,
+		// give what we got
+		// if we got it
+		if ( mods_img ) {
+			return mods_img;
 		}
 	}
 
@@ -150,7 +148,7 @@ bgimg_manager::get_mod_image()
 			// not so good . . .
 			delete img;
 			img = 0;
-			return mods_img ? mods_img : 0;
+			return 0;
 		}
 	}
 
@@ -164,8 +162,17 @@ bgimg_manager::get_mod_image()
 		return img;
 	}
 
+	if ( get_conv_hsvs() || get_conv_hsvv() ) {
+		double h = 0.0;
+		double s = double(data_std.hsv_s) / 100.0;
+		double v = double(data_std.hsv_v) / 100.0;
+
+		mods_img = wximg_adjhsv(new wxImage(img->Copy()), h, s, v);
+	}
 	if ( get_conv_grey() ) {
-		mods_img = get_grey_wximg(img);
+		wxImage* t = mods_img ? mods_img : new wxImage(img->Copy());
+		mods_img = get_grey_wximg(t);
+		delete t;
 	}
 
 	if ( get_flip_horz() ) {
@@ -231,6 +238,8 @@ bgimg_manager::update_from_dialog(datastruct& dat)
 	dat.modsheight = p->spin_hi->GetValue();
 	dat.off_x = p->spin_offsx->GetValue();
 	dat.off_y = p->spin_offsy->GetValue();
+	dat.hsv_s = p->hsv_s->GetValue();
+	dat.hsv_v = p->hsv_v->GetValue();
 	dat.img_fname = p->selector_file->GetPath();
 }
 
@@ -243,14 +252,16 @@ bgimg_manager::update__to__dialog(const datastruct& dat)
 		return;
 	}
 
-	/* wxCheckBox* */ p->chk_flhorz->SetValue(get_flip_horz());
-	/* wxCheckBox* */ p->chk_flvert->SetValue(get_flip_vert());
-	/* wxCheckBox* */ p->chk_greyscale->SetValue(get_conv_grey());
-	/* wxSpinCtrl* */ p->spin_wi->SetValue(dat.modswidth);
-	/* wxSpinCtrl* */ p->spin_hi->SetValue(dat.modsheight);
-	/* wxSpinCtrl* */ p->spin_offsx->SetValue(dat.off_x);
-	/* wxSpinCtrl* */ p->spin_offsy->SetValue(dat.off_y);
-	/* wxFilePickerCtrl* */ p->selector_file->SetPath(dat.img_fname);
+	p->chk_flhorz->SetValue(get_flip_horz());
+	p->chk_flvert->SetValue(get_flip_vert());
+	p->chk_greyscale->SetValue(get_conv_grey());
+	p->spin_wi->SetValue(dat.modswidth);
+	p->spin_hi->SetValue(dat.modsheight);
+	p->spin_offsx->SetValue(dat.off_x);
+	p->spin_offsy->SetValue(dat.off_y);
+	p->hsv_s->SetValue(dat.hsv_s);
+	p->hsv_v->SetValue(dat.hsv_v);
+	p->selector_file->SetPath(dat.img_fname);
 
 	p->set_preview(get_mod_image());
 }
@@ -264,7 +275,6 @@ bgimg_manager::on_close_event(wxCloseEvent& event)
 		dlg = 0;
 		delete t;
 	} else {
-		//update__to__dialog(data_std);
 		event.Skip();
 	}
 }
@@ -302,15 +312,18 @@ void
 bgimg_manager::on_cancel(wxCommandEvent& event)
 {
 	data_std = data_save;
-	update__to__dialog(data_std);
+	//update__to__dialog(data_std);
 	force_updates();
 }
 
 void
 bgimg_manager::on_OK(wxCommandEvent& event)
 {
-	get_mod_image();
-	data_save = data_std;
+	delete mods_img;
+	mods_img = 0;
+	delete img;
+	img = 0;
+	//data_save = data_std;
 	on_apply(event);
 }
 
@@ -318,28 +331,6 @@ void
 bgimg_manager::on_help(wxCommandEvent& event)
 {
 	wxGetApp().ShowHelp(IDI_BackgroundImage);
-}
-
-// simple conversion to greyscale -- may be replaced
-// with something, time permitting
-static wxImage*
-get_grey_wximg(wxImage* src, bool use_alt)
-{
-	const double alt_r = 0.2126;
-	const double alt_b = 0.0722;
-	const double alt_g = 1.0 - alt_b - alt_r;
-	
-	wxImage* dest;
-
-	if ( use_alt ) {
-		dest = new wxImage(src->ConvertToGreyscale(
-			alt_r, alt_g, alt_b
-		));
-	} else {
-		dest = new wxImage(src->ConvertToGreyscale());
-	}
-
-	return dest;
 }
 
 // The generated dialog base is in namespace "ns_bg_img_dlg",
@@ -379,6 +370,13 @@ bg_img_dlg::put_preview()
 		return;
 	}
 
+	if ( hsv_s->GetValue() || hsv_v->GetValue() ) {
+		double h = 0.0;
+		double s = double(hsv_s->GetValue()) / 100.0;
+		double v = double(hsv_v->GetValue()) / 100.0;
+
+		wximg_adjhsv(&i, h, s, v);
+	}
 	if ( chk_greyscale->GetValue() ) {
 		i = i.ConvertToGreyscale();
 	}
@@ -394,13 +392,9 @@ bg_img_dlg::put_preview()
 		  spin_hi->GetValue() > 0 ? spin_hi->GetValue() : i.GetHeight()
 		);
 	}
-	if ( spin_offsx->GetValue() || spin_offsy->GetValue() ) {
-		i.Resize(
-			wxSize(i.GetWidth(), i.GetHeight()),
-			wxPoint(spin_offsx->GetValue(), spin_offsy->GetValue()),
-			0, 0, 0
-		);
-	}
+	// next block moved to set_preview() because
+	// app does not add offset to image
+	//if ( spin_offsx->GetValue() || spin_offsy->GetValue() ) {
 
 	set_preview(&i);
 }
@@ -411,6 +405,19 @@ bg_img_dlg::set_preview(wxImage* i)
 	wxSize sz = bmp_preview->GetClientSize();
 
 	if ( i && i->GetHeight() > 0 ) {
+		wxImage itmp(i->Copy());
+		i = &itmp;
+
+		// this block moved to here because
+		// app does not add offset to image
+		if ( spin_offsx->GetValue() || spin_offsy->GetValue() ) {
+			i->Resize(
+				wxSize(i->GetWidth(), i->GetHeight()),
+				wxPoint(spin_offsx->GetValue(), spin_offsy->GetValue()),
+				0, 0, 0
+			);
+		}
+
 		int x, y;
 		float rn = float(sz.GetWidth())  / float(sz.GetHeight());
 		float ro = float(i->GetWidth()) / float(i->GetHeight());
@@ -453,7 +460,7 @@ bg_img_dlg::on_copy_opt(wxCommandEvent& event)
 void
 bg_img_dlg::on_flip_horz(wxCommandEvent& event)
 {
-	mng->set_flip_horz(chk_flhorz->GetValue() ? true : false);
+	mng->set_flip_horz(chk_flhorz->GetValue());
 
 	put_preview();
 }
@@ -461,7 +468,7 @@ bg_img_dlg::on_flip_horz(wxCommandEvent& event)
 void
 bg_img_dlg::on_flip_vert(wxCommandEvent& event)
 {
-	mng->set_flip_vert(chk_flvert->GetValue() ? true : false);
+	mng->set_flip_vert(chk_flvert->GetValue());
 
 	put_preview();
 }
@@ -477,8 +484,9 @@ bg_img_dlg::on_greyscale(wxCommandEvent& event)
 void
 bg_img_dlg::on_width(wxCommandEvent& event)
 {
-	mng->data_std.modswidth =
-		(bgimg_manager::dim_type)spin_wi->GetValue();
+	int i = spin_wi->GetValue();
+	mng->data_std.modswidth = (bgimg_manager::dim_type)i;
+	mng->set_arg_width(i != 0);
 
 	put_preview();
 }
@@ -486,8 +494,9 @@ bg_img_dlg::on_width(wxCommandEvent& event)
 void
 bg_img_dlg::on_height(wxCommandEvent& event)
 {
-	mng->data_std.modsheight =
-		(bgimg_manager::dim_type)spin_hi->GetValue();
+	int i = spin_hi->GetValue();
+	mng->data_std.modsheight = (bgimg_manager::dim_type)i;
+	mng->set_arg_height(i != 0);
 
 	put_preview();
 }
@@ -495,8 +504,9 @@ bg_img_dlg::on_height(wxCommandEvent& event)
 void
 bg_img_dlg::on_offs_x(wxCommandEvent& event)
 {
-	mng->data_std.off_x =
-		(bgimg_manager::off_type)spin_offsx->GetValue();
+	int i = spin_offsx->GetValue();
+	mng->data_std.off_x = (bgimg_manager::off_type)i;
+	mng->set_arg_offsx(i != 0);
 
 	put_preview();
 }
@@ -504,8 +514,29 @@ bg_img_dlg::on_offs_x(wxCommandEvent& event)
 void
 bg_img_dlg::on_offs_y(wxCommandEvent& event)
 {
-	mng->data_std.off_y =
-		(bgimg_manager::off_type)spin_offsy->GetValue();
+	int i = spin_offsy->GetValue();
+	mng->data_std.off_y = (bgimg_manager::off_type)i;
+	mng->set_arg_offsy(i != 0);
+
+	put_preview();
+}
+
+void
+bg_img_dlg::on_hsv_s_scroll(wxScrollEvent& event)
+{
+	int i = hsv_s->GetValue();
+	mng->data_std.hsv_s = (bgimg_manager::hsv_type)i;
+	mng->set_conv_hsvs(i != 0);
+
+	put_preview();
+}
+
+void
+bg_img_dlg::on_hsv_v_scroll(wxScrollEvent& event)
+{
+	int i = hsv_v->GetValue();
+	mng->data_std.hsv_v = (bgimg_manager::hsv_type)i;
+	mng->set_conv_hsvv(i != 0);
 
 	put_preview();
 }

@@ -43,6 +43,7 @@ class A_Tabpage;
 class A_Frame;
 class A_Ruler;
 class A_Canvas;
+class bgimg_manager;
 
 
 // Buffered DCs not working as hoped, but maybe try again later.
@@ -117,6 +118,8 @@ enum {
 	IC_move_down,
 	IC_move_up,
 
+	IC_set_bg_img,
+
 	IC_end
 };
 
@@ -126,6 +129,7 @@ class A_Canvas: public wxScrolledWindow {
 protected:
 	A_Frame*     a_frame;
 	A_Tabpage*   a_tabpg;
+	bgimg_manager*	bg_mng;
 	bool         aa_draw; // draw anti-aliased curves, or not
 	// For guide/snap-to lines
 	A_Ruler*     hrule, * vrule;

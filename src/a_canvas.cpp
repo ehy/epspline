@@ -71,7 +71,8 @@
 #include "a_ruler.h"
 #include "a_zoomdlg.h"
 #include "a_prefs_manager.h"
-
+#include "a_bgimg_manager.h"
+ 
 #include "swap_vals.h"
 #include "drawlines.h"
 namespace aap = ANTI_ALIAS_LINE_NAMESPACE_NAME;
@@ -180,7 +181,8 @@ A_BUFDCCanvas::~A_BUFDCCanvas()
 
 A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	: wxScrolledWindow(realparent)
-	, a_frame(parent), a_tabpg(realparent), aa_draw(aa)
+	, a_frame(parent), a_tabpg(realparent)
+	, bg_mng(new bgimg_manager()), aa_draw(aa)
 	, hrule(0), vrule(0)
 	, pt_mousedown(INT_MIN, INT_MIN)
 	, D(new DataState)
@@ -236,6 +238,9 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	_("Export objects to current file name"));
 	m_pop->Append(IC_exportas, _("Export As"),
 	_("Export objects to new file"));
+	m_pop->AppendSeparator();
+	m_pop->Append(IC_set_bg_img, _("Set Background Image"),
+	_("Show dialog to set or modify canvas background image"));
 
 	m_sel = new wxMenu(_("Selection"), wxMENU_TEAROFF);
 	m_sel->Append(IC_set_props, _("Set object properties"),
@@ -1990,6 +1995,9 @@ A_Canvas::GotPopup(wxCommandEvent& event)
 			break;
 		case IC_move_up:
 			MoveUp();
+			break;
+		case IC_set_bg_img:
+			bg_mng->show_dialog();
 			break;
 		default:
 			D->GotPopup(event);

@@ -69,11 +69,11 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/a_textctldlg.h \
 	$(HDRDIR)/a_aboutbox.h \
 	$(HDRDIR)/a_prefs_manager.h \
-	$(HDRDIR)/a_bgimg_manager.h \
 	$(HDRDIR)/a_glbprefsdlg.h \
 	$(HDRDIR)/spline_props.h \
 	$(HDRDIR)/globlal_prefs.h \
 	$(HDRDIR)/bg_image_dlg.h \
+	$(HDRDIR)/a_bgimg_manager.h \
 	$(HDRDIR)/wxexio.h
 
 SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
@@ -84,11 +84,11 @@ SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
 	$(SRCDIR)/a_textctldlg.cpp \
 	$(SRCDIR)/a_aboutbox.cpp \
 	$(SRCDIR)/a_prefs_manager.cpp \
-	$(SRCDIR)/a_bgimg_manager.cpp \
 	$(SRCDIR)/a_glbprefsdlg.cpp \
 	$(SRCDIR)/spline_props.cpp \
 	$(SRCDIR)/globlal_prefs.cpp \
 	$(SRCDIR)/bg_image_dlg.cpp \
+	$(SRCDIR)/a_bgimg_manager.cpp \
 	$(SRCDIR)/wxexio.cpp
 
 OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
@@ -99,11 +99,11 @@ OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
 	$(OBJDIR)/a_spintextdlg.o \
 	$(OBJDIR)/a_aboutbox.o \
 	$(OBJDIR)/a_prefs_manager.o \
-	$(OBJDIR)/a_bgimg_manager.o \
 	$(OBJDIR)/a_glbprefsdlg.o \
 	$(OBJDIR)/spline_props.o \
 	$(OBJDIR)/globlal_prefs.o \
 	$(OBJDIR)/bg_image_dlg.o \
+	$(OBJDIR)/a_bgimg_manager.o \
 	$(OBJDIR)/wxexio.o \
 	$(OBJDIR)/parser.o
 

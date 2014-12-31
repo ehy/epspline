@@ -44,10 +44,10 @@
 						<option>0</option>
 						<flag>wxALL|wxFIXED_MINSIZE</flag>
 						<border>5</border>
-						<object class="wxStaticText" name="bg_ing_label">
+						<object class="wxStaticText" name="bg_img_label">
 							<style>wxALIGN_CENTRE</style>
 							<tooltip>Image Preview</tooltip>
-							<label>Image</label>
+							<label>Image Preview</label>
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -55,7 +55,7 @@
 						<flag>wxALIGN_CENTER|wxALL</flag>
 						<border>5</border>
 						<object class="wxStaticBitmap" name="bmp_preview">
-							<size>192,192</size>
+							<size>192,128</size>
 							<bitmap />
 						</object>
 					</object>
@@ -75,7 +75,7 @@
 							<style>wxRA_SPECIFY_ROWS</style>
 							<tooltip>Option to copy image with the .pse file: copy the original without changes (changes will be lost), or copy with changes (changes will be available in future, even if original file is not), or make no copy (changes will be lost).</tooltip>
 							<label>Copy Options:</label>
-							<selection>1</selection>
+							<selection>0</selection>
 							<content>
 								<item>Copy Original</item>
 								<item>Copy Changes</item>
@@ -185,6 +185,7 @@
 										<border>5</border>
 										<object class="wxSpinCtrl" name="spin_wi">
 											<style>wxSP_ARROW_KEYS</style>
+											<tooltip>Set the width of display on background.</tooltip>
 											<value>0</value>
 											<min>0</min>
 											<max>32767</max>
@@ -222,6 +223,7 @@
 										<border>5</border>
 										<object class="wxSpinCtrl" name="spin_hi">
 											<style>wxSP_ARROW_KEYS</style>
+											<tooltip>Set the height of display on background.</tooltip>
 											<value>0</value>
 											<min>0</min>
 											<max>32767</max>
@@ -268,6 +270,7 @@
 										<border>5</border>
 										<object class="wxSpinCtrl" name="spin_offsx">
 											<style>wxSP_ARROW_KEYS</style>
+											<tooltip>Set the horizontal offset of display on background.</tooltip>
 											<value>0</value>
 											<min>-32767</min>
 											<max>32766</max>
@@ -305,6 +308,7 @@
 										<border>5</border>
 										<object class="wxSpinCtrl" name="spin_offsy">
 											<style>wxSP_ARROW_KEYS</style>
+											<tooltip>Set the vertical offset of display on background.</tooltip>
 											<value>0</value>
 											<min>-32767</min>
 											<max>32766</max>
@@ -323,13 +327,30 @@
 							<object class="sizeritem">
 								<cellpos>2,0</cellpos>
 								<cellspan>1,3</cellspan>
-								<flag>wxALIGN_CENTER|wxALL|wxEXPAND</flag>
+								<flag>wxEXPAND</flag>
 								<border>5</border>
-								<object class="wxFilePickerCtrl" name="selector_file">
-									<value></value>
-									<message>Select an image file</message>
-									<wildcard>*.*</wildcard>
-									<style>wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL</style>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText6">
+											<label>Choose Image File:</label>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxFilePickerCtrl" name="selector_file">
+											<value></value>
+											<message>Choose an image file</message>
+											<wildcard>(*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm)|*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm</wildcard>
+											<style>wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL</style>
+											<tooltip>Choose a background image file.</tooltip>
+										</object>
+									</object>
 								</object>
 							</object>
 							<object class="sizeritem">

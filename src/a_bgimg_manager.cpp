@@ -33,16 +33,18 @@
 // bg image manager methods
 bgimg_manager::bgimg_manager()
 	: dlg(0), img(0), mods_img(0)
+	, cb_func(0), cb_arg(0)
 {
+	set_rotbg();
 	set_default_params();
-	//parmscancel = parms;
 }
 
 bgimg_manager::bgimg_manager(unsigned long p)
 	: dlg(0), img(0), mods_img(0)
+	, cb_func(0), cb_arg(0)
 {
+	set_rotbg();
 	set_params(p);
-	//parmscancel = parms;
 }
 
 bgimg_manager::~bgimg_manager()
@@ -162,16 +164,17 @@ bgimg_manager::get_mod_image()
 		return img;
 	}
 
-	if ( get_conv_hsvs() || get_conv_hsvv() ) {
-		double h = 0.0;
-		double s = double(data_std.hsv_s) / 100.0;
-		double v = double(data_std.hsv_v) / 100.0;
-
-		mods_img = wximg_adjhsv(new wxImage(img->Copy()), h, s, v);
+	if ( get_conv_hsvh() || get_conv_hsvs() || get_conv_hsvv() ) {
+		mods_img = wximg_adjhsv(
+			new wxImage(img->Copy()),
+			int(data_std.hsv_h),
+			int(data_std.hsv_s),
+			int(data_std.hsv_v)
+		);
 	}
 	if ( get_conv_grey() ) {
 		wxImage* t = mods_img ? mods_img : new wxImage(img->Copy());
-		mods_img = get_grey_wximg(t);
+		mods_img = wximg_get_greyscale(t);
 		delete t;
 	}
 
@@ -188,6 +191,13 @@ bgimg_manager::get_mod_image()
 		);
 		delete mods_img;
 		mods_img = t;
+	}
+	if ( get_arg_rotate() ) {
+		mods_img = wximg_rotate(
+			mods_img ? mods_img : new wxImage(img->Copy()),
+			data_std.degrotate,
+			true, rotbg_r, rotbg_g, rotbg_b
+		);
 	}
 
 	if ( get_arg_width() || get_arg_height() ) {
@@ -224,6 +234,31 @@ bgimg_manager::get_mod_image()
 }
 
 void
+bgimg_manager::remove_image(bool update)
+{
+	hide_dialog();
+	data_save = data_std;
+	data_std = datastruct();
+	
+	delete mods_img;
+	mods_img = 0;
+	delete img;
+	img = 0;
+
+	if ( update ) {
+		force_updates();
+	}
+}
+
+void
+bgimg_manager::force_updates()
+{
+	if ( cb_func != 0 ) {
+		cb_func(cb_arg);
+	}
+}
+
+void
 bgimg_manager::update_from_dialog(datastruct& dat)
 {
 	dialog_type* p = get_dlg();
@@ -238,6 +273,7 @@ bgimg_manager::update_from_dialog(datastruct& dat)
 	dat.modsheight = p->spin_hi->GetValue();
 	dat.off_x = p->spin_offsx->GetValue();
 	dat.off_y = p->spin_offsy->GetValue();
+	dat.hsv_h = p->hsv_h->GetValue();
 	dat.hsv_s = p->hsv_s->GetValue();
 	dat.hsv_v = p->hsv_v->GetValue();
 	dat.img_fname = p->selector_file->GetPath();
@@ -259,6 +295,7 @@ bgimg_manager::update__to__dialog(const datastruct& dat)
 	p->spin_hi->SetValue(dat.modsheight);
 	p->spin_offsx->SetValue(dat.off_x);
 	p->spin_offsy->SetValue(dat.off_y);
+	p->hsv_h->SetValue(dat.hsv_h);
 	p->hsv_s->SetValue(dat.hsv_s);
 	p->hsv_v->SetValue(dat.hsv_v);
 	p->selector_file->SetPath(dat.img_fname);
@@ -345,7 +382,6 @@ bg_img_dlg::bg_img_dlg(
 	long style)
 	: bg_image(manager->parent_wnd(), id, title, pos, size, style)
 	, mng(manager)
-	, suffixes(wxImage::GetImageExtWildcard())
 {
 }
 
@@ -370,12 +406,13 @@ bg_img_dlg::put_preview()
 		return;
 	}
 
-	if ( hsv_s->GetValue() || hsv_v->GetValue() ) {
-		double h = 0.0;
-		double s = double(hsv_s->GetValue()) / 100.0;
-		double v = double(hsv_v->GetValue()) / 100.0;
-
-		wximg_adjhsv(&i, h, s, v);
+	if ( hsv_h->GetValue() || hsv_s->GetValue() || hsv_v->GetValue() ) {
+		wximg_adjhsv(
+			&i,
+			hsv_h->GetValue(),
+			hsv_s->GetValue(),
+			hsv_v->GetValue()
+		);
 	}
 	if ( chk_greyscale->GetValue() ) {
 		i = i.ConvertToGreyscale();
@@ -385,6 +422,10 @@ bg_img_dlg::put_preview()
 	}
 	if ( chk_flvert->GetValue() ) {
 		i = i.Mirror(false);
+	}
+	if ( spin_ro->GetValue() ) {
+		wximg_rotate(&i, spin_ro->GetValue(), true,
+			mng->rotbg_r, mng->rotbg_g, mng->rotbg_b);
 	}
 	if ( spin_wi->GetValue() > 0 || spin_hi->GetValue() > 0 ) {
 		i.Rescale(
@@ -414,7 +455,7 @@ bg_img_dlg::set_preview(wxImage* i)
 			i->Resize(
 				wxSize(i->GetWidth(), i->GetHeight()),
 				wxPoint(spin_offsx->GetValue(), spin_offsy->GetValue()),
-				0, 0, 0
+				mng->rotbg_r, mng->rotbg_g, mng->rotbg_b
 			);
 		}
 
@@ -438,7 +479,9 @@ bg_img_dlg::set_preview(wxImage* i)
 			wxBitmap(
 				i->Scale(
 					x, y, wxIMAGE_QUALITY_NORMAL
-				).Size(sz, off, 0, 0, 0)
+				).Size(sz, off,
+					mng->rotbg_r, mng->rotbg_g, mng->rotbg_b
+				)
 			)
 		);
 	} else {
@@ -455,6 +498,18 @@ bg_img_dlg::set_preview(wxImage* i)
 void
 bg_img_dlg::on_copy_opt(wxCommandEvent& event)
 {
+	switch ( opt_save->GetSelection() ) {
+		case 0:
+			mng->set_copy_orig(true);
+			break;
+		case 1:
+			mng->set_copy_changes(true);
+			break;
+		case 2:
+		default:
+			mng->set_copy_none(true);
+			break;
+	}
 }
 
 void
@@ -477,6 +532,16 @@ void
 bg_img_dlg::on_greyscale(wxCommandEvent& event)
 {
 	mng->set_conv_grey(chk_greyscale->GetValue());
+
+	put_preview();
+}
+
+void
+bg_img_dlg::on_rotate(wxCommandEvent& event)
+{
+	int i = spin_ro->GetValue();
+	mng->data_std.degrotate = (bgimg_manager::dim_type)i;
+	mng->set_arg_rotate(i != 0);
 
 	put_preview();
 }
@@ -517,6 +582,16 @@ bg_img_dlg::on_offs_y(wxCommandEvent& event)
 	int i = spin_offsy->GetValue();
 	mng->data_std.off_y = (bgimg_manager::off_type)i;
 	mng->set_arg_offsy(i != 0);
+
+	put_preview();
+}
+
+void
+bg_img_dlg::on_hsv_h_scroll(wxScrollEvent& event)
+{
+	int i = hsv_h->GetValue();
+	mng->data_std.hsv_h = (bgimg_manager::hsv_type)i;
+	mng->set_conv_hsvh(i != 0);
 
 	put_preview();
 }
@@ -569,15 +644,15 @@ bg_img_dlg::on_init_dlg(wxInitDialogEvent& event)
 void
 bg_img_dlg::on_apply(wxCommandEvent& event)
 {
-		mng->on_apply(event);
-		event.Skip();
+	mng->on_apply(event);
+	event.Skip();
 }
 
 void
 bg_img_dlg::on_cancel(wxCommandEvent& event)
 {
-		mng->on_cancel(event);
-		event.Skip();
+	mng->on_cancel(event);
+	event.Skip();
 }
 
 void
@@ -601,234 +676,9 @@ bg_img_dlg::on_help(wxCommandEvent& event)
 void
 bg_img_dlg::on_ok(wxCommandEvent& event)
 {
-		mng->on_OK(event);
-		event.Skip();
+	mng->on_OK(event);
+	event.Skip();
 }
 // END class bg_img_dlg methods
 
 }; // END namespace ns_bg_img_dlg
-
-/*
-///////////////////////////////////////////////////////////////////////////
-// impl. -- REFRENCE, TEMPORARY
-bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
-{
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
-	wxFlexGridSizer* fgSizer2;
-	fgSizer2 = new wxFlexGridSizer( 3, 3, 0, 15 );
-	fgSizer2->SetFlexibleDirection( wxBOTH );
-	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-	
-	
-	fgSizer2->Add( 16, 16, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 1, 16, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 16, 16, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 16, 1, 1, wxEXPAND, 5 );
-	
-	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxVERTICAL );
-	
-	bg_ing_label = new wxStaticText( this, wxID_ANY, _("Image"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
-	bg_ing_label->Wrap( -1 );
-	bg_ing_label->SetToolTip( _("Image Preview") );
-	bg_ing_label->SetMinSize( wxSize( 200,-1 ) );
-	
-	bSizer1->Add( bg_ing_label, 0, wxALL|wxFIXED_MINSIZE, 5 );
-	
-	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 192,192 ), 0 );
-	bSizer1->Add( bmp_preview, 0, wxALIGN_CENTER|wxALL, 5 );
-	
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
-	wxString opt_saveChoices[] = { _("Copy Original"), _("Copy Changes"), _("No Copy") };
-	int opt_saveNChoices = sizeof( opt_saveChoices ) / sizeof( wxString );
-	opt_save = new wxRadioBox( this, wxID_ANY, _("Copy Options:"), wxDefaultPosition, wxDefaultSize, opt_saveNChoices, opt_saveChoices, 1, wxRA_SPECIFY_ROWS );
-	opt_save->SetSelection( 1 );
-	opt_save->SetToolTip( _("Option to copy image with the .pse file: copy the original without changes (changes will be lost), or copy with changes (changes will be available in future, even if original file is not), or make no copy (changes will be lost).") );
-	
-	bSizer1->Add( opt_save, 0, wxALIGN_CENTER|wxALL, 5 );
-	
-	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
-	
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
-	
-	chk_flhorz = new wxCheckBox( this, wxID_ANY, _("Flip Horizontal"), wxDefaultPosition, wxDefaultSize, 0 );
-	chk_flhorz->SetToolTip( _("Flip image left to right.") );
-	
-	bSizer4->Add( chk_flhorz, 0, wxALL, 5 );
-	
-	chk_flvert = new wxCheckBox( this, wxID_ANY, _("Flip Vertical"), wxDefaultPosition, wxDefaultSize, 0 );
-	chk_flvert->SetToolTip( _("Flip image top to bottom.") );
-	
-	bSizer4->Add( chk_flvert, 0, wxALL, 5 );
-	
-	m_staticline8 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
-	bSizer4->Add( m_staticline8, 0, wxEXPAND | wxALL, 5 );
-	
-	wxBoxSizer* bSizer13;
-	bSizer13 = new wxBoxSizer( wxVERTICAL );
-	
-	chk_greyscale = new wxCheckBox( this, wxID_ANY, _("Greyscale"), wxDefaultPosition, wxDefaultSize, 0 );
-	chk_greyscale->SetToolTip( _("Convert image to greyscale.") );
-	
-	bSizer13->Add( chk_greyscale, 0, wxALIGN_CENTER|wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	bSizer4->Add( bSizer13, 1, wxEXPAND, 5 );
-	
-	bSizer1->Add( bSizer4, 0, wxEXPAND, 5 );
-	
-	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizer1->Add( m_staticline4, 0, wxALL|wxEXPAND, 5 );
-	
-	wxGridBagSizer* gbSizer1;
-	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->AddGrowableCol( 3 );
-	gbSizer1->AddGrowableRow( 5 );
-	gbSizer1->SetFlexibleDirection( wxBOTH );
-	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
-	
-	wxBoxSizer* sizer_dimsw;
-	sizer_dimsw = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText3 = new wxStaticText( this, wxID_ANY, _("Width:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_staticText3->Wrap( -1 );
-	sizer_dimsw->Add( m_staticText3, 0, wxALL, 5 );
-	
-	spin_wi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 32767, 0 );
-	sizer_dimsw->Add( spin_wi, 0, wxALL, 5 );
-	
-	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	sizer_dimsw->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
-	
-	gbSizer1->Add( sizer_dimsw, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	wxBoxSizer* sizer_dimsh;
-	sizer_dimsh = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText4 = new wxStaticText( this, wxID_ANY, _("Height:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_staticText4->Wrap( -1 );
-	sizer_dimsh->Add( m_staticText4, 0, wxALL, 5 );
-	
-	spin_hi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 32767, 0 );
-	sizer_dimsh->Add( spin_hi, 0, wxALL, 5 );
-	
-	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	sizer_dimsh->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );
-	
-	gbSizer1->Add( sizer_dimsh, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	m_staticline18 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
-	gbSizer1->Add( m_staticline18, wxGBPosition( 0, 1 ), wxGBSpan( 2, 1 ), wxEXPAND | wxALL, 5 );
-	
-	wxBoxSizer* sizer_offsx;
-	sizer_offsx = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText31 = new wxStaticText( this, wxID_ANY, _("Horizontal Offset:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_staticText31->Wrap( -1 );
-	sizer_offsx->Add( m_staticText31, 0, wxALL, 5 );
-	
-	spin_offsx = new wxSpinCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -32767, 32766, 0 );
-	sizer_offsx->Add( spin_offsx, 0, wxALL, 5 );
-	
-	m_staticline51 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	sizer_offsx->Add( m_staticline51, 0, wxEXPAND | wxALL, 5 );
-	
-	gbSizer1->Add( sizer_offsx, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	wxBoxSizer* sizer_offsx1;
-	sizer_offsx1 = new wxBoxSizer( wxVERTICAL );
-	
-	m_staticText311 = new wxStaticText( this, wxID_ANY, _("Vertical Offset:"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
-	m_staticText311->Wrap( -1 );
-	sizer_offsx1->Add( m_staticText311, 0, wxALL, 5 );
-	
-	spin_offsy = new wxSpinCtrl( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -32767, 32766, 0 );
-	sizer_offsx1->Add( spin_offsy, 0, wxALL, 5 );
-	
-	m_staticline511 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	sizer_offsx1->Add( m_staticline511, 0, wxEXPAND | wxALL, 5 );
-	
-	gbSizer1->Add( sizer_offsx1, wxGBPosition( 1, 2 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
-	
-	selector_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select an image file"), wxT("*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
-	gbSizer1->Add( selector_file, wxGBPosition( 2, 0 ), wxGBSpan( 1, 3 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
-	
-	m_staticline7 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	gbSizer1->Add( m_staticline7, wxGBPosition( 3, 0 ), wxGBSpan( 1, 3 ), wxEXPAND | wxALL, 5 );
-	
-	button_sizer1 = new wxStdDialogButtonSizer();
-	button_sizer1OK = new wxButton( this, wxID_OK );
-	button_sizer1->AddButton( button_sizer1OK );
-	button_sizer1Apply = new wxButton( this, wxID_APPLY );
-	button_sizer1->AddButton( button_sizer1Apply );
-	button_sizer1Cancel = new wxButton( this, wxID_CANCEL );
-	button_sizer1->AddButton( button_sizer1Cancel );
-	button_sizer1Help = new wxButton( this, wxID_HELP );
-	button_sizer1->AddButton( button_sizer1Help );
-	button_sizer1->Realize();
-	gbSizer1->Add( button_sizer1, wxGBPosition( 4, 0 ), wxGBSpan( 1, 3 ), wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
-	
-	bSizer1->Add( gbSizer1, 1, wxEXPAND, 5 );
-	
-	fgSizer2->Add( bSizer1, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 16, 1, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 16, 16, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 1, 16, 1, wxEXPAND, 5 );
-	
-	
-	fgSizer2->Add( 16, 16, 1, wxEXPAND, 5 );
-	
-	this->SetSizer( fgSizer2 );
-	this->Layout();
-	fgSizer2->Fit( this );
-	
-	// Connect Events
-	opt_save->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
-	chk_flhorz->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_horz ), NULL, this );
-	chk_flvert->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_vert ), NULL, this );
-	chk_greyscale->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );
-	spin_wi->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_width ), NULL, this );
-	spin_hi->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_height ), NULL, this );
-	spin_offsx->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_x ), NULL, this );
-	spin_offsy->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_y ), NULL, this );
-	selector_file->Connect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( bg_image::on_file select ), NULL, this );
-	button_sizer1Apply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_apply ), NULL, this );
-	button_sizer1Cancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_cancel ), NULL, this );
-	button_sizer1Help->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_help ), NULL, this );
-	button_sizer1OK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_ok ), NULL, this );
-}
-
-bg_image::~bg_image()
-{
-	// Disconnect Events
-	opt_save->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
-	chk_flhorz->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_horz ), NULL, this );
-	chk_flvert->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_vert ), NULL, this );
-	chk_greyscale->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );
-	spin_wi->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_width ), NULL, this );
-	spin_hi->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_height ), NULL, this );
-	spin_offsx->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_x ), NULL, this );
-	spin_offsy->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_y ), NULL, this );
-	selector_file->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( bg_image::on_file select ), NULL, this );
-	button_sizer1Apply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_apply ), NULL, this );
-	button_sizer1Cancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_cancel ), NULL, this );
-	button_sizer1Help->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_help ), NULL, this );
-	button_sizer1OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_ok ), NULL, this );
-}
-*/

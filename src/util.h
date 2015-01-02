@@ -29,6 +29,7 @@
 #include <string>
 #include <stdexcept>
 #include <cstdio>
+#include <cmath>
 
 #if defined(__DMC__) || defined (__SC__) && defined(__WXMSW__)
 #	define snprintf _snprintf // sigh
@@ -36,6 +37,18 @@
 
 #undef  A_SIZE
 #define A_SIZE(a) (sizeof(a)/sizeof((a)[0]))
+
+// handy, used in wxutil.h
+// real args: float, double, long double
+#define PI_HEMI (M_PI / 180.0)
+template< class T > inline T deg2rad(T degrees)
+{
+	return degrees * T(PI_HEMI);
+}
+template< class T > inline T rad2deg(T radians)
+{
+	return radians / T(PI_HEMI);
+}
 
 // quick, dirty automatic buffer w/ closure
 template < class T > struct tbuffer {

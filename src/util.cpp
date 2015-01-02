@@ -46,7 +46,7 @@
 #include <climits>
 #include <io.h>
 #include <fcntl.h>
-#ifdef __SC__
+#ifdef __SC__ // actually, DMC: proto missing, definition in C lib
 extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #define snprintf _snprintf
 #endif
@@ -122,7 +122,11 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 		return 0;
 	}
 
-	const unsigned pixwid = 3;
+	const size_t pixwid = 3;
+	const int R = 0;
+	const int G = 1;
+	const int B = 2;
+
 	int wi = img->GetWidth(), hi = img->GetHeight();
 
 	if ( wi < 1 || hi < 1 ) {
@@ -135,17 +139,17 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 		return img;
 	}
 
-	unsigned char* e = p + (unsigned(wi) * pixwid * unsigned(hi));
+	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
 
 	// this is the simplistic part . . .
 #	define _adjcomp(v, a) \
 	( \
-		std::min(1.0, std::max(0.0, v * (1.0 + a))) \
+		std::min(1.0, std::max(0.0, (v) * (1.0 + (a)))) \
 	)
 
 	while ( p < e ) {
 		wxImage::HSVValue hsv =
-			wxImage::RGBtoHSV(wxImage::RGBValue(p[0], p[1], p[2]));
+			wxImage::RGBtoHSV(wxImage::RGBValue(p[R], p[G], p[B]));
 
 		wxImage::RGBValue rgb =
 			wxImage::HSVtoRGB(wxImage::HSVValue(
@@ -155,12 +159,14 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 			)
 		);
 
-		p[0] = rgb.red;
-		p[1] = rgb.green;
-		p[2] = rgb.blue;
+		p[R] = rgb.red;
+		p[G] = rgb.green;
+		p[B] = rgb.blue;
 
 		p += pixwid;
 	}
+
+#	undef _adjcomp
 
 	return img;
 }
@@ -170,7 +176,7 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 // originally for background image
 // NOTE: returns operator new'd image (i.e., source not changed)
 wxImage*
-get_grey_wximg(wxImage* src, bool use_alt)
+wximg_get_greyscale(wxImage* src, bool use_alt)
 {
 	const double alt_r = 0.2126;
 	const double alt_b = 0.0722;
@@ -187,6 +193,47 @@ get_grey_wximg(wxImage* src, bool use_alt)
 	}
 
 	return dest;
+}
+
+// rotate a wxImage by arg in degrees around center
+// NOTE: returns *same* image (i.e., source is edited)
+// the setbg and color args are to set wxImafe mask, the
+// way provided to control background color when rotated
+// non-multiple of 90 deg.; wx default is black
+wxImage*
+wximg_rotate(wxImage* img, double rot,
+	bool setbg, unsigned char r, unsigned char g, unsigned char b)
+{
+	bool hasmask = false;
+	unsigned char rs = 0, gs = 0, bs = 0;
+
+	if ( setbg ) {
+		hasmask = img->HasMask();
+		
+		if ( hasmask ) {
+			rs = img->GetMaskRed();
+			gs = img->GetMaskGreen();
+			bs = img->GetMaskBlue();
+		}
+
+		img->SetMaskColour(r, g, b);
+	}
+
+	*img = img->Rotate(
+		deg2rad(rot),
+		wxPoint(img->GetWidth() >> 1, img->GetHeight() >> 1),
+		true
+	);
+
+	if ( setbg ) {
+		img->SetMaskColour(rs, gs, bs);
+
+		if ( ! hasmask ) {
+			img->SetMask(false);
+		}
+	}
+
+	return img;
 }
 
 int

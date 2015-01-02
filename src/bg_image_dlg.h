@@ -46,10 +46,10 @@
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/spinctrl.h>
+#include <wx/gbsizer.h>
 #include <wx/slider.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
-#include <wx/gbsizer.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -69,9 +69,13 @@ namespace ns_bg_img_dlg
 			
 			
 			wxStaticLine* m_staticline1;
+			wxStaticLine* m_staticline13;
 			wxStaticLine* m_staticline2;
+			wxStaticLine* m_staticline181;
 			wxStaticLine* m_staticline8;
+			wxStaticText* m_staticText8;
 			wxStaticLine* m_staticline4;
+			wxStaticLine* m_staticline19;
 			wxStaticText* m_staticText3;
 			wxStaticLine* m_staticline5;
 			wxStaticText* m_staticText4;
@@ -83,10 +87,10 @@ namespace ns_bg_img_dlg
 			wxStaticLine* m_staticline511;
 			wxStaticLine* m_staticline11;
 			wxStaticText* m_staticText7;
+			
+			
 			wxStaticLine* m_staticline12;
-			wxStaticText* m_staticText8;
-			wxStaticLine* m_staticline13;
-			wxStaticText* m_staticText6;
+			wxStaticText* m_staticText9;
 			wxStaticLine* m_staticline7;
 			wxStdDialogButtonSizer* button_sizer1;
 			wxButton* button_sizer1OK;
@@ -102,13 +106,15 @@ namespace ns_bg_img_dlg
 			virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
 			virtual void on_init_dlg( wxInitDialogEvent& event ) { event.Skip(); }
 			virtual void on_copy_opt( wxCommandEvent& event ) { event.Skip(); }
+			virtual void on_greyscale( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_flip_horz( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_flip_vert( wxCommandEvent& event ) { event.Skip(); }
-			virtual void on_greyscale( wxCommandEvent& event ) { event.Skip(); }
+			virtual void on_rotate( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_width( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_height( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_x( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_offs_y( wxCommandEvent& event ) { event.Skip(); }
+			virtual void on_hsv_h_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_hsv_s_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_hsv_v_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
@@ -122,13 +128,15 @@ namespace ns_bg_img_dlg
 			wxStaticText* bg_img_label;
 			wxStaticBitmap* bmp_preview;
 			wxRadioBox* opt_save;
+			wxCheckBox* chk_greyscale;
 			wxCheckBox* chk_flhorz;
 			wxCheckBox* chk_flvert;
-			wxCheckBox* chk_greyscale;
+			wxSpinCtrl* spin_ro;
 			wxSpinCtrl* spin_wi;
 			wxSpinCtrl* spin_hi;
 			wxSpinCtrl* spin_offsx;
 			wxSpinCtrl* spin_offsy;
+			wxSlider* hsv_h;
 			wxSlider* hsv_s;
 			wxSlider* hsv_v;
 			wxFilePickerCtrl* selector_file;

@@ -119,6 +119,7 @@ enum {
 	IC_move_up,
 
 	IC_set_bg_img,
+	IC_rm_bg_img,
 
 	IC_end
 };
@@ -130,7 +131,9 @@ protected:
 	A_Frame*     a_frame;
 	A_Tabpage*   a_tabpg;
 	bgimg_manager*	bg_mng;
+
 	bool         aa_draw; // draw anti-aliased curves, or not
+
 	// For guide/snap-to lines
 	A_Ruler*     hrule, * vrule;
 	wxMenu*      m_pop;
@@ -185,6 +188,10 @@ protected:
 
 		DataState& operator = (const DataState&);
 	};
+
+	// callback for bg image manager: tell us to update
+	typedef /*bgimg_manager::cb_update_arg*/ void* bg_update_arg;
+	static void bg_update(bg_update_arg);
 
 public:
 	A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa = true);

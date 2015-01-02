@@ -205,11 +205,15 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	shearcursor = new wxCursor(wxCURSOR_SIZENWSE);
 	rotatecursor = new wxCursor(wxCURSOR_BULLSEYE);
 	curcursor = arrowcursor;
-	
+
 	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
 	wxColour clr(pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
 	SetBackgroundColour(clr);
 	
+	bg_mng->set_rotbg(clr.Red(), clr.Green(), clr.Blue());
+	bg_mng->set_update_callback(bg_update,
+		static_cast<bg_update_arg>(this));
+
 	if ( pfs ) {
 		wxColour tclr(pfs->canvas_guides_color);
 		guidepen = wxPen(tclr, 1, wxSOLID);
@@ -241,6 +245,8 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	m_pop->AppendSeparator();
 	m_pop->Append(IC_set_bg_img, _("Set Background Image"),
 	_("Show dialog to set or modify canvas background image"));
+	m_pop->Append(IC_rm_bg_img, _("Remove Background Image"),
+	_("Remove canvas background image"));
 
 	m_sel = new wxMenu(_("Selection"), wxMENU_TEAROFF);
 	m_sel->Append(IC_set_props, _("Set object properties"),
@@ -279,6 +285,7 @@ A_Canvas::PreferenceChanged()
 
 	clr = wxColour(pfs->canvas_background_color);
 	SetBackgroundColour(clr);
+	bg_mng->set_rotbg(clr.Red(), clr.Green(), clr.Blue());
 	
 	clr = wxColour(pfs->canvas_guides_color);
 	guidepen = wxPen(clr, 1, wxSOLID);
@@ -1999,6 +2006,9 @@ A_Canvas::GotPopup(wxCommandEvent& event)
 		case IC_set_bg_img:
 			bg_mng->show_dialog();
 			break;
+		case IC_rm_bg_img:
+			bg_mng->remove_image();
+			break;
 		default:
 			D->GotPopup(event);
 	}
@@ -3260,6 +3270,8 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 	wxColour grc  // grid color
 	)
 {
+	wxImage* bgimg = bg_mng->get_mod_image();
+
 	// wxImage does not include alpha in 
 	// 4-component pixels as I had assumed, but in separate
 	// memory
@@ -3275,7 +3287,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 	unsigned char cR, cG, cB;
 	// pixel component indices
 	const int iR = 0, iG = 1, iB = 2;;
-	
+
 	// device x, y
 	int X, Y, W, H;
 	X = r.x;
@@ -3310,6 +3322,21 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 			}
 	
 			rp += rowlen;
+		}
+	}
+
+	if ( bgimg ) {
+		int mxw = std::min(imw, bgimg->GetWidth());
+		int mxh = std::min(imh, bgimg->GetHeight());
+		int bgrowlen = bgimg->GetWidth() * pixlen;
+		size_t cplen = size_t(mxw) * pixlen;
+		unsigned char* rp = pd;
+		unsigned char* bgp = bgimg->GetData();
+		
+		for ( int j = 0; j < mxh; j++ ) {
+			std::memcpy(rp, bgp, cplen);
+			rp += rowlen;
+			bgp += bgrowlen;
 		}
 	}
 
@@ -3655,6 +3682,15 @@ A_Canvas::DataState::NewObj()
 		t->SetType(SplineBase::undef);
 
 	return t;
+}
+
+// callback for bg image manager: tell us to update
+void
+A_Canvas::bg_update(bg_update_arg cb_ptr)
+{
+	if ( A_Canvas* p = static_cast<A_Canvas*>(cb_ptr) ) {
+		p->Refresh();
+	}
 }
 
 // Simple functions that could not be inlined in the

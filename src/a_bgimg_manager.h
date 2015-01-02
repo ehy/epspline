@@ -43,6 +43,10 @@ public:
 	// image HSV adj. type
 	typedef signed	 short 	hsv_type;
 
+	// for using code update callback
+	typedef void*	cb_update_arg;
+	typedef void   (*cb_update_func)(cb_update_arg);
+
 protected:
 	friend dialog_type;
 
@@ -67,14 +71,16 @@ protected:
 		// layout transforms
 		flip_horz = 0x10,
 		flip_vert = 0x20,
+		arg_rot   = 0x80,
 		arg_width = 0x100,
 		arg_height = 0x200,
 		arg_offsx = 0x400,
 		arg_offsy = 0x800,
 		// color transforms
 		conv_grey = 0x1000,
-		conv_hsvs = 0x2000,
-		conv_hsvv = 0x4000,
+		conv_hsvh = 0x2000,
+		conv_hsvs = 0x4000,
+		conv_hsvv = 0x8000,
 		// test if transform is set
 		trans_mask = 0xFFF0,
 		// end tag -- just for comma
@@ -85,15 +91,14 @@ protected:
 	struct datastruct {
 		// params member var
 		params parms;
-		// on dlg show save here, and restore from here on cancel
-		//params parmscancel;
 	
 		wxString img_fname;
 
 		dim_type origwidth, origheight;
 		dim_type modswidth, modsheight;
 		off_type off_x, off_y;
-		hsv_type hsv_s, hsv_v;
+		hsv_type hsv_h, hsv_s, hsv_v;
+		off_type degrotate;
 
 		datastruct() {
 			parms = params_null;
@@ -104,8 +109,10 @@ protected:
 			modsheight = 0;
 			off_x = 0;
 			off_y = 0;
+			hsv_h = 0;
 			hsv_s = 0;
 			hsv_v = 0;
+			degrotate = 0;
 		}
 
 		datastruct(const datastruct& o) {
@@ -121,12 +128,14 @@ protected:
 			modsheight = o.modsheight;
 			off_x = o.off_x;
 			off_y = o.off_y;
+			hsv_h = o.hsv_h;
 			hsv_s = o.hsv_s;
 			hsv_v = o.hsv_v;
+			degrotate = o.degrotate;
 			return *this;
 		}
 
-		bool operator == (const datastruct& o) {
+		bool operator == (const datastruct& o) const {
 			return (
 				parms == o.parms &&
 				img_fname == o.img_fname &&
@@ -136,9 +145,15 @@ protected:
 				modsheight == o.modsheight &&
 				off_x == o.off_x &&
 				off_y == o.off_y &&
+				hsv_h == o.hsv_h &&
 				hsv_s == o.hsv_s &&
-				hsv_v == o.hsv_v
+				hsv_v == o.hsv_v &&
+				degrotate == o.degrotate
 			);
+		}
+
+		bool operator != (const datastruct& o) const {
+			return ! (*this == o);
 		}
 	};
 
@@ -169,12 +184,22 @@ protected:
 	}
 
 	// tell using code to update
-	void force_updates() {}
+	void force_updates();
+
+	// for using code update callback
+	cb_update_func  cb_func;
+	cb_update_arg	cb_arg;
 
 public:
 	bgimg_manager();
 	bgimg_manager(unsigned long p);
 	~bgimg_manager();
+
+	// for using code update callback
+	void set_update_callback(cb_update_func f, cb_update_arg a = 0) {
+		cb_func = f;
+		cb_arg  = a;
+	}
 
 	// set/get: conversion to fundamental type for convenience
 	// of using code, e.g. read/write to file
@@ -202,14 +227,32 @@ public:
 	// DO check return for 0! (either failure or not applicable)
 	wxImage* get_mod_image();
 
+	// remove bg image
+	void remove_image(bool update = true);
+
 	void show_dialog(bool show = true);
 	void hide_dialog() { show_dialog(false); }
 
-protected:
+	// background color when image is rotated, etc.
+	unsigned char rotbg_r;
+	unsigned char rotbg_g;
+	unsigned char rotbg_b;
+	void set_rotbg(
+		unsigned char r = wximg_rotmask_default_r,
+		unsigned char g = wximg_rotmask_default_g,
+		unsigned char b = wximg_rotmask_default_b
+	) {
+		rotbg_r = r;
+		rotbg_g = g;
+		rotbg_b = b;
+		delete mods_img;
+		mods_img = 0;
+	}
+
 	// param access wrappers: isolate effects of scheme changes
 	bool get_copy_none() { return (parms() & copy_bitsmask) == copy_none; }
 	void set_copy_none(bool b = true) {
-		set_params(b ? (parms() & ~copy_bitsmask) : (parms() | copy_changes));
+		set_params(b ? (parms() & ~copy_bitsmask) : (parms() | copy_orig));
 	}
 	bool get_copy_orig() { return parms() & copy_orig; }
 	void set_copy_orig(bool b = true) {
@@ -233,6 +276,10 @@ protected:
 	void toggle_flip_vert() {
 		set_flip_vert(!get_flip_vert());
 	}
+	bool get_arg_rotate() { return parms() & arg_rot; }
+	void set_arg_rotate(bool b = true) {
+		set_params(b ? (parms() | arg_rot) : (parms() & ~arg_rot));
+	}
 	bool get_arg_width() { return parms() & arg_width; }
 	void set_arg_width(bool b = true) {
 		set_params(b ? (parms() | arg_width) : (parms() & ~arg_width));
@@ -248,6 +295,10 @@ protected:
 	bool get_arg_offsy() { return parms() & arg_offsy; }
 	void set_arg_offsy(bool b = true) {
 		set_params(b ? (parms() | arg_offsy) : (parms() & ~arg_offsy));
+	}
+	bool get_conv_hsvh() { return parms() & conv_hsvh; }
+	void set_conv_hsvh(bool b = true) {
+		set_params(b ? (parms() | conv_hsvh) : (parms() & ~conv_hsvh));
 	}
 	bool get_conv_hsvs() { return parms() & conv_hsvs; }
 	void set_conv_hsvs(bool b = true) {
@@ -276,8 +327,6 @@ namespace ns_bg_img_dlg {
 	class bg_img_dlg : public bg_image {
 	protected:
 		bgimg_manager*	mng;
-		// for file file selector
-		wxString		suffixes;
 
 	public:
 		bg_img_dlg(
@@ -293,11 +342,13 @@ namespace ns_bg_img_dlg {
 		virtual void on_copy_opt(wxCommandEvent& event);
 		virtual void on_flip_horz(wxCommandEvent& event);
 		virtual void on_flip_vert(wxCommandEvent& event);
+		virtual void on_rotate(wxCommandEvent& event);
 		virtual void on_greyscale(wxCommandEvent& event);
 		virtual void on_width(wxCommandEvent& event);
 		virtual void on_height(wxCommandEvent& event);
 		virtual void on_offs_x(wxCommandEvent& event);
 		virtual void on_offs_y(wxCommandEvent& event);
+		virtual void on_hsv_h_scroll(wxScrollEvent& event);
 		virtual void on_hsv_s_scroll(wxScrollEvent& event);
 		virtual void on_hsv_v_scroll(wxScrollEvent& event);
 		virtual void on_file_select(wxFileDirPickerEvent& event);
@@ -310,25 +361,6 @@ namespace ns_bg_img_dlg {
 
 		void put_preview();
 		void set_preview(wxImage* i);
-
-		// for file file selector --
-		// Presently suffixes cannot be used due to deficiency
-		// in design of wxFilePickerControl, that is lacks
-		// any way to change the wildcard string: it can only
-		// be set in ctor, and since the ctor is invoked in
-		// generated code from a GUI dialog builder, we don't
-		// change it.  The argument used now is a string constant
-		// taken from static wxImage::GetImageExtWildcard()
-		// output from dev's build, but it is not certain to
-		// be correct for every build a user might have.
-		// So be it. The suffix data and methods remain here out
-		// of hope for the future.
-		wxString get_suffix_selector() { return suffixes; }
-		wxString set_suffix_selector(const wxString& s) {
-			wxString t = suffixes;
-			suffixes = s;
-			return t;
-		}
 	}; // END class bg_img_dlg
 }; // END namespace ns_bg_img_dlg
 

@@ -112,6 +112,52 @@ newwstrdup(const wchar_t* str)
 	return p ? std::wcscpy(p, str) : 0;
 }
 
+// simplistc omage {light,dark}ening with linear compression
+// of pixel components to 'band' width (0.1, 10)
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage*
+wximg_bandcomp(wxImage* img, double band, bool lighten)
+{
+	if ( ! img ) {
+		return 0;
+	}
+
+	const size_t pixwid = 3;
+	const int R = 0;
+	const int G = 1;
+	const int B = 2;
+
+	int wi = img->GetWidth(), hi = img->GetHeight();
+
+	if ( wi < 1 || hi < 1 ) {
+		return img;
+	}
+
+	unsigned char* p = img->GetData();
+
+	if ( ! p ) {
+		return img;
+	}
+
+	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
+	
+	band = std::min(1.0, band);
+	band = std::max(0.1, band);
+
+	unsigned char add = lighten ?
+		static_cast<unsigned char>(255.0 - band * 255.0) : 0;
+
+	while ( p < e ) {
+		p[R] = add + static_cast<unsigned char>(band * p[R]);
+		p[G] = add + static_cast<unsigned char>(band * p[G]);
+		p[B] = add + static_cast<unsigned char>(band * p[B]);
+
+		p += pixwid;
+	}
+
+	return img;
+}
+
 // simplistc HSV adjustment, originally for background image
 // double args are -1.0,1.0
 // NOTE: returns *same* image (i.e., source is edited)

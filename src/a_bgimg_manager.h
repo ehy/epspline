@@ -42,6 +42,8 @@ public:
 	typedef signed	 short 	off_type;
 	// image HSV adj. type
 	typedef signed	 short 	hsv_type;
+	// image compress type
+	typedef signed	 short 	cmp_type;
 
 	// for using code update callback
 	typedef void*	cb_update_arg;
@@ -81,10 +83,11 @@ protected:
 		conv_hsvh = 0x2000,
 		conv_hsvs = 0x4000,
 		conv_hsvv = 0x8000,
+		conv_bcmp = 0x10000,
 		// test if transform is set
-		trans_mask = 0xFFF0,
+		trans_mask = 0xFFFF0,
 		// end tag -- just for comma
-		end_enum = 0xFFFF
+		end_enum = 0xFFFFF
 	};
 
 	// structure to hold data
@@ -98,9 +101,18 @@ protected:
 		dim_type modswidth, modsheight;
 		off_type off_x, off_y;
 		hsv_type hsv_h, hsv_s, hsv_v;
+		cmp_type band_comp;
 		off_type degrotate;
 
 		datastruct() {
+			zero();
+		}
+
+		datastruct(const datastruct& o) {
+			*this = o;
+		}
+
+		void zero() {
 			parms = params_null;
 			img_fname.Empty();
 			origwidth = 0;
@@ -112,11 +124,8 @@ protected:
 			hsv_h = 0;
 			hsv_s = 0;
 			hsv_v = 0;
+			band_comp = 0;
 			degrotate = 0;
-		}
-
-		datastruct(const datastruct& o) {
-			*this = o;
 		}
 
 		datastruct& operator = (const datastruct& o) {
@@ -131,6 +140,7 @@ protected:
 			hsv_h = o.hsv_h;
 			hsv_s = o.hsv_s;
 			hsv_v = o.hsv_v;
+			band_comp = o.band_comp;
 			degrotate = o.degrotate;
 			return *this;
 		}
@@ -148,6 +158,7 @@ protected:
 				hsv_h == o.hsv_h &&
 				hsv_s == o.hsv_s &&
 				hsv_v == o.hsv_v &&
+				band_comp == o.band_comp &&
 				degrotate == o.degrotate
 			);
 		}
@@ -190,6 +201,9 @@ protected:
 	cb_update_func  cb_func;
 	cb_update_arg	cb_arg;
 
+	// mods_img is current
+	bool mods_current;
+
 public:
 	bgimg_manager();
 	bgimg_manager(unsigned long p);
@@ -200,6 +214,9 @@ public:
 		cb_func = f;
 		cb_arg  = a;
 	}
+
+	// mods_img is current
+	bool is_current() { return mods_current; }
 
 	// set/get: conversion to fundamental type for convenience
 	// of using code, e.g. read/write to file
@@ -308,6 +325,10 @@ public:
 	void set_conv_hsvv(bool b = true) {
 		set_params(b ? (parms() | conv_hsvv) : (parms() & ~conv_hsvv));
 	}
+	bool get_conv_band_comp() { return parms() & conv_bcmp; }
+	void set_conv_band_comp(bool b = true) {
+		set_params(b ? (parms() | conv_bcmp) : (parms() & ~conv_bcmp));
+	}
 	bool get_conv_grey() { return parms() & conv_grey; }
 	void set_conv_grey(bool b = true) {
 		set_params(b ? (parms() | conv_grey) : (parms() & ~conv_grey));
@@ -351,6 +372,7 @@ namespace ns_bg_img_dlg {
 		virtual void on_hsv_h_scroll(wxScrollEvent& event);
 		virtual void on_hsv_s_scroll(wxScrollEvent& event);
 		virtual void on_hsv_v_scroll(wxScrollEvent& event);
+		virtual void on_band_comp_scroll(wxScrollEvent& event);
 		virtual void on_file_select(wxFileDirPickerEvent& event);
 		virtual void on_close_event(wxCloseEvent& event);
 		virtual void on_init_dlg(wxInitDialogEvent& event);

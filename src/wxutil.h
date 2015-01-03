@@ -57,6 +57,12 @@ inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }
 
+// simplistc image {light,dark}ening with linear compression
+// of pixel components to 'band' width (0.1, 10)
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage*
+wximg_bandcomp(wxImage* img, double band, bool lighten = true);
+
 // simplistc HSV adjustment, originally for background image
 // double args are -1.0,1.0
 // NOTE: returns *same* image (i.e., source is edited)

@@ -87,9 +87,12 @@ namespace ns_bg_img_dlg
 			wxStaticLine* m_staticline511;
 			wxStaticLine* m_staticline11;
 			wxStaticText* m_staticText7;
-			
-			
 			wxStaticLine* m_staticline12;
+			wxStaticLine* m_staticline111;
+			wxStaticText* m_staticText71;
+			
+			
+			wxStaticLine* m_staticline121;
 			wxStaticText* m_staticText9;
 			wxStaticLine* m_staticline7;
 			wxStdDialogButtonSizer* button_sizer1;
@@ -117,6 +120,7 @@ namespace ns_bg_img_dlg
 			virtual void on_hsv_h_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_hsv_s_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_hsv_v_scroll( wxScrollEvent& event ) { event.Skip(); }
+			virtual void on_band_comp_scroll( wxScrollEvent& event ) { event.Skip(); }
 			virtual void on_file_select( wxFileDirPickerEvent& event ) { event.Skip(); }
 			virtual void on_apply( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_cancel( wxCommandEvent& event ) { event.Skip(); }
@@ -139,6 +143,7 @@ namespace ns_bg_img_dlg
 			wxSlider* hsv_h;
 			wxSlider* hsv_s;
 			wxSlider* hsv_v;
+			wxSlider* band_comp;
 			wxFilePickerCtrl* selector_file;
 			
 			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );

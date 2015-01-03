@@ -3115,6 +3115,8 @@ A_Canvas::ImagePaint(wxImage** ipp, wxRect& logrc, double thickness)
 
 	aap::draw_device dr(*ip);
 	aap::pxl px(0, 0, 0);
+	aap::pxl_xor px_xor(0xFF, 0xFF, 0xFF);
+	bool have_bg = false; // (bg_mng->get_mod_image() != 0);
 	int ox = rr.x - bgpad;
 	int oy = rr.y - bgpad;
 
@@ -3134,14 +3136,25 @@ A_Canvas::ImagePaint(wxImage** ipp, wxRect& logrc, double thickness)
 				if ( p0.isflag() || p1.isflag() )
 					continue;
 				
-				aap::drawline_wu(
-			         thickness,
-			         p0.getX() - ox, p0.getY() - oy,
-			         p1.getX() - ox, p1.getY() - oy,
-			         dr,
-			         long(dr.Width()), long(dr.Height()),
-			         px,
-			         true);
+				if ( have_bg ) {
+					aap::drawline_wu(
+				         thickness,
+				         p0.getX() - ox, p0.getY() - oy,
+				         p1.getX() - ox, p1.getY() - oy,
+				         dr,
+				         long(dr.Width()), long(dr.Height()),
+				         px_xor,
+				         true);
+				 } else {
+					aap::drawline_wu(
+				         thickness,
+				         p0.getX() - ox, p0.getY() - oy,
+				         p1.getX() - ox, p1.getY() - oy,
+				         dr,
+				         long(dr.Width()), long(dr.Height()),
+				         px,
+				         true);
+				 }
 			 }
 		}
 	}
@@ -3326,17 +3339,43 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 	}
 
 	if ( bgimg ) {
-		int mxw = std::min(imw, bgimg->GetWidth());
-		int mxh = std::min(imh, bgimg->GetHeight());
-		int bgrowlen = bgimg->GetWidth() * pixlen;
+		bgimg_manager::dim_type bg_wi, bg_hi;
+		bgimg_manager::off_type bg_ox, bg_oy;
+		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+		
+		bg_ox -= X;
+		bg_oy -= Y;
+
+		int mxw = std::min(imw, int(bg_wi));
+		int mxh = std::min(imh, int(bg_hi));
+		int bgrowlen = pixlen * bg_wi;
 		size_t cplen = size_t(mxw) * pixlen;
 		unsigned char* rp = pd;
 		unsigned char* bgp = bgimg->GetData();
 		
-		for ( int j = 0; j < mxh; j++ ) {
-			std::memcpy(rp, bgp, cplen);
-			rp += rowlen;
-			bgp += bgrowlen;
+		if ( bg_ox < 0 ) {
+			cplen = size_t(std::max(mxw + bg_ox, int(0))) * pixlen;
+			bgp += pixlen * (-bg_ox);
+		} else if ( bg_ox > 0 ) {
+			cplen = size_t(std::max(
+				std::min(mxw, imw - bg_ox), int(0))) * pixlen;
+			rp += pixlen * bg_ox;
+		}
+
+		if ( bg_oy < 0 ) {
+			mxh = std::min(imh, int(bg_hi) + bg_oy);
+			bgp += pixlen * bg_wi * (-bg_oy);
+		} else if ( bg_oy > 0 ) {
+			mxh = std::min(imh - bg_oy, int(bg_hi));
+			rp += imw * pixlen * bg_oy;
+		}
+
+		if ( cplen > 0 ) {
+			for ( int j = 0; j < mxh; j++ ) {
+				std::memcpy(rp, bgp, cplen);
+				rp += rowlen;
+				bgp += bgrowlen;
+			}
 		}
 	}
 

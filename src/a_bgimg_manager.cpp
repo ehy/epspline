@@ -34,6 +34,7 @@
 bgimg_manager::bgimg_manager()
 	: dlg(0), img(0), mods_img(0)
 	, cb_func(0), cb_arg(0)
+	, mods_current(false)
 {
 	set_rotbg();
 	set_default_params();
@@ -42,6 +43,7 @@ bgimg_manager::bgimg_manager()
 bgimg_manager::bgimg_manager(unsigned long p)
 	: dlg(0), img(0), mods_img(0)
 	, cb_func(0), cb_arg(0)
+	, mods_current(false)
 {
 	set_rotbg();
 	set_params(p);
@@ -66,8 +68,10 @@ void
 bgimg_manager::set_dimensions(
 	dim_type width, dim_type height, off_type xo, off_type yo)
 {
-	data_std.modswidth  = width;
-	data_std.modsheight = height;
+	data_std.modswidth  =
+		width == data_std.origwidth ? 0 : width;
+	data_std.modsheight =
+		height == data_std.origheight ? 0 : height;
 	data_std.off_x = xo;
 	data_std.off_y = yo;
 }
@@ -76,8 +80,10 @@ void
 bgimg_manager::get_dimensions(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
-	width  = data_std.modswidth;
-	height = data_std.modsheight;
+	width  =
+		data_std.modswidth ? data_std.modswidth : data_std.origwidth;
+	height =
+		data_std.modsheight ? data_std.modsheight : data_std.origheight;
 	xo = data_std.off_x;
 	yo = data_std.off_y;
 }
@@ -130,7 +136,8 @@ bgimg_manager::get_mod_image()
 		return 0;
 	}
 
-	if ( data_std == data_save ) {
+	//if ( data_std == data_save ) {
+	if ( is_current() ) {
 		// no transforms pending,
 		// give what we got
 		// if we got it
@@ -155,52 +162,53 @@ bgimg_manager::get_mod_image()
 	}
 
 	delete mods_img;
-	mods_img = 0;
+	mods_img = new wxImage(img->Copy());
 
 	data_std.origwidth = img->GetWidth();
 	data_std.origheight = img->GetHeight();
 
 	if ( ! has_transform() ) {
-		return img;
+		return mods_img;
 	}
 
 	if ( get_conv_hsvh() || get_conv_hsvs() || get_conv_hsvv() ) {
-		mods_img = wximg_adjhsv(
-			new wxImage(img->Copy()),
+		mods_img = wximg_adjhsv(mods_img,
 			int(data_std.hsv_h),
 			int(data_std.hsv_s),
 			int(data_std.hsv_v)
 		);
 	}
+	if ( get_conv_band_comp() ) {
+		int v = data_std.band_comp;
+		bool lighten = (v > 0);
+		double band = 1.0 - double(std::abs(v)) / 255.0;
+		mods_img = wximg_bandcomp(mods_img, band, lighten);
+	}
 	if ( get_conv_grey() ) {
-		wxImage* t = mods_img ? mods_img : new wxImage(img->Copy());
+		wxImage* t = mods_img;
 		mods_img = wximg_get_greyscale(t);
 		delete t;
 	}
 
 	if ( get_flip_horz() ) {
-		wxImage* t = new wxImage(
-			(mods_img ? mods_img : img)->Mirror(true)
-		);
+		wxImage* t = new wxImage(mods_img->Mirror(true));
 		delete mods_img;
 		mods_img = t;
 	}
 	if ( get_flip_vert() ) {
-		wxImage* t = new wxImage(
-			(mods_img ? mods_img : img)->Mirror(false)
-		);
+		wxImage* t = new wxImage(mods_img->Mirror(false));
 		delete mods_img;
 		mods_img = t;
 	}
 	if ( get_arg_rotate() ) {
 		mods_img = wximg_rotate(
-			mods_img ? mods_img : new wxImage(img->Copy()),
+			mods_img,
 			data_std.degrotate,
 			true, rotbg_r, rotbg_g, rotbg_b
 		);
 	}
 
-	if ( get_arg_width() || get_arg_height() ) {
+	if ( get_arg_rotate() || get_arg_width() || get_arg_height() ) {
 		// TODO: make scale type an option
 		const
 		#if wxCHECK_VERSION(2, 9, 0)
@@ -210,8 +218,7 @@ bgimg_manager::get_mod_image()
 		#endif
 		//qual = wxIMAGE_QUALITY_NORMAL;
 		qual = wxIMAGE_QUALITY_HIGH;
-		int ow = static_cast<int>(data_std.origwidth);
-		int oh = static_cast<int>(data_std.origheight);
+
 		int w = static_cast<int>(
 			data_std.modswidth ?
 			data_std.modswidth :
@@ -221,15 +228,12 @@ bgimg_manager::get_mod_image()
 			data_std.modsheight :
 			data_std.origheight);
 
-		if ( w != ow || h != oh ) {
-			if ( mods_img ) {
-				mods_img->Rescale(w, h, qual);
-			} else {
-				mods_img = new wxImage(img->Scale(w, h, qual));
-			}
+		if ( w != mods_img->GetWidth() || h != mods_img->GetHeight() ) {
+			mods_img->Rescale(w, h, qual);
 		}
 	}
 
+	mods_current = true;
 	return mods_img;
 }
 
@@ -337,6 +341,7 @@ void
 bgimg_manager::on_apply(wxCommandEvent& event)
 {
 	update_from_dialog(data_std);
+	mods_current = false;
 
 	if ( dialog_type* p = get_dlg() ) {
 		p->set_preview(get_mod_image());
@@ -349,7 +354,14 @@ void
 bgimg_manager::on_cancel(wxCommandEvent& event)
 {
 	data_std = data_save;
-	//update__to__dialog(data_std);
+
+	delete mods_img;
+	mods_img = 0;
+	delete img;
+	img = 0;
+
+	mods_current = false;
+
 	force_updates();
 }
 
@@ -360,8 +372,11 @@ bgimg_manager::on_OK(wxCommandEvent& event)
 	mods_img = 0;
 	delete img;
 	img = 0;
-	//data_save = data_std;
-	on_apply(event);
+
+	update_from_dialog(data_std);
+	mods_current = false;
+
+	force_updates();
 }
 
 void
@@ -414,6 +429,11 @@ bg_img_dlg::put_preview()
 			hsv_v->GetValue()
 		);
 	}
+	if ( int v = band_comp->GetValue() ) {
+		bool lighten = (v > 0);
+		double band = 1.0 - double(std::abs(v)) / 255.0;
+		wximg_bandcomp(&i, band, lighten);
+	}
 	if ( chk_greyscale->GetValue() ) {
 		i = i.ConvertToGreyscale();
 	}
@@ -423,8 +443,8 @@ bg_img_dlg::put_preview()
 	if ( chk_flvert->GetValue() ) {
 		i = i.Mirror(false);
 	}
-	if ( spin_ro->GetValue() ) {
-		wximg_rotate(&i, spin_ro->GetValue(), true,
+	if ( int v = spin_ro->GetValue() ) {
+		wximg_rotate(&i, v, true,
 			mng->rotbg_r, mng->rotbg_g, mng->rotbg_b);
 	}
 	if ( spin_wi->GetValue() > 0 || spin_hi->GetValue() > 0 ) {
@@ -612,6 +632,16 @@ bg_img_dlg::on_hsv_v_scroll(wxScrollEvent& event)
 	int i = hsv_v->GetValue();
 	mng->data_std.hsv_v = (bgimg_manager::hsv_type)i;
 	mng->set_conv_hsvv(i != 0);
+
+	put_preview();
+}
+
+void
+bg_img_dlg::on_band_comp_scroll(wxScrollEvent& event)
+{
+	int i = band_comp->GetValue();
+	mng->data_std.band_comp = (bgimg_manager::cmp_type)i;
+	mng->set_conv_band_comp(i != 0);
 
 	put_preview();
 }

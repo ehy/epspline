@@ -140,8 +140,8 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	wxGridBagSizer* gbSizer1;
 	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->AddGrowableCol( 6 );
-	gbSizer1->AddGrowableRow( 5 );
+	gbSizer1->AddGrowableCol( 8 );
+	gbSizer1->AddGrowableRow( 6 );
 	gbSizer1->SetFlexibleDirection( wxBOTH );
 	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -223,15 +223,12 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 	
-	m_staticText7 = new wxStaticText( this, wxID_ANY, _("HSV adjustment:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7 = new wxStaticText( this, wxID_ANY, _("HSV adjust:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
 	bSizer9->Add( m_staticText7, 0, wxALL, 5 );
 	
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
-	
-	
-	bSizer11->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	hsv_h = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_h->SetToolTip( _("Adjust HSV (Hue Saturation Value) hue.") );
@@ -248,15 +245,43 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer11->Add( hsv_v, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	
-	bSizer11->Add( 0, 0, 1, wxEXPAND, 5 );
-	
 	bSizer9->Add( bSizer11, 1, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
 	
-	m_staticline12 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( 130,-1 ), wxLI_HORIZONTAL );
+	m_staticline12 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLI_HORIZONTAL );
 	bSizer9->Add( m_staticline12, 0, wxEXPAND | wxALL, 5 );
 	
-	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 2, 3 ), wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 2, 1 ), wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	m_staticline111 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
+	gbSizer1->Add( m_staticline111, wxGBPosition( 0, 5 ), wxGBSpan( 3, 1 ), wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer91;
+	bSizer91 = new wxBoxSizer( wxVERTICAL );
+	
+	m_staticText71 = new wxStaticText( this, wxID_ANY, _("Lightness:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText71->Wrap( -1 );
+	bSizer91->Add( m_staticText71, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	band_comp = new wxSlider( this, wxID_ANY, 0, -255, 255, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_INVERSE|wxSL_VERTICAL );
+	band_comp->SetToolTip( _("Lighten or darken image.") );
+	
+	bSizer12->Add( band_comp, 0, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	
+	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer91->Add( bSizer12, 1, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	m_staticline121 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLI_HORIZONTAL );
+	bSizer91->Add( m_staticline121, 0, wxALL|wxEXPAND, 5 );
+	
+	gbSizer1->Add( bSizer91, wxGBPosition( 0, 6 ), wxGBSpan( 2, 1 ), wxALIGN_CENTER|wxALIGN_TOP|wxEXPAND|wxLEFT|wxRIGHT, 5 );
 	
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -268,9 +293,9 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	selector_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Choose an image file"), wxT("(*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm)|*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	selector_file->SetToolTip( _("Choose a background image file.") );
 	
-	bSizer8->Add( selector_file, 0, wxBOTTOM|wxEXPAND|wxTOP, 5 );
+	bSizer8->Add( selector_file, 0, wxALIGN_CENTER|wxALL|wxBOTTOM|wxEXPAND|wxTOP, 5 );
 	
-	gbSizer1->Add( bSizer8, wxGBPosition( 2, 0 ), wxGBSpan( 1, 7 ), wxEXPAND, 5 );
+	gbSizer1->Add( bSizer8, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer1->Add( m_staticline7, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxEXPAND | wxALL, 5 );
@@ -285,7 +310,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	button_sizer1Help = new wxButton( this, wxID_HELP );
 	button_sizer1->AddButton( button_sizer1Help );
 	button_sizer1->Realize();
-	gbSizer1->Add( button_sizer1, wxGBPosition( 4, 0 ), wxGBSpan( 1, 7 ), wxALIGN_BOTTOM|wxALIGN_CENTER|wxALIGN_TOP|wxBOTTOM|wxTOP, 5 );
+	gbSizer1->Add( button_sizer1, wxGBPosition( 4, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALIGN_TOP|wxALL|wxEXPAND|wxTOP, 5 );
 	
 	bSizer1->Add( gbSizer1, 1, wxALL|wxEXPAND, 5 );
 	
@@ -346,6 +371,15 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	hsv_v->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
 	hsv_v->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
 	hsv_v->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
 	selector_file->Connect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( bg_image::on_file_select ), NULL, this );
 	button_sizer1Apply->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_apply ), NULL, this );
 	button_sizer1Cancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_cancel ), NULL, this );
@@ -394,6 +428,15 @@ bg_image::~bg_image()
 	hsv_v->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
 	hsv_v->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
 	hsv_v->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( bg_image::on_hsv_v_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
+	band_comp->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( bg_image::on_band_comp_scroll ), NULL, this );
 	selector_file->Disconnect( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler( bg_image::on_file_select ), NULL, this );
 	button_sizer1Apply->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_apply ), NULL, this );
 	button_sizer1Cancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_cancel ), NULL, this );

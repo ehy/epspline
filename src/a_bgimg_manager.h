@@ -228,11 +228,19 @@ public:
 	}
 
 	// access for using app code
+	void set_file(wxString name);
+	void get_file(wxString& name);
 	void set_dimensions(dim_type width, dim_type height,
 		off_type xo, off_type yo);
 	void get_dimensions(dim_type& width, dim_type& height,
 		off_type& xo, off_type& yo);
 	void get_dimensions_orig(dim_type& width, dim_type& height);
+	void set_hsv_vals(hsv_type hue, hsv_type sat, hsv_type val);
+	void get_hsv_vals(hsv_type& hue, hsv_type& sat, hsv_type& val);
+	void set_compression(cmp_type comp);
+	void get_compression(cmp_type& comp);
+	void set_rotation(off_type rot);
+	void get_rotation(off_type& rot);
 
 	// get image for display -- after transforms are applied --
 	// and caller should not modify the returned image, but
@@ -339,7 +347,7 @@ public:
 
 	bool has_transform() { return parms() & trans_mask; }
 
-	wxWindow* parent_wnd() { return wxGetApp().GetTopWindow(); }
+	wxWindow* parent_wnd();
 };
 
 // here lies the subclass of the generated bg_image dialog class,

@@ -50,6 +50,30 @@ template< class T > inline T rad2deg(T radians)
 	return radians / T(PI_HEMI);
 }
 
+// macro and inline func for image alpha overlay blending
+// on uchar color component, where alpha is also uchar
+// 0(transparent),255(opaque) -- Afor is foreground (top)
+// alpha, Aback is alpha of bg (blended into pixel component)
+#define ALPHA_OVER(Cfor, Afor, Cback, Aback) \
+	( \
+		(unsigned char)( \
+			(((unsigned)(Cfor) * (Afor) / 255) + \
+			((unsigned)(Cback) * (Aback) / 255) * \
+			(255 - (Afor)) / 255) \
+		) \
+	)
+inline unsigned char
+alpha_over(
+	unsigned char Cfor, unsigned char Afor,
+	unsigned char Cback, unsigned char Aback = 255)
+{
+	return static_cast<unsigned char>(
+		((unsigned)Cfor * Afor / 255) +
+		((unsigned)Cback * Aback / 255) *
+		(255 - Afor) / 255
+	);
+}
+
 // quick, dirty automatic buffer w/ closure
 template < class T > struct tbuffer {
 	std::size_t cnt;

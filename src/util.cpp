@@ -112,8 +112,8 @@ newwstrdup(const wchar_t* str)
 	return p ? std::wcscpy(p, str) : 0;
 }
 
-// simplistc omage {light,dark}ening with linear compression
-// of pixel components to 'band' width (0.1, 10)
+// simplistc image {light,dark}ening with linear compression
+// of pixel components to 'band' width (0.1, 1.0)
 // NOTE: returns *same* image (i.e., source is edited)
 wxImage*
 wximg_bandcomp(wxImage* img, double band, bool lighten)

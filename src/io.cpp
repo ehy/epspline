@@ -24,6 +24,7 @@
 #include <wx/wx.h>
 #include "wxexio.h"
 #include "wxutil.h"
+#include "a_bgimg_manager.h"
 
 #include <string>
 #include <sstream>
@@ -91,7 +92,7 @@ inline int sanitise_spline_point(SplinePoint& pt)
 }
 
 // Data file format version:
-const long format_version = 0x00000002L;
+const long format_version = 0x00000003L;
 
 // Real number formatting precision (decimal part)
 const int default_real_fmt_precision = 8;
@@ -99,7 +100,7 @@ const int default_real_fmt_precision = 8;
 bool
 WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 	, const std::vector<int>& hg, const std::vector<int>& vg
-	, const wxString* pcomment)
+	, const IO_AddlData* addl, const wxString* pcomment)
 {
 	errno = 0;
 	cnumtmp c_tmp;
@@ -123,6 +124,57 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 	cnt->AddAttributeValue(wxT("ObjectCount"), (long)lst.size());
 	cnt->AddAttributeValue(wxT("HGuideCount"), (long)hg.size());
 	cnt->AddAttributeValue(wxT("VGuideCount"), (long)vg.size());
+
+	/* if ( fvers >= 0x3L ) */ {
+		long tint = long(addl->scrollpos_h);
+		cnt->AddAttributeValue(wxT("CanvasHScroll"), tint);
+		tint = long(addl->scrollpos_v);
+		cnt->AddAttributeValue(wxT("CanvasVScroll"), tint);
+		tint = long(addl->scale);
+		cnt->AddAttributeValue(wxT("CanvasScale"), tint);
+		
+		if ( addl->bgm ) {
+			wxString name;
+			addl->bgm->get_file(name);
+			cnt->AddAttributeValueString(
+				wxT("CanvasBGFName"), wxsani(name));
+
+			long tlong = long(addl->bgm->get_params());
+			cnt->AddAttributeValue(wxT("CanvasBGParams"), tlong);
+
+			bgimg_manager::dim_type dtw, dth;
+			bgimg_manager::off_type otx, oty;
+			addl->bgm->get_dimensions(dtw, dth, otx, oty);
+			tlong = long(dtw);
+			cnt->AddAttributeValue(wxT("CanvasBGImgWi"), tlong);
+			tlong = long(dth);
+			cnt->AddAttributeValue(wxT("CanvasBGImgHi"), tlong);
+			tlong = long(otx);
+			cnt->AddAttributeValue(wxT("CanvasBGImgOffX"), tlong);
+			tlong = long(oty);
+			cnt->AddAttributeValue(wxT("CanvasBGImgOffY"), tlong);
+
+			bgimg_manager::hsv_type hsvh, hsvs, hsvv;
+			addl->bgm->get_hsv_vals(hsvh, hsvs, hsvv);
+			tlong = long(hsvh);
+			cnt->AddAttributeValue(wxT("CanvasBGImgHueH"), tlong);
+			tlong = long(hsvs);
+			cnt->AddAttributeValue(wxT("CanvasBGImgHueS"), tlong);
+			tlong = long(hsvv);
+			cnt->AddAttributeValue(wxT("CanvasBGImgHueV"), tlong);
+
+			bgimg_manager::cmp_type cmp;
+			addl->bgm->get_compression(cmp);
+			tlong = long(cmp);
+			cnt->AddAttributeValue(wxT("CanvasBGImgLightness"), tlong);
+
+			bgimg_manager::off_type rot;
+			addl->bgm->get_rotation(rot);
+			tlong = long(rot);
+			cnt->AddAttributeValue(wxT("CanvasBGImgRotate"), tlong);
+		}
+	}
+
 	db.Append(cnt);
 
 	int nobj = 0;
@@ -230,7 +282,8 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 
 int
 ReadData(const wxString& fname, std::list<SplineBase*>& lst
-	, std::vector<int>& hg, std::vector<int>& vg, wxString* pcomment)
+	, std::vector<int>& hg, std::vector<int>& vg
+	, IO_AddlData* addl, wxString* pcomment)
 {
 	cnumtmp c_tmp;
 	int n;
@@ -265,6 +318,72 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	pe->GetAttributeValue(wxT("HGuideCount"), nhg);
 	int nvg = 0;
 	pe->GetAttributeValue(wxT("VGuideCount"), nvg);
+
+	if ( fvers >= 0x3L ) {
+		int tint = 0;
+		pe->GetAttributeValue(wxT("CanvasHScroll"), tint);
+		addl->scrollpos_h = tint;
+		tint = 0;
+		pe->GetAttributeValue(wxT("CanvasVScroll"), tint);
+		addl->scrollpos_v = tint;
+		tint = 0;
+		pe->GetAttributeValue(wxT("CanvasScale"), tint);
+		addl->scale = tint;
+		
+		if ( addl->bgm ) {
+			wxString name;
+			pe->GetAttributeValue(wxT("CanvasBGFName"), name);
+			addl->bgm->set_file(name);
+
+			long tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGParams"), tlong);
+			addl->bgm->set_params(static_cast<unsigned long>(tlong));
+			bgimg_manager::dim_type dtw;
+
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgWi"), tlong);
+			dtw = static_cast<bgimg_manager::dim_type>(tlong);
+			bgimg_manager::dim_type dth;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgHi"), tlong);
+			dth = static_cast<bgimg_manager::dim_type>(tlong);
+			bgimg_manager::off_type otx;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgOffX"), tlong);
+			otx = static_cast<bgimg_manager::off_type>(tlong);
+			bgimg_manager::off_type oty;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgOffY"), tlong);
+			oty = static_cast<bgimg_manager::off_type>(tlong);
+			addl->bgm->set_dimensions(dtw, dth, otx, oty);
+
+			bgimg_manager::hsv_type hsvh, hsvs, hsvv;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgHueH"), tlong);
+			hsvh = static_cast<bgimg_manager::hsv_type>(tlong);
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgHueS"), tlong);
+			hsvs = static_cast<bgimg_manager::hsv_type>(tlong);
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgHueV"), tlong);
+			hsvv = static_cast<bgimg_manager::hsv_type>(tlong);
+			addl->bgm->set_hsv_vals(hsvh, hsvs, hsvv);
+
+			bgimg_manager::cmp_type cmp;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgLightness"), tlong);
+			cmp = static_cast<bgimg_manager::cmp_type>(tlong);
+			addl->bgm->set_compression(cmp);
+
+			bgimg_manager::off_type rot;
+			tlong = 0;
+			pe->GetAttributeValue(wxT("CanvasBGImgRotate"), tlong);
+			rot = static_cast<bgimg_manager::off_type>(tlong);
+			addl->bgm->set_rotation(rot);
+		}
+
+		addl->init = true;
+	}
 
 	for ( n = 0; n < nobj; n++ ) {
 		wxString ob(wxT("Object"));
@@ -357,7 +476,7 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 
 		ti = -1;
 		pe->GetAttributeValue(wxT("UVcount"), ti);
-		if ( fvers >= format_version ) {
+		if ( fvers >= 0x00000002L ) {
 			for ( int i = 0; i < ti; i++ ) {
 				SplinePoint pt;
 				double d;

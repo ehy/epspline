@@ -64,6 +64,24 @@ bgimg_manager::get_dlg() {
 	return dlg;
 }
 
+wxWindow*
+bgimg_manager::parent_wnd()
+{
+	return wxGetApp().GetTopWindow();
+}
+
+void
+bgimg_manager::set_file(wxString name)
+{
+	data_std.img_fname = name;
+}
+
+void
+bgimg_manager::get_file(wxString& name)
+{
+	name = data_std.img_fname;
+}
+
 void
 bgimg_manager::set_dimensions(
 	dim_type width, dim_type height, off_type xo, off_type yo)
@@ -93,6 +111,46 @@ bgimg_manager::get_dimensions_orig(dim_type& width, dim_type& height)
 {
 	width  = data_std.origwidth;
 	height = data_std.origheight;
+}
+
+void
+bgimg_manager::set_hsv_vals(hsv_type hue, hsv_type sat, hsv_type val)
+{
+	data_std.hsv_h = hue;
+	data_std.hsv_s = sat;
+	data_std.hsv_v = val;
+}
+
+void
+bgimg_manager::get_hsv_vals(hsv_type& hue, hsv_type& sat, hsv_type& val)
+{
+	hue = data_std.hsv_h;
+	sat = data_std.hsv_s;
+	val = data_std.hsv_v;
+}
+
+void
+bgimg_manager::set_compression(cmp_type comp)
+{
+	data_std.band_comp = comp;
+}
+
+void
+bgimg_manager::get_compression(cmp_type& comp)
+{
+	comp = data_std.band_comp;
+}
+
+void
+bgimg_manager::set_rotation(off_type rot)
+{
+	data_std.degrotate = rot;
+}
+
+void
+bgimg_manager::get_rotation(off_type& rot)
+{
+	rot = data_std.degrotate;
 }
 
 void
@@ -136,7 +194,6 @@ bgimg_manager::get_mod_image()
 		return 0;
 	}
 
-	//if ( data_std == data_save ) {
 	if ( is_current() ) {
 		// no transforms pending,
 		// give what we got
@@ -178,12 +235,14 @@ bgimg_manager::get_mod_image()
 			int(data_std.hsv_v)
 		);
 	}
+
 	if ( get_conv_band_comp() ) {
 		int v = data_std.band_comp;
 		bool lighten = (v > 0);
 		double band = 1.0 - double(std::abs(v)) / 255.0;
 		mods_img = wximg_bandcomp(mods_img, band, lighten);
 	}
+
 	if ( get_conv_grey() ) {
 		wxImage* t = mods_img;
 		mods_img = wximg_get_greyscale(t);
@@ -195,11 +254,13 @@ bgimg_manager::get_mod_image()
 		delete mods_img;
 		mods_img = t;
 	}
+
 	if ( get_flip_vert() ) {
 		wxImage* t = new wxImage(mods_img->Mirror(false));
 		delete mods_img;
 		mods_img = t;
 	}
+
 	if ( get_arg_rotate() ) {
 		mods_img = wximg_rotate(
 			mods_img,
@@ -280,6 +341,7 @@ bgimg_manager::update_from_dialog(datastruct& dat)
 	dat.hsv_h = p->hsv_h->GetValue();
 	dat.hsv_s = p->hsv_s->GetValue();
 	dat.hsv_v = p->hsv_v->GetValue();
+	dat.band_comp = p->band_comp->GetValue();
 	dat.img_fname = p->selector_file->GetPath();
 }
 
@@ -302,6 +364,7 @@ bgimg_manager::update__to__dialog(const datastruct& dat)
 	p->hsv_h->SetValue(dat.hsv_h);
 	p->hsv_s->SetValue(dat.hsv_s);
 	p->hsv_v->SetValue(dat.hsv_v);
+	p->band_comp->SetValue(dat.band_comp);
 	p->selector_file->SetPath(dat.img_fname);
 
 	p->set_preview(get_mod_image());

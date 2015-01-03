@@ -28,12 +28,30 @@
 #include "splines.h"
 #include "util.h"
 
+// TODO: move these into header "io.h"
+// The .PSE file Write/Read routines + struct for additional
+// data for per-file section (used by canvas)
+class bgimg_manager;
+struct IO_AddlData {
+	bool init; // remains false if not inited due to old file
+	int scrollpos_h;
+	int scrollpos_v;
+	int scale;
+	bgimg_manager* bgm;
+
+	IO_AddlData() {
+		init = false;
+		scrollpos_h = scrollpos_v = scale = 0;
+		bgm = 0;
+	}
+};
+// Write/Read routines
 bool WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 	, const std::vector<int>& hg, const std::vector<int>& vg
-	, const wxString* pcomment = 0);
+	, const IO_AddlData* addl, const wxString* pcomment = 0);
 int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	, std::vector<int>& hg, std::vector<int>& vg
-	, wxString* pcomment = 0);
+	, IO_AddlData* addl, wxString* pcomment = 0);
 
 // Must check and sanitize the real numbers, as
 // extreme values can cause big trouble like infinite loops,
@@ -58,7 +76,7 @@ return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }
 
 // simplistc image {light,dark}ening with linear compression
-// of pixel components to 'band' width (0.1, 10)
+// of pixel components to 'band' width (0.1, 1.0)
 // NOTE: returns *same* image (i.e., source is edited)
 wxImage*
 wximg_bandcomp(wxImage* img, double band, bool lighten = true);

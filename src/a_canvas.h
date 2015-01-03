@@ -449,6 +449,7 @@ protected:
 	void enableEdCutGlobal(bool b);
 	void enableEdPasteGlobal(bool b);
 	void enableHelpDemo(bool b);
+	void enableRemoveBackgroundImage(bool b);
 
 	void enable_set_linear(bool b)
 	{m_pop->Enable(IC_set_linear, b);}

@@ -393,6 +393,8 @@ A_Canvas::IdleUpdate()
 	enableEdUndo(ustack.count() > 0);
 	enableEdRedo(rstack.count() > 0);
 	enableCloseCurves(D->sSname != wxT("") || D->lst.size() > 0);
+	enableRemoveBackgroundImage(bg_mng->get_mod_image() != 0);
+
 
 	bool dirty = IsDirty();
 #	if 1
@@ -2370,7 +2372,12 @@ A_Canvas::Open(wxString filename)
 		DataState* tmp = new DataState;
 		DataState::guidestore& th = tmp->hguides;
 		DataState::guidestore& tv = tmp->vguides;
-		if ( ReadData(filename, tmp->lst, th, tv, &filecomment) >= 0 ) {
+
+		IO_AddlData addl;
+		addl.bgm = bg_mng;
+
+		if ( ReadData(filename, tmp->lst, th, tv
+						, &addl, &filecomment) >= 0 ) {
 			DataState* t2 = D;
 			D = tmp;
 			tmp = t2;
@@ -2385,6 +2392,13 @@ A_Canvas::Open(wxString filename)
 			copy(tv.begin(), tv.end(), back_inserter(vguides));
 #			endif
 			a_frame->SetTitlePrefix(tn);
+
+			if ( addl.init ) {
+				Scroll(addl.scrollpos_h, addl.scrollpos_v);
+				xscale = (addl.scale >> 16) & 0xFFFF;
+				yscale = addl.scale & 0xFFFF;
+			}
+
 			Refresh();
 		} else {
 			int err = errno;
@@ -2564,8 +2578,15 @@ A_Canvas::ForceSave(bool namechange)
 
 	wxString t = fn.GetFullPath();
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
+
+	IO_AddlData addl;
+	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
+	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
+	addl.scale = (xscale << 16) | yscale;
+	addl.bgm = bg_mng;
+
 	errno = 0;
-	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
 		// possibly useful under Unix
 		std::fprintf(stderr, "Epspline: failed forced save of '%s'\n",
 			wxs2ch(t));
@@ -2589,8 +2610,15 @@ A_Canvas::Save()
 
 	wxString t = GetCurFullpath();
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
+
+	IO_AddlData addl;
+	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
+	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
+	addl.scale = (xscale << 16) | yscale;
+	addl.bgm = bg_mng;
+
 	errno = 0;
-	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
 		int e = errno;
 		wxString msg(_("Failed saving to \""));
 		
@@ -3283,8 +3311,6 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 	wxColour grc  // grid color
 	)
 {
-	wxImage* bgimg = bg_mng->get_mod_image();
-
 	// wxImage does not include alpha in 
 	// 4-component pixels as I had assumed, but in separate
 	// memory
@@ -3338,7 +3364,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 		}
 	}
 
-	if ( bgimg ) {
+	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
 		bgimg_manager::dim_type bg_wi, bg_hi;
 		bgimg_manager::off_type bg_ox, bg_oy;
 		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
@@ -3350,30 +3376,58 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 		int mxh = std::min(imh, int(bg_hi));
 		int bgrowlen = pixlen * bg_wi;
 		size_t cplen = size_t(mxw) * pixlen;
-		unsigned char* rp = pd;
+		unsigned char* rp  = pd;
 		unsigned char* bgp = bgimg->GetData();
-		
+		unsigned char* ap  = bgimg->HasAlpha() ? bgimg->GetAlpha() : 0;
+
 		if ( bg_ox < 0 ) {
-			cplen = size_t(std::max(mxw + bg_ox, int(0))) * pixlen;
+			cplen = size_t(std::min(imw,
+				std::max(int(bg_wi) + bg_ox, int(0)))) * pixlen;
 			bgp += pixlen * (-bg_ox);
+			if ( ap ) {
+				ap += -bg_ox;
+			}
 		} else if ( bg_ox > 0 ) {
 			cplen = size_t(std::max(
-				std::min(mxw, imw - bg_ox), int(0))) * pixlen;
+				std::min(int(bg_wi), imw - bg_ox), int(0))) * pixlen;
 			rp += pixlen * bg_ox;
 		}
 
 		if ( bg_oy < 0 ) {
 			mxh = std::min(imh, int(bg_hi) + bg_oy);
 			bgp += pixlen * bg_wi * (-bg_oy);
+			if ( ap ) {
+				ap += bg_wi * (-bg_oy);
+			}
 		} else if ( bg_oy > 0 ) {
 			mxh = std::min(imh - bg_oy, int(bg_hi));
 			rp += imw * pixlen * bg_oy;
 		}
 
-		if ( cplen > 0 ) {
+		if ( cplen > 0 && ap ) {
+			size_t cpcnt = cplen / pixlen;
+
+			for ( int j = 0; j < mxh; j++ ) {
+				unsigned char* tp = rp;
+				unsigned char* sp = bgp;
+
+				for ( size_t i = 0; i < cpcnt; i++ ) {
+					unsigned char al = ap[i];
+					tp[iR] = alpha_over(sp[iR], al, tp[iR]);
+					tp[iG] = alpha_over(sp[iG], al, tp[iG]);
+					tp[iB] = alpha_over(sp[iB], al, tp[iB]);
+					tp += pixlen;
+					sp += pixlen;
+				}
+
+				rp  += rowlen;
+				bgp += bgrowlen;
+				ap  += bg_wi;
+			}
+		} else if ( cplen > 0 ) {
 			for ( int j = 0; j < mxh; j++ ) {
 				std::memcpy(rp, bgp, cplen);
-				rp += rowlen;
+				rp  += rowlen;
 				bgp += bgrowlen;
 			}
 		}
@@ -3797,6 +3851,9 @@ A_Canvas::enableEdPasteGlobal(bool b)
 void
 A_Canvas::enableHelpDemo(bool b)
 {a_frame->enableHelpDemo(b);}
+void
+A_Canvas::enableRemoveBackgroundImage(bool b)
+{m_pop->Enable(IC_rm_bg_img, b);}
 
 void
 A_Canvas::ErrorBox(const wxString& msg, const wxString& titletail)

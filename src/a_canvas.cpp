@@ -3061,6 +3061,15 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	#endif
 	dc.SetPen(np);
 
+	if ( bg_mng->get_mod_image() ) {
+		bgimg_manager::dim_type bg_wi, bg_hi;
+		bgimg_manager::off_type bg_ox, bg_oy;
+		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+		
+		wxBitmap bmbg(*bg_mng->get_mod_image());
+		dc.DrawBitmap(bmbg, wxCoord(bg_ox), wxCoord(bg_oy), true);
+	}
+
 	if ( drawgrid && wid > 0 ) {
 		int xs = wid;
 		int ys = wid;

@@ -75,6 +75,13 @@ inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }
 
+// wxImage maintains distinct mask amd alpha channel; effects
+// can be unpredictable, esp. in code that writes to canvas --
+// so if image has mask and not alpha, make alpha channel
+// from mask color.
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage* wximg_get_alphaconv(wxImage* src);
+
 // simplistc image {light,dark}ening with linear compression
 // of pixel components to 'band' width (0.1, 1.0)
 // NOTE: returns *same* image (i.e., source is edited)

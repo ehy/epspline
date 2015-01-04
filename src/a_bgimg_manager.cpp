@@ -73,7 +73,20 @@ bgimg_manager::parent_wnd()
 void
 bgimg_manager::set_file(wxString name)
 {
+	delete img;
+	img = 0;
+	delete mods_img;
+	mods_img = 0;
 	data_std.img_fname = name;
+	update__to__dialog(data_std);
+}
+
+void
+bgimg_manager::set_file_reset(wxString name)
+{
+	data_save = data_std;
+	reset_default_params();
+	set_file(name);
 }
 
 void
@@ -182,6 +195,41 @@ bgimg_manager::show_dialog(bool show)
 	p->Show(show);
 }
 
+// saving copies of images:
+bool
+bgimg_manager::SaveOrigTo(const wxString& name, img_save_type_t type)
+{
+	// no image
+	if ( img_fname().IsEmpty() ) {
+		return false;
+	}
+
+	// orig not present
+	if ( img == 0 ) {
+		img = new wxImage(img_fname());
+		if ( img == 0 || ! img->IsOk() ) {
+			delete img;
+			img = 0;
+			return false;
+		}
+	}
+
+	return img->SaveFile(name, type);
+}
+
+// saving copies of images:
+bool
+bgimg_manager::SaveModsTo(const wxString& name, img_save_type_t type)
+{
+	wxImage* tmp = get_mod_image();
+
+	if ( tmp == 0 ) {
+		return false;
+	}
+
+	return tmp->SaveFile(name, type);
+}
+
 wxImage*
 bgimg_manager::get_mod_image()
 {
@@ -219,7 +267,8 @@ bgimg_manager::get_mod_image()
 	}
 
 	delete mods_img;
-	mods_img = new wxImage(img->Copy());
+	//mods_img = new wxImage(img->Copy());
+	mods_img = wximg_get_alphaconv(img);
 
 	data_std.origwidth = img->GetWidth();
 	data_std.origheight = img->GetHeight();
@@ -331,6 +380,19 @@ bgimg_manager::update_from_dialog(datastruct& dat)
 		return;
 	}
 
+	switch ( p->opt_save->GetSelection() ) {
+		case 0:
+			set_copy_orig(true);
+			break;
+		case 1:
+			set_copy_changes(true);
+			break;
+		case 2:
+		default:
+			set_copy_none(true);
+			break;
+	}
+
 	set_flip_horz(p->chk_flhorz->GetValue());
 	set_flip_vert(p->chk_flvert->GetValue());
 	set_conv_grey(p->chk_greyscale->GetValue());
@@ -354,6 +416,16 @@ bgimg_manager::update__to__dialog(const datastruct& dat)
 		return;
 	}
 
+	int copyopt;
+	if ( get_copy_orig() ) {
+		copyopt = 0;
+	} else if ( get_copy_changes() ) {
+		copyopt = 1;
+	} else {
+		copyopt = 2;
+	}
+	p->opt_save->SetSelection(copyopt);
+		
 	p->chk_flhorz->SetValue(get_flip_horz());
 	p->chk_flvert->SetValue(get_flip_vert());
 	p->chk_greyscale->SetValue(get_conv_grey());

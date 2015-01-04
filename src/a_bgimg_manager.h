@@ -191,7 +191,23 @@ protected:
 	void clear_params() { set_params(0); }
 	void set_default_params() {
 		clear_params();
-		set_copy_changes();
+		data_std.zero();
+		set_copy_orig();
+		update__to__dialog(data_std);
+	}
+	void reset_default_params() {
+		// save offsets: they are for using code, and are
+		// not applied to image; therefore they are not cumulatively
+		// reapplied to image, and should not be lost
+		off_type off_x, off_y;
+		off_x = data_std.off_x;
+		off_y = data_std.off_y;
+		clear_params();
+		data_std.zero();
+		set_copy_orig();
+		data_std.off_x = off_x;
+		data_std.off_y = off_y;
+		update__to__dialog(data_std);
 	}
 
 	// tell using code to update
@@ -241,6 +257,20 @@ public:
 	void get_compression(cmp_type& comp);
 	void set_rotation(off_type rot);
 	void get_rotation(off_type& rot);
+	// like set_file() above, plus reset data; e.g., if
+	// mod image is set as orig image, so mods are not repeated
+	void set_file_reset(wxString name);
+
+	// saving copies of images:
+#	if wxCHECK_VERSION(2, 9, 0) // sigh
+	typedef wxBitmapType	img_save_type_t;
+#	else
+	typedef int				img_save_type_t;
+#	endif
+	bool SaveOrigTo(const wxString& name,
+		img_save_type_t type = wxBITMAP_TYPE_PNG);
+	bool SaveModsTo(const wxString& name,
+		img_save_type_t type = wxBITMAP_TYPE_PNG);
 
 	// get image for display -- after transforms are applied --
 	// and caller should not modify the returned image, but
@@ -281,10 +311,12 @@ public:
 	}
 	bool get_copy_orig() { return parms() & copy_orig; }
 	void set_copy_orig(bool b = true) {
+		set_copy_none(true);
 		set_params(b ? (parms() | copy_orig) : (parms() & ~copy_orig));
 	}
 	bool get_copy_changes() { return parms() & copy_changes; }
 	void set_copy_changes(bool b = true) {
+		set_copy_none(true);
 		set_params(b ? (parms() | copy_changes) : (parms() & ~copy_changes));
 	}
 	bool get_flip_horz() { return parms() & flip_horz; }

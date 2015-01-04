@@ -383,8 +383,10 @@ A_Canvas::OnIdle(wxIdleEvent& event)
 void
 A_Canvas::IdleUpdate()
 {
-	if ( activetab == false )
+	if ( activetab == false ) {
+		bg_mng->hide_dialog();
 		return;
+	}
 
 	SetCursor(*curcursor);
 
@@ -2421,17 +2423,7 @@ A_Canvas::Open(wxString filename)
 bool
 A_Canvas::SaveBGImage(const wxImage* p) const
 {
-	// ensure destruction iff allocated here.
-	// NOTE auto_ptr deprecated in C++11
-	std::auto_ptr<const wxImage> ap;
-
-	// If im_main is used there are no decorations, e.g.
-	// dots at control points -- which was wanted for debugging
-	// -- generally the the decorations should be included,
-	// so disable use of im_main (unless passed in p)
-	if ( false && p == 0 && query_AA() ) {
-		p = im_main;
-	}
+	wxImage timg;
 
 	if ( p == 0 ) {
 		int x, y;
@@ -2469,10 +2461,8 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		mdc.SelectObject(wxNullBitmap);
 #		endif // wxCHECK_VERSION(2, 8, 0)
 
-		// image is allocated here, and we want it gone at return,
-		// so hand it up-scope to auto_ptr declared for this purpose
-		ap = std::auto_ptr<const wxImage>(
-			p = new wxImage(bm.ConvertToImage()) );
+		timg = bm.ConvertToImage();
+		p = &timg;
 	}
 
 	if ( D->sSdir == wxT("") )
@@ -2549,6 +2539,43 @@ A_Canvas::SaveAs()
 }
 
 void
+A_Canvas::PrepSaveAddlData(IO_AddlData& addl,
+	wxString* dname, wxString* fname)
+{
+	wxImage* itst = bg_mng->get_mod_image();
+
+	// saving copies of images:
+	if ( itst && bg_mng->get_copy_orig() ) {
+		wxString f;
+		wxString d(dname ? *dname : GetCurDirName());
+	
+		bg_mng->get_file(f);
+		wxFileName nfn(d, wxFileName(f).GetName());
+		nfn.SetExt("png");
+		f = nfn.GetFullPath();
+
+		bg_mng->SaveOrigTo(f, wxBITMAP_TYPE_PNG);
+		bg_mng->set_file(f);
+	} else if ( itst && bg_mng->get_copy_changes() ) {
+		wxString f(fname ? *fname : GetCurFileName());
+		wxString d(dname ? *dname : GetCurDirName());
+	
+		wxFileName nfn(d, f);
+		nfn.SetExt("png");
+		f = nfn.GetFullPath();
+
+		bg_mng->SaveModsTo(f, wxBITMAP_TYPE_PNG);
+		bg_mng->set_file_reset(f);
+	}
+
+	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
+	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
+	addl.scale = ((xscale & 0xFFFF) << 16) | (yscale & 0xFFFF);
+	addl.bgm = bg_mng;
+	addl.init = true;
+}
+
+void
 A_Canvas::ForceSave(bool namechange)
 {
 	SetClean();
@@ -2580,16 +2607,16 @@ A_Canvas::ForceSave(bool namechange)
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
 
 	IO_AddlData addl;
-	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
-	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
-	addl.scale = (xscale << 16) | yscale;
-	addl.bgm = bg_mng;
+	d = fn.GetPath();
+	f = fn.GetName();
+	PrepSaveAddlData(addl, &d, &f);
 
 	errno = 0;
 	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
 		// possibly useful under Unix
-		std::fprintf(stderr, "Epspline: failed forced save of '%s'\n",
-			wxs2ch(t));
+		std::fprintf(stderr,
+			"Epspline: failed forced save of '%s', errno %d\n",
+			wxs2ch(t), errno);
 	} else {
 		std::fprintf(stderr, "Epspline: did forced save to '%s'\n",
 			wxs2ch(t));
@@ -2612,10 +2639,10 @@ A_Canvas::Save()
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
 
 	IO_AddlData addl;
-	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
-	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
-	addl.scale = (xscale << 16) | yscale;
-	addl.bgm = bg_mng;
+	wxFileName fn(t);
+	wxString d = fn.GetPath();
+	wxString f = fn.GetName();
+	PrepSaveAddlData(addl, &d, &f);
 
 	errno = 0;
 	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
@@ -3423,6 +3450,30 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 				rp  += rowlen;
 				bgp += bgrowlen;
 				ap  += bg_wi;
+			}
+		} else if ( cplen > 0 && bgimg->HasMask() ) {
+			unsigned char mr = bgimg->GetMaskRed();
+			unsigned char mg = bgimg->GetMaskGreen();
+			unsigned char mb = bgimg->GetMaskBlue();
+
+			for ( int j = 0; j < mxh; j++ ) {
+				unsigned char* tp = rp;
+				unsigned char* sp = bgp;
+				unsigned char* ep = sp + cplen;
+
+				while ( sp < ep ) {
+					if ( mr != sp[iR] &&
+						 mg != sp[iG] && mb != sp[iB] ) {
+						tp[iR] = sp[iR];
+						tp[iG] = sp[iG];
+						tp[iB] = sp[iB];
+					}
+					tp += pixlen;
+					sp += pixlen;
+				}
+
+				rp  += rowlen;
+				bgp += bgrowlen;
 			}
 		} else if ( cplen > 0 ) {
 			for ( int j = 0; j < mxh; j++ ) {

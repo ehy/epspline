@@ -217,6 +217,64 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 	return img;
 }
 
+// wxImage maintains distinct mask amd alpha channel; effects
+// can be unpredictable, esp. in code that writes to canvas --
+// so if image has mask and not alpha, make alpha channel
+// from mask color.
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage*
+wximg_get_alphaconv(wxImage* src)
+{
+	// has alpha already, or no mask
+	if ( src->HasAlpha() || ! src->HasMask() ) {
+		return new wxImage(src->Copy());
+	}
+
+	const size_t pixlen = 3;
+	int wi = src->GetWidth();
+	int hi = src->GetHeight();
+	size_t alen = size_t(wi) * hi;
+	size_t dlen = alen * pixlen;
+
+	unsigned char* data = (unsigned char*)std::malloc(dlen);
+	if ( ! data ) {
+		return new wxImage(src->Copy()); // use new_handler
+	}
+	unsigned char* alph = (unsigned char*)std::malloc(alen);
+	if ( ! alph ) {
+		std::free(data);
+		return new wxImage(src->Copy()); // use new_handler
+	}
+
+	const int iR = 0, iG = 1, iB = 2;;
+	unsigned char mr = src->GetMaskRed();
+	unsigned char mg = src->GetMaskGreen();
+	unsigned char mb = src->GetMaskBlue();
+
+	unsigned char* sp = src->GetData();
+	unsigned char* dp = data;
+	unsigned char* ap = alph;
+	unsigned char* ep = ap + alen;
+
+	for ( ; ap < ep; ap++ ) {
+		if ( sp[iR] == mr && sp[iG] == mg && sp[iB] == mb ) {
+			*ap = 0;
+		} else {
+			*ap = 255;
+		}
+
+		*dp++ = *sp++;
+		*dp++ = *sp++;
+		*dp++ = *sp++;
+	}
+
+	wxImage* dst = new wxImage(wi, hi, data);
+
+	dst->SetAlpha(alph);
+
+	return dst;
+}
+
 // simple conversion to greyscale -- may be replaced
 // with something, time permitting
 // originally for background image

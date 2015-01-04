@@ -193,6 +193,12 @@ protected:
 	typedef /*bgimg_manager::cb_update_arg*/ void* bg_update_arg;
 	static void bg_update(bg_update_arg);
 
+	// for save routines to share -- dname and fname are
+	// hints for background image copy options;
+	// IO_AddlData is in wxutil.h
+	void PrepSaveAddlData(IO_AddlData& addl,
+		wxString* dname = 0, wxString* fname = 0);
+
 public:
 	A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa = true);
 	virtual ~A_Canvas();

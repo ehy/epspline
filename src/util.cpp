@@ -140,6 +140,15 @@ wximg_bandcomp(wxImage* img, double band, bool lighten)
 	}
 
 	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
+
+	bool hasmask = img->HasMask();
+	unsigned char rm = 0, gm = 0, bm = 0;
+		
+	if ( hasmask ) {
+		rm = img->GetMaskRed();
+		gm = img->GetMaskGreen();
+		bm = img->GetMaskBlue();
+	}
 	
 	band = std::min(1.0, band);
 	band = std::max(0.1, band);
@@ -153,6 +162,14 @@ wximg_bandcomp(wxImage* img, double band, bool lighten)
 		p[B] = add + static_cast<unsigned char>(band * p[B]);
 
 		p += pixwid;
+	}
+
+	if ( hasmask ) {
+		rm = add + static_cast<unsigned char>(band * rm);
+		gm = add + static_cast<unsigned char>(band * gm);
+		bm = add + static_cast<unsigned char>(band * bm);
+		
+		img->SetMaskColour(rm, gm, bm);
 	}
 
 	return img;
@@ -187,6 +204,15 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 
 	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
 
+	bool hasmask = img->HasMask();
+	unsigned char rm = 0, gm = 0, bm = 0;
+		
+	if ( hasmask ) {
+		rm = img->GetMaskRed();
+		gm = img->GetMaskGreen();
+		bm = img->GetMaskBlue();
+	}
+
 	// this is the simplistic part . . .
 #	define _adjcomp(v, a) \
 	( \
@@ -212,14 +238,28 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 		p += pixwid;
 	}
 
+	if ( hasmask ) {
+		wxImage::HSVValue hsv =
+			wxImage::RGBtoHSV(wxImage::RGBValue(rm, gm, bm));
+
+		wxImage::RGBValue rgb =
+			wxImage::HSVtoRGB(wxImage::HSVValue(
+				_adjcomp(hsv.hue, h),
+				_adjcomp(hsv.saturation, s),
+				_adjcomp(hsv.value, v)
+			)
+		);
+		
+		img->SetMaskColour(rgb.red, rgb.green, rgb.blue);
+	}
+
 #	undef _adjcomp
 
 	return img;
 }
 
-// wxImage maintains distinct mask amd alpha channel; effects
-// can be unpredictable, esp. in code that writes to canvas --
-// so if image has mask and not alpha, make alpha channel
+// wxImage may have distinct mask amd alpha channel;
+// If image has mask and not alpha, make alpha channel
 // from mask color.
 // NOTE: returns operator new'd image (i.e., source not changed)
 wxImage*
@@ -308,34 +348,19 @@ wxImage*
 wximg_rotate(wxImage* img, double rot,
 	bool setbg, unsigned char r, unsigned char g, unsigned char b)
 {
-	bool hasmask = false;
-	unsigned char rs = 0, gs = 0, bs = 0;
-
-	if ( setbg ) {
-		hasmask = img->HasMask();
-		
-		if ( hasmask ) {
-			rs = img->GetMaskRed();
-			gs = img->GetMaskGreen();
-			bs = img->GetMaskBlue();
-		}
-
+	if ( setbg && ! img->HasMask() && ! img->HasAlpha() ) {
 		img->SetMaskColour(r, g, b);
 	}
 
+	// NOTE bool arg interpolate: if image relies on a mask
+	// for alpha, interpolate will defeat this by changing
+	// masked color; OTOH, an alpha channel will rotate too,
+	// so interpolation should be OK
 	*img = img->Rotate(
 		deg2rad(rot),
-		wxPoint(img->GetWidth() >> 1, img->GetHeight() >> 1),
-		true
+		wxPoint(img->GetWidth() / 2, img->GetHeight() / 2),
+		(img->HasAlpha() || ! img->HasMask()) ? true : false
 	);
-
-	if ( setbg ) {
-		img->SetMaskColour(rs, gs, bs);
-
-		if ( ! hasmask ) {
-			img->SetMask(false);
-		}
-	}
 
 	return img;
 }
@@ -718,7 +743,11 @@ int sanitise_with_prompt(wxString& str)
 // restrict to this unit with namespace.
 namespace {
 	using namespace std;
+	// gperf uses ancient 'register' and apparently has no option to
+	// desist with that; meanwhile, compilers such as clang++ complain.
+#	define register
 #	include "pov_reserved_words.cpp"
+#	undef register
 }
 
 bool check_identifier(const char* word, size_t len)

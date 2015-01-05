@@ -111,10 +111,21 @@ void
 bgimg_manager::get_dimensions(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
+	#if 0
+	width  =
+		data_std.modswidth ? data_std.modswidth :
+		((is_current() && mods_img) ? dim_type(mods_img->GetWidth()):
+			data_std.origwidth);
+	height =
+		data_std.modsheight ? data_std.modsheight :
+		((is_current() && mods_img) ? dim_type(mods_img->GetHeight()):
+			data_std.origheight);
+	#else
 	width  =
 		data_std.modswidth ? data_std.modswidth : data_std.origwidth;
 	height =
 		data_std.modsheight ? data_std.modsheight : data_std.origheight;
+	#endif
 	xo = data_std.off_x;
 	yo = data_std.off_y;
 }
@@ -195,6 +206,24 @@ bgimg_manager::show_dialog(bool show)
 	p->Show(show);
 }
 
+void
+bgimg_manager::cancel_dialog()
+{
+	dialog_type* p = get_dlg();
+
+	if ( !p || ! p->IsShown() ) {
+		return;
+	}
+
+	wxControl* c = dynamic_cast<wxControl*>(p->FindWindow(wxID_CANCEL));
+	if ( c ) {
+		wxCommandEvent e(wxEVT_COMMAND_BUTTON_CLICKED);
+		c->Command(e);
+	}
+
+	hide_dialog();
+}
+
 // saving copies of images:
 bool
 bgimg_manager::SaveOrigTo(const wxString& name, img_save_type_t type)
@@ -264,14 +293,17 @@ bgimg_manager::get_mod_image()
 			img = 0;
 			return 0;
 		}
+
+		data_std.origwidth = img->GetWidth();
+		data_std.origheight = img->GetHeight();
 	}
 
 	delete mods_img;
-	//mods_img = new wxImage(img->Copy());
-	mods_img = wximg_get_alphaconv(img);
-
-	data_std.origwidth = img->GetWidth();
-	data_std.origheight = img->GetHeight();
+	if ( false ) {
+		mods_img = wximg_get_alphaconv(img);
+	} else {
+		mods_img = new wxImage(img->Copy());
+	}
 
 	if ( ! has_transform() ) {
 		return mods_img;
@@ -318,16 +350,15 @@ bgimg_manager::get_mod_image()
 		);
 	}
 
-	if ( get_arg_rotate() || get_arg_width() || get_arg_height() ) {
+	if ( get_arg_width() || get_arg_height() ) {
 		// TODO: make scale type an option
 		const
-		#if wxCHECK_VERSION(2, 9, 0)
+#		if wxCHECK_VERSION(2, 9, 0)
 		wxImageResizeQuality
-		#else
+#		else
 		int
-		#endif
-		//qual = wxIMAGE_QUALITY_NORMAL;
-		qual = wxIMAGE_QUALITY_HIGH;
+#		endif
+		qual = wxIMAGE_QUALITY_HIGH; //qual = wxIMAGE_QUALITY_NORMAL;
 
 		int w = static_cast<int>(
 			data_std.modswidth ?
@@ -352,13 +383,15 @@ bgimg_manager::remove_image(bool update)
 {
 	hide_dialog();
 	data_save = data_std;
-	data_std = datastruct();
-	
 	delete mods_img;
 	mods_img = 0;
 	delete img;
 	img = 0;
 
+	clear_params();
+	data_std.zero();
+	update__to__dialog(data_std);
+	
 	if ( update ) {
 		force_updates();
 	}
@@ -396,6 +429,7 @@ bgimg_manager::update_from_dialog(datastruct& dat)
 	set_flip_horz(p->chk_flhorz->GetValue());
 	set_flip_vert(p->chk_flvert->GetValue());
 	set_conv_grey(p->chk_greyscale->GetValue());
+	dat.degrotate = p->spin_ro->GetValue();
 	dat.modswidth = p->spin_wi->GetValue();
 	dat.modsheight = p->spin_hi->GetValue();
 	dat.off_x = p->spin_offsx->GetValue();
@@ -429,6 +463,7 @@ bgimg_manager::update__to__dialog(const datastruct& dat)
 	p->chk_flhorz->SetValue(get_flip_horz());
 	p->chk_flvert->SetValue(get_flip_vert());
 	p->chk_greyscale->SetValue(get_conv_grey());
+	p->spin_ro->SetValue(dat.degrotate);
 	p->spin_wi->SetValue(dat.modswidth);
 	p->spin_hi->SetValue(dat.modsheight);
 	p->spin_offsx->SetValue(dat.off_x);
@@ -557,11 +592,8 @@ bg_img_dlg::put_preview()
 	}
 
 	if ( hsv_h->GetValue() || hsv_s->GetValue() || hsv_v->GetValue() ) {
-		wximg_adjhsv(
-			&i,
-			hsv_h->GetValue(),
-			hsv_s->GetValue(),
-			hsv_v->GetValue()
+		wximg_adjhsv(&i,
+			hsv_h->GetValue(), hsv_s->GetValue(), hsv_v->GetValue()
 		);
 	}
 	if ( int v = band_comp->GetValue() ) {
@@ -600,45 +632,50 @@ bg_img_dlg::set_preview(wxImage* i)
 {
 	wxSize sz = bmp_preview->GetClientSize();
 
-	if ( i && i->GetHeight() > 0 ) {
+	if ( i && i->GetWidth() > 0 && i->GetHeight() > 0 ) {
 		wxImage itmp(i->Copy());
 		i = &itmp;
 
-		// this block moved to here because
-		// app does not add offset to image
-		if ( spin_offsx->GetValue() || spin_offsy->GetValue() ) {
-			i->Resize(
-				wxSize(i->GetWidth(), i->GetHeight()),
-				wxPoint(spin_offsx->GetValue(), spin_offsy->GetValue()),
-				mng->rotbg_r, mng->rotbg_g, mng->rotbg_b
-			);
-		}
+		int x = sz.GetWidth(), y = sz.GetHeight();
+		int ix = spin_wi->GetValue() ? spin_wi->GetValue()
+			: i->GetWidth();
+		int iy = spin_hi->GetValue() ? spin_hi->GetValue()
+			: i->GetHeight();
+		int ox = spin_offsx->GetValue() * x / ix;
+		int oy = spin_offsy->GetValue() * y / iy;
 
-		int x, y;
-		float rn = float(sz.GetWidth())  / float(sz.GetHeight());
-		float ro = float(i->GetWidth()) / float(i->GetHeight());
+		float rn = float(x)  / float(y);
+		float ro = float(ix) / float(iy);
 
 		if ( ro < rn ) {
-			x = int(float(sz.GetHeight()) * ro + 0.5);
-			y = sz.GetHeight();
+			x = int(float(y) * ro + 0.5);
 		} else {
-			x = sz.GetWidth();
-			y = int(float(sz.GetWidth()) / ro + 0.5);
+			y = int(float(x) / ro + 0.5);
 		}
 
 		wxPoint off(
-			(sz.GetWidth() - x) / 2, (sz.GetHeight() - y) / 2
+			ox + (sz.GetWidth() - x) / 2, oy + (sz.GetHeight() - y) / 2
 		);
 
-		bmp_preview->SetBitmap(
-			wxBitmap(
-				i->Scale(
-					x, y, wxIMAGE_QUALITY_NORMAL
-				).Size(sz, off,
-					mng->rotbg_r, mng->rotbg_g, mng->rotbg_b
+		if ( i->HasMask() || i->HasAlpha() ) {
+			bmp_preview->SetBitmap(
+				wxBitmap(
+					i->Scale(
+						x, y, wxIMAGE_QUALITY_NORMAL
+					).Size(sz, off)
 				)
-			)
-		);
+			);
+		} else {
+			bmp_preview->SetBitmap(
+				wxBitmap(
+					i->Scale(
+						x, y, wxIMAGE_QUALITY_NORMAL
+					).Size(sz, off,
+						mng->rotbg_r, mng->rotbg_g, mng->rotbg_b
+					)
+				)
+			);
+		}
 	} else {
 		bmp_preview->SetBitmap(
 			wxBitmap(

@@ -111,6 +111,8 @@ enum menu_and_toolbar_IDs {
 	EdPasteGlobal,
 	EdGlobalPreferences,
 // Tools
+	SetBGImage,
+	RmBGImage,
 	SetUserScale,
 	CycleUserScale,
 	Toggle_AA_Lines,
@@ -256,9 +258,14 @@ public:
 		menuEdit->Enable(EdPasteGlobal, b);
 		GetToolBar()->EnableTool(EdPasteGlobal, b);
 	}
+	void enableSetBGImg(bool b) {
+		MenuOpts->Enable(SetBGImage, b);
+	}
+	void enableRmBGImg(bool b) {
+		MenuOpts->Enable(RmBGImage, b);
+	}
 	void enableViewScale(bool b) {
 		MenuOpts->Enable(SetUserScale, b);
-		//GetToolBar()->EnableTool(SetUserScale, b);
 	}
 	void enableViewScaleCycle(bool b) {
 		MenuOpts->Enable(CycleUserScale, b);

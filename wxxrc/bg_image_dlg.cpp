@@ -61,7 +61,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxString opt_saveChoices[] = { _("Copy Original"), _("Copy Changes"), _("No Copy") };
 	int opt_saveNChoices = sizeof( opt_saveChoices ) / sizeof( wxString );
 	opt_save = new wxRadioBox( this, wxID_ANY, _("Copy Options:"), wxDefaultPosition, wxDefaultSize, opt_saveNChoices, opt_saveChoices, 1, wxRA_SPECIFY_ROWS );
-	opt_save->SetSelection( 0 );
+	opt_save->SetSelection( 1 );
 	opt_save->SetToolTip( _("Option to copy image with the saved .pse file:\ncopy the original without changes (modifications\nmay be reapplied automattically), or save a copy\nwith changes, or make no copy at all.") );
 	
 	gbSizer2->Add( opt_save, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxBOTTOM|wxTOP, 5 );
@@ -132,7 +132,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sizer_dimsw->Add( m_staticText3, 0, wxALL, 5 );
 	
 	spin_wi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 80,-1 ), wxSP_ARROW_KEYS, 0, 32767, 0 );
-	spin_wi->SetToolTip( _("Set the width of display on background.") );
+	spin_wi->SetToolTip( _("Set the width of display on background.\nZero (0) will use default width.") );
 	
 	sizer_dimsw->Add( spin_wi, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	
@@ -149,7 +149,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sizer_dimsh->Add( m_staticText4, 0, wxALL, 5 );
 	
 	spin_hi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 80,-1 ), wxSP_ARROW_KEYS, 0, 32767, 0 );
-	spin_hi->SetToolTip( _("Set the height of display on background.") );
+	spin_hi->SetToolTip( _("Set the height of display on background.\nZero (0) will use default height.") );
 	
 	sizer_dimsh->Add( spin_hi, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	

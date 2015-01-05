@@ -287,6 +287,7 @@ public:
 
 	void show_dialog(bool show = true);
 	void hide_dialog() { show_dialog(false); }
+	void cancel_dialog();
 
 	// background color when image is rotated, etc.
 	unsigned char rotbg_r;

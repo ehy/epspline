@@ -261,6 +261,7 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 
 A_Canvas::~A_Canvas()
 {
+	delete bg_mng;
 	delete im_main;
 	delete D;
 	delete m_pop;
@@ -384,7 +385,7 @@ void
 A_Canvas::IdleUpdate()
 {
 	if ( activetab == false ) {
-		bg_mng->hide_dialog();
+		bg_mng->cancel_dialog();
 		return;
 	}
 
@@ -2008,10 +2009,12 @@ A_Canvas::GotPopup(wxCommandEvent& event)
 			MoveUp();
 			break;
 		case IC_set_bg_img:
-			bg_mng->show_dialog();
+			//bg_mng->show_dialog();
+			DoSetBGImg();
 			break;
 		case IC_rm_bg_img:
-			bg_mng->remove_image();
+			//bg_mng->remove_image();
+			DoRmBGImg();
 			break;
 		default:
 			D->GotPopup(event);
@@ -2277,6 +2280,18 @@ A_Canvas::DoCycleScale()
 		vrule->SetScalePercent(yscale);
 	Refresh();
 	UpdateStatusBar();
+}
+
+void
+A_Canvas::DoSetBGImg()
+{
+	bg_mng->show_dialog();
+}
+
+void
+A_Canvas::DoRmBGImg()
+{
+	bg_mng->remove_image();
 }
 
 bool
@@ -2551,7 +2566,7 @@ A_Canvas::PrepSaveAddlData(IO_AddlData& addl,
 	
 		bg_mng->get_file(f);
 		wxFileName nfn(d, wxFileName(f).GetName());
-		nfn.SetExt("png");
+		nfn.SetExt(wxT("png"));
 		f = nfn.GetFullPath();
 
 		bg_mng->SaveOrigTo(f, wxBITMAP_TYPE_PNG);
@@ -2561,7 +2576,7 @@ A_Canvas::PrepSaveAddlData(IO_AddlData& addl,
 		wxString d(dname ? *dname : GetCurDirName());
 	
 		wxFileName nfn(d, f);
-		nfn.SetExt("png");
+		nfn.SetExt(wxT("png"));
 		f = nfn.GetFullPath();
 
 		bg_mng->SaveModsTo(f, wxBITMAP_TYPE_PNG);
@@ -3061,19 +3076,19 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	#endif
 	dc.SetPen(np);
 
-	if ( bg_mng->get_mod_image() ) {
+	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
 		bgimg_manager::dim_type bg_wi, bg_hi;
 		bgimg_manager::off_type bg_ox, bg_oy;
 		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
 		
-		wxBitmap bmbg(*bg_mng->get_mod_image());
+		wxBitmap bmbg(*bgimg);
 		dc.DrawBitmap(bmbg, wxCoord(bg_ox), wxCoord(bg_oy), true);
 	}
 
 	if ( drawgrid && wid > 0 ) {
 		int xs = wid;
 		int ys = wid;
-		int offs = r.x - (r.x % xs); // - 1;
+		int offs = r.x - (r.x % xs);
 		int cnt = ((r.width + r.x) - offs) / xs;
 
 		while ( cnt-- > 0 ) {
@@ -3081,7 +3096,7 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 			dc.DrawLine(offs, r.y, offs, r.y + r.height);
 		}
 	
-		offs = r.y - (r.y % ys); // - 1;
+		offs = r.y - (r.y % ys);
 		cnt = ((r.height + r.y) - offs) / ys;
 
 		while ( cnt-- > 0 ) {
@@ -3404,6 +3419,8 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 		bgimg_manager::dim_type bg_wi, bg_hi;
 		bgimg_manager::off_type bg_ox, bg_oy;
 		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+		bg_wi = bgimg->GetWidth();
+		bg_hi = bgimg->GetHeight();
 		
 		bg_ox -= X;
 		bg_oy -= Y;
@@ -3471,8 +3488,8 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 				unsigned char* ep = sp + cplen;
 
 				while ( sp < ep ) {
-					if ( mr != sp[iR] &&
-						 mg != sp[iG] && mb != sp[iB] ) {
+					if ( mr != sp[iR] ||
+						 mg != sp[iG] || mb != sp[iB] ) {
 						tp[iR] = sp[iR];
 						tp[iG] = sp[iG];
 						tp[iB] = sp[iB];
@@ -3912,8 +3929,17 @@ void
 A_Canvas::enableHelpDemo(bool b)
 {a_frame->enableHelpDemo(b);}
 void
+A_Canvas::enableSetBackgroundImage(bool b)
+{
+	m_pop->Enable(IC_set_bg_img, b);
+	a_frame->enableSetBGImg(b);
+}
+void
 A_Canvas::enableRemoveBackgroundImage(bool b)
-{m_pop->Enable(IC_rm_bg_img, b);}
+{
+	m_pop->Enable(IC_rm_bg_img, b);
+	a_frame->enableRmBGImg(b);
+}
 
 void
 A_Canvas::ErrorBox(const wxString& msg, const wxString& titletail)

@@ -202,6 +202,13 @@ A_Frame::A_Frame(
 	, _("Pre&ferences"), _("Edit application preferences"));
 
 	// Tools:
+	MNADD0NS(MenuOpts, SetBGImage
+	, _("Setup &Backgroung Image"),
+	_("Set or change a backgroung image on the drawing area"));
+	MNADD0NS(MenuOpts, RmBGImage
+	, _("&Remove Backgroung Image"),
+	_("Remove a backgroung image on the drawing area"));
+	MenuOpts->AppendSeparator();
 	MNADD0NS(MenuOpts, SetUserScale
 	, _("&Set Scale"), _("Set scale of view"));
 	MNADD0NS(MenuOpts, CycleUserScale
@@ -888,6 +895,12 @@ A_Frame::OnOption(wxCommandEvent& event)
 			break;
 		case EdGlobalPreferences:
 			wxGetApp().show_prefs_dialog(true);
+			break;
+		case SetBGImage:
+			canvas->DoSetBGImg();
+			break;
+		case RmBGImage:
+			canvas->DoRmBGImg();
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();

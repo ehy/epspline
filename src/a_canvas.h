@@ -289,6 +289,8 @@ public:
 	void DoRClickMenu(int x, int y);
 	void DoSetScale();
 	void DoCycleScale();
+	void DoSetBGImg();
+	void DoRmBGImg();
 
 	// For internal clipboard that can hold one object
 	void            clipCopy();
@@ -455,6 +457,7 @@ protected:
 	void enableEdCutGlobal(bool b);
 	void enableEdPasteGlobal(bool b);
 	void enableHelpDemo(bool b);
+	void enableSetBackgroundImage(bool b);
 	void enableRemoveBackgroundImage(bool b);
 
 	void enable_set_linear(bool b)

@@ -111,7 +111,7 @@ void
 bgimg_manager::get_dimensions(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
-	#if 0
+	#if 1
 	width  =
 		data_std.modswidth ? data_std.modswidth :
 		((is_current() && mods_img) ? dim_type(mods_img->GetWidth()):
@@ -641,21 +641,35 @@ bg_img_dlg::set_preview(wxImage* i)
 			: i->GetWidth();
 		int iy = spin_hi->GetValue() ? spin_hi->GetValue()
 			: i->GetHeight();
-		int ox = spin_offsx->GetValue() * x / ix;
-		int oy = spin_offsy->GetValue() * y / iy;
+		int ox = spin_offsx->GetValue();
+		int oy = spin_offsy->GetValue();
 
 		float rn = float(x)  / float(y);
 		float ro = float(ix) / float(iy);
 
 		if ( ro < rn ) {
 			x = int(float(y) * ro + 0.5);
+			ox = ox * x / ix;
+			oy = oy * x / ix;
 		} else {
 			y = int(float(x) / ro + 0.5);
+			ox = ox * y / iy;
+			oy = oy * y / iy;
 		}
 
+#		if wxCHECK_VERSION(3, 0, 0)
+		// wx 3.0 does not have bug described below
 		wxPoint off(
 			ox + (sz.GetWidth() - x) / 2, oy + (sz.GetHeight() - y) / 2
 		);
+#		else
+		// with 2.8.12, wxImage::Size(sz, off) fails as soon as
+		// non-masked area passes size limit: image simply
+		// disappears rather than get clipped -- so no scaled offset
+		wxPoint off(
+			(sz.GetWidth() - x) / 2, (sz.GetHeight() - y) / 2
+		);
+#		endif
 
 		if ( i->HasMask() || i->HasAlpha() ) {
 			bmp_preview->SetBitmap(

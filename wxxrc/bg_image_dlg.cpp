@@ -313,6 +313,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( bg_image::on_close_event ) );
+	this->Connect( wxEVT_IDLE, wxIdleEventHandler( bg_image::on_idle_dlg ) );
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( bg_image::on_init_dlg ) );
 	opt_save->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
 	chk_greyscale->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );
@@ -370,6 +371,7 @@ bg_image::~bg_image()
 {
 	// Disconnect Events
 	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( bg_image::on_close_event ) );
+	this->Disconnect( wxEVT_IDLE, wxIdleEventHandler( bg_image::on_idle_dlg ) );
 	this->Disconnect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( bg_image::on_init_dlg ) );
 	opt_save->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
 	chk_greyscale->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );

@@ -335,7 +335,7 @@ A_Canvas::DragCallbackHandler(wxMouseEvent& e, A_Ruler* r)
 			}
 			me.m_y = e.m_y;
 		} else {
-			fprintf(stderr,"internal error:DragCallbackHandler\n");
+			std::fprintf(stderr,"internal error:DragCallbackHandler\n");
 			break;
 		}
 
@@ -346,7 +346,7 @@ A_Canvas::DragCallbackHandler(wxMouseEvent& e, A_Ruler* r)
 
 		wxEvtHandler* eh = GetEventHandler();
 		if ( eh == NULL ) {
-			fprintf(stderr, "No wxEvtHandler* eh!\n");
+			std::fprintf(stderr, "No wxEvtHandler* eh!\n");
 			break;
 		}
 		if ( me.Leaving() ) {

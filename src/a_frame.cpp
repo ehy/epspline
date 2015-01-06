@@ -203,11 +203,11 @@ A_Frame::A_Frame(
 
 	// Tools:
 	MNADD0NS(MenuOpts, SetBGImage
-	, _("Setup &Backgroung Image"),
-	_("Set or change a backgroung image on the drawing area"));
+	, _("Set &Background Image"),
+	_("Set or change a background image on the drawing area"));
 	MNADD0NS(MenuOpts, RmBGImage
-	, _("&Remove Backgroung Image"),
-	_("Remove a backgroung image on the drawing area"));
+	, _("&Remove Background Image"),
+	_("Remove a background image on the drawing area"));
 	MenuOpts->AppendSeparator();
 	MNADD0NS(MenuOpts, SetUserScale
 	, _("&Set Scale"), _("Set scale of view"));
@@ -530,16 +530,17 @@ void
 A_Frame::ErrorBox(const wxString& msg, const wxString& titletail)
 const
 {
-	//wxString ttl = wxGetApp().GetAppTitle();
-	wxString ttl = wxGetApp().GetBinName();
+	//wxString tit = wxGetApp().GetAppTitle();
+	wxString tit = wxGetApp().GetBinName();
 
-	if ( titletail != wxT("") ) {
-		ttl += _(":  ");
-		ttl += titletail;
-	}
+	wxString ttl;
+	// TRANSLATORS: %1$s is application binary name ("epspline")
+	// and %2$s is an additional message suitable for an error
+	// messsage box
+	ttl.Printf(_("%1$s: %2$s"), tit.c_str(), titletail.c_str());
 
 	wxMessageBox(msg, ttl
-		, wxCENTRE | wxICON_EXCLAMATION | wxOK
+		, wxCENTRE | wxICON_ERROR | wxOK
 		, const_cast<A_Frame*>(this));
 }
 

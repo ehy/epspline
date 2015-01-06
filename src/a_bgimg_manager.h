@@ -55,8 +55,6 @@ protected:
 	// event handler overides in friend dialog call these
 	void on_close_event(wxCloseEvent& event);
 	void on_init_dlg(wxInitDialogEvent& event);
-	void on_restore_defs(wxCommandEvent& event);
-	void on_restore_conf(wxCommandEvent& event);
 	void on_apply(wxCommandEvent& event);
 	void on_cancel(wxCommandEvent& event);
 	void on_help(wxCommandEvent& event);
@@ -176,8 +174,8 @@ protected:
 	void update__to__dialog(const datastruct& dat);
 
 	// helpers
-	params& parms() { return *(&data_std.parms); }
-	wxString& img_fname() { return *(&data_std.img_fname); }
+	params& parms() { return data_std.parms; }
+	wxString& img_fname() { return data_std.img_fname; }
 
 	// this manages the wxImage and copies
 	wxImage* img;
@@ -212,6 +210,9 @@ protected:
 
 	// tell using code to update
 	void force_updates();
+
+	// display error message; e.g., image file open failure
+	void error_msg(wxString msg, wxString addl);
 
 	// for using code update callback
 	cb_update_func  cb_func;
@@ -389,6 +390,8 @@ namespace ns_bg_img_dlg {
 	class bg_img_dlg : public bg_image {
 	protected:
 		bgimg_manager*	mng;
+		// set in file picker handler gets name of existing file
+		bool new_filename;
 
 	public:
 		bg_img_dlg(
@@ -417,6 +420,7 @@ namespace ns_bg_img_dlg {
 		virtual void on_file_select(wxFileDirPickerEvent& event);
 		virtual void on_close_event(wxCloseEvent& event);
 		virtual void on_init_dlg(wxInitDialogEvent& event);
+		virtual void on_idle_dlg(wxIdleEvent& event);
 		virtual void on_apply(wxCommandEvent& event);
 		virtual void on_cancel(wxCommandEvent& event);
 		virtual void on_help(wxCommandEvent& event);

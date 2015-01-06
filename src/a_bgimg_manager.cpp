@@ -19,9 +19,13 @@
  * MA 02110-1301, USA.
  */
 
+#include <cstdlib>
+#include <cstring>
+#include <cerrno>
 #include "cfg.h"
 #include "stdcc.h"
 #include "epspline.h"
+#include "a_frame.h"
 #include "splines.h"
 #include "spline_props.h"
 #include "wxutil.h"
@@ -56,6 +60,18 @@ bgimg_manager::~bgimg_manager()
 	delete mods_img;
 }
 
+// display error message; e.g., image file open failure
+void
+bgimg_manager::error_msg(wxString msg, wxString addl)
+{
+	// main window handles the error dialog
+	if ( A_Frame* p = dynamic_cast<A_Frame*>(parent_wnd()) ) {
+		p->ErrorBox(msg, addl);
+	} else {
+		std::fprintf(stderr, "%s: %s\n", wxs2ch(addl), wxs2ch(msg));
+	}
+}
+
 bgimg_manager::dialog_type*
 bgimg_manager::get_dlg() {
 	if ( dlg == 0 ) {
@@ -77,7 +93,7 @@ bgimg_manager::set_file(wxString name)
 	img = 0;
 	delete mods_img;
 	mods_img = 0;
-	data_std.img_fname = name;
+	img_fname() = name;
 	update__to__dialog(data_std);
 }
 
@@ -92,7 +108,7 @@ bgimg_manager::set_file_reset(wxString name)
 void
 bgimg_manager::get_file(wxString& name)
 {
-	name = data_std.img_fname;
+	name = img_fname();
 }
 
 void
@@ -286,11 +302,50 @@ bgimg_manager::get_mod_image()
 	if ( img == 0 ) {
 		// have file name but image not created
 		// yet; or, error
+		errno = 0;
 		img = new wxImage(img_fname());
-		if ( img == 0 || ! img->IsOk() ) {
+
+		if ( errno && img == 0 || ! img->IsOk() ) {
+			int etmp = errno;
 			// not so good . . .
 			delete img;
 			img = 0;
+
+			wxString err;
+			// TRANSLATORS: this is a failure to open a raster
+			// image file specified by the user through a
+			// dialog box, meant for a image on the background
+			// of the working area ("canvas"). This error is most likely
+			// at system level, like does not exist, or permissions.
+			err.Printf(
+				_("Cannot open backgroung image file \"%s\""),
+				img_fname().c_str());
+
+			// don't fail to empty file string: else inf recurse!
+			img_fname().Empty();
+			error_msg(err, ch2wxs(strerror(etmp)));
+
+			return 0;
+		} else if ( img == 0 || ! img->IsOk() ) {
+			// not so good . . .
+			delete img;
+			img = 0;
+
+			wxString err;
+			// TRANSLATORS: this is a failure to open a raster
+			// image file specified by the user through a
+			// dialog box, meant for a image on the background
+			// of the working area ("canvas"). This error is most likely
+			// at the library level, like a corrupt image or
+			// unsupported type.
+			err.Printf(
+				_("Failure opening backgroung image file \"%s\""),
+				img_fname().c_str());
+
+			// don't fail to empty file string: else inf recurse!
+			img_fname().Empty();
+			error_msg(err, _("Backgroung Image Error"));
+
 			return 0;
 		}
 
@@ -496,18 +551,6 @@ bgimg_manager::on_init_dlg(wxInitDialogEvent& event)
 }
 
 void
-bgimg_manager::on_restore_defs(wxCommandEvent& event)
-{
-	update__to__dialog(data_std);
-}
-
-void
-bgimg_manager::on_restore_conf(wxCommandEvent& event)
-{
-	update__to__dialog(data_std);
-}
-
-void
 bgimg_manager::on_apply(wxCommandEvent& event)
 {
 	update_from_dialog(data_std);
@@ -567,6 +610,7 @@ bg_img_dlg::bg_img_dlg(
 	long style)
 	: bg_image(manager->parent_wnd(), id, title, pos, size, style)
 	, mng(manager)
+	, new_filename(false)
 {
 }
 
@@ -577,7 +621,7 @@ bg_img_dlg::~bg_img_dlg()
 void
 bg_img_dlg::put_preview()
 {
-	wxString s = selector_file->GetPath();
+	wxString s = mng->img_fname();
 
 	if ( s.IsEmpty() ) {
 		set_preview(0);
@@ -835,25 +879,54 @@ bg_img_dlg::on_band_comp_scroll(wxScrollEvent& event)
 void
 bg_img_dlg::on_file_select(wxFileDirPickerEvent& event)
 {
-	mng->data_std.img_fname.Empty();
-	mng->get_mod_image();
-	mng->data_std.img_fname = selector_file->GetPath();
+	event.Skip();
 
-	put_preview();
+	// already working on it
+	if ( new_filename ) {
+		return;
+	}
+
+	// wx 3.0 bug: this is getting called *for each char entered*
+	// in contradiction to the docs which say that it is only
+	// called if file exists when control has wxFLP_FILE_MUST_EXIST
+	// (and it does). Result: hand text entry is ++ungood.
+	// Workaround: check file existence here; do nothing if
+	// non-existent.
+	if ( !::wxFileExists(selector_file->GetPath()) ) {
+		return;
+	}
+
+	// handle existing file in idle handler; doing it here
+	// gets infinite recursion if a error dialog is shown.
+	new_filename = true;
 }
 
 void
 bg_img_dlg::on_close_event(wxCloseEvent& event)
 {
 	mng->on_close_event(event);
-	// let manager decide on Skip()
-	//event.Skip();
+	event.Skip();
 }
 
 void
 bg_img_dlg::on_init_dlg(wxInitDialogEvent& event)
 {
 	mng->on_init_dlg(event);
+	event.Skip();
+}
+
+void
+bg_img_dlg::on_idle_dlg(wxIdleEvent& event)
+{
+	if ( new_filename ) {
+		mng->img_fname().Empty();
+		mng->get_mod_image();
+		mng->img_fname() = selector_file->GetPath();
+	
+		put_preview();
+		new_filename = false;
+	}
+
 	event.Skip();
 }
 

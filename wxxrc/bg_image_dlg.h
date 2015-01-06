@@ -86,6 +86,7 @@ namespace ns_bg_img_dlg
 			
 			// Virtual event handlers, overide them in your derived class
 			virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
+			virtual void on_idle_dlg( wxIdleEvent& event ) { event.Skip(); }
 			virtual void on_init_dlg( wxInitDialogEvent& event ) { event.Skip(); }
 			virtual void on_copy_opt( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_greyscale( wxCommandEvent& event ) { event.Skip(); }
@@ -125,7 +126,7 @@ namespace ns_bg_img_dlg
 			wxSlider* band_comp;
 			wxFilePickerCtrl* selector_file;
 			
-			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE );
 			~bg_image();
 		
 	};

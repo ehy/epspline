@@ -80,7 +80,7 @@ class AnApp : public wxApp {
 
 	// These On*EndSession seem to be mostly for MSW's shutdown message
 	// handling; there doesn't seem to be an equivalent in the
-	// GTK build, or generally a X Window System desktop environment?
+	// GTK build, or generally a X Window System desktop environment
 	void OnQueryEndSession(wxCloseEvent& e);
 	void OnEndSession(wxCloseEvent& e);
 

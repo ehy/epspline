@@ -737,10 +737,15 @@ bg_img_dlg::set_preview(wxImage* i)
 			oy = oy * y / iy;
 		}
 
-#		if wxCHECK_VERSION(3, 0, 0)
+#		if wxCHECK_VERSION(3, 0, 0) || 1
 		// wx 3.0 does not have bug described below
+		// UPDATE: this is nnow limited to extent that
+		// will not clip, even though wx handles it
 		wxPoint off(
-			ox + (sz.GetWidth() - x) / 2, oy + (sz.GetHeight() - y) / 2
+			std::max(0, std::min(ox + (sz.GetWidth() - x) / 2,
+				sz.GetWidth() - x)),
+			std::max(0, std::min(oy + (sz.GetHeight() - y) / 2,
+				sz.GetHeight() - y))
 		);
 #		else
 		// with 2.8.12, wxImage::Size(sz, off) fails as soon as

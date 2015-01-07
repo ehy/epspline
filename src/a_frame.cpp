@@ -203,8 +203,9 @@ A_Frame::A_Frame(
 
 	// Tools:
 	MNADD0NS(MenuOpts, SetBGImage
-	, _("Set &Background Image"),
+	, _("Set &Background Image\tCtrl-B"),
 	_("Set or change a background image on the drawing area"));
+	MNACCHACK(MenuOpts, SetBGImage, _("Ctrl-B"));
 	MNADD0NS(MenuOpts, RmBGImage
 	, _("&Remove Background Image"),
 	_("Remove a background image on the drawing area"));

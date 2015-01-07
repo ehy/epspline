@@ -122,6 +122,7 @@ wxImage* wximg_rotate(wxImage* img, double rot,
 	unsigned char g = wximg_rotmask_default_g,
 	unsigned char b = wximg_rotmask_default_b);
 
+// test for any intersection of wx rectangles
 bool IntersectRect(const wxRect& r0, const wxRect& r1);
 
 // test if point is on rect line, return enum indicating which

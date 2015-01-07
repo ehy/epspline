@@ -87,6 +87,37 @@ bgimg_manager::parent_wnd()
 }
 
 void
+bgimg_manager::set_default_params()
+{
+	clear_params();
+	data_std.zero();
+	set_copy_orig();
+	update__to__dialog(data_std);
+}
+
+void
+bgimg_manager::reset_default_params()
+{
+	// save offsets: they are for using code, and are
+	// not applied to image; therefore they are not cumulatively
+	// reapplied to image, and should not be lost
+	off_type off_x, off_y;
+	off_x = data_std.off_x;
+	off_y = data_std.off_y;
+	// save copy params too; should not be lost here
+	params copopt = params(parms() & copy_bitsmask);
+	clear_params();
+	data_std.zero();
+	set_copy_orig();
+	// restore saved items
+	data_std.off_x = off_x;
+	data_std.off_y = off_y;
+	parms() = params((parms() & ~copy_bitsmask) | copopt);
+	// update
+	update__to__dialog(data_std);
+}
+
+void
 bgimg_manager::set_file(wxString name)
 {
 	delete img;
@@ -127,7 +158,7 @@ void
 bgimg_manager::get_dimensions(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
-	#if 1
+	#if 0
 	width  =
 		data_std.modswidth ? data_std.modswidth :
 		((is_current() && mods_img) ? dim_type(mods_img->GetWidth()):
@@ -136,11 +167,16 @@ bgimg_manager::get_dimensions(
 		data_std.modsheight ? data_std.modsheight :
 		((is_current() && mods_img) ? dim_type(mods_img->GetHeight()):
 			data_std.origheight);
-	#else
+	#elif 0
 	width  =
 		data_std.modswidth ? data_std.modswidth : data_std.origwidth;
 	height =
 		data_std.modsheight ? data_std.modsheight : data_std.origheight;
+	#else
+	width  =
+		data_std.modswidth ? data_std.modswidth : 0;
+	height =
+		data_std.modsheight ? data_std.modsheight : 0;
 	#endif
 	xo = data_std.off_x;
 	yo = data_std.off_y;
@@ -305,7 +341,7 @@ bgimg_manager::get_mod_image()
 		errno = 0;
 		img = new wxImage(img_fname());
 
-		if ( errno && img == 0 || ! img->IsOk() ) {
+		if ( errno && (img == 0 || ! img->IsOk()) ) {
 			int etmp = errno;
 			// not so good . . .
 			delete img;

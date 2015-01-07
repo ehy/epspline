@@ -22,6 +22,7 @@
 
 
 #include <wx/wx.h>
+#include <wx/filename.h>
 #include "wxexio.h"
 #include "wxutil.h"
 #include "a_bgimg_manager.h"
@@ -136,6 +137,11 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 		if ( addl->bgm ) {
 			wxString name;
 			addl->bgm->get_file(name);
+			if ( addl->bgm->get_copy_orig() ||
+				 addl->bgm->get_copy_changes() ) {
+				// in this case do not save directory
+				name = wxFileName(name).GetFullName();
+			}
 			cnt->AddAttributeValueString(
 				wxT("CanvasBGFName"), wxsani(name));
 
@@ -331,10 +337,6 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 		addl->scale = tint;
 		
 		if ( addl->bgm ) {
-			wxString name;
-			pe->GetAttributeValue(wxT("CanvasBGFName"), name);
-			addl->bgm->set_file(name);
-
 			long tlong = 0;
 			pe->GetAttributeValue(wxT("CanvasBGParams"), tlong);
 			addl->bgm->set_params(static_cast<unsigned long>(tlong));
@@ -380,6 +382,20 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 			pe->GetAttributeValue(wxT("CanvasBGImgRotate"), tlong);
 			rot = static_cast<bgimg_manager::off_type>(tlong);
 			addl->bgm->set_rotation(rot);
+
+			wxString name;
+			pe->GetAttributeValue(wxT("CanvasBGFName"), name);
+			if ( addl->bgm->get_copy_orig() ||
+				 addl->bgm->get_copy_changes() ) {
+				// in this case directory was not
+				// saved, and file is expected in
+				// same dir as .pse file.
+				name = wxFileName(
+					wxFileName(fname).GetPath(),
+					wxFileName(name).GetFullName()
+				).GetFullPath();
+			}
+			addl->bgm->set_file(name);
 		}
 
 		addl->init = true;

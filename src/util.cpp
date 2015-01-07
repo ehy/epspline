@@ -178,6 +178,25 @@ wximg_bandcomp(wxImage* img, double band, bool lighten)
 // simplistc HSV adjustment, originally for background image
 // double args are -1.0,1.0
 // NOTE: returns *same* image (i.e., source is edited)
+// (1st static inlines to support wximg_adjhsv)
+static inline double adjhsvH(double v, double a)
+{
+	a *= 0.5;
+	v += a;
+	return v > 1.0 ? (v - 1.0) : (v < 0.0 ? (v + 1.0) : v);
+}
+static inline double adjhsvS(double v, double a)
+{
+#if 0
+	return std::min(1.0, std::max(0.0, v * (1.0 + a)));
+#else
+	return v + (a > 0.0 ? (a * (1.0 - v)) : (a * v));
+#endif
+}
+static inline double adjhsvV(double v, double a)
+{
+	return v + (a > 0.0 ? (a * (1.0 - v)) : (a * v));
+}
 wxImage*
 wximg_adjhsv(wxImage* img, double h, double s, double v)
 {
@@ -213,21 +232,15 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 		bm = img->GetMaskBlue();
 	}
 
-	// this is the simplistic part . . .
-#	define _adjcomp(v, a) \
-	( \
-		std::min(1.0, std::max(0.0, (v) * (1.0 + (a)))) \
-	)
-
 	while ( p < e ) {
 		wxImage::HSVValue hsv =
 			wxImage::RGBtoHSV(wxImage::RGBValue(p[R], p[G], p[B]));
 
 		wxImage::RGBValue rgb =
 			wxImage::HSVtoRGB(wxImage::HSVValue(
-				_adjcomp(hsv.hue, h),
-				_adjcomp(hsv.saturation, s),
-				_adjcomp(hsv.value, v)
+				adjhsvH(hsv.hue, h),
+				adjhsvS(hsv.saturation, s),
+				adjhsvV(hsv.value, v)
 			)
 		);
 
@@ -244,16 +257,14 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 
 		wxImage::RGBValue rgb =
 			wxImage::HSVtoRGB(wxImage::HSVValue(
-				_adjcomp(hsv.hue, h),
-				_adjcomp(hsv.saturation, s),
-				_adjcomp(hsv.value, v)
+				adjhsvH(hsv.hue, h),
+				adjhsvS(hsv.saturation, s),
+				adjhsvV(hsv.value, v)
 			)
 		);
 		
 		img->SetMaskColour(rgb.red, rgb.green, rgb.blue);
 	}
-
-#	undef _adjcomp
 
 	return img;
 }

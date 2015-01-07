@@ -146,105 +146,109 @@
 #define IDS_BackgroundImage		"Background Image"
 #define IDF_BackgroundImage		"epsplinese8.html"
 
-#define IDI_MouseKeyRef		480
+#define IDI_BackgroundImageDialogControls		480
+#define IDS_BackgroundImageDialogControls		"Background Image Dialog Controls"
+#define IDF_BackgroundImageDialogControls		"epsplinese8.html#x16-360002.6.1"
+
+#define IDI_MouseKeyRef		496
 #define IDS_MouseKeyRef		"Mouse and Key Reference"
 #define IDF_MouseKeyRef		"epsplinese9.html"
 
-#define IDI_MouseandKeyInputActions		496
+#define IDI_MouseandKeyInputActions		512
 #define IDS_MouseandKeyInputActions		"Mouse and Key Input Actions"
-#define IDF_MouseandKeyInputActions		"epsplinese9.html#x17-370002.7.1"
+#define IDF_MouseandKeyInputActions		"epsplinese9.html#x17-380002.7.1"
 
 #define IDI_Licenses		202000
 #define IDS_Licenses		"Licenses"
 #define IDF_Licenses		"epsplinech3.html"
 
-#define IDI_GPL3_Section		544
+#define IDI_GPL3_Section		560
 #define IDS_GPL3_Section		"GNU General Public License"
 #define IDF_GPL3_Section		"epsplinese10.html"
 
-#define IDI_Preamble_GPL_3		560
+#define IDI_Preamble_GPL_3		576
 #define IDS_Preamble_GPL_3		"PREAMBLE"
-#define IDF_Preamble_GPL_3		"epsplinese10.html#x19-400003.1"
+#define IDF_Preamble_GPL_3		"epsplinese10.html#x19-410003.1"
 
-#define IDI_TERMSANDCONDITIONS		576
+#define IDI_TERMSANDCONDITIONS		592
 #define IDS_TERMSANDCONDITIONS		"TERMS AND CONDITIONS"
-#define IDF_TERMSANDCONDITIONS		"epsplinese10.html#x19-410003.1"
+#define IDF_TERMSANDCONDITIONS		"epsplinese10.html#x19-420003.1"
 
-#define IDI_APPLYTHESETERMSTOYOURNEWPROGRAMS		592
+#define IDI_APPLYTHESETERMSTOYOURNEWPROGRAMS		608
 #define IDS_APPLYTHESETERMSTOYOURNEWPROGRAMS		"APPLY THESE TERMS TO YOUR NEW PROGRAMS"
-#define IDF_APPLYTHESETERMSTOYOURNEWPROGRAMS		"epsplinese10.html#x19-4200017"
+#define IDF_APPLYTHESETERMSTOYOURNEWPROGRAMS		"epsplinese10.html#x19-4300017"
 
-#define IDI_GPL2_Section		608
+#define IDI_GPL2_Section		624
 #define IDS_GPL2_Section		"GNU General Public License Version 2"
 #define IDF_GPL2_Section		"epsplinese11.html"
 
-#define IDI_Preamble_GPL_2		624
+#define IDI_Preamble_GPL_2		640
 #define IDS_Preamble_GPL_2		"Preamble GPL 2"
-#define IDF_Preamble_GPL_2		"epsplinese11.html#x20-440003.2"
+#define IDF_Preamble_GPL_2		"epsplinese11.html#x20-450003.2"
 
-#define IDI_TermsandConditionsForCopyingDistributionandModification		640
+#define IDI_TermsandConditionsForCopyingDistributionandModification		656
 #define IDS_TermsandConditionsForCopyingDistributionandModification		"Terms and Conditions For Copying, Distribution and Modification"
-#define IDF_TermsandConditionsForCopyingDistributionandModification		"epsplinese11.html#x20-450003.2"
+#define IDF_TermsandConditionsForCopyingDistributionandModification		"epsplinese11.html#x20-460003.2"
 
-#define IDI_HowtoApplyTheseTermstoYourNewPrograms		656
+#define IDI_HowtoApplyTheseTermstoYourNewPrograms		672
 #define IDS_HowtoApplyTheseTermstoYourNewPrograms		"How to Apply These Terms to Your New Programs"
-#define IDF_HowtoApplyTheseTermstoYourNewPrograms		"epsplinese11.html#x20-460003.2"
+#define IDF_HowtoApplyTheseTermstoYourNewPrograms		"epsplinese11.html#x20-470003.2"
 
-#define IDI_FDL_Section		672
+#define IDI_FDL_Section		688
 #define IDS_FDL_Section		"GNU Free Documentation License"
 #define IDF_FDL_Section		"epsplinese12.html"
 
-#define IDI_Preamble		688
+#define IDI_Preamble		704
 #define IDS_Preamble		"Preamble"
-#define IDF_Preamble		"epsplinese12.html#x21-480003.3"
+#define IDF_Preamble		"epsplinese12.html#x21-490003.3"
 
-#define IDI_1APPLICABILITYANDDEFINITIONS		704
+#define IDI_1APPLICABILITYANDDEFINITIONS		720
 #define IDS_1APPLICABILITYANDDEFINITIONS		"1. APPLICABILITY AND DEFINITIONS"
-#define IDF_1APPLICABILITYANDDEFINITIONS		"epsplinese12.html#x21-490003.3"
+#define IDF_1APPLICABILITYANDDEFINITIONS		"epsplinese12.html#x21-500003.3"
 
-#define IDI_2VERBATIMCOPYING		720
+#define IDI_2VERBATIMCOPYING		736
 #define IDS_2VERBATIMCOPYING		"2. VERBATIM COPYING"
-#define IDF_2VERBATIMCOPYING		"epsplinese12.html#x21-500003.3"
+#define IDF_2VERBATIMCOPYING		"epsplinese12.html#x21-510003.3"
 
-#define IDI_3COPYINGINQUANTITY		736
+#define IDI_3COPYINGINQUANTITY		752
 #define IDS_3COPYINGINQUANTITY		"3. COPYING IN QUANTITY"
-#define IDF_3COPYINGINQUANTITY		"epsplinese12.html#x21-510003.3"
+#define IDF_3COPYINGINQUANTITY		"epsplinese12.html#x21-520003.3"
 
-#define IDI_4MODIFICATIONS		752
+#define IDI_4MODIFICATIONS		768
 #define IDS_4MODIFICATIONS		"4. MODIFICATIONS"
-#define IDF_4MODIFICATIONS		"epsplinese12.html#x21-520003.3"
+#define IDF_4MODIFICATIONS		"epsplinese12.html#x21-530003.3"
 
-#define IDI_5COMBININGDOCUMENTS		768
+#define IDI_5COMBININGDOCUMENTS		784
 #define IDS_5COMBININGDOCUMENTS		"5. COMBINING DOCUMENTS"
-#define IDF_5COMBININGDOCUMENTS		"epsplinese12.html#x21-530003.3"
+#define IDF_5COMBININGDOCUMENTS		"epsplinese12.html#x21-540003.3"
 
-#define IDI_6COLLECTIONSOFDOCUMENTS		784
+#define IDI_6COLLECTIONSOFDOCUMENTS		800
 #define IDS_6COLLECTIONSOFDOCUMENTS		"6. COLLECTIONS OF DOCUMENTS"
-#define IDF_6COLLECTIONSOFDOCUMENTS		"epsplinese12.html#x21-540003.3"
+#define IDF_6COLLECTIONSOFDOCUMENTS		"epsplinese12.html#x21-550003.3"
 
-#define IDI_7AGGREGATIONWITHINDEPENDENTWORKS		800
+#define IDI_7AGGREGATIONWITHINDEPENDENTWORKS		816
 #define IDS_7AGGREGATIONWITHINDEPENDENTWORKS		"7. AGGREGATION WITH INDEPENDENT WORKS"
-#define IDF_7AGGREGATIONWITHINDEPENDENTWORKS		"epsplinese12.html#x21-550003.3"
+#define IDF_7AGGREGATIONWITHINDEPENDENTWORKS		"epsplinese12.html#x21-560003.3"
 
-#define IDI_8TRANSLATION		816
+#define IDI_8TRANSLATION		832
 #define IDS_8TRANSLATION		"8. TRANSLATION"
-#define IDF_8TRANSLATION		"epsplinese12.html#x21-560003.3"
+#define IDF_8TRANSLATION		"epsplinese12.html#x21-570003.3"
 
-#define IDI_9TERMINATION		832
+#define IDI_9TERMINATION		848
 #define IDS_9TERMINATION		"9. TERMINATION"
-#define IDF_9TERMINATION		"epsplinese12.html#x21-570003.3"
+#define IDF_9TERMINATION		"epsplinese12.html#x21-580003.3"
 
-#define IDI_10FUTUREREVISIONSOFTHISLICENSE		848
+#define IDI_10FUTUREREVISIONSOFTHISLICENSE		864
 #define IDS_10FUTUREREVISIONSOFTHISLICENSE		"10. FUTURE REVISIONS OF THIS LICENSE"
-#define IDF_10FUTUREREVISIONSOFTHISLICENSE		"epsplinese12.html#x21-580003.3"
+#define IDF_10FUTUREREVISIONSOFTHISLICENSE		"epsplinese12.html#x21-590003.3"
 
-#define IDI_11RELICENSING		864
+#define IDI_11RELICENSING		880
 #define IDS_11RELICENSING		"11. RELICENSING"
-#define IDF_11RELICENSING		"epsplinese12.html#x21-590003.3"
+#define IDF_11RELICENSING		"epsplinese12.html#x21-600003.3"
 
-#define IDI_ADDENDUMHowtousethisLicenseforyourdocuments		880
+#define IDI_ADDENDUMHowtousethisLicenseforyourdocuments		896
 #define IDS_ADDENDUMHowtousethisLicenseforyourdocuments		"ADDENDUM: How to use this License for your documents"
-#define IDF_ADDENDUMHowtousethisLicenseforyourdocuments		"epsplinese12.html#x21-600003.3"
+#define IDF_ADDENDUMHowtousethisLicenseforyourdocuments		"epsplinese12.html#x21-610003.3"
 
 #define IDI_ListFigures		3000000000
 #define IDS_ListFigures		"List of Figures"

@@ -34,6 +34,7 @@ namespace ns_bg_img_dlg {
 // also manages bg img dialog
 class bgimg_manager {
 public:
+	friend class ns_bg_img_dlg::bg_img_dlg;
 	typedef class ns_bg_img_dlg::bg_img_dlg dialog_type;
 
 	// WxH dimensions type
@@ -50,8 +51,6 @@ public:
 	typedef void   (*cb_update_func)(cb_update_arg);
 
 protected:
-	friend dialog_type;
-
 	// event handler overides in friend dialog call these
 	void on_close_event(wxCloseEvent& event);
 	void on_init_dlg(wxInitDialogEvent& event);
@@ -187,26 +186,8 @@ protected:
 
 	// params basic ops
 	void clear_params() { set_params(0); }
-	void set_default_params() {
-		clear_params();
-		data_std.zero();
-		set_copy_orig();
-		update__to__dialog(data_std);
-	}
-	void reset_default_params() {
-		// save offsets: they are for using code, and are
-		// not applied to image; therefore they are not cumulatively
-		// reapplied to image, and should not be lost
-		off_type off_x, off_y;
-		off_x = data_std.off_x;
-		off_y = data_std.off_y;
-		clear_params();
-		data_std.zero();
-		set_copy_orig();
-		data_std.off_x = off_x;
-		data_std.off_y = off_y;
-		update__to__dialog(data_std);
-	}
+	void set_default_params();
+	void reset_default_params();
 
 	// tell using code to update
 	void force_updates();

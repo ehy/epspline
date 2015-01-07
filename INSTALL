@@ -168,14 +168,12 @@ FreeBSD:
     will be a wx configuration script with the version and text-
     type encoded in the name: wxgtk2-2.6-config, wxgtk2-2.8-config,
     wxgtk2u-2.6-config, wxgtk2u-2.8-config, wxgtk2u-2.9-config.
-    It seems that no default `wx-config' is maintained by the
-    ports system (of course, the author might have missed
-    something).
+	There should also be a default wx-config (check with
+	wx-config --version).
     
-    Without a wx-config in $PATH, assigning the CF Makefile
-    macro is mandatory. Select an installed wx*config
-    (preferably the latest version and preferably a unicode build)
-    and ``make CF=wxgtk<whatever>-config && sudo make install''
+    Select an installed wx*config (preferably the latest version
+    and preferably a unicode build) and
+	``make CF=wxgtk<whatever>-config && sudo make install''
     should work.
     
     Please avoid wx 2.6 if possible, especially the unicode build.

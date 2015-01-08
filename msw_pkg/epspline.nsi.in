@@ -49,6 +49,10 @@ dnl## macros not included here so they can be given on m4 command
   # EXEC_LVL: 'highest', 'admin', 'user'
   !define EXEC_LVL     highest
   !define SRC_ZIP      "appname-appversion.zip"
+  !define APP_ICO      "appname.ico"
+  !define APP_VICO     "appname_varsz.ico"
+  !define PATH_APP_ICO      "../art/appname.ico"
+  !define PATH_APP_VICO     "../art/appname_varsz.ico"
   # name used in control panel add/remove reg key
   !define ADDREMNAME   "appclass appversion"
   # MSW registry H-key, e.g. HKCU or HKLM or multiuser SHCTX
@@ -92,6 +96,9 @@ dnl## macros not included here so they can be given on m4 command
   ;Name and file
   Name "progprettyname appversion"
   OutFile mswinstallernameS
+
+# Added EH 0.0.4.4: suddenly seems necessary
+  Icon "${PATH_APP_ICO}"
 
 ;--------------------------------
 ;Variables
@@ -152,6 +159,8 @@ Section "appclass program" SecExe
   ;ADD YOUR OWN FILES HERE...
   # Added EH:
   File "../src/appname.exe"
+  # Added EH 0.0.4.4:
+  File "../src/${PATH_APP_ICO}"
   
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -164,6 +173,9 @@ Section "appclass program" SecExe
 	"installed version integer" appversionI
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
 	"installed executable file" "$INSTDIR\appname.exe"
+  # Added EH 0.0.4.4:
+  WriteRegStr ${_HK_} "${prodname}\DefaultIcon" \
+    "installed icon" "$INSTDIR\${APP_ICO}"
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
 	"installed uninstall program" "$INSTDIR\uninstall.exe"
   
@@ -335,6 +347,7 @@ Section "Uninstall"
   Delete "$INSTDIR\mswsrc_dir\${SRC_ZIP}"
   Delete "$INSTDIR\mswxmpldir\*.*"
   Delete "$INSTDIR\appname.exe"
+  Delete "$INSTDIR\${APP_ICO}"
   Delete "$INSTDIR\uninstall.exe"
 
   RMDir "$INSTDIR\mswhelpdir"

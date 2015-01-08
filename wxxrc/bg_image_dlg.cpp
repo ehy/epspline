@@ -72,7 +72,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	gbSizer2->Add( chk_greyscale, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER, 5 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	gbSizer2->Add( m_staticline2, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
+	gbSizer2->Add( m_staticline2, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticline181 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline181, wxGBPosition( 1, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );

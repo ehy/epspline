@@ -55,6 +55,8 @@ HDRS = $(HDRDIR)\\a_canvas.h $(HDRDIR)\\a_frame.h $(HDRDIR)\\a_ruler.h \
 	$(HDRDIR)\\a_glbprefsdlg.h \
 	$(HDRDIR)\\spline_props.h \
 	$(HDRDIR)\\globlal_prefs.h \
+	$(HDRDIR)\\bg_image_dlg.h \
+	$(HDRDIR)\\a_bgimg_manager.h \
 	$(HDRDIR)\\wxexio.h
 
 SRCS = $(SRCDIR)\\epspline.cpp $(SRCDIR)\\io.cpp $(SRCDIR)\\a_canvas.cpp \
@@ -68,6 +70,8 @@ SRCS = $(SRCDIR)\\epspline.cpp $(SRCDIR)\\io.cpp $(SRCDIR)\\a_canvas.cpp \
 	$(SRCDIR)\\a_glbprefsdlg.cpp \
 	$(SRCDIR)\\spline_props.cpp \
 	$(SRCDIR)\\globlal_prefs.cpp \
+	$(SRCDIR)\\bg_image_dlg.cpp \
+	$(SRCDIR)\\a_bgimg_manager.cpp \
 	$(SRCDIR)\\wxexio.cpp
 
 OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
@@ -81,6 +85,8 @@ OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
 	$(OBJDIR)\\a_glbprefsdlg.obj \
 	$(OBJDIR)\\spline_props.obj \
 	$(OBJDIR)\\globlal_prefs.obj \
+	$(OBJDIR)\\bg_image_dlg.obj \
+	$(OBJDIR)\\a_bgimg_manager.obj \
 	$(OBJDIR)\\wxexio.obj
 
 PARSER_SRC = $(SRCDIR)\\ms_parse.c
@@ -160,6 +166,12 @@ $(OBJDIR)\\a_glbprefsdlg.obj: $(SRCDIR)\\a_glbprefsdlg.cpp
 
 $(OBJDIR)\\globlal_prefs.obj: $(SRCDIR)\\globlal_prefs.cpp
 	$(CC) $(CFLAGS) -mn -cpp -c -ogloblal_prefs.obj globlal_prefs.cpp
+
+$(OBJDIR)\\bg_image_dlg.obj: $(SRCDIR)\\bg_image_dlg.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -obg_image_dlg.obj bg_image_dlg.cpp
+
+$(OBJDIR)\\a_bg_image_dlg.obj: $(SRCDIR)\\a_bg_image_dlg.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -oa_bg_image_dlg.obj a_bg_image_dlg.cpp
 
 epspline.exe : $(OBJECTS) parser epspline.def epspline.res
 	$(CC) $(LDFLAGS) -o$@ $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res $(LIBS)

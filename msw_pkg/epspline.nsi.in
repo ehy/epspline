@@ -49,10 +49,15 @@ dnl## macros not included here so they can be given on m4 command
   # EXEC_LVL: 'highest', 'admin', 'user'
   !define EXEC_LVL     highest
   !define SRC_ZIP      "appname-appversion.zip"
-  !define APP_ICO      "appname.ico"
-  !define APP_VICO     "appname_varsz.ico"
-  !define PATH_APP_ICO      "../art/appname.ico"
-  !define PATH_APP_VICO     "../art/appname_varsz.ico"
+  !define APP_SICO     "appname.ico"
+  !define APP_VICO     "appname-varsz.ico"
+  !define PATH_APP_SICO     "../art/appname.ico"
+  !define PATH_APP_VICO     "../art/appname-varsz.ico"
+  !define APP_ICO            "${APP_VICO}"
+  !define PATH_APP_ICO       "${PATH_APP_VICO}"
+  !define APP_BANNER     "../art/banner-375x96.bmp"
+  !define APP_BANNER_WI		375
+  !define APP_BANNER_HI		96
   # name used in control panel add/remove reg key
   !define ADDREMNAME   "appclass appversion"
   # MSW registry H-key, e.g. HKCU or HKLM or multiuser SHCTX
@@ -108,6 +113,10 @@ dnl## macros not included here so they can be given on m4 command
 ;--------------------------------
 ;Interface Settings
 
+  # Added EH 0.0.4.4
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP ${APP_BANNER}
+  # orig
   !define MUI_WELCOMEFINISHPAGE_BITMAP chisel.bmp
   !define MUI_UNWELCOMEFINISHPAGE_BITMAP lamp.bmp
   !define MUI_ABORTWARNING
@@ -160,7 +169,7 @@ Section "appclass program" SecExe
   # Added EH:
   File "../src/appname.exe"
   # Added EH 0.0.4.4:
-  File "../src/${PATH_APP_ICO}"
+  File "${PATH_APP_ICO}"
   
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -174,7 +183,7 @@ Section "appclass program" SecExe
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
 	"installed executable file" "$INSTDIR\appname.exe"
   # Added EH 0.0.4.4:
-  WriteRegStr ${_HK_} "${prodname}\DefaultIcon" \
+  WriteRegStr ${_HK_} "Software\vendorname\appname\appversion\DefaultIcon" \
     "installed icon" "$INSTDIR\${APP_ICO}"
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
 	"installed uninstall program" "$INSTDIR\uninstall.exe"
@@ -368,7 +377,8 @@ Section "Uninstall"
   # Note next unconditional (no /ifempty) removal at version -- things
   # like window placement will be lost -- maybe revisit this in future
   DeleteRegKey          ${_HK_} "Software\vendorname\appname\appversion"
-  DeleteRegKey /ifempty ${_HK_} "Software\vendorname\appname"
+  #DeleteRegKey /ifempty ${_HK_} "Software\vendorname\appname"
+  DeleteRegKey          ${_HK_} "Software\vendorname\appname"
   DeleteRegKey /ifempty ${_HK_} "Software\vendorname"
   # this removes the control panel "Add/Remove" entry
   DeleteRegKey          ${_HK_} \

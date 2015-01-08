@@ -70,7 +70,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	wxGridBagSizer* gbSizer2;
 	gbSizer2 = new wxGridBagSizer( 0, 0 );
-	gbSizer2->AddGrowableCol( 4 );
+	gbSizer2->AddGrowableCol( 3 );
 	gbSizer2->AddGrowableRow( 4 );
 	gbSizer2->SetFlexibleDirection( wxBOTH );
 	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
@@ -85,12 +85,12 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	opt_save->SetSelection( 1 );
 	opt_save->SetToolTip( _("Option to copy image with the saved .pse file:\ncopy the original without changes (modifications\nmay be reapplied automattically), or save a copy\nwith changes, or make no copy at all.") );
 	
-	gbSizer2->Add( opt_save, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxBOTTOM|wxTOP, 5 );
+	gbSizer2->Add( opt_save, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxTOP, 5 );
 	
 	chk_greyscale = new wxCheckBox( this, wxID_ANY, _("Greyscale"), wxDefaultPosition, wxDefaultSize, 0 );
 	chk_greyscale->SetToolTip( _("Convert image to greyscale.") );
 	
-	gbSizer2->Add( chk_greyscale, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER, 5 );
+	gbSizer2->Add( chk_greyscale, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL, 5 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline2, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
@@ -111,7 +111,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer15->Add( chk_flvert, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	
-	gbSizer2->Add( bSizer15, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxBOTTOM|wxTOP, 5 );
+	gbSizer2->Add( bSizer15, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxTOP, 5 );
 	
 	m_staticline8 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	gbSizer2->Add( m_staticline8, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
@@ -128,7 +128,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer111->Add( spin_ro, 0, wxALIGN_CENTER, 5 );
 	
-	gbSizer2->Add( bSizer111, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxBOTTOM|wxEXPAND, 5 );
+	gbSizer2->Add( bSizer111, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline4, wxGBPosition( 3, 0 ), wxGBSpan( 1, 2 ), wxEXPAND | wxALL, 5 );
@@ -140,7 +140,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	wxGridBagSizer* gbSizer1;
 	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->AddGrowableCol( 8 );
+	gbSizer1->AddGrowableCol( 7 );
 	gbSizer1->AddGrowableRow( 6 );
 	gbSizer1->SetFlexibleDirection( wxBOTH );
 	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
@@ -230,17 +230,17 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxHORIZONTAL );
 	
-	hsv_h = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL );
+	hsv_h = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_h->SetToolTip( _("Adjust HSV (Hue Saturation Value) hue.") );
 	
 	bSizer11->Add( hsv_h, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
-	hsv_s = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL );
+	hsv_s = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_s->SetToolTip( _("Adjust HSV (Hue Saturation Value) saturation.") );
 	
 	bSizer11->Add( hsv_s, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALIGN_TOP|wxEXPAND, 5 );
 	
-	hsv_v = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL );
+	hsv_v = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_v->SetToolTip( _("Adjust HSV (Hue Saturation Value) value.") );
 	
 	bSizer11->Add( hsv_v, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
@@ -268,7 +268,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	band_comp = new wxSlider( this, wxID_ANY, 0, -255, 255, wxDefaultPosition, wxDefaultSize, wxSL_AUTOTICKS|wxSL_INVERSE|wxSL_VERTICAL );
+	band_comp = new wxSlider( this, wxID_ANY, 0, -255, 255, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	band_comp->SetToolTip( _("Lighten or darken image.") );
 	
 	bSizer12->Add( band_comp, 0, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
@@ -298,7 +298,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	gbSizer1->Add( bSizer8, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	gbSizer1->Add( m_staticline7, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxEXPAND | wxALL, 5 );
+	gbSizer1->Add( m_staticline7, wxGBPosition( 4, 0 ), wxGBSpan( 1, 7 ), wxEXPAND | wxALL, 5 );
 	
 	button_sizer1 = new wxStdDialogButtonSizer();
 	button_sizer1OK = new wxButton( this, wxID_OK );
@@ -310,7 +310,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	button_sizer1Help = new wxButton( this, wxID_HELP );
 	button_sizer1->AddButton( button_sizer1Help );
 	button_sizer1->Realize();
-	gbSizer1->Add( button_sizer1, wxGBPosition( 4, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALIGN_TOP|wxALL|wxEXPAND|wxTOP, 5 );
+	gbSizer1->Add( button_sizer1, wxGBPosition( 5, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALIGN_TOP|wxALL|wxEXPAND|wxTOP, 5 );
 	
 	bSizer1->Add( gbSizer1, 1, wxALL|wxEXPAND, 5 );
 	

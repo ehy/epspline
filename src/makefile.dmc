@@ -170,8 +170,8 @@ $(OBJDIR)\\globlal_prefs.obj: $(SRCDIR)\\globlal_prefs.cpp
 $(OBJDIR)\\bg_image_dlg.obj: $(SRCDIR)\\bg_image_dlg.cpp
 	$(CC) $(CFLAGS) -mn -cpp -c -obg_image_dlg.obj bg_image_dlg.cpp
 
-$(OBJDIR)\\a_bg_image_dlg.obj: $(SRCDIR)\\a_bg_image_dlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_bg_image_dlg.obj a_bg_image_dlg.cpp
+$(OBJDIR)\\a_bgimg_manager.obj: $(SRCDIR)\\a_bgimg_manager.cpp
+	$(CC) $(CFLAGS) -mn -cpp -c -oa_bgimg_manager.obj a_bgimg_manager.cpp
 
 epspline.exe : $(OBJECTS) parser epspline.def epspline.res
 	$(CC) $(LDFLAGS) -o$@ $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res $(LIBS)

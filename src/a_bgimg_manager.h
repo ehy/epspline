@@ -88,6 +88,9 @@ protected:
 	};
 
 	// structure to hold data
+#   if defined(__SC__) || defined(__DMC__) // Digital Mars w32
+	friend
+#   endif
 	struct datastruct {
 		// params member var
 		params parms;

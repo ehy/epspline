@@ -304,7 +304,7 @@
                             <object class="wxGridBagSizer" expanded="1">
                                 <property name="empty_cell_size"></property>
                                 <property name="flexible_direction">wxBOTH</property>
-                                <property name="growablecols">4</property>
+                                <property name="growablecols">3</property>
                                 <property name="growablerows">4</property>
                                 <property name="hgap">0</property>
                                 <property name="minimum_size">-1,30</property>
@@ -372,7 +372,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">0</property>
-                                    <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxTOP</property>
+                                    <property name="flag">wxALIGN_CENTER|wxALL|wxTOP</property>
                                     <property name="row">0</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxRadioBox" expanded="1">
@@ -433,7 +433,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">2</property>
-                                    <property name="flag">wxALIGN_CENTER</property>
+                                    <property name="flag">wxALIGN_CENTER|wxALL</property>
                                     <property name="row">0</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxCheckBox" expanded="1">
@@ -604,7 +604,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">0</property>
-                                    <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxTOP</property>
+                                    <property name="flag">wxALIGN_CENTER|wxALL|wxTOP</property>
                                     <property name="row">2</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxBoxSizer" expanded="1">
@@ -786,7 +786,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">2</property>
-                                    <property name="flag">wxALIGN_CENTER|wxBOTTOM|wxEXPAND</property>
+                                    <property name="flag">wxALIGN_CENTER|wxALL|wxEXPAND</property>
                                     <property name="row">2</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxBoxSizer" expanded="1">
@@ -1031,7 +1031,7 @@
                             <object class="wxGridBagSizer" expanded="1">
                                 <property name="empty_cell_size"></property>
                                 <property name="flexible_direction">wxBOTH</property>
-                                <property name="growablecols">8</property>
+                                <property name="growablecols">7</property>
                                 <property name="growablerows">6</property>
                                 <property name="hgap">0</property>
                                 <property name="minimum_size"></property>
@@ -1971,7 +1971,7 @@
                                                         <property name="permission">public</property>
                                                         <property name="pos"></property>
                                                         <property name="size"></property>
-                                                        <property name="style">wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL</property>
+                                                        <property name="style">wxSL_INVERSE|wxSL_VERTICAL</property>
                                                         <property name="subclass"></property>
                                                         <property name="tooltip">Adjust HSV (Hue Saturation Value) hue.</property>
                                                         <property name="validator_data_type"></property>
@@ -2047,7 +2047,7 @@
                                                         <property name="permission">public</property>
                                                         <property name="pos"></property>
                                                         <property name="size"></property>
-                                                        <property name="style">wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL</property>
+                                                        <property name="style">wxSL_INVERSE|wxSL_VERTICAL</property>
                                                         <property name="subclass"></property>
                                                         <property name="tooltip">Adjust HSV (Hue Saturation Value) saturation.</property>
                                                         <property name="validator_data_type"></property>
@@ -2123,7 +2123,7 @@
                                                         <property name="permission">public</property>
                                                         <property name="pos"></property>
                                                         <property name="size"></property>
-                                                        <property name="style">wxSL_AUTOTICKS|wxSL_BOTTOM|wxSL_INVERSE|wxSL_VERTICAL</property>
+                                                        <property name="style">wxSL_INVERSE|wxSL_VERTICAL</property>
                                                         <property name="subclass"></property>
                                                         <property name="tooltip">Adjust HSV (Hue Saturation Value) value.</property>
                                                         <property name="validator_data_type"></property>
@@ -2398,7 +2398,7 @@
                                                         <property name="permission">public</property>
                                                         <property name="pos"></property>
                                                         <property name="size"></property>
-                                                        <property name="style">wxSL_AUTOTICKS|wxSL_INVERSE|wxSL_VERTICAL</property>
+                                                        <property name="style">wxSL_INVERSE|wxSL_VERTICAL</property>
                                                         <property name="subclass"></property>
                                                         <property name="tooltip">Lighten or darken image.</property>
                                                         <property name="validator_data_type"></property>
@@ -2652,7 +2652,7 @@
                                     <property name="colspan">7</property>
                                     <property name="column">0</property>
                                     <property name="flag">wxEXPAND | wxALL</property>
-                                    <property name="row">3</property>
+                                    <property name="row">4</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxStaticLine" expanded="1">
                                         <property name="bg"></property>
@@ -2708,7 +2708,7 @@
                                     <property name="colspan">7</property>
                                     <property name="column">0</property>
                                     <property name="flag">wxALIGN_CENTER|wxALIGN_TOP|wxALL|wxEXPAND|wxTOP</property>
-                                    <property name="row">4</property>
+                                    <property name="row">5</property>
                                     <property name="rowspan">1</property>
                                     <object class="wxStdDialogButtonSizer" expanded="1">
                                         <property name="Apply">1</property>

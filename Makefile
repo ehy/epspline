@@ -390,7 +390,7 @@ dist archive distarchive: distclean
 				ls -l "$$TF" || { echo FAILED making $$TF; exit 1; }; \
 				test X"$(MKZIP)" = X || { \
 					TZ="$$TD.zip"; \
-					$(RM) "$$TZ"; zip -9 -db -o -r "$$TZ" "$$TD" || \
+					$(RM) "$$TZ"; zip -9 -o -r "$$TZ" "$$TD" || \
 						{ echo FAILED making $$TZ; exit 1; }; \
 				}; \
 			}; \

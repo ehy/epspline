@@ -6,10 +6,10 @@ accuracy
 acos
 acosh
 adaptive
-adc_bailou
+adc_bailout
 agate
 agate_turb
-albed
+albedo
 all
 all_intersections
 alpha
@@ -95,7 +95,7 @@ count
 crackle
 crand
 cube
-cubi
+cubic
 cubic_spline
 cubic_wave
 cutaway_textures
@@ -128,7 +128,7 @@ double_illuminate
 eccentricity
 else
 elseif
-emissio
+emission
 end
 error
 error_bound
@@ -169,7 +169,7 @@ frame_number
 frequency
 fresnel
 function
-gamm
+gamma
 gather
 gif
 global_lights
@@ -402,7 +402,7 @@ spotted
 sqr
 sqrt
 square
-srg
+srgb
 srgbf
 srgbft
 srgbt

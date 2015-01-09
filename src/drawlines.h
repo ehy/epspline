@@ -91,8 +91,50 @@ struct tpl_pxl {
 	}
 };
 
+// pixel template xor subs =
+template<typename T, T TI = 0>
+struct tpl_pxl_xor {
+	typedef T cmp_t;
+	T r, g, b;
+
+	tpl_pxl_xor(T rc = TI, T gc = TI, T bc = TI)
+		: r(rc), g(gc), b(bc) {}
+	tpl_pxl_xor(const tpl_pxl_xor<T, TI>& o) { *this = o; }
+
+	inline tpl_pxl_xor<T, TI>& swap(tpl_pxl_xor<T, TI>& o) {
+		swap_vals(r, o.r);
+		swap_vals(g, o.g);
+		swap_vals(b, o.b);
+		return *this;
+	}
+
+	inline bool operator == (const tpl_pxl_xor<T, TI>& o) {
+		return r == o.r && g == o.g && b == o.b;
+	}
+
+	inline bool operator != (const tpl_pxl_xor<T, TI>& o) {
+		return ! *this == o;
+	}
+
+	inline tpl_pxl_xor<T, TI>&
+	operator = (const tpl_pxl_xor<T, TI>& o) {
+		r ^= o.r; g ^= o.g; b ^= o.b;
+		return *this;
+	}
+
+	template<typename fT> inline tpl_pxl_xor<T, TI>&
+	mix(const tpl_pxl_xor<T, TI>& o, fT s) {
+		//const fT t = fT(1) - s;
+		r ^= T(o.r * s);
+		g ^= T(o.g * s);
+		b ^= T(o.b * s);
+		return *this;
+	}
+};
+
 // pixel struct
 typedef tpl_pxl<clrcmp, ccmp_max> pxl;
+typedef tpl_pxl_xor<clrcmp, ccmp_max> pxl_xor;
 
 
 // adapt draw ops to image type;
@@ -175,13 +217,13 @@ put_pixel(
 		dr.put(x, y, clr);
 }
 
-template<typename fT> void
+template<typename fT, typename pixT> void
 drawline_wu(
 	fT thickness,
 	fT x0, fT y0, fT x1, fT y1,
 	draw_device& drdev,
 	long cols, long rows,
-	const pxl& fg,
+	const pixT& fg,
 	// bool: maintain apparent thickness regardless of line angle
 	bool const_thickness)
 {

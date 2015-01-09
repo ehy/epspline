@@ -71,7 +71,8 @@
 #include "a_ruler.h"
 #include "a_zoomdlg.h"
 #include "a_prefs_manager.h"
-
+#include "a_bgimg_manager.h"
+ 
 #include "swap_vals.h"
 #include "drawlines.h"
 namespace aap = ANTI_ALIAS_LINE_NAMESPACE_NAME;
@@ -180,7 +181,8 @@ A_BUFDCCanvas::~A_BUFDCCanvas()
 
 A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	: wxScrolledWindow(realparent)
-	, a_frame(parent), a_tabpg(realparent), aa_draw(aa)
+	, a_frame(parent), a_tabpg(realparent)
+	, bg_mng(new bgimg_manager()), aa_draw(aa)
 	, hrule(0), vrule(0)
 	, pt_mousedown(INT_MIN, INT_MIN)
 	, D(new DataState)
@@ -203,11 +205,15 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	shearcursor = new wxCursor(wxCURSOR_SIZENWSE);
 	rotatecursor = new wxCursor(wxCURSOR_BULLSEYE);
 	curcursor = arrowcursor;
-	
+
 	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
 	wxColour clr(pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
 	SetBackgroundColour(clr);
 	
+	bg_mng->set_rotbg(clr.Red(), clr.Green(), clr.Blue());
+	bg_mng->set_update_callback(bg_update,
+		static_cast<bg_update_arg>(this));
+
 	if ( pfs ) {
 		wxColour tclr(pfs->canvas_guides_color);
 		guidepen = wxPen(tclr, 1, wxSOLID);
@@ -236,6 +242,11 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	_("Export objects to current file name"));
 	m_pop->Append(IC_exportas, _("Export As"),
 	_("Export objects to new file"));
+	m_pop->AppendSeparator();
+	m_pop->Append(IC_set_bg_img, _("Set Background Image"),
+	_("Show dialog to set or modify canvas background image"));
+	m_pop->Append(IC_rm_bg_img, _("Remove Background Image"),
+	_("Remove canvas background image"));
 
 	m_sel = new wxMenu(_("Selection"), wxMENU_TEAROFF);
 	m_sel->Append(IC_set_props, _("Set object properties"),
@@ -250,6 +261,7 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 
 A_Canvas::~A_Canvas()
 {
+	delete bg_mng;
 	delete im_main;
 	delete D;
 	delete m_pop;
@@ -274,6 +286,7 @@ A_Canvas::PreferenceChanged()
 
 	clr = wxColour(pfs->canvas_background_color);
 	SetBackgroundColour(clr);
+	bg_mng->set_rotbg(clr.Red(), clr.Green(), clr.Blue());
 	
 	clr = wxColour(pfs->canvas_guides_color);
 	guidepen = wxPen(clr, 1, wxSOLID);
@@ -322,7 +335,7 @@ A_Canvas::DragCallbackHandler(wxMouseEvent& e, A_Ruler* r)
 			}
 			me.m_y = e.m_y;
 		} else {
-			fprintf(stderr,"internal error:DragCallbackHandler\n");
+			std::fprintf(stderr,"internal error:DragCallbackHandler\n");
 			break;
 		}
 
@@ -333,7 +346,7 @@ A_Canvas::DragCallbackHandler(wxMouseEvent& e, A_Ruler* r)
 
 		wxEvtHandler* eh = GetEventHandler();
 		if ( eh == NULL ) {
-			fprintf(stderr, "No wxEvtHandler* eh!\n");
+			std::fprintf(stderr, "No wxEvtHandler* eh!\n");
 			break;
 		}
 		if ( me.Leaving() ) {
@@ -371,8 +384,10 @@ A_Canvas::OnIdle(wxIdleEvent& event)
 void
 A_Canvas::IdleUpdate()
 {
-	if ( activetab == false )
+	if ( activetab == false ) {
+		bg_mng->cancel_dialog();
 		return;
+	}
 
 	SetCursor(*curcursor);
 
@@ -381,6 +396,8 @@ A_Canvas::IdleUpdate()
 	enableEdUndo(ustack.count() > 0);
 	enableEdRedo(rstack.count() > 0);
 	enableCloseCurves(D->sSname != wxT("") || D->lst.size() > 0);
+	enableRemoveBackgroundImage(bg_mng->get_mod_image() != 0);
+
 
 	bool dirty = IsDirty();
 #	if 1
@@ -1991,6 +2008,14 @@ A_Canvas::GotPopup(wxCommandEvent& event)
 		case IC_move_up:
 			MoveUp();
 			break;
+		case IC_set_bg_img:
+			//bg_mng->show_dialog();
+			DoSetBGImg();
+			break;
+		case IC_rm_bg_img:
+			//bg_mng->remove_image();
+			DoRmBGImg();
+			break;
 		default:
 			D->GotPopup(event);
 	}
@@ -2257,6 +2282,18 @@ A_Canvas::DoCycleScale()
 	UpdateStatusBar();
 }
 
+void
+A_Canvas::DoSetBGImg()
+{
+	bg_mng->show_dialog();
+}
+
+void
+A_Canvas::DoRmBGImg()
+{
+	bg_mng->remove_image();
+}
+
 bool
 A_Canvas::CloseOpt(bool force)
 {
@@ -2352,7 +2389,12 @@ A_Canvas::Open(wxString filename)
 		DataState* tmp = new DataState;
 		DataState::guidestore& th = tmp->hguides;
 		DataState::guidestore& tv = tmp->vguides;
-		if ( ReadData(filename, tmp->lst, th, tv, &filecomment) >= 0 ) {
+
+		IO_AddlData addl;
+		addl.bgm = bg_mng;
+
+		if ( ReadData(filename, tmp->lst, th, tv
+						, &addl, &filecomment) >= 0 ) {
 			DataState* t2 = D;
 			D = tmp;
 			tmp = t2;
@@ -2367,6 +2409,13 @@ A_Canvas::Open(wxString filename)
 			copy(tv.begin(), tv.end(), back_inserter(vguides));
 #			endif
 			a_frame->SetTitlePrefix(tn);
+
+			if ( addl.init ) {
+				Scroll(addl.scrollpos_h, addl.scrollpos_v);
+				xscale = (addl.scale >> 16) & 0xFFFF;
+				yscale = addl.scale & 0xFFFF;
+			}
+
 			Refresh();
 		} else {
 			int err = errno;
@@ -2389,17 +2438,7 @@ A_Canvas::Open(wxString filename)
 bool
 A_Canvas::SaveBGImage(const wxImage* p) const
 {
-	// ensure destruction iff allocated here.
-	// NOTE auto_ptr deprecated in C++11
-	std::auto_ptr<const wxImage> ap;
-
-	// If im_main is used there are no decorations, e.g.
-	// dots at control points -- which was wanted for debugging
-	// -- generally the the decorations should be included,
-	// so disable use of im_main (unless passed in p)
-	if ( false && p == 0 && query_AA() ) {
-		p = im_main;
-	}
+	wxImage timg;
 
 	if ( p == 0 ) {
 		int x, y;
@@ -2437,10 +2476,8 @@ A_Canvas::SaveBGImage(const wxImage* p) const
 		mdc.SelectObject(wxNullBitmap);
 #		endif // wxCHECK_VERSION(2, 8, 0)
 
-		// image is allocated here, and we want it gone at return,
-		// so hand it up-scope to auto_ptr declared for this purpose
-		ap = std::auto_ptr<const wxImage>(
-			p = new wxImage(bm.ConvertToImage()) );
+		timg = bm.ConvertToImage();
+		p = &timg;
 	}
 
 	if ( D->sSdir == wxT("") )
@@ -2517,6 +2554,43 @@ A_Canvas::SaveAs()
 }
 
 void
+A_Canvas::PrepSaveAddlData(IO_AddlData& addl,
+	wxString* dname, wxString* fname)
+{
+	wxImage* itst = bg_mng->get_mod_image();
+
+	// saving copies of images:
+	if ( itst && bg_mng->get_copy_orig() ) {
+		wxString f;
+		wxString d(dname ? *dname : GetCurDirName());
+	
+		bg_mng->get_file(f);
+		wxFileName nfn(d, wxFileName(f).GetName());
+		nfn.SetExt(wxT("png"));
+		f = nfn.GetFullPath();
+
+		bg_mng->SaveOrigTo(f, wxBITMAP_TYPE_PNG);
+		bg_mng->set_file(f);
+	} else if ( itst && bg_mng->get_copy_changes() ) {
+		wxString f(fname ? *fname : GetCurFileName());
+		wxString d(dname ? *dname : GetCurDirName());
+	
+		wxFileName nfn(d, f);
+		nfn.SetExt(wxT("png"));
+		f = nfn.GetFullPath();
+
+		bg_mng->SaveModsTo(f, wxBITMAP_TYPE_PNG);
+		bg_mng->set_file_reset(f);
+	}
+
+	addl.scrollpos_h = GetScrollPos(wxHORIZONTAL);
+	addl.scrollpos_v = GetScrollPos(wxVERTICAL);
+	addl.scale = ((xscale & 0xFFFF) << 16) | (yscale & 0xFFFF);
+	addl.bgm = bg_mng;
+	addl.init = true;
+}
+
+void
 A_Canvas::ForceSave(bool namechange)
 {
 	SetClean();
@@ -2546,11 +2620,18 @@ A_Canvas::ForceSave(bool namechange)
 
 	wxString t = fn.GetFullPath();
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
+
+	IO_AddlData addl;
+	d = fn.GetPath();
+	f = fn.GetName();
+	PrepSaveAddlData(addl, &d, &f);
+
 	errno = 0;
-	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
 		// possibly useful under Unix
-		std::fprintf(stderr, "Epspline: failed forced save of '%s'\n",
-			wxs2ch(t));
+		std::fprintf(stderr,
+			"Epspline: failed forced save of '%s', errno %d\n",
+			wxs2ch(t), errno);
 	} else {
 		std::fprintf(stderr, "Epspline: did forced save to '%s'\n",
 			wxs2ch(t));
@@ -2571,8 +2652,15 @@ A_Canvas::Save()
 
 	wxString t = GetCurFullpath();
 	wxString* ps = filecomment.empty() ? 0 : &filecomment;
+
+	IO_AddlData addl;
+	wxFileName fn(t);
+	wxString d = fn.GetPath();
+	wxString f = fn.GetName();
+	PrepSaveAddlData(addl, &d, &f);
+
 	errno = 0;
-	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, ps) ) {
+	if ( ! WriteData(t, D->lst, D->hguides, D->vguides, &addl, ps) ) {
 		int e = errno;
 		wxString msg(_("Failed saving to \""));
 		
@@ -2988,10 +3076,19 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	#endif
 	dc.SetPen(np);
 
+	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
+		bgimg_manager::dim_type bg_wi, bg_hi;
+		bgimg_manager::off_type bg_ox, bg_oy;
+		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+		
+		wxBitmap bmbg(*bgimg);
+		dc.DrawBitmap(bmbg, wxCoord(bg_ox), wxCoord(bg_oy), true);
+	}
+
 	if ( drawgrid && wid > 0 ) {
 		int xs = wid;
 		int ys = wid;
-		int offs = r.x - (r.x % xs); // - 1;
+		int offs = r.x - (r.x % xs);
 		int cnt = ((r.width + r.x) - offs) / xs;
 
 		while ( cnt-- > 0 ) {
@@ -2999,7 +3096,7 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 			dc.DrawLine(offs, r.y, offs, r.y + r.height);
 		}
 	
-		offs = r.y - (r.y % ys); // - 1;
+		offs = r.y - (r.y % ys);
 		cnt = ((r.height + r.y) - offs) / ys;
 
 		while ( cnt-- > 0 ) {
@@ -3097,6 +3194,8 @@ A_Canvas::ImagePaint(wxImage** ipp, wxRect& logrc, double thickness)
 
 	aap::draw_device dr(*ip);
 	aap::pxl px(0, 0, 0);
+	aap::pxl_xor px_xor(0xFF, 0xFF, 0xFF);
+	bool have_bg = false; // (bg_mng->get_mod_image() != 0);
 	int ox = rr.x - bgpad;
 	int oy = rr.y - bgpad;
 
@@ -3116,14 +3215,25 @@ A_Canvas::ImagePaint(wxImage** ipp, wxRect& logrc, double thickness)
 				if ( p0.isflag() || p1.isflag() )
 					continue;
 				
-				aap::drawline_wu(
-			         thickness,
-			         p0.getX() - ox, p0.getY() - oy,
-			         p1.getX() - ox, p1.getY() - oy,
-			         dr,
-			         long(dr.Width()), long(dr.Height()),
-			         px,
-			         true);
+				if ( have_bg ) {
+					aap::drawline_wu(
+				         thickness,
+				         p0.getX() - ox, p0.getY() - oy,
+				         p1.getX() - ox, p1.getY() - oy,
+				         dr,
+				         long(dr.Width()), long(dr.Height()),
+				         px_xor,
+				         true);
+				 } else {
+					aap::drawline_wu(
+				         thickness,
+				         p0.getX() - ox, p0.getY() - oy,
+				         p1.getX() - ox, p1.getY() - oy,
+				         dr,
+				         long(dr.Width()), long(dr.Height()),
+				         px,
+				         true);
+				 }
 			 }
 		}
 	}
@@ -3267,7 +3377,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 	unsigned char cR, cG, cB;
 	// pixel component indices
 	const int iR = 0, iG = 1, iB = 2;;
-	
+
 	// device x, y
 	int X, Y, W, H;
 	X = r.x;
@@ -3302,6 +3412,101 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 			}
 	
 			rp += rowlen;
+		}
+	}
+
+	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
+		bgimg_manager::dim_type bg_wi, bg_hi;
+		bgimg_manager::off_type bg_ox, bg_oy;
+		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+		bg_wi = bgimg->GetWidth();
+		bg_hi = bgimg->GetHeight();
+		
+		bg_ox -= X;
+		bg_oy -= Y;
+
+		int mxw = std::min(imw, int(bg_wi));
+		int mxh = std::min(imh, int(bg_hi));
+		int bgrowlen = pixlen * bg_wi;
+		size_t cplen = size_t(mxw) * pixlen;
+		unsigned char* rp  = pd;
+		unsigned char* bgp = bgimg->GetData();
+		unsigned char* ap  = bgimg->HasAlpha() ? bgimg->GetAlpha() : 0;
+
+		if ( bg_ox < 0 ) {
+			cplen = size_t(std::min(imw,
+				std::max(int(bg_wi) + bg_ox, int(0)))) * pixlen;
+			bgp += pixlen * (-bg_ox);
+			if ( ap ) {
+				ap += -bg_ox;
+			}
+		} else if ( bg_ox > 0 ) {
+			cplen = size_t(std::max(
+				std::min(int(bg_wi), imw - bg_ox), int(0))) * pixlen;
+			rp += pixlen * bg_ox;
+		}
+
+		if ( bg_oy < 0 ) {
+			mxh = std::min(imh, int(bg_hi) + bg_oy);
+			bgp += pixlen * bg_wi * (-bg_oy);
+			if ( ap ) {
+				ap += bg_wi * (-bg_oy);
+			}
+		} else if ( bg_oy > 0 ) {
+			mxh = std::min(imh - bg_oy, int(bg_hi));
+			rp += imw * pixlen * bg_oy;
+		}
+
+		if ( cplen > 0 && ap ) {
+			size_t cpcnt = cplen / pixlen;
+
+			for ( int j = 0; j < mxh; j++ ) {
+				unsigned char* tp = rp;
+				unsigned char* sp = bgp;
+
+				for ( size_t i = 0; i < cpcnt; i++ ) {
+					unsigned char al = ap[i];
+					tp[iR] = alpha_over(sp[iR], al, tp[iR]);
+					tp[iG] = alpha_over(sp[iG], al, tp[iG]);
+					tp[iB] = alpha_over(sp[iB], al, tp[iB]);
+					tp += pixlen;
+					sp += pixlen;
+				}
+
+				rp  += rowlen;
+				bgp += bgrowlen;
+				ap  += bg_wi;
+			}
+		} else if ( cplen > 0 && bgimg->HasMask() ) {
+			unsigned char mr = bgimg->GetMaskRed();
+			unsigned char mg = bgimg->GetMaskGreen();
+			unsigned char mb = bgimg->GetMaskBlue();
+
+			for ( int j = 0; j < mxh; j++ ) {
+				unsigned char* tp = rp;
+				unsigned char* sp = bgp;
+				unsigned char* ep = sp + cplen;
+
+				while ( sp < ep ) {
+					if ( mr != sp[iR] ||
+						 mg != sp[iG] || mb != sp[iB] ) {
+						tp[iR] = sp[iR];
+						tp[iG] = sp[iG];
+						tp[iB] = sp[iB];
+					}
+					tp += pixlen;
+					sp += pixlen;
+				}
+
+				rp  += rowlen;
+				bgp += bgrowlen;
+			}
+		} else if ( cplen > 0 ) {
+			for ( int j = 0; j < mxh; j++ ) {
+				std::memcpy(rp, bgp, cplen);
+				rp  += rowlen;
+				bgp += bgrowlen;
+			}
 		}
 	}
 
@@ -3649,6 +3854,15 @@ A_Canvas::DataState::NewObj()
 	return t;
 }
 
+// callback for bg image manager: tell us to update
+void
+A_Canvas::bg_update(bg_update_arg cb_ptr)
+{
+	if ( A_Canvas* p = static_cast<A_Canvas*>(cb_ptr) ) {
+		p->Refresh();
+	}
+}
+
 // Simple functions that could not be inlined in the
 // header due to mutual include problem between
 // a_frame.h and a_canvas.h if the header were to
@@ -3714,6 +3928,18 @@ A_Canvas::enableEdPasteGlobal(bool b)
 void
 A_Canvas::enableHelpDemo(bool b)
 {a_frame->enableHelpDemo(b);}
+void
+A_Canvas::enableSetBackgroundImage(bool b)
+{
+	m_pop->Enable(IC_set_bg_img, b);
+	a_frame->enableSetBGImg(b);
+}
+void
+A_Canvas::enableRemoveBackgroundImage(bool b)
+{
+	m_pop->Enable(IC_rm_bg_img, b);
+	a_frame->enableRmBGImg(b);
+}
 
 void
 A_Canvas::ErrorBox(const wxString& msg, const wxString& titletail)

@@ -46,7 +46,7 @@
 #include <climits>
 #include <io.h>
 #include <fcntl.h>
-#ifdef __SC__
+#ifdef __SC__ // actually, DMC: proto missing, definition in C lib
 extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #define snprintf _snprintf
 #endif
@@ -64,6 +64,7 @@ extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
 #endif
 #endif
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
@@ -109,6 +110,270 @@ newwstrdup(const wchar_t* str)
 	if ( !str ) return 0;
 	wchar_t* p = new wchar_t[std::wcslen(str) + 1];
 	return p ? std::wcscpy(p, str) : 0;
+}
+
+// simplistc image {light,dark}ening with linear compression
+// of pixel components to 'band' width (0.1, 1.0)
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage*
+wximg_bandcomp(wxImage* img, double band, bool lighten)
+{
+	if ( ! img ) {
+		return 0;
+	}
+
+	const size_t pixwid = 3;
+	const int R = 0;
+	const int G = 1;
+	const int B = 2;
+
+	int wi = img->GetWidth(), hi = img->GetHeight();
+
+	if ( wi < 1 || hi < 1 ) {
+		return img;
+	}
+
+	unsigned char* p = img->GetData();
+
+	if ( ! p ) {
+		return img;
+	}
+
+	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
+
+	bool hasmask = img->HasMask();
+	unsigned char rm = 0, gm = 0, bm = 0;
+		
+	if ( hasmask ) {
+		rm = img->GetMaskRed();
+		gm = img->GetMaskGreen();
+		bm = img->GetMaskBlue();
+	}
+	
+	band = std::min(1.0, band);
+	band = std::max(0.1, band);
+
+	unsigned char add = lighten ?
+		static_cast<unsigned char>(255.0 - band * 255.0) : 0;
+
+	while ( p < e ) {
+		p[R] = add + static_cast<unsigned char>(band * p[R]);
+		p[G] = add + static_cast<unsigned char>(band * p[G]);
+		p[B] = add + static_cast<unsigned char>(band * p[B]);
+
+		p += pixwid;
+	}
+
+	if ( hasmask ) {
+		rm = add + static_cast<unsigned char>(band * rm);
+		gm = add + static_cast<unsigned char>(band * gm);
+		bm = add + static_cast<unsigned char>(band * bm);
+		
+		img->SetMaskColour(rm, gm, bm);
+	}
+
+	return img;
+}
+
+// simplistc HSV adjustment, originally for background image
+// double args are -1.0,1.0
+// NOTE: returns *same* image (i.e., source is edited)
+// (1st static inlines to support wximg_adjhsv)
+static inline double adjhsvH(double v, double a)
+{
+	a *= 0.5;
+	v += a;
+	return v > 1.0 ? (v - 1.0) : (v < 0.0 ? (v + 1.0) : v);
+}
+static inline double adjhsvS(double v, double a)
+{
+#if 0
+	return std::min(1.0, std::max(0.0, v * (1.0 + a)));
+#else
+	return v + (a > 0.0 ? (a * (1.0 - v)) : (a * v));
+#endif
+}
+static inline double adjhsvV(double v, double a)
+{
+	return v + (a > 0.0 ? (a * (1.0 - v)) : (a * v));
+}
+wxImage*
+wximg_adjhsv(wxImage* img, double h, double s, double v)
+{
+	if ( ! img ) {
+		return 0;
+	}
+
+	const size_t pixwid = 3;
+	const int R = 0;
+	const int G = 1;
+	const int B = 2;
+
+	int wi = img->GetWidth(), hi = img->GetHeight();
+
+	if ( wi < 1 || hi < 1 ) {
+		return img;
+	}
+
+	unsigned char* p = img->GetData();
+
+	if ( ! p ) {
+		return img;
+	}
+
+	unsigned char* e = p + (size_t(wi) * pixwid * size_t(hi));
+
+	bool hasmask = img->HasMask();
+	unsigned char rm = 0, gm = 0, bm = 0;
+		
+	if ( hasmask ) {
+		rm = img->GetMaskRed();
+		gm = img->GetMaskGreen();
+		bm = img->GetMaskBlue();
+	}
+
+	while ( p < e ) {
+		wxImage::HSVValue hsv =
+			wxImage::RGBtoHSV(wxImage::RGBValue(p[R], p[G], p[B]));
+
+		wxImage::RGBValue rgb =
+			wxImage::HSVtoRGB(wxImage::HSVValue(
+				adjhsvH(hsv.hue, h),
+				adjhsvS(hsv.saturation, s),
+				adjhsvV(hsv.value, v)
+			)
+		);
+
+		p[R] = rgb.red;
+		p[G] = rgb.green;
+		p[B] = rgb.blue;
+
+		p += pixwid;
+	}
+
+	if ( hasmask ) {
+		wxImage::HSVValue hsv =
+			wxImage::RGBtoHSV(wxImage::RGBValue(rm, gm, bm));
+
+		wxImage::RGBValue rgb =
+			wxImage::HSVtoRGB(wxImage::HSVValue(
+				adjhsvH(hsv.hue, h),
+				adjhsvS(hsv.saturation, s),
+				adjhsvV(hsv.value, v)
+			)
+		);
+		
+		img->SetMaskColour(rgb.red, rgb.green, rgb.blue);
+	}
+
+	return img;
+}
+
+// wxImage may have distinct mask amd alpha channel;
+// If image has mask and not alpha, make alpha channel
+// from mask color.
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage*
+wximg_get_alphaconv(wxImage* src)
+{
+	// has alpha already, or no mask
+	if ( src->HasAlpha() || ! src->HasMask() ) {
+		return new wxImage(src->Copy());
+	}
+
+	const size_t pixlen = 3;
+	int wi = src->GetWidth();
+	int hi = src->GetHeight();
+	size_t alen = size_t(wi) * hi;
+	size_t dlen = alen * pixlen;
+
+	unsigned char* data = (unsigned char*)std::malloc(dlen);
+	if ( ! data ) {
+		return new wxImage(src->Copy()); // use new_handler
+	}
+	unsigned char* alph = (unsigned char*)std::malloc(alen);
+	if ( ! alph ) {
+		std::free(data);
+		return new wxImage(src->Copy()); // use new_handler
+	}
+
+	const int iR = 0, iG = 1, iB = 2;;
+	unsigned char mr = src->GetMaskRed();
+	unsigned char mg = src->GetMaskGreen();
+	unsigned char mb = src->GetMaskBlue();
+
+	unsigned char* sp = src->GetData();
+	unsigned char* dp = data;
+	unsigned char* ap = alph;
+	unsigned char* ep = ap + alen;
+
+	for ( ; ap < ep; ap++ ) {
+		if ( sp[iR] == mr && sp[iG] == mg && sp[iB] == mb ) {
+			*ap = 0;
+		} else {
+			*ap = 255;
+		}
+
+		*dp++ = *sp++;
+		*dp++ = *sp++;
+		*dp++ = *sp++;
+	}
+
+	wxImage* dst = new wxImage(wi, hi, data);
+
+	dst->SetAlpha(alph);
+
+	return dst;
+}
+
+// simple conversion to greyscale -- may be replaced
+// with something, time permitting
+// originally for background image
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage*
+wximg_get_greyscale(wxImage* src, bool use_alt)
+{
+	const double alt_r = 0.2126;
+	const double alt_b = 0.0722;
+	const double alt_g = 1.0 - alt_b - alt_r;
+	
+	wxImage* dest;
+
+	if ( use_alt ) {
+		dest = new wxImage(src->ConvertToGreyscale(
+			alt_r, alt_g, alt_b
+		));
+	} else {
+		dest = new wxImage(src->ConvertToGreyscale());
+	}
+
+	return dest;
+}
+
+// rotate a wxImage by arg in degrees around center
+// NOTE: returns *same* image (i.e., source is edited)
+// the setbg and color args are to set wxImafe mask, the
+// way provided to control background color when rotated
+// non-multiple of 90 deg.; wx default is black
+wxImage*
+wximg_rotate(wxImage* img, double rot,
+	bool setbg, unsigned char r, unsigned char g, unsigned char b)
+{
+	if ( setbg && ! img->HasMask() && ! img->HasAlpha() ) {
+		img->SetMaskColour(r, g, b);
+	}
+
+	// NOTE bool arg interpolate: if image relies on a mask
+	// for alpha, interpolate will defeat this by changing
+	// masked color; OTOH, an alpha channel will rotate too,
+	// so interpolation should be OK
+	*img = img->Rotate(
+		deg2rad(rot),
+		wxPoint(img->GetWidth() / 2, img->GetHeight() / 2),
+		(img->HasAlpha() || ! img->HasMask()) ? true : false
+	);
+
+	return img;
 }
 
 int
@@ -489,7 +754,11 @@ int sanitise_with_prompt(wxString& str)
 // restrict to this unit with namespace.
 namespace {
 	using namespace std;
+	// gperf uses ancient 'register' and apparently has no option to
+	// desist with that; meanwhile, compilers such as clang++ complain.
+#	define register
 #	include "pov_reserved_words.cpp"
+#	undef register
 }
 
 bool check_identifier(const char* word, size_t len)

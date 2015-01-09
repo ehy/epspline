@@ -370,16 +370,18 @@ MKZIP = itydoodah
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
 	examples-working
 dist archive distarchive: distclean
+	V=$$(/bin/sh ./version.sh) || { \
+		echo FAILED to get version from ./version.sh; exit 1; } ; \
+	TD="epspline-$${V}"; PD="$$(pwd)"; \
+	D="$${PD##*/}"; TF="$$TD.tar.gz"; \
+	test -e ../"$$TD" && \
+		{ echo FAILED: ../"$$TD" exists; ls -ld ../"$$TD"; exit 1; }; \
 	mkdir ../EXCL_TEMPD || { echo FAIL mkdir ../EXCL_TEMPD; exit 1; }; \
 	for f in $(EXCLFILES) ; do \
 		test -e "$$f" && $(MV) "$$f" ../EXCL_TEMPD ; \
 	done; \
 	_ST=0; \
-	V=$$(/bin/sh ./version.sh) || { \
-		echo FAILED to get version from ./version.sh; _ST=1; } ; \
 	test 0 -eq $$_ST && { \
-		TD="epspline-$${V}"; PD="$$(pwd)"; \
-		D="$${PD##*/}"; TF="$$TD.tar.gz"; \
 		( cd .. && { \
 			test X"$$D" = X"$$TD" || \
 				{ $(MV) "$$D" "$$TD" && trap "$(MV) $$TD $$D" 0; }; \

@@ -549,7 +549,7 @@ public:
         ;
     }
 
-    //casts
+    // casts
     operator wxRealPoint () const { return wxRealPoint(x, y); }
     operator wxPoint () const { return wxPoint(irint(x), irint(y)); }
 
@@ -575,6 +575,10 @@ public:
     double getY() const { return y; }
     int    getXi() const { return irint(x); }
     int    getYi() const { return irint(y); }
+
+    // get wx*
+    wxRealPoint get_wxRealPoint() const { return wxRealPoint(x, y); }
+    wxPoint get_wxPoint() const { return wxPoint(irint(x), irint(y)); }
 
     // flag state
     bool isflag() const { return f; }

@@ -43,6 +43,7 @@ class A_Tabpage;
 class A_Frame;
 class A_Ruler;
 class A_Canvas;
+class bgimg_manager;
 
 
 // Buffered DCs not working as hoped, but maybe try again later.
@@ -117,6 +118,9 @@ enum {
 	IC_move_down,
 	IC_move_up,
 
+	IC_set_bg_img,
+	IC_rm_bg_img,
+
 	IC_end
 };
 
@@ -126,7 +130,10 @@ class A_Canvas: public wxScrolledWindow {
 protected:
 	A_Frame*     a_frame;
 	A_Tabpage*   a_tabpg;
+	bgimg_manager*	bg_mng;
+
 	bool         aa_draw; // draw anti-aliased curves, or not
+
 	// For guide/snap-to lines
 	A_Ruler*     hrule, * vrule;
 	wxMenu*      m_pop;
@@ -181,6 +188,16 @@ protected:
 
 		DataState& operator = (const DataState&);
 	};
+
+	// callback for bg image manager: tell us to update
+	typedef /*bgimg_manager::cb_update_arg*/ void* bg_update_arg;
+	static void bg_update(bg_update_arg);
+
+	// for save routines to share -- dname and fname are
+	// hints for background image copy options;
+	// IO_AddlData is in wxutil.h
+	void PrepSaveAddlData(IO_AddlData& addl,
+		wxString* dname = 0, wxString* fname = 0);
 
 public:
 	A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa = true);
@@ -272,6 +289,8 @@ public:
 	void DoRClickMenu(int x, int y);
 	void DoSetScale();
 	void DoCycleScale();
+	void DoSetBGImg();
+	void DoRmBGImg();
 
 	// For internal clipboard that can hold one object
 	void            clipCopy();
@@ -438,6 +457,8 @@ protected:
 	void enableEdCutGlobal(bool b);
 	void enableEdPasteGlobal(bool b);
 	void enableHelpDemo(bool b);
+	void enableSetBackgroundImage(bool b);
+	void enableRemoveBackgroundImage(bool b);
 
 	void enable_set_linear(bool b)
 	{m_pop->Enable(IC_set_linear, b);}

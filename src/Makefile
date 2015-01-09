@@ -42,11 +42,11 @@ UNINST_LIST = ../uninstall/src_uninstall-list
 LEXYACCFAIL = SunOS Linux
 LEXYACCOK   = OpenBSD FreeBSD NetBSD
 
-# CFLAGS (environment overridden) are used in the parser.o
+# PARSERCFLAGS are used in the parser.o
 # compile; the _LINUX def is inherited with the lexer and parser
 # and wxExio code pulled from an old version of wxWindows --
 # it's not actually only used on GNU/Linux here.
-CFLAGS = $(CCFLAGS) -D_LINUX=1
+PARSERCFLAGS = $(CCFLAGS) -D_LINUX=1
 
 OBJDIR = .
 SRCDIR = .
@@ -72,6 +72,8 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/a_glbprefsdlg.h \
 	$(HDRDIR)/spline_props.h \
 	$(HDRDIR)/globlal_prefs.h \
+	$(HDRDIR)/bg_image_dlg.h \
+	$(HDRDIR)/a_bgimg_manager.h \
 	$(HDRDIR)/wxexio.h
 
 SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
@@ -85,6 +87,8 @@ SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
 	$(SRCDIR)/a_glbprefsdlg.cpp \
 	$(SRCDIR)/spline_props.cpp \
 	$(SRCDIR)/globlal_prefs.cpp \
+	$(SRCDIR)/bg_image_dlg.cpp \
+	$(SRCDIR)/a_bgimg_manager.cpp \
 	$(SRCDIR)/wxexio.cpp
 
 OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
@@ -98,6 +102,8 @@ OBJECTS = $(OBJDIR)/epspline.o $(OBJDIR)/io.o $(OBJDIR)/a_canvas.o \
 	$(OBJDIR)/a_glbprefsdlg.o \
 	$(OBJDIR)/spline_props.o \
 	$(OBJDIR)/globlal_prefs.o \
+	$(OBJDIR)/bg_image_dlg.o \
+	$(OBJDIR)/a_bgimg_manager.o \
 	$(OBJDIR)/wxexio.o \
 	$(OBJDIR)/parser.o
 
@@ -116,7 +122,7 @@ $(OBJDIR):
 
 
 $(OBJDIR)/parser.o: $(SRCDIR)/parser.c $(SRCDIR)/lexer.c
-	$(CCLEX) -c $(CFLAGS) -I. -o $@ $(SRCDIR)/parser.c
+	$(CCLEX) -c $(PARSERCFLAGS) -I. -o $@ $(SRCDIR)/parser.c
 
 $(SRCDIR)/parser.c: $(COMMDIR)/parser.y $(SRCDIR)/lexer.c
 	@$(RM) y.tab.c
@@ -173,6 +179,16 @@ $(SRCDIR)/globlal_prefs.cpp : $(LICENSEHEAD) $(GENSRCDIR)/globlal_prefs.cpp
 		> $(SRCDIR)/globlal_prefs.cpp
 
 $(OBJDIR)/globlal_prefs.o : $(SRCDIR)/globlal_prefs.cpp $(HDRDIR)/globlal_prefs.h
+
+$(HDRDIR)/bg_image_dlg.h : $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.h
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.h \
+		> $(HDRDIR)/bg_image_dlg.h
+
+$(SRCDIR)/bg_image_dlg.cpp : $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.cpp
+	$(CAT) $(LICENSEHEAD) $(GENSRCDIR)/bg_image_dlg.cpp \
+		> $(SRCDIR)/bg_image_dlg.cpp
+
+$(OBJDIR)/bg_image_dlg.o : $(SRCDIR)/bg_image_dlg.cpp $(HDRDIR)/bg_image_dlg.h
 
 # GNU gperf is used to make a hashed set of pov reserved words
 # which have been gathered from pov docs.  These words are in a

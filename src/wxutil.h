@@ -24,15 +24,34 @@
 #ifndef _WXUTIL_H_
 #define _WXUTIL_H_
 
+#include <wx/image.h>
 #include "splines.h"
 #include "util.h"
 
+// TODO: move these into header "io.h"
+// The .PSE file Write/Read routines + struct for additional
+// data for per-file section (used by canvas)
+class bgimg_manager;
+struct IO_AddlData {
+	bool init; // remains false if not inited due to old file
+	int scrollpos_h;
+	int scrollpos_v;
+	int scale;
+	bgimg_manager* bgm;
+
+	IO_AddlData() {
+		init = false;
+		scrollpos_h = scrollpos_v = scale = 0;
+		bgm = 0;
+	}
+};
+// Write/Read routines
 bool WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 	, const std::vector<int>& hg, const std::vector<int>& vg
-	, const wxString* pcomment = 0);
+	, const IO_AddlData* addl, const wxString* pcomment = 0);
 int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 	, std::vector<int>& hg, std::vector<int>& vg
-	, wxString* pcomment = 0);
+	, IO_AddlData* addl, wxString* pcomment = 0);
 
 // Must check and sanitize the real numbers, as
 // extreme values can cause big trouble like infinite loops,
@@ -56,6 +75,54 @@ inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
 }
 
+// wxImage may have distinct mask amd alpha channel;
+// If image has mask and not alpha, make alpha channel
+// from mask color.
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage* wximg_get_alphaconv(wxImage* src);
+
+// simplistc image {light,dark}ening with linear compression
+// of pixel components to 'band' width (0.1, 1.0)
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage*
+wximg_bandcomp(wxImage* img, double band, bool lighten = true);
+
+// simplistc HSV adjustment, originally for background image
+// double args are -1.0,1.0
+// NOTE: returns *same* image (i.e., source is edited)
+wxImage* wximg_adjhsv(wxImage* img, double h, double s, double v);
+
+// helper for above proc: take int args in range -100, 100 incl.
+// -- useful e.g. in dialog boxes where a control might only
+// accept integer ranges
+inline wxImage*
+wximg_adjhsv(wxImage* img, int _h, int _s, int _v)
+{
+	return wximg_adjhsv(img,
+		double(_h) / 100.0, double(_s) / 100.0, double(_v) / 100.0);
+}
+
+// simple conversion to greyscale -- may be replaced
+// with something, time permitting
+// originally for background image
+// NOTE: returns operator new'd image (i.e., source not changed)
+wxImage* wximg_get_greyscale(wxImage* src, bool use_alt = false);
+
+// rotate a wxImage by arg in degrees around center
+// NOTE: returns *same* image (i.e., source is edited)
+// the setbg and color args are to set wxImafe mask, the
+// way provided to control background color when rotated
+// non-multiple of 90 deg.; wx default is black
+const unsigned char wximg_rotmask_default_r = 240;
+const unsigned char wximg_rotmask_default_g = 240;
+const unsigned char wximg_rotmask_default_b = 240;
+wxImage* wximg_rotate(wxImage* img, double rot,
+	bool setbg = true,
+	unsigned char r = wximg_rotmask_default_r,
+	unsigned char g = wximg_rotmask_default_g,
+	unsigned char b = wximg_rotmask_default_b);
+
+// test for any intersection of wx rectangles
 bool IntersectRect(const wxRect& r0, const wxRect& r1);
 
 // test if point is on rect line, return enum indicating which

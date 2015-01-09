@@ -38,7 +38,27 @@ camera {
 // given (in the properties dialog) was ``Path_1''.
 // This sample was based on the cup sample, and so the cup
 // and handle are present too.
+#include "cubic_bezier.inc"
 #include "splinepath.inc"
+
+#declare UseBezPath = 1;
+#if ( UseBezPath )
+	#declare ThePath = BzPath_1;
+	#declare ThePath_left = BzPath_1_left;
+	#declare ThePath_top = BzPath_1_top;
+	#declare ThePath_width = BzPath_1_width;
+	#declare ThePath_height = BzPath_1_height;
+	#declare ThePath_max_extent = BzPath_1_max_extent;
+	#declare ThePath_ARRAY_COUNT = BzPath_1_ARRAY_COUNT;
+#else
+	#declare ThePath = Path_1;
+	#declare ThePath_left = Path_1_left;
+	#declare ThePath_top = Path_1_top;
+	#declare ThePath_width = Path_1_width;
+	#declare ThePath_height = Path_1_height;
+	#declare ThePath_max_extent = Path_1_max_extent;
+	#declare ThePath_ARRAY_COUNT = Path_1_ARRAY_COUNT;
+#end
 
 #declare CoffeeCupRaw = union {
 	object { Handle
@@ -59,21 +79,33 @@ camera {
 // etc. wholesale, so use a macro to transform each point.
 #declare Path_scale = 27;
 #macro mk_spline_point ( vec )
-	#local iu = vec.u + (-Path_1_left - Path_1_width / 2);
-	#local iv = vec.v + (-Path_1_top - Path_1_height / 2);
-	< iu * Path_scale / Path_1_max_extent, -iv * Path_scale / Path_1_max_extent >
+	#local iu = vec.u + (-ThePath_left - ThePath_width / 2);
+	#local iv = vec.v + (-ThePath_top - ThePath_height / 2);
+	< iu * Path_scale / ThePath_max_extent, -iv * Path_scale / ThePath_max_extent >
 #end
 
+#local curpt = 0;
+#while ( curpt < ThePath_ARRAY_COUNT )
+	#declare ThePath[curpt] = mk_spline_point(ThePath[curpt]);
+	#local curpt = curpt + 1;
+#end
+
+#if ( UseBezPath )
+#macro SplineThePath(ix)
+BezierFindPos(ThePath, ThePath_ARRAY_COUNT, ix)
+#end
+#else
 // Make the spline from the array (using above macro)
-#declare SplinePath_1 =
+#declare SplineThePath =
 spline {
 	cubic_spline
 	#local ix = 0;
-	#while ( ix < Path_1_ARRAY_COUNT )
-		ix , mk_spline_point(Path_1[ix])
+	#while ( ix < ThePath_ARRAY_COUNT )
+		ix , ThePath[ix]
 		#local ix = ix + 1;
 	#end
 }
+#end
 
 // two u,v vectors, taken as endpoints of segment:
 // get length
@@ -99,16 +131,28 @@ spline {
 // use spline object generated above to place objects;
 // also, use two consecutive points to find a rotation
 // for the cups
+#if ( UseBezPath )
 #declare r_ang = -90;
 #declare bcup = 0.75;
-#declare ecup = Path_1_ARRAY_COUNT - 1.0;
+#declare ecup = ThePath_ARRAY_COUNT - 0.000001;
+#declare ncup = 1111;
+#declare incr = (ThePath_ARRAY_COUNT - bcup) / ncup;
+#declare spc = 1.601;
+#declare ix = 0;
+#declare lvec = SplineThePath(ThePath_ARRAY_COUNT - 0.00001);
+#else
+#declare r_ang = -90;
+#declare bcup = 0.75;
+#declare ecup = ThePath_ARRAY_COUNT - 1.0;
 #declare ncup = 1111;
 #declare incr = (ecup - bcup) / ncup;
 #declare spc = 1.601;
 #declare ix = incr;
-#declare lvec = SplinePath_1(ix);
+#declare lvec = SplineThePath(ix);
+#end
+
 #while ( ix <= ecup )
-	#local t_vec = SplinePath_1(ix);
+	#local t_vec = SplineThePath(ix);
 	// Samples from spline may not be evenly spaced,
 	// so excess samples are taken and an object is
 	// only placed at desired distance

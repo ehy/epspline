@@ -202,6 +202,14 @@ A_Frame::A_Frame(
 	, _("Pre&ferences"), _("Edit application preferences"));
 
 	// Tools:
+	MNADD0NS(MenuOpts, SetBGImage
+	, _("Set &Background Image\tCtrl-B"),
+	_("Set or change a background image on the drawing area"));
+	MNACCHACK(MenuOpts, SetBGImage, _("Ctrl-B"));
+	MNADD0NS(MenuOpts, RmBGImage
+	, _("&Remove Background Image"),
+	_("Remove a background image on the drawing area"));
+	MenuOpts->AppendSeparator();
 	MNADD0NS(MenuOpts, SetUserScale
 	, _("&Set Scale"), _("Set scale of view"));
 	MNADD0NS(MenuOpts, CycleUserScale
@@ -523,16 +531,17 @@ void
 A_Frame::ErrorBox(const wxString& msg, const wxString& titletail)
 const
 {
-	//wxString ttl = wxGetApp().GetAppTitle();
-	wxString ttl = wxGetApp().GetBinName();
+	//wxString tit = wxGetApp().GetAppTitle();
+	wxString tit = wxGetApp().GetBinName();
 
-	if ( titletail != wxT("") ) {
-		ttl += _(":  ");
-		ttl += titletail;
-	}
+	wxString ttl;
+	// TRANSLATORS: %1$s is application binary name ("epspline")
+	// and %2$s is an additional message suitable for an error
+	// messsage box
+	ttl.Printf(_("%1$s: %2$s"), tit.c_str(), titletail.c_str());
 
 	wxMessageBox(msg, ttl
-		, wxCENTRE | wxICON_EXCLAMATION | wxOK
+		, wxCENTRE | wxICON_ERROR | wxOK
 		, const_cast<A_Frame*>(this));
 }
 
@@ -888,6 +897,12 @@ A_Frame::OnOption(wxCommandEvent& event)
 			break;
 		case EdGlobalPreferences:
 			wxGetApp().show_prefs_dialog(true);
+			break;
+		case SetBGImage:
+			canvas->DoSetBGImg();
+			break;
+		case RmBGImage:
+			canvas->DoRmBGImg();
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();

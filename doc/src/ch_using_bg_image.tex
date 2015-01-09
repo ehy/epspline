@@ -1,0 +1,155 @@
+	\IXpkgu{} can display a raster image on the drawing area.
+	A \IXnewterm{background image} might be helpful for tracing,
+	inspiration, or anything that pleases the user. \IXpkgu{}
+	provides a \IXarg{dialog} window with which
+	a \IXarg{background image} may be selected,
+	adjusted and placed. This dialog window is
+	invoked by selecting the tools \IXarg{menu}
+	(see \nameref{sssec:tools_menu})
+	``Set Background Image'' item. An existing image
+	may be removed with the ``Remove Background Image''
+	item on the same menu. Also, those two menu items
+	appear near the bottom of the drawing area 
+	``pop-up'' menu, seen in figure~\ref{fig:canvas_popup_menu}.
+
+	\begin{figure}[htp!]
+	\centering
+	\includegraphics{\ImgBGImgDlg}
+	\caption{The background image window.}
+	\label{fig:bgimg_dlg}
+	\end{figure}
+
+	The \IXarg{background image} \IXarg{dialog} window is
+	seen in figure~\ref{fig:bgimg_dlg}.
+	There are five buttons near the bottom of the
+	\IXarg{dialog} window. These are explained
+	in the table \nameref{tab:bgimg_dialog_buttons}.
+	Note that
+	the buttons listed in the table as ``Help,'' ``Apply,'' ``Cancel,''
+	and ``OK,'' might have different labels and appear in a
+	different order depending on the current platform or theme
+	(or translation).
+	
+	\begin{table}[htbp]
+	\centering
+	\textsf{
+	\begin{tabular}[c]{ | l || p{6.33cm} | }
+	\hline
+	\textsc{Button}: & \textsc{Action}:\\ \hline
+	\hline \hline
+	Help & show the help viewer window displaying this section\\ \hline
+	Apply & put current values in effect, and leave the dialog window showing\\ \hline
+	Cancel & dismiss the dialog window, and discard changed values\\ \hline
+	OK & put current values in effect, dismiss the dialog window\\ \hline
+	\end{tabular}
+	}%\textsf
+	\caption{The Buttons of the Background Image Dialog Window}
+	\label{tab:bgimg_dialog_buttons}
+	\end{table}
+
+	Like the
+	\hyperref[sec:ch_global_prefs]{preferences} \IXarg{dialog},
+	this \IXarg{dialog} window is designed to allow interaction
+	with the
+	\hyperref[sec:window_interface]{main window}
+	without closing the \IXarg{dialog} window.
+
+		\subsection{Background Image Dialog Controls}%WX%4||||
+		\label{ssec:bg_image_controls}
+		In addition to the buttons described above,
+		the \IXarg{background image} \IXarg{dialog} window
+		presents items to control the placement and
+		appearance of the image, and how or whether
+		the image will be saved when the \IXpkg{} file
+		is saved. Hopefully, some combination of the
+		controls will provide a suitable display on the
+		drawing area.
+
+		\begin{description}
+		  \item[Copy options:] This exclusive option
+		  provides the following three choices.
+			\begin{enumerate}
+			  \item \emph{Copy Original}: A
+			  copy of the image will be made when the
+			  \IXpkg{} file is saved. The copy is made in
+			  the same directory as the saved \IXpkg{} file,
+			  and will have the same file name as the original,
+			  but with a
+			  `.png' suffix (as that format is used).  The
+			  image is not changed, but changes applied on the
+			  drawing area representation are preserved in
+			  the \IXpkg{} file, and will be applied again when
+			  the \IXpkg{} file is opened again.
+			  \item \emph{Copy Changes}: This
+			  choice will save a `.png'
+			  file as above, but with changes applied to
+			  the saved image. In this case the image
+			  file will have the same name as the \IXpkg{} file,
+			  but with a `.png' suffix. The \IXarg{dialog}
+			  control settings, except the offsets,
+			  are discarded so that they will not be applied
+			  again in addition to the first application
+			  in the saved copy. Offset settings are retained,
+			  because they apply to the drawing area rather
+			  than the image data.
+			  \item \emph{No Copy}: This choice
+			  saves no image file, but if the
+			  original is found when the \IXpkg{} file is
+			  opened again it will be used. Note that the
+			  full path of the original file will be stored
+			  in the \IXpkg{} file. If the path is unsuitable
+			  for a file that might be transferred or shared,
+			  then save a copy with the background image
+			  removed and use that as a portable version.
+			\end{enumerate}
+		  \item[Greyscale:] This checkbox (on or off)
+		  will apply a conversion to greyscale on a color
+		  image.
+		  \item[Flip Horizontal, Flip Vertical:] These checkboxes
+		  apply a `mirror' operation, or `flip,' along one
+		  axis. The horizontal operation appears to `flip'
+		  the image around the $y$ axis,
+		  and the vertical around $x$.
+		  \item[Rotate:] A rotation is applied around the
+		  center of the image. The value is in \IXnewterm{degrees}.
+		  Note that the image will appear to become smaller,
+		  because the original rectangular dimensions
+		  are preserved. If necessary, compensate for that
+		  with width and height adjustments.
+		  \item[Width, Height:] These `spinner' controls accept
+		  numeric (integer) input from keys, or mouse adjustment
+		  by clicking the arrows at the right of the control.
+		  In either of these two, a value of zero (0)
+		  indicates that the the original value from the image
+		  should be used.
+		  \item[Horizontal Offset, Vertical Offset:] These
+		  `spinner' controls accept positive or negative
+		  integers. These values control placement of the image
+		  within the drawing area. If these are both
+		  zero (0) then the upper left corner of the image
+		  is placed at the upper left corner of the drawing
+		  area.
+		  \item[HSV Adjust:] These `slider' controls will
+		  adjust image color properties in the
+		  \IXnewterm{HSV}
+		  (``Hue, Saturation \& Value'') color space.
+		  It might be possible to find a set of adjustments
+		  with these controls that help emphasize an area
+		  of interest in the image.
+		  \item[Lightness:] This `slider' applies a simple
+		  adjustment to apparently lighten or darken the
+		  image. Using this to lighten an image should be
+		  helpful --- and possibly necessary --- to display
+		  a background image with sufficient contrast
+		  against the \IXarg{curves} being drawn.
+		  \item[Choose an image file:] This control has a
+		  text entry field that will accept an image
+		  file path, and a button that will invoke a
+		  file selector \IXarg{dialog} window.
+		\end{description}
+
+		Many images will be too dark or colorful to serve
+		as a background over which \IXarg{curves} can be
+		seen and manipulated. The controls in this \IXarg{dialog}
+		should make it possible to render an image as a
+		useful background.

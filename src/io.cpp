@@ -385,15 +385,17 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 
 			wxString name;
 			pe->GetAttributeValue(wxT("CanvasBGFName"), name);
-			if ( addl->bgm->get_copy_orig() ||
-				 addl->bgm->get_copy_changes() ) {
-				// in this case directory was not
-				// saved, and file is expected in
-				// same dir as .pse file.
-				name = wxFileName(
-					wxFileName(fname).GetPath(),
-					wxFileName(name).GetFullName()
-				).GetFullPath();
+			if ( ! name.IsEmpty() ) {
+				if ( addl->bgm->get_copy_orig() ||
+					 addl->bgm->get_copy_changes() ) {
+					// in this case directory was not
+					// saved, and file is expected in
+					// same dir as .pse file.
+					name = wxFileName(
+						wxFileName(fname).GetPath(),
+						wxFileName(name).GetFullName()
+					).GetFullPath();
+				}
 			}
 			addl->bgm->set_file(name);
 		}

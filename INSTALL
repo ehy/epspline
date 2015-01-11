@@ -158,6 +158,10 @@ OpenBSD:
     is the only system found to require `make all'). As usual,
     the linker will nag about a few unsafe string functions.
 
+    UPDATE: as of OpenBSD 5.5 (I do not know which version exactly)
+    OpenBSD make recognizes .POSIX such that a simple ``make''
+    will work.
+
 FreeBSD:
     UPDATE: wxWidgets 2.6 is no longer supported; see README.
     Reference to 2.6 below is merely historical.

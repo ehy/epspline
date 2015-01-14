@@ -296,7 +296,7 @@ mingw_l_y:
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
 #depend: $(HDRS) $(SRCS)
-depend_raw:
+depend:
 	@$(RM) depend
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \
@@ -305,7 +305,7 @@ depend_raw:
 	$(CXXDEPS) $(CCFLAGS) $$MM $(SRCS) | \
 	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > depend
 
-depend dep: depend_raw
+dep: depend
 	mv depend dep
 	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < dep | \
 	sed -e 's;^\$$;\?\?&;' \
@@ -318,7 +318,7 @@ depend dep: depend_raw
 # Actually, GNU tools, grep and sed are used below; word-edge-anchors
 # '\<' and '\>' are used and they are not POSIX -- failure likely
 # except on GNU system or with GNU tools.
-depend.msw dep.msw : depend
+depend.msw dep.msw : dep
 	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < depend | \
 	sed -e 's;^\$$;\?\?&;' \
 	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' \

@@ -46,13 +46,14 @@
 namespace {
 	inline wxString wxsani(const wxString& s)
 	{
-		std::string ss(wxs2ch(s));
+		std::string ss((const char*)s.mb_str(wxConvUTF8));
 		return ch2wxs(sanitise_string(ss, ss, false).c_str());
 	}
 	inline wxString& wxunsani(wxString& s)
 	{
 		std::string ss(wxs2ch(s));
-		s = ch2wxs(unsanitise_string(ss, ss, false).c_str());
+		s = wxString(unsanitise_string(ss, ss, false).c_str(),
+			wxConvUTF8);
 		return s;
 	}
 }

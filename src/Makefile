@@ -296,7 +296,7 @@ mingw_l_y:
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
 #depend: $(HDRS) $(SRCS)
-depend:
+depend_raw:
 	@$(RM) depend
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \
@@ -305,7 +305,7 @@ depend:
 	$(CXXDEPS) $(CCFLAGS) $$MM $(SRCS) | \
 	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > depend
 
-dep: depend
+depend dep: depend_raw
 	mv depend dep
 	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < dep | \
 	sed -e 's;^\$$;\?\?&;' \

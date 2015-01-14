@@ -220,6 +220,8 @@ is_priviliged();
 // "escapes" are put before '\', '"', and '\'' if esc == true
 std::string&
 sanitise_string(std::string& in, std::string& out, bool esc = false);
+std::string&
+unsanitise_string(std::string& in, std::string& out, bool esc = false);
 // replace C comments "/*" and "*/" with r
 std::string&
 unccom_string(std::string& in, std::string& out, const char* r = "");

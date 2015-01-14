@@ -809,13 +809,14 @@ sanitise_string(std::string& in, std::string& out)
 		// problem: std::iscntrl(c) is true for '\t'
 		if ( c != '\t' && (uc.u > 127 || std::iscntrl(c)
 				|| ! (std::isprint(c) || std::isspace(c)) ) ) {
+			// put double backslash!
 			so << "\\\\x" << std::setw(2) << unsigned(uc.u);
 			continue;
 		}
 		switch ( c ) {
-			case '\'':
-			case '"':
 			case '\\':
+			case '"':
+			/* case '\'': NOT single quote */
 				so.put('\\');
 				break;
 			default:

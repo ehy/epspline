@@ -47,7 +47,13 @@ namespace {
 	inline wxString wxsani(const wxString& s)
 	{
 		std::string ss(wxs2ch(s));
-		return ch2wxs(sanitise_string(ss, ss).c_str());
+		return ch2wxs(sanitise_string(ss, ss, false).c_str());
+	}
+	inline wxString& wxunsani(wxString& s)
+	{
+		std::string ss(wxs2ch(s));
+		s = ch2wxs(unsanitise_string(ss, ss, false).c_str());
+		return s;
 	}
 }
 
@@ -385,7 +391,7 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 
 			wxString name;
 			pe->GetAttributeValue(wxT("CanvasBGFName"), name);
-			if ( ! name.IsEmpty() ) {
+			if ( ! wxunsani(name).IsEmpty() ) {
 				if ( addl->bgm->get_copy_orig() ||
 					 addl->bgm->get_copy_changes() ) {
 					// in this case directory was not
@@ -414,7 +420,7 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 		}
 		wxString t(wxT(""));
 		pe->GetAttributeValue(wxT("objname"), t);
-		if ( t == wxT("") ) continue;
+		if ( wxunsani(t).IsEmpty() ) continue;
 
 		int ti = -1;
 		pe->GetAttributeValue(wxT("splinetype"), ti);
@@ -458,37 +464,37 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 		if ( ti > -1 ) p->Getsweept() = (SplineBase::sweep_t)ti;
 		else p->Getsweept() = SplineBase::slinear;
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(wxT("sweep_min"), t);
 		if ( t != wxT("") ) t.ToDouble(&p->Getsweepmin());
 		else p->Getsweepmin() = -1.0;
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(wxT("sweep_max"), t);
 		if ( t != wxT("") ) t.ToDouble(&p->Getsweepmax());
 		else p->Getsweepmax() = 1.0;
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(p->PropNames[p->transform], t);
-		if ( t != wxT("") ) {
+		if ( ! wxunsani(t).IsEmpty() ) {
 			p->GetTransform() = t;
 		}
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(p->PropNames[p->texture], t);
-		if ( t != wxT("") ) {
+		if ( ! wxunsani(t).IsEmpty() ) {
 			p->GetTexture() = t;
 		}
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(p->PropNames[p->interior], t);
-		if ( t != wxT("") ) {
+		if ( ! wxunsani(t).IsEmpty() ) {
 			p->GetInterior() = t;
 		}
 
-		t = wxT("");
+		t.Empty();
 		pe->GetAttributeValue(p->PropNames[p->userstr], t);
-		if ( t != wxT("") ) {
+		if ( ! wxunsani(t).IsEmpty() ) {
 			p->GetUserStr() = t;
 		}
 
@@ -587,7 +593,7 @@ ReadData(const wxString& fname, std::list<SplineBase*>& lst
 			if ( n > 0 ) {
 				wxString t;
 				pe->GetAttributeValue(wxT("Comment1"), t);
-				*pcomment = wxsani(t);
+				*pcomment = wxunsani(t);
 			} else {
 				*pcomment = wxT("");
 			}

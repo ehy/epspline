@@ -884,7 +884,7 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 		// problem: std::iscntrl(c) is true for '\t'
 		if ( c != '\t' && (uc.u > 127 || std::iscntrl(c)
 				|| ! (std::isprint(c) || std::isspace(c)) ) ) {
-			so << "\\\\x" << std::setw(2) << unsigned(uc.u);
+			so << "\\x" << std::setw(2) << unsigned(uc.u);
 			continue;
 		}
 		if ( esc ) {
@@ -901,8 +901,72 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 		so.put(c);
 	}
 
-	// Ouch, this was missing, must have deleted it; returns
-	// nothing without it!
+	out = so.str();
+
+	return out;
+}
+
+std::string&
+unsanitise_string(std::string& in, std::string& out, bool esc)
+{
+	std::istringstream si(in);
+	std::ostringstream so;
+
+	char c;
+	while ( si.get(c) ) {
+		if ( c == '\\' ) {
+			if ( ! si.get(c) ) {
+				so.put('\\');
+				continue;
+			}
+
+			if ( ! esc && c != 'x' ) {
+				so.put('\\');
+			} else {
+				char buf[3];
+
+				if ( ! si.get(c) ) {
+					so.put('x');
+					continue;
+				}
+				if ( ! std::isxdigit(c) ) {
+					so.put('x');
+					so.put(c);
+					continue;
+				}
+
+				buf[0] = c;
+
+				if ( ! si.get(c) ) {
+					so.put('x');
+					so.put(buf[0]);
+					continue;
+				}
+				if ( ! std::isxdigit(c) ) {
+					so.put('x');
+					so.put(buf[0]);
+					so.put(c);
+					continue;
+				}
+
+				buf[1] = c;
+				buf[2] = '\0';
+
+				unsigned us;
+				std::istringstream ts(buf);
+
+				ts >> std::setbase(16) >> us;
+
+				union { char c; unsigned char u; } uc;
+
+				uc.u = static_cast<unsigned char>(us);
+				c = uc.c;
+			}
+		}
+
+		so.put(c);
+	}
+
 	out = so.str();
 
 	return out;

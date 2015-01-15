@@ -102,8 +102,12 @@
 extern "C" {
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <freetype/t1tables.h>
-}
+#if defined(__OpenBSD__) // OBSD 'xenocara' has all in one dir
+#	include <t1tables.h>
+#else
+#	include <freetype/t1tables.h>
+#endif
+} // extern "C"
 
 template<int C> class C_loc_Temp {
 protected:

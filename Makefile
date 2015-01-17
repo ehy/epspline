@@ -368,7 +368,7 @@ distclean: distclean_po distclean_examples distclean_doc
 # "$(MKZIP)" is not empty.
 MKZIP = itydoodah
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
-	examples-working
+	examples-working tmp bak
 dist archive distarchive: distclean
 	V=$$(/bin/sh ./version.sh) || { \
 		echo FAILED to get version from ./version.sh; exit 1; } ; \
@@ -376,7 +376,9 @@ dist archive distarchive: distclean
 	D="$${PD##*/}"; TF="$$TD.tar.gz"; \
 	test -e ../"$$TD" && \
 		{ echo FAILED: ../"$$TD" exists; ls -ld ../"$$TD"; exit 1; }; \
-	mkdir ../EXCL_TEMPD || { echo FAIL mkdir ../EXCL_TEMPD; exit 1; }; \
+	test -e ../EXCL_TEMPD && \
+		{ echo FAILED: ../EXCL_TEMPD exists; ls -ld ../EXCL_TEMPD; exit 1; }; \
+	mkdir ../EXCL_TEMPD || { echo FAILED mkdir ../EXCL_TEMPD; exit 1; }; \
 	for f in $(EXCLFILES) ; do \
 		test -e "$$f" && $(MV) "$$f" ../EXCL_TEMPD ; \
 	done; \

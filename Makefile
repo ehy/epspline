@@ -102,7 +102,7 @@ MSWRCC = `$(CF) --rescomp`
 # The target for this setup is 'uninst_setup' ('prog' depends).
 UNINSTALLER_ROOT = uninstall
 UNINSTALLER_BASE = _uninstall-list
-UNINSTALLER_DIRS = doc po examples src
+UNINSTALLER_DIRS = doc po examples anim-example src
 
 
 #
@@ -260,7 +260,7 @@ uninstall_xdg:
 # this target always exits success in case current system
 # does not have msgfmt program (or any other error) and it
 # should not prevent program build and install
-po examples doc: junko
+po examples anim-example doc: junko
 	@cd $@ && \
 	$(MAKE) -f $(MKFILE) \
 		PREFIX="$(PREFIX)" DATAPREFIX="$(DATAPREFIX)" all || \
@@ -278,6 +278,12 @@ install_examples uninstall_examples clean_examples cleanall_examples distclean_e
 		PREFIX="$(PREFIX)" DATAPREFIX="$(DATAPREFIX)" $$t || \
 		{ echo FAILED make $@; exit 0; };
 
+install_anim-example uninstall_anim-example clean_anim-example cleanall_anim-example distclean_anim-example:
+	@TT=$@; t=$${TT%_*}; D=$${TT##*_}; cd $$D && \
+	$(MAKE) -f $(MKFILE) \
+		PREFIX="$(PREFIX)" DATAPREFIX="$(DATAPREFIX)" $$t || \
+		{ echo FAILED make $@; exit 0; };
+
 install_doc uninstall_doc clean_doc cleanall_doc distclean_doc:
 	@TT=$@; t=$${TT%_*}; D=$${TT##*_}; cd $$D && \
 	$(MAKE) -f $(MKFILE) \
@@ -287,7 +293,7 @@ install_doc uninstall_doc clean_doc cleanall_doc distclean_doc:
 # Note that install depends on prog, not all.  This intentionally
 # avoids the po target.  If target all had not already been
 # visited, the catalogs will not be installed.
-install_base: prog install_po install_examples install_doc
+install_base: prog install_po install_examples install_anim-example install_doc
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		INSTALLCMD="$(INSTALLCMD)" INSTALLOPTS="$(INSTALLOPTS)" \
@@ -301,7 +307,7 @@ install_base: prog install_po install_examples install_doc
 install: install_base install_xdg
 	@echo "Succeeded $@ in $(DIRS)"
 
-uninstall: uninstall_po uninstall_examples uninstall_doc uninstall_xdg
+uninstall: uninstall_po uninstall_examples uninstall_anim-example uninstall_doc uninstall_xdg
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		INSTALLCMD="$(INSTALLCMD)" INSTALLOPTS="$(INSTALLOPTS)" \

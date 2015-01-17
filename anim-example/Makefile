@@ -40,8 +40,7 @@ INSTALLDIR = $(DATAPREFIX)/share/$(NAME)/anim-example
 all:
 	@P="`pwd`"; D="$${P##*/}"; echo $@ made in "$$D" ; exit 0
 
-# excludes must be string w/ space at each end
-INSTALL_EXCLUDES = " Makefile "
+INSTALL_EXCLUDES = Makefile
 INST_LIST = *
 # Maintain $(UNINST_LIST)
 install:
@@ -51,8 +50,8 @@ install:
 	fi
 	@for f in $(INST_LIST) ; do \
 		test -e "$$f" || continue ; \
-		case $(INSTALL_EXCLUDES) in; \
-			" $$f " ) continue;;; \
+		case " $(INSTALL_EXCLUDES) " in \
+			*" $$f "* ) continue;; \
 		esac; \
 		td="$(INSTALLDIR)" ; \
 		test -e "$$td" && test ! -d "$$td" && \

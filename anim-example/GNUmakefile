@@ -311,8 +311,9 @@ DEPS         = boardspace-path.inc \
 				cubic_bezier.inc
 
 # generated data file to be read within POV SDL file
-GEN_DATA_0 = gen/dat0
-GEN_DATA_1 = gen/dat1
+GEN_DATA_D = gen
+GEN_DATA_0 = $(GEN_DATA_D)/dat0
+GEN_DATA_1 = $(GEN_DATA_D)/dat1
 GEN_DATA   = $(GEN_DATA_0) $(GEN_DATA_1)
 
 finalimg     = $(nameout).SD.final.$(nameext)
@@ -371,7 +372,13 @@ listtargets:
 	@echo '  ' '0x6F10DF@0.98' where alpha scale follows '@'
 	@echo
 
-$(GEN_DATA) :
+mk_dir:
+	test -d $(framedir) || { mkdir $(framedir) || \
+		{ echo FAILED mkdir $(framedir) ; exit 1 ; } ; } ; \
+	test -d $(GEN_DATA_D) || { mkdir $(GEN_DATA_D) || \
+		{ echo FAILED mkdir $(GEN_DATA_D) ; exit 1 ; } ; } ;
+
+$(GEN_DATA) : mk_dir
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0)
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1)
@@ -382,7 +389,7 @@ gen_data: $(GEN_DATA)
 # Povray exits with status 0 even on error!
 # Testing for the presence of output files sucks but will have to do.
 ifdef MULTIJOBS
-$(nameout).LD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).LD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -402,7 +409,7 @@ $(nameout).LD.devel.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).LD.devel$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).LD.devel$(N4E).$(nameext) $@
 else
-$(nameout).LD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).LD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -421,7 +428,7 @@ $(nameout).LD.devel.$(vidext): $(nameout).LD.devel.$(nameext)
 ffLDdevel: $(nameout).LD.devel.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).SD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).SD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -441,7 +448,7 @@ $(nameout).SD.devel.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).SD.devel$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).SD.devel$(N4E).$(nameext) $@
 else
-$(nameout).SD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).SD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -460,7 +467,7 @@ $(nameout).SD.devel.$(vidext): $(nameout).SD.devel.$(nameext)
 ffSDdevel: $(nameout).SD.devel.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).WSD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WSD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -480,7 +487,7 @@ $(nameout).WSD.devel.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).WSD.devel$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).WSD.devel$(N4E).$(nameext) $@
 else
-$(nameout).WSD.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WSD.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -499,7 +506,7 @@ $(nameout).WSD.devel.$(vidext): $(nameout).WSD.devel.$(nameext)
 ffWSDdevel: $(nameout).WSD.devel.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).HD1.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).HD1.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -519,7 +526,7 @@ $(nameout).HD1.devel.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).HD1.devel$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).HD1.devel$(N4E).$(nameext) $@
 else
-$(nameout).HD1.devel.$(nameext): $(SRCS) $(DEPS)
+$(nameout).HD1.devel.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -538,7 +545,7 @@ $(nameout).HD1.devel.$(vidextxlg): $(nameout).HD1.devel.$(nameext)
 ffHD1devel: $(nameout).HD1.devel.$(vidextxlg)
 
 ifdef MULTIJOBS
-$(nameout).LD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).LD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -558,7 +565,7 @@ $(nameout).LD.final.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).LD.final$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).LD.final$(N4E).$(nameext) $@
 else
-$(nameout).LD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).LD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -577,7 +584,7 @@ $(nameout).LD.final.$(vidext): $(nameout).LD.final.$(nameext)
 ffLDfinal: $(nameout).LD.final.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).SD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).SD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -597,7 +604,7 @@ $(nameout).SD.final.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).SD.final$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).SD.final$(N4E).$(nameext) $@
 else
-$(nameout).SD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).SD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -616,7 +623,7 @@ $(nameout).SD.final.$(vidext): $(nameout).SD.final.$(nameext)
 ffSDfinal: $(nameout).SD.final.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).WSD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WSD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -636,7 +643,7 @@ $(nameout).WSD.final.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).WSD.final$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).WSD.final$(N4E).$(nameext) $@
 else
-$(nameout).WSD.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WSD.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -655,7 +662,7 @@ $(nameout).WSD.final.$(vidext): $(nameout).WSD.final.$(nameext)
 ffWSDfinal: $(nameout).WSD.final.$(vidext)
 
 ifdef MULTIJOBS
-$(nameout).HD1.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).HD1.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -675,7 +682,7 @@ $(nameout).HD1.final.$(nameext): $(SRCS) $(DEPS)
 		test -f $(nameout).HD1.final$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).HD1.final$(N4E).$(nameext) $@
 else
-$(nameout).HD1.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).HD1.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -695,7 +702,7 @@ ffHD1final: $(nameout).HD1.final.$(vidextxlg)
 
 
 ifdef MULTIJOBS
-$(nameout).WEB.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WEB.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	( $(ULIMIT) ; \
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
@@ -715,7 +722,7 @@ $(nameout).WEB.final.$(nameext): $(SRCS) $(DEPS)
 		test -f    $(nameout).WEB.final$(N3E).$(nameext) && \
 		$(CPFORCE) $(nameout).WEB.final$(N4E).$(nameext) $@
 else
-$(nameout).WEB.final.$(nameext): $(SRCS) $(DEPS)
+$(nameout).WEB.final.$(nameext): mk_dir $(SRCS) $(DEPS)
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) $(TESTING) $(SINGLE) \
 		> $(GEN_DATA_0) ; \
 	printf '%s,%s,%s,' $(FINAL) $(RNUMER) $(RDENOM) > $(GEN_DATA_1) ; \
@@ -746,12 +753,12 @@ test: tst.png
 test2: tst2.png
 #	display tst2.png
 # $(SRCS) $(DEPS)
-tst tst.png:
+tst tst.png: mk_dir
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) 1 1 > $(GEN_DATA_0)
 	printf '%s,%s,%s,%s,%s' 0 24 1 4 3 > $(GEN_DATA_1)
 	$(pov) $(TSTCMD) $(ADDLPOVOPTS) +I$(namepov).$(povext) +O$@
 # $(SRCS) $(DEPS)
-tst2 tst2.png:
+tst2 tst2.png: mk_dir
 	printf '%s,%s,%s,%s' $(frame1st) $(framecnt) 1 1 > $(GEN_DATA_0)
 	printf '%s,%s,%s,%s,%s' 1 24 1 16 9 > $(GEN_DATA_1)
 	$(pov) $(TST2CMD) $(ADDLPOVOPTS) +I$(namepov).$(povext) +O$@

@@ -279,6 +279,8 @@ Section "appclass examples" SecExa
   File  "../examples/*.inc"
   File  "../examples/*.pov"
   File  "../examples/*.jpeg"
+  SetOutPath "$INSTDIR\mswxmpldir\anim-example"
+  File  "../anim-example/*"
 
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -354,6 +356,8 @@ Section "Uninstall"
   Delete "$INSTDIR\en\appname.mo"
   Delete "$INSTDIR\en_US\appname.mo"
   Delete "$INSTDIR\mswsrc_dir\${SRC_ZIP}"
+  Delete "$INSTDIR\mswxmpldir\anim-example\*"
+  RMDir  "$INSTDIR\mswxmpldir\anim-example"
   Delete "$INSTDIR\mswxmpldir\*.*"
   Delete "$INSTDIR\appname.exe"
   Delete "$INSTDIR\${APP_ICO}"

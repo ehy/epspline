@@ -7,24 +7,48 @@
 	 ways.  The boardspace example makes a random boardlike
 	 thing, and moves an object among obstacles on the board.
 	 -
-	 Works like this:
-	 Invoke, if neeeded, the "traceimage" target in the
-	 (GNU make) Makefile, open boardspace-path.pse with
-	 Epspline and check/adjust bezier path. Next run make
-	 (or gmake) with no target and check the available
-	 targets near the top of the help output (try LDdevel
-	 first), peruse the remainder of help text, and try
-	 something like this:
+	 Works like this on Unix:
+    	 Invoke, if neeeded, the "traceimage" target in the
+    	 (GNU make) GNUMakefile, open boardspace-path.pse with
+    	 Epspline and check/adjust bezier path. Next run make
+    	 (or gmake) with no target and check the available
+    	 targets near the top of the help output (try LDdevel
+    	 first), peruse the remainder of help text, and try
+    	 something like this:
+    	 -
+    	 time make PREVIEW=true ANI_FILM=true ENCODE_TYPE=ntsc-film \
+    		AUDIO_ARGS="-an" MULTIJOBS=true \
+    		ffLDdevel
+    	 -
+    	 Note the target is "ffLDdevel" which will finish with
+    	 ffmpeg encoding -- if you don't have ffmpeg just use
+    	 "LDdevel"
+    	 -
+
+	 Works like this on MSWindows:
+	    1) select menu Render->Edit Settings/Render, and in the
+	     "INI file" section of the dialog make sure ANIM_MSW.INI,
+	     included with this example, will be used and click "Save".
+	    2) open the aforementioned ANIM_MSW.INI in the POV-Ray
+	     editor, switch to that tab, and READ THE COMMENTS, esp.
+	     comments re. "IO and anim opts" and Output_File_Name;
+	     because, if you know how to make Pre_Scene_Command
+	     work the render can be made more flexible and subdirs
+	     can be used for generated files. (I cannot get
+	     Pre_Scene_Command to work if the command is given any
+	     options at all -- YMMV.)
+	    3) invoke, if neeeded, the "traceimage" section in 
+    	 ANIM_MSW.INI, open boardspace-path.pse with
+    	 Epspline and check/adjust bezier path.
+    	4) select a size-named section, which are all for animation,
+    	 and run.
+    	 -
+    	 Finally if you wish, compile the frames into a video with
+    	 your preferred tool.
+    	 -
+
 	 -
-	 time make PREVIEW=true ANI_FILM=true ENCODE_TYPE=ntsc-film \
-		AUDIO_ARGS="-an" MULTIJOBS=true \
-		ffLDdevel
-	 -
-	 Note the target is "ffLDdevel" which will finish with
-	 ffmpeg encoding -- if you don't have ffmpeg just use
-	 "LDdevel"
-	 -
-	 Ed Hynan 2014
+	 Ed Hynan 2015
 */
 
 // should work with 3.6 or 3.7
@@ -42,6 +66,17 @@
 
 #declare IS_ANIM = clock_on;
 #if ( IS_ANIM )
+#	ifdef ( NO_GEN_FILES )
+#	declare FFST = 1;
+#	declare NF = 900;
+#	declare TESTING = 0;
+#	declare SINGLE  = 0;
+#	declare IsFinal = 1;
+#	declare rate_numerator = 24;
+#	declare rate_denominator = 1;
+#	declare DAR_x = image_width;
+#	declare DAR_y = image_height;
+#	else
 	// values from data-file: Makefile genterated or hand edited, etc..
 #	fopen DATF "gen/dat0" read
 #	read(DATF, FFST, NF, TESTING, SINGLE)
@@ -49,6 +84,7 @@
 #	fopen DATF "gen/dat1" read
 #	read(DATF, IsFinal, rate_numerator, rate_denominator, DAR_x, DAR_y)
 #	fclose DATF
+#	end
 
 	// Display aspect:
 #	declare DAR = DAR_x / DAR_y;

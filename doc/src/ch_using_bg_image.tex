@@ -102,10 +102,10 @@
 			  then save a copy with the background image
 			  removed and use that as a portable version.
 			\end{enumerate}
-		  \item[Greyscale:] This checkbox (on or off)
+		  \item[Greyscale:] This check box (on or off)
 		  will apply a conversion to greyscale on a color
 		  image.
-		  \item[Flip Horizontal, Flip Vertical:] These checkboxes
+		  \item[Flip Horizontal, Flip Vertical:] These check boxes
 		  apply a `mirror' operation, or `flip,' along one
 		  axis. The horizontal operation appears to `flip'
 		  the image around the $y$ axis,
@@ -153,3 +153,15 @@
 		seen and manipulated. The controls in this \IXarg{dialog}
 		should make it possible to render an image as a
 		useful background.
+
+		Since \IXarg{spline} based objects may be drawn against a
+		\IXarg{background image}, it might be useful to refer to the
+		offset and display dimensions of the image on the canvas
+		in \IXpov{} \IXarg{SDL}. When an \IXpkg{} file is exported to
+		a \IXpov{} include file, if there is a background image
+		then constants will be declared with the prefix
+		``BGIMG\_'' for width, height, left, right,
+		top, bottom, and maximum extent. The include file
+		name will follow the prefix with unsuitable characters
+		replaced. These constants are placed near the top
+		of the file.

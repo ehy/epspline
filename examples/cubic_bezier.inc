@@ -48,7 +48,7 @@
 // calculate a <u,v> coord from Bezier points
 // in array Arr with Cnt members for position
 // along path Pos, where 0<=Pos<Cnt
-// Cnt is currently unused
+//
 // the form with suffix 'Co' allows diddling
 // with the constant (3) used in the evaluation
 // of the control point terms in the bezier
@@ -58,8 +58,9 @@
 #end
 #macro BezierFindPosCo(Arr, Cnt, Pos, _const)
 	#local ipos = int(Pos);
-	#local mpos = mod(ipos, 4);
-	#local seg  = ipos - mpos;
+	#local pos  = mod(ipos, Cnt);
+	#local mpos = mod(pos, 4);
+	#local seg  = pos - mpos;
 	#local i = (mpos + (Pos - ipos)) / 4;
 	BezierInterpAtIncrCo(
 		Arr[seg + 0],

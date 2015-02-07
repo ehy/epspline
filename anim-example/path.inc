@@ -27,19 +27,21 @@
 
 #declare epsilon_add = epsilon * 4; // arbitrary
 
-// Like atan2, with extra arbitrary handling of adjacent == 0,
-// and returning only postive coincident angles when atan2
-// returns negative
-#macro p_atan2(o, a)
-	// take angle as if segment is in 1st quadrant
-	#local tt = 0;
-	#if ( a != 0 )
-		#local tt = atan2(o, a);
-	#end
-	#if ( tt < 0 )
-		#local tt = pi * 2 + tt;
-	#end
-	tt
+// utility: like the AT&T V3 UNIX, C99, POSIX.1-2001
+// math lib hypot(3)
+#macro pthHypot(px, py)
+	#local _hy = sqrt(px * px + py * py);
+	_hy
+#end
+// utility: length of line with an endpoint at 0,0
+#macro pthLineLen(px, py)
+	#local len = pthHypot(px, py);
+	len
+#end
+// utility: length of line with endpoints at u,v vecs v1 and v2
+#macro pthLineLenUV(v1, v2)
+	#local len = pthLineLen(v2.v - v1.v, v2.u - v1.u);
+	len
 #end
 
 // 2D angle of segment between 2 2D vectors;
@@ -48,45 +50,18 @@
 #ifndef ( rotYAngle )
 #macro rotYAngle(ov, nv)
 	// wanted: angle of segment between two u,v vectors
-	#local tu = nv.u - ov.u;
-	#local tv = nv.v - ov.v;
-	#if ( 1 )
-	#local tr = atan2(tv, tu);
-	#else
-	#local tr = p_atan2(tv, tu);
-	#end // if ( 1 )
+	#local _x = nv.u - ov.u;
+	#local _y = nv.v - ov.v;
+	#local tr = atan2(_y, _x);
 	#local ta = degrees(tr);
 	// result
 	ta
 #end
 #end // rotYAngle
 
-
-// 2D angle of segment between 2 2D vectors;
-// result in arcsine half cycle range
-// return in units of degrees, as POV rotate transform uses degrees
 #ifndef ( rotZAngle )
 #macro rotZAngle(ov, nv)
-	// wanted: angle of segment between two u,v vectors
-	#local tu = nv.u - ov.u;
-	#local tv = nv.v - ov.v;
-	#local th = sqrt(tu * tu + tv * tv);
-	#if ( 0 )
-		#if ( tu )
-		#local tr = acos(tu / th);
-		#else // if ( t? )
-		#local tr = 0;
-		#end // if ( t? )
-	#else // if ( 1|0 )
-		#if ( th )
-		#local tr = asin(tv / th);
-		#else // if ( t? )
-		#local tr = 0;
-		#end // if ( t? )
-	#end // if ( 1 )
-	#local ta = degrees(tr);
-	// result
-	ta
+	rotYAngle(ov, nv)
 #end
 #end // rotZAngle
 
@@ -98,30 +73,22 @@
 	#local i = ixcur * iscl;
 	#local ipr = ixprev * iscl;
 	#if ( 1 )
-		#if ( i > max_path )
+		#while ( i >= max_path )
 			#local i = i - max_path;
 		#end
 		#if ( i < 0 )
 			#local i = i + max_path;
 		#end
-		#if ( ipr > max_path )
+		#while ( ipr >= max_path )
 			#local ipr = ipr - max_path;
 		#end
 		#if ( ipr < 0 )
 			#local ipr = ipr + max_path;
 		#end
 	#end
-	#local teps = abs(i) - int(abs(i));
-	#if ( teps < epsilon )
-		#local i = i + select(i, epsilon_add, -epsilon_add);
-	#end
-	#local teps = abs(ipr) - int(abs(ipr));
-	#if ( teps < epsilon )
-		#local ipr = ipr + select(ipr, epsilon_add, -epsilon_add);
-	#end
 
-	#local t_vec = BezierFindPos(Aobj, 1, i + offs);
-	#local lvec = BezierFindPos(Aobj, 1, ipr + offs);
+	#local t_vec = BezierFindPos(Aobj, max_path, i   + offs);
+	#local lvec  = BezierFindPos(Aobj, max_path, ipr + offs);
 
 	#local av0 = rotYAngle(lvec, t_vec);
 	#local av1 = rotYAngle(t_vec, lvec);
@@ -134,3 +101,40 @@
 		< lvec.u,  av3, lvec.v  >
 	}
 #end // path_vec2d_rot
+
+#macro path_vec2d_rot_dist(Aobj, ixcur, ixprev, ixnum, max_path, clenArr, inc)
+	#local clen = clenArr[max_path / 4 - 1];
+	#local iscl = clen / ixnum;
+	#local i = ixcur * iscl;
+	#local ipr = ixprev * iscl;
+	#local offs = i - ipr;
+
+	#if ( 1 )
+		#while ( i >= clen )
+			#local i = i - clen;
+		#end
+		#if ( i < 0 )
+			#local i = i + clen;
+		#end
+		#while ( ipr >= clen )
+			#local ipr = ipr - clen;
+		#end
+		#if ( ipr < 0 )
+			#local ipr = ipr + clen;
+		#end
+	#end
+
+	#local t_vec = BezierFindPosDistOpti(Aobj, max_path, i  , inc, clenArr);
+	#local lvec  = BezierFindPosDistOpti(Aobj, max_path, ipr, inc, clenArr);
+
+	#local av0 = rotYAngle(lvec, t_vec);
+	#local av1 = rotYAngle(t_vec, lvec);
+	#local av2 = rotZAngle(lvec, t_vec);
+	#local av3 = rotZAngle(t_vec, lvec);
+	array[path_vec2d_rot_ACNT] {
+		< t_vec.u, av0, t_vec.v >,
+		< lvec.u,  av1, lvec.v  >,
+		< t_vec.u, av2, t_vec.v >,
+		< lvec.u,  av3, lvec.v  >
+	}
+#end // path_vec2d_rot_dist

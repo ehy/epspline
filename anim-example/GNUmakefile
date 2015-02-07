@@ -314,7 +314,8 @@ DEPS         = boardspace-path.inc \
 GEN_DATA_D = gen
 GEN_DATA_0 = $(GEN_DATA_D)/dat0
 GEN_DATA_1 = $(GEN_DATA_D)/dat1
-GEN_DATA   = $(GEN_DATA_0) $(GEN_DATA_1)
+GEN_DATA_2 = traveldata.cache
+GEN_DATA   = $(GEN_DATA_0) $(GEN_DATA_1) $(GEN_DATA_2)
 
 finalimg     = $(nameout).SD.final.$(nameext)
 

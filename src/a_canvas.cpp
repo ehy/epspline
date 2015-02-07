@@ -2813,7 +2813,7 @@ A_Canvas::ExportFILE(FILE* f, const wxString& fname, bool indemo)
 		bgimg_manager::dim_type dtw, dth;
 		bgimg_manager::off_type otx, oty;
 		long tw, th, tx, ty;
-		bg_mng->get_dimensions(dtw, dth, otx, oty);
+		bg_mng->get_dimensions_noz(dtw, dth, otx, oty);
 		tw = static_cast<long>(dtw);
 		th = static_cast<long>(dth);
 		tx = static_cast<long>(otx);

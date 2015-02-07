@@ -313,5 +313,26 @@ inline wxString unccom_wxs(const wxString& s, const char* r = "")
 	return ch2wxs(unccom_string(ss, ss, r).c_str());
 }
 
+// char string: anything that is _not_ ascii, printable or space,
+// is changed to hex in the '\xNN' convention; also backslash
+// "escapes" are put before '\', '"', and '\'' if esc == true
+inline wxString&
+sanitise_wxs(wxString& in, wxString& out, bool esc = false)
+{
+	std::string t(wxs2ch(in));
+	sanitise_string(t, t, esc);
+	out = ch2wxs(t.c_str());
+	return out;
+}
+
+inline wxString&
+unsanitise_wxs(wxString& in, wxString& out, bool esc = false)
+{
+	std::string t(wxs2ch(in));
+	unsanitise_string(t, t, esc);
+	out = ch2wxs(t.c_str());
+	return out;
+}
+
 #endif  // _WXUTIL_H_
 

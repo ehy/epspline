@@ -838,7 +838,8 @@ SplineBase::InitPropsDialog(spline_properties& dlg)
 	dlg.txt_sweep_max_validator = ts;
 	
 	// using ASCII validator
-	dlg.txt_predefined_validator = UserStr;
+	ts = UserStr;
+	dlg.txt_predefined_validator = sanitise_wxs(ts, ts);
 }
 
 void

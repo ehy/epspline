@@ -233,7 +233,11 @@ public:
 	void get_file(wxString& name);
 	void set_dimensions(dim_type width, dim_type height,
 		off_type xo, off_type yo);
+	// width or height field is empty, zero is return for that
 	void get_dimensions(dim_type& width, dim_type& height,
+		off_type& xo, off_type& yo);
+	// width or height field is empty, original is return for that
+	void get_dimensions_noz(dim_type& width, dim_type& height,
 		off_type& xo, off_type& yo);
 	void get_dimensions_orig(dim_type& width, dim_type& height);
 	void set_hsv_vals(hsv_type hue, hsv_type sat, hsv_type val);

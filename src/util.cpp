@@ -881,11 +881,13 @@ sanitise_string(std::string& in, std::string& out, bool esc)
 		// of signedness of char
 		union { char c; unsigned char u; } uc;
 		uc.c = c;
-		// problem: std::iscntrl(c) is true for '\t'
-		if ( c != '\t' && (uc.u > 127 || std::iscntrl(c)
-				|| ! (std::isprint(c) || std::isspace(c)) ) ) {
-			so << "\\x" << std::setw(2) << unsigned(uc.u);
-			continue;
+		// problem: std::iscntrl(c) is true for '\t' etc
+		if ( c != '\t' && c != '\n' && c != '\r' ) {
+			if ( uc.u > 127 || std::iscntrl(c)
+			     || ! (std::isprint(c) || std::isspace(c)) ) {
+				so << "\\x" << std::setw(2) << unsigned(uc.u);
+				continue;
+			}
 		}
 		if ( esc ) {
 			switch ( c ) {

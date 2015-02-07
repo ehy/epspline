@@ -158,26 +158,20 @@ void
 bgimg_manager::get_dimensions(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
-	#if 0
-	width  =
-		data_std.modswidth ? data_std.modswidth :
-		((is_current() && mods_img) ? dim_type(mods_img->GetWidth()):
-			data_std.origwidth);
-	height =
-		data_std.modsheight ? data_std.modsheight :
-		((is_current() && mods_img) ? dim_type(mods_img->GetHeight()):
-			data_std.origheight);
-	#elif 0
+	width  = data_std.modswidth;
+	height = data_std.modsheight;
+	xo = data_std.off_x;
+	yo = data_std.off_y;
+}
+
+void
+bgimg_manager::get_dimensions_noz(
+	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
+{
 	width  =
 		data_std.modswidth ? data_std.modswidth : data_std.origwidth;
 	height =
 		data_std.modsheight ? data_std.modsheight : data_std.origheight;
-	#else
-	width  =
-		data_std.modswidth ? data_std.modswidth : 0;
-	height =
-		data_std.modsheight ? data_std.modsheight : 0;
-	#endif
 	xo = data_std.off_x;
 	yo = data_std.off_y;
 }

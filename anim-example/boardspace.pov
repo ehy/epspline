@@ -64,6 +64,20 @@
 // animation related setup
 //
 
+
+// One of two bezier path interpolation methods can be used:
+// one that takes evenly distributed samples along the length
+// of the composite path (object appears to have constant
+// rate of travel), and one equally samples each segment regardless
+// of length (object appears faster on long segments, slower
+// on short ones).
+// If you want the varying speed, make NO_DISTRIBUTED_PATH = 1.
+#ifndef ( NO_DISTRIBUTED_PATH )
+#	declare NO_DISTRIBUTED_PATH = 0;
+#end
+
+// hackish stuff here, don't pay any more attention to ``IS_ANIM''
+// blocks than absolutely necessary.
 #declare IS_ANIM = clock_on;
 #if ( IS_ANIM )
 #	ifdef ( NO_GEN_FILES )
@@ -124,6 +138,7 @@
 	light_source { <0, 4, 0> color White }
 #end // #if ( IS_ANIM )
 
+// less hackish stuff here
 //
 // decls and macros for the generated board
 //
@@ -280,29 +295,109 @@
 
 
 #declare travel_rot_addl = -90;
-// see path.inc
+
+// see comment near top of file
+#if ( NO_DISTRIBUTED_PATH )
+
 #declare traveldataAR =
 	path_vec2d_rot(Path_1, PATH_IX, PATH_PREV, 1, Path_1_ARRAY_COUNT);
 
-// scale interpolation result vectors
-// Note values added to Path_1_off{x,y} -- notarbitrary:
-// y gets difference 'tween board background image top and topmost
-// point of drawn path (taken from epspline coord display of mouse
-// position, needn't be too accurate). Likewise x, but for left.
-// other constants (Path_1_{left,top,max_extent,etc}) are found
-// in boardspace-path.inc exported from Epspline.
-#local pthinc = 0;
-#local Path_1_offx = Path_1_max_extent / 2.0 - 8;
-#local Path_1_offy = Path_1_max_extent / 2.0 + 7;
-#while ( pthinc < path_vec2d_rot_ACNT )
-#	local Unew =
-	(traveldataAR[pthinc].x - Path_1_left - Path_1_offx) / Path_1_max_extent;
-#	local Vnew =
-	(traveldataAR[pthinc].z - Path_1_top - Path_1_offy) / Path_1_max_extent;
-#	local Anew = traveldataAR[pthinc].y * -1;
-#	declare traveldataAR[pthinc] = <Unew, Anew, Vnew * -1>;
-#	local pthinc = pthinc + 1;
+#else // #ifdef ( NO_DISTRIBUTED_PATH )
+
+// use macro that attempts even distribution regardless
+// of relative segment lengths -- macro takes an optimization
+// array, so use a cache file for that
+#local traveldata_OptCacheName = "traveldata.cache";
+
+#ifndef ( traveldata_Incr )
+	#local traveldata_Incr = 0.001;
 #end
+
+// read or write cache
+#if ( file_exists(traveldata_OptCacheName) )
+	// exists, read contents
+#debug "READ EXISTING CACHE\n"
+	#fopen traveldata_OptCacheFile traveldata_OptCacheName read
+	#local traveldata_LenA = array[Path_1_ARRAY_COUNT / 4];
+	#local i = 0;
+	#while ( defined(traveldata_OptCacheFile) )
+		#read (traveldata_OptCacheFile, traveldata_Tmp)
+		#local traveldata_LenA[i] = traveldata_Tmp;
+		#local i = i + 1;
+	#end
+#else
+	// not existing, make and write
+#debug "WRITE NEW CACHE\n"
+
+	#local traveldata_LenA =
+		BezierFindLengthArray(Path_1, Path_1_ARRAY_COUNT, traveldata_Incr);
+	#local traveldata_LenMax = traveldata_LenA[Path_1_ARRAY_COUNT / 4 - 1];
+
+	#fopen traveldata_OptCacheFile traveldata_OptCacheName write
+	#local i = 0;
+	#local imax = Path_1_ARRAY_COUNT / 4 - 1;
+	#while ( i < imax )
+		#write (traveldata_OptCacheFile, traveldata_LenA[i], ",")
+		#local i = i + 1;
+	#end
+	#write (traveldata_OptCacheFile, traveldata_LenA[i])
+#end
+#fclose traveldata_OptCacheFile
+
+#declare traveldataAR = path_vec2d_rot_dist(
+   Path_1, PATH_IX, PATH_PREV, 1, Path_1_ARRAY_COUNT,
+   traveldata_LenA, traveldata_Incr);
+
+#end // #ifdef ( NO_DISTRIBUTED_PATH )
+
+// scale interpolation result vectors:
+// When a background image is used with Epspline the position
+// and dimensions of the image, relative to the drawing area,
+// are declared in exported SDL as constants with a prefix
+// ``BGIMG_'' and these constants are useful to translate and
+// transform a curve drawn against that image.
+// 
+// In this example there is a small complication corrected
+// with the declared constants ``visual_offs'' and ``visual_off2''.
+// The reason is that the background image was rendered in POV-Ray,
+// with a view focused on the board but with a visible border
+// space around the edges.  This unwanted border is not part of
+// the board seen in the animation (it is generated in line);
+// therefore the the constants exported by Epspline need correction.
+// The value of ``visual_offs'' was found simply by adding two
+// guidelines in Epspline, on the left at the edges of the
+// unwanted border and watching the line's x offsets in the
+// status bar, and taking the difference.
+#declare visual_offs         = 25;
+#declare visual_off2         = visual_offs * 2;
+#declare img_algn_left       = BGIMG_boardspace_path_inc_left       + visual_offs;
+#declare img_algn_right      = BGIMG_boardspace_path_inc_right      - visual_offs;
+#declare img_algn_top        = BGIMG_boardspace_path_inc_top        + visual_offs;
+#declare img_algn_bottom     = BGIMG_boardspace_path_inc_bottom     - visual_offs;
+#declare img_algn_width      = BGIMG_boardspace_path_inc_width      - visual_off2;
+#declare img_algn_height     = BGIMG_boardspace_path_inc_height     - visual_off2;
+#declare img_algn_div_extent = BGIMG_boardspace_path_inc_max_extent - visual_off2;
+#declare scal_div = img_algn_div_extent;
+#macro scale_arr_memb(Arr, offxz)
+	#local pthinc = 0;
+	#while ( pthinc < dimension_size(Arr,1) )
+	#	local tmp = Arr[pthinc];
+	
+	#	local Anew = tmp.y * -1;
+	
+	#	local Unew = tmp.x - Path_1_left - offxz.u;
+	#	local Unew = (Unew + Path_1_left - img_algn_left)  / scal_div;
+	
+	#	local Vnew = tmp.z - Path_1_top - offxz.v;
+	#	local Vnew = (Vnew + Path_1_top - img_algn_top)  / scal_div;
+	
+	#	declare Arr[pthinc] = <Unew, Anew, Vnew * -1>;
+	
+	#	local pthinc = pthinc + 1;
+	#end
+#end
+
+scale_arr_memb(traveldataAR, <1,1> * (Path_1_max_extent / 2))
 
 #declare traveldata   = traveldataAR[0];
 #declare travel_rot_path = traveldata.y;
@@ -314,10 +409,21 @@
 	#local T0 = PATH_IX+incT*0;
 	#local T1 = PATH_IX+incT*1;
 	#while ( ix < navg )
+#if ( NO_DISTRIBUTED_PATH )
 		#local r0 =
 			path_vec2d_rot(Path_1, T1, T0, 1, Path_1_ARRAY_COUNT);
 		#local r1 =
 			path_vec2d_rot(Path_1, T1+incT, T0+incT, 1, Path_1_ARRAY_COUNT);
+#else // ( NO_DISTRIBUTED_PATH )
+		#local r0 =
+			path_vec2d_rot_dist(
+			Path_1, T1, T0, 1, Path_1_ARRAY_COUNT
+			, traveldata_LenA, traveldata_Incr);
+		#local r1 =
+			path_vec2d_rot_dist(
+			Path_1, T1+incT, T0+incT, 1, Path_1_ARRAY_COUNT
+			, traveldata_LenA, traveldata_Incr);
+#end  // ( NO_DISTRIBUTED_PATH )
 		#local accZ = accZ + get_z_rot(r1[0].y, r0[0].y);
 		#local ix = ix + 1;
 		#local T0 = T0 + incT;

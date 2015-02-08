@@ -132,7 +132,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sizer_dimsw->Add( m_staticText3, 0, wxALL, 5 );
 	
 	spin_wi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 80,-1 ), wxSP_ARROW_KEYS, 0, 32767, 0 );
-	spin_wi->SetToolTip( _("Set the width of display on background.\nZero (0) will use default width.") );
+	spin_wi->SetToolTip( _("Set the width of display on background.\nZero (0) will use default width.\n\nBy default, aspect ratio will be maintained in the\nwidth and height fields. To modify one or the other\nindependently, focus the field with a click or tabs,\nand the press a modifier key (Alt, Meta, Shift,\nControl, Cmd) . When the aspect ratio is unlocked,\nthe width and height fields will have backgrounds\ncolored green.") );
 	
 	sizer_dimsw->Add( spin_wi, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	
@@ -149,7 +149,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	sizer_dimsh->Add( m_staticText4, 0, wxALL, 5 );
 	
 	spin_hi = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 80,-1 ), wxSP_ARROW_KEYS, 0, 32767, 0 );
-	spin_hi->SetToolTip( _("Set the height of display on background.\nZero (0) will use default height.") );
+	spin_hi->SetToolTip( _("Set the height of display on background.\nZero (0) will use default height.\n\nBy default, aspect ratio will be maintained in the\nwidth and height fields. To modify one or the other\nindependently, focus the field with a click or tabs,\nand the press a modifier key (Alt, Meta, Shift,\nControl, Cmd) . When the aspect ratio is unlocked,\nthe width and height fields will have backgrounds\ncolored green.") );
 	
 	sizer_dimsh->Add( spin_hi, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	
@@ -315,12 +315,18 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( bg_image::on_close_event ) );
 	this->Connect( wxEVT_IDLE, wxIdleEventHandler( bg_image::on_idle_dlg ) );
 	this->Connect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( bg_image::on_init_dlg ) );
+	this->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ) );
+	this->Connect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ) );
 	opt_save->Connect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
 	chk_greyscale->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );
 	chk_flhorz->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_horz ), NULL, this );
 	chk_flvert->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_vert ), NULL, this );
 	spin_ro->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_rotate ), NULL, this );
+	spin_wi->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ), NULL, this );
+	spin_wi->Connect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ), NULL, this );
 	spin_wi->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_width ), NULL, this );
+	spin_hi->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ), NULL, this );
+	spin_hi->Connect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ), NULL, this );
 	spin_hi->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_height ), NULL, this );
 	spin_offsx->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_x ), NULL, this );
 	spin_offsy->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_y ), NULL, this );
@@ -373,12 +379,18 @@ bg_image::~bg_image()
 	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( bg_image::on_close_event ) );
 	this->Disconnect( wxEVT_IDLE, wxIdleEventHandler( bg_image::on_idle_dlg ) );
 	this->Disconnect( wxEVT_INIT_DIALOG, wxInitDialogEventHandler( bg_image::on_init_dlg ) );
+	this->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ) );
+	this->Disconnect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ) );
 	opt_save->Disconnect( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler( bg_image::on_copy_opt ), NULL, this );
 	chk_greyscale->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_greyscale ), NULL, this );
 	chk_flhorz->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_horz ), NULL, this );
 	chk_flvert->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( bg_image::on_flip_vert ), NULL, this );
 	spin_ro->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_rotate ), NULL, this );
+	spin_wi->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ), NULL, this );
+	spin_wi->Disconnect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ), NULL, this );
 	spin_wi->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_width ), NULL, this );
+	spin_hi->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( bg_image::on_key_down ), NULL, this );
+	spin_hi->Disconnect( wxEVT_KEY_UP, wxKeyEventHandler( bg_image::on_key_up ), NULL, this );
 	spin_hi->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_height ), NULL, this );
 	spin_offsx->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_x ), NULL, this );
 	spin_offsy->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( bg_image::on_offs_y ), NULL, this );

@@ -109,6 +109,8 @@ namespace ns_bg_img_dlg
 			virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
 			virtual void on_idle_dlg( wxIdleEvent& event ) { event.Skip(); }
 			virtual void on_init_dlg( wxInitDialogEvent& event ) { event.Skip(); }
+			virtual void on_key_down( wxKeyEvent& event ) { event.Skip(); }
+			virtual void on_key_up( wxKeyEvent& event ) { event.Skip(); }
 			virtual void on_copy_opt( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_greyscale( wxCommandEvent& event ) { event.Skip(); }
 			virtual void on_flip_horz( wxCommandEvent& event ) { event.Skip(); }

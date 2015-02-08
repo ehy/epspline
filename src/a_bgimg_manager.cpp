@@ -641,6 +641,7 @@ bg_img_dlg::bg_img_dlg(
 	: bg_image(manager->parent_wnd(), id, title, pos, size, style)
 	, mng(manager)
 	, new_filename(false)
+	, wh_unlock(false)
 {
 }
 
@@ -838,6 +839,18 @@ bg_img_dlg::on_width(wxCommandEvent& event)
 	mng->data_std.modswidth = (bgimg_manager::dim_type)i;
 	mng->set_arg_width(i != 0);
 
+	if ( ! wh_unlock ) {
+		bgimg_manager::dim_type ow, oh;
+
+		mng->get_dimensions_orig(ow, oh);
+
+		if ( ow > 0 && oh > 0 ) {
+			float rat = float(ow) / float(oh);
+			
+			spin_hi->SetValue(int(float(i) / rat + 0.5));
+		}
+	}
+
 	put_preview();
 }
 
@@ -847,6 +860,18 @@ bg_img_dlg::on_height(wxCommandEvent& event)
 	int i = spin_hi->GetValue();
 	mng->data_std.modsheight = (bgimg_manager::dim_type)i;
 	mng->set_arg_height(i != 0);
+
+	if ( ! wh_unlock ) {
+		bgimg_manager::dim_type ow, oh;
+
+		mng->get_dimensions_orig(ow, oh);
+
+		if ( ow > 0 && oh > 0 ) {
+			float rat = float(ow) / float(oh);
+			
+			spin_wi->SetValue(int(float(i) * rat + 0.5));
+		}
+	}
 
 	put_preview();
 }
@@ -960,6 +985,35 @@ bg_img_dlg::on_idle_dlg(wxIdleEvent& event)
 	
 		put_preview();
 		new_filename = false;
+	}
+
+	event.Skip();
+}
+
+void
+bg_img_dlg::on_key_down(wxKeyEvent& event)
+{
+	const int modk_bits = 
+	  wxMOD_CONTROL | wxMOD_SHIFT | wxMOD_ALT | wxMOD_META | wxMOD_CMD;
+	int modk = event.GetModifiers();
+
+	if ( modk & modk_bits ) {
+		wh_unlock = ! wh_unlock;
+	}
+
+	event.Skip();
+}
+
+void
+bg_img_dlg::on_key_up(wxKeyEvent& event)
+{
+	if ( wh_unlock ) {
+		const wxColour& unlock_color = *wxGREEN;
+		spin_wi->SetBackgroundColour(unlock_color);
+		spin_hi->SetBackgroundColour(unlock_color);
+	} else {
+		spin_wi->SetBackgroundColour(wxNullColour);
+		spin_hi->SetBackgroundColour(wxNullColour);
 	}
 
 	event.Skip();

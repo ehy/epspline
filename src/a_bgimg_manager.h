@@ -380,6 +380,8 @@ namespace ns_bg_img_dlg {
 		bgimg_manager*	mng;
 		// set in file picker handler gets name of existing file
 		bool new_filename;
+		// width x height unlock key up/dowm
+		bool wh_unlock;
 
 	public:
 		bg_img_dlg(
@@ -408,6 +410,8 @@ namespace ns_bg_img_dlg {
 		virtual void on_file_select(wxFileDirPickerEvent& event);
 		virtual void on_close_event(wxCloseEvent& event);
 		virtual void on_init_dlg(wxInitDialogEvent& event);
+		virtual void on_key_down( wxKeyEvent& event );
+		virtual void on_key_up( wxKeyEvent& event );
 		virtual void on_idle_dlg(wxIdleEvent& event);
 		virtual void on_apply(wxCommandEvent& event);
 		virtual void on_cancel(wxCommandEvent& event);

@@ -267,12 +267,7 @@
 #end
 
 // Get -- and condition -- z rotation of object to
-// approximate banking for a turn. The angles used are the
-// result of atan2 and since atan2 can't `spin', i.e. has
-// a discontinuity near pi and -pi, using a simple difference
-// make an occasional `flipped' result. The first two
-// conditional blocks correct for that, imperfectly but
-// suitably here. The remainder of the macro just scales and limits.
+// approximate banking for a turn.
 #macro get_z_rot(rt1, rt2)
 	#local a1 = chk_zmin(rt1);
 	#local a2 = chk_zmin(rt2);
@@ -397,6 +392,9 @@
 	#end
 #end
 
+// scale and adjust the animated object translation u,v data
+// by the factor which scales the drawing background to one
+// unit, and center around origin (as is done with "board") 
 scale_arr_memb(traveldataAR, <1,1> * (Path_1_max_extent / 2))
 
 #declare traveldata   = traveldataAR[0];

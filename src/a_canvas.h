@@ -133,6 +133,7 @@ protected:
 	bgimg_manager*	bg_mng;
 
 	bool         aa_draw; // draw anti-aliased curves, or not
+	bool         bg_hide; // if bg image, show, or not
 
 	// For guide/snap-to lines
 	A_Ruler*     hrule, * vrule;
@@ -291,6 +292,7 @@ public:
 	void DoCycleScale();
 	void DoSetBGImg();
 	void DoRmBGImg();
+	void DoHideBGImg();
 
 	// For internal clipboard that can hold one object
 	void            clipCopy();
@@ -459,6 +461,7 @@ protected:
 	void enableHelpDemo(bool b);
 	void enableSetBackgroundImage(bool b);
 	void enableRemoveBackgroundImage(bool b);
+	void enableHideBackgroundImage(bool b);
 
 	void enable_set_linear(bool b)
 	{m_pop->Enable(IC_set_linear, b);}

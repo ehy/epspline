@@ -182,7 +182,7 @@ A_BUFDCCanvas::~A_BUFDCCanvas()
 A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	: wxScrolledWindow(realparent)
 	, a_frame(parent), a_tabpg(realparent)
-	, bg_mng(new bgimg_manager()), aa_draw(aa)
+	, bg_mng(new bgimg_manager()), aa_draw(aa), bg_hide(false)
 	, hrule(0), vrule(0)
 	, pt_mousedown(INT_MIN, INT_MIN)
 	, D(new DataState)
@@ -396,7 +396,10 @@ A_Canvas::IdleUpdate()
 	enableEdUndo(ustack.count() > 0);
 	enableEdRedo(rstack.count() > 0);
 	enableCloseCurves(D->sSname != wxT("") || D->lst.size() > 0);
-	enableRemoveBackgroundImage(bg_mng->get_mod_image() != 0);
+
+	bool have_bg_img = bg_mng->get_mod_image() != 0;
+	enableRemoveBackgroundImage(have_bg_img);
+	enableHideBackgroundImage(have_bg_img);
 
 
 	bool dirty = IsDirty();
@@ -2294,6 +2297,13 @@ A_Canvas::DoRmBGImg()
 	bg_mng->remove_image();
 }
 
+void
+A_Canvas::DoHideBGImg()
+{
+	bg_hide = ! bg_hide;
+	Refresh();
+}
+
 bool
 A_Canvas::CloseOpt(bool force)
 {
@@ -3124,13 +3134,15 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	#endif
 	dc.SetPen(np);
 
-	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
-		bgimg_manager::dim_type bg_wi, bg_hi;
-		bgimg_manager::off_type bg_ox, bg_oy;
-		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
-		
-		wxBitmap bmbg(*bgimg);
-		dc.DrawBitmap(bmbg, wxCoord(bg_ox), wxCoord(bg_oy), true);
+	if ( ! bg_hide ) {
+		if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
+			bgimg_manager::dim_type bg_wi, bg_hi;
+			bgimg_manager::off_type bg_ox, bg_oy;
+			bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
+			
+			wxBitmap bmbg(*bgimg);
+			dc.DrawBitmap(bmbg, wxCoord(bg_ox), wxCoord(bg_oy), true);
+		}
 	}
 
 	if ( drawgrid && wid > 0 ) {
@@ -3463,6 +3475,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 		}
 	}
 
+	if ( ! bg_hide )
 	if ( wxImage* bgimg = bg_mng->get_mod_image() ) {
 		bgimg_manager::dim_type bg_wi, bg_hi;
 		bgimg_manager::off_type bg_ox, bg_oy;
@@ -3987,6 +4000,12 @@ A_Canvas::enableRemoveBackgroundImage(bool b)
 {
 	m_pop->Enable(IC_rm_bg_img, b);
 	a_frame->enableRmBGImg(b);
+}
+void
+A_Canvas::enableHideBackgroundImage(bool b)
+{
+	//m_pop->Enable(IC_hide_bg_img, b);
+	a_frame->enableHideBGImg(b);
 }
 
 void

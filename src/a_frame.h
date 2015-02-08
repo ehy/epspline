@@ -113,6 +113,7 @@ enum menu_and_toolbar_IDs {
 // Tools
 	SetBGImage,
 	RmBGImage,
+	HideBGImage,
 	SetUserScale,
 	CycleUserScale,
 	Toggle_AA_Lines,
@@ -263,6 +264,9 @@ public:
 	}
 	void enableRmBGImg(bool b) {
 		MenuOpts->Enable(RmBGImage, b);
+	}
+	void enableHideBGImg(bool b) {
+		MenuOpts->Enable(HideBGImage, b);
 	}
 	void enableViewScale(bool b) {
 		MenuOpts->Enable(SetUserScale, b);

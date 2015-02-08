@@ -206,6 +206,9 @@ A_Frame::A_Frame(
 	, _("Set &Background Image\tCtrl-B"),
 	_("Set or change a background image on the drawing area"));
 	MNACCHACK(MenuOpts, SetBGImage, _("Ctrl-B"));
+	MNADD0NS(MenuOpts, HideBGImage
+	, _("&Hide/Show Background Image"),
+	_("Toggle visibility of a background image on the drawing area"));
 	MNADD0NS(MenuOpts, RmBGImage
 	, _("&Remove Background Image"),
 	_("Remove a background image on the drawing area"));
@@ -903,6 +906,9 @@ A_Frame::OnOption(wxCommandEvent& event)
 			break;
 		case RmBGImage:
 			canvas->DoRmBGImg();
+			break;
+		case HideBGImage:
+			canvas->DoHideBGImg();
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();

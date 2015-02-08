@@ -2424,6 +2424,10 @@ A_Canvas::Open(wxString filename)
 				Scroll(addl.scrollpos_h, addl.scrollpos_v);
 				xscale = (addl.scale >> 16) & 0xFFFF;
 				yscale = addl.scale & 0xFFFF;
+				if ( hrule )
+					hrule->SetScalePercent(xscale);
+				if ( vrule )
+					vrule->SetScalePercent(yscale);
 			}
 
 			Refresh();

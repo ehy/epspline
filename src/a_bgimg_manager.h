@@ -380,7 +380,7 @@ namespace ns_bg_img_dlg {
 		bgimg_manager*	mng;
 		// set in file picker handler gets name of existing file
 		bool new_filename;
-		// width x height unlock key up/dowm
+		// width x height unlock key up/down
 		bool wh_unlock;
 
 	public:

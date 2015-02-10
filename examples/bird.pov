@@ -13,7 +13,10 @@
 #if ( version > 3.7 )
 #version 3.7;
 #end
-global_settings{ assumed_gamma 1.0 }
+global_settings{
+	assumed_gamma 2.2
+	ambient_light <1, 1, 1> * 4
+}
 #else // 3.7
 // FPO. This is the 1st sample made w/ POV 3.7; attempting
 // to get similar results w/ 3.6 is a matter for another
@@ -28,19 +31,18 @@ global_settings{ assumed_gamma 2.2 }
 
 camera {
 	location <0, 1.75, -0.25>
-	//location <0, 0.25, -1.75>
 	look_at <0, 0.25, 0>
-	//look_at <0, 04, 0>
 	right x * image_width / image_height
 	angle 45
 }
 
 #declare LightOffs = 10; // 5; // or 10 or 20
+#declare LightANum = 05;
 // light source iff no lamp
 light_source {
 	<-LightOffs, LightOffs, -LightOffs * 1.5>
 	color White
-	area_light <5, 0, 0>, <0, 0, 5>, 5, 5
+	area_light <LightANum, 0, 0>, <0, 0, LightANum>, LightANum, LightANum
 	adaptive 1
 	jitter
 }

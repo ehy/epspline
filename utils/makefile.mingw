@@ -1,0 +1,64 @@
+# The freetype headers and dll and a zlib dll can be had in
+# binary packages at:
+#	http://gnuwin32.sourceforge.net/packages/freetype.htm
+# Get the links ``Binaries'' (freetype-bin-zip) and
+# ``Dependencies'' (freetype-dep-zip)
+#
+# unzip freetype-bin-zip, then freetype-dep-zip. With this file
+# in the same working directory where the .zips were unzipped,
+# and named ``$(PRGNM).cc,'' this should build it:
+#	wine dmc -cpp -o+space -mn -Aa -Ab -Ar -Ae -wx -p \
+#		-IC:\\dm\\stlport\\stlport \
+#		-I.\\include\\freetype2 \
+#		-I.\\include \
+#		$(PRGNM).cc \
+#		.\\lib\\freetype-bcc.lib
+#
+
+PRGNM = t1char2pse
+OBJDIR = .
+SRCDIR = .
+
+SRC = $(PRGNM).cc
+DEF = $(PRGNM).def
+RC  = $(PRGNM).rc
+RES = $(PRGNM).res
+BIN = $(PRGNM).exe
+
+INCLUDES = -I./include/freetype2 -I./include
+
+#LIBS = ./freetype6.dll
+#LIBS = ./lib/freetype.lib
+LIBS = ./lib/libfreetype.dll.a
+
+CXX = i686-w64-mingw32-c++
+#CXX = x86_64-w64-mingw32-c++
+
+CXXFLAGS = -Os -static -mconsole $(INCLUDES)
+#CXXFLAGS = -Os -mconsole $(INCLUDES)
+
+all: $(BIN)
+
+$(BIN): $(SRC) $(RES)
+	$(CXX) $(CXXFLAGS) -o $@ $(SRC) $(LIBS) $(RES)
+
+# make MSW resource binary -- note the attempt to find the resource
+# compiler if $(MSWRCC) is empty assumes tool name pattern of
+# typical mingw installations
+$(RES): $(RC)
+	@RCC="$(MSWRCC)"; RC="$(RC)"; \
+	if test X"$$RCC" = X ; then \
+		{ C="$(CXX)"; RCC="$${C%-*}-windres"; \
+		type "$$RCC" || { echo FAILED trying \"$$RCC\"; exit 1; } ; \
+		} ; \
+		echo "$$RCC" --output-format=coff -I . $$RC $@ ; \
+		"$$RCC" --output-format=coff -I . $$RC $@ ; \
+	else \
+		echo $(MSWRCC) --output-format=coff -I . $$RC $@ ; \
+		$(MSWRCC) --output-format=coff -I . $$RC $@ ; \
+	fi
+	@echo Succeeded compiling MSW binary resource $@
+
+clean:
+	rm -f core *.core $(BIN) $(RES)
+

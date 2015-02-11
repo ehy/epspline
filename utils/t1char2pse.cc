@@ -84,12 +84,15 @@
 #include <cerrno>
 #include <clocale>
 
-// Things needed for cost-free Digital Mars MSW32 compiler.
+// MSWindows build.
 // Add what you need for your MSW development tools.
-#if __DMC__
+#if defined(_WIN32) || defined(__WIN32__) || defined(_Win32) \
+	|| defined(__MINGW__) || defined(__DMC__)
 #	include <io.h>		// for setmode()
 #	include <fcntl.h>	// for O_BINARY
-#	define snprintf _snprintf
+#	if __DMC__
+#		define snprintf _snprintf
+#	endif
 #	ifndef _WIN32
 #		define _WIN32
 #	endif
@@ -192,6 +195,7 @@ static void f_atexit(void)
 
 const char default_prog[] = "t1char2pse";
 const char* prog = default_prog;
+const char* lc_all_found = 0; // for a locale check
 // typeface file
 const char* fontfile = 0;
 // approx. epspline virtual x
@@ -249,11 +253,18 @@ main(int argc, char* argv[])
 	out_fp = stdout;
 #endif
 
-	std::setlocale(LC_ALL, "");
-
 	std::vector<iarg> iargs;
 
 	get_envvars();
+
+	if ( lc_all_found ) {
+		std::cerr << "Found LC_ALL == \""
+			<< lc_all_found << "\"" << std::endl;
+		std::setlocale(LC_ALL, "");
+	} else {
+		std::setlocale(LC_ALL, "C");
+	}
+
 	get_options(argc, argv, iargs);
 
 	FT_Library library;
@@ -573,6 +584,10 @@ get_envvars()
 		if ( s != "no" && s != "false" && s !=  "0" ) {
 			very_verbose = true;
 		}
+	}
+	// local env check
+	if ( const char* p = std::getenv("LC_ALL") ) {
+		lc_all_found = p;
 	}
 }
 

@@ -1,5 +1,5 @@
 NAME		"t1char2pse" WINDOWAPI 
-DESCRIPTION	'Epspline T1 font to .pse file conversion utility'
+DESCRIPTION	"Epspline T1 font to .pse file conversion utility"
 EXETYPE		NT
 SUBSYSTEM	CONSOLE
 VERSION		1.0

@@ -5,23 +5,22 @@
 // might be used nicely be a real artist.
 //
 // 12-2013 Ed Hynan
+// 02-2015 Ed Hynan -- small corrections
 
 // POV-Ray 3.7 makes some new demands, among which are #version
-// as a first statement, and an expicit assumed_gamma
+// as a first statement, and an explicit assumed_gamma
 #version version;
 #if ( version >= 3.7 )
 #if ( version > 3.7 )
 #version 3.7;
 #end
 global_settings{
-	assumed_gamma 2.2
-	ambient_light <1, 1, 1> * 4
+	assumed_gamma 1.0
 }
 #else // 3.7
-// FPO. This is the 1st sample made w/ POV 3.7; attempting
-// to get similar results w/ 3.6 is a matter for another
-// time -- gamma does not do it.
-global_settings{ assumed_gamma 2.2 }
+global_settings{
+	assumed_gamma 1.0
+}
 #end
 
 #include "colors.inc"

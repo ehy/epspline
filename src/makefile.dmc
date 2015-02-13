@@ -18,13 +18,13 @@ OBJS = dmc_mswd$(CFG)
 LIBTYPE_SUFFIX = lib
 LIBDIRNAME = $(WXDIR)\lib\dmc_$(LIBTYPE_SUFFIX)$(CFG)
 SETUPHDIR = $(LIBDIRNAME)\mswd
-#LOCAL_CXXFLAGS = -g -o+none -D_WIN32_WINNT=0x0400 -D__WXMSW__ -D__WXDEBUG__ \
+
 LOCAL_CXXFLAGS = -D__SC__ -D_WIN32_WINNT=0x0400 -D__WXMSW__ \
 	-DLROUND_UNAVAILABLE=1 \
         -I$(SETUPHDIR) -I$(WXDIR)\include -w- -I. -WA \
 	-I$(WXDIR)\samples -DNOPCH -Ar -Ae
 
-CFLAGS=$(CFLAGS) $(CXXFLAGS) $(DBGF) $(OPTF) $(CPPFLAGS) $(DEFS) $(INCLUDES) $(LOCAL_CXXFLAGS)
+CCFLAGS=$(CFLAGS) $(CXXFLAGS) $(DBGF) $(OPTF) $(CPPFLAGS) $(DEFS) $(INCLUDES) $(LOCAL_CXXFLAGS)
 
 LPATH = $(LIBDIRNAME)
 LDFLAGS = -L/DE\
@@ -44,147 +44,145 @@ OBJDIR = .
 SRCDIR = .
 HDRDIR = .
 
-HDRS = $(HDRDIR)\\a_canvas.h $(HDRDIR)\\a_frame.h $(HDRDIR)\\a_ruler.h \
-	$(HDRDIR)\\cfg.h $(HDRDIR)\\splines.h \
-	$(HDRDIR)\\stdcc.h $(HDRDIR)\\util.h $(HDRDIR)\\epspline.h \
-	$(HDRDIR)\\wxutil.h $(HDRDIR)\\a_tabwnd.h $(HDRDIR)\\a_tabpage.h \
-	$(HDRDIR)\\a_zoomdlg.h $(HDRDIR)\\a_spintextdlg.h \
-	$(HDRDIR)\\a_textctldlg.h \
-	$(HDRDIR)\\a_aboutbox.h \
-	$(HDRDIR)\\a_prefs_manager.h \
-	$(HDRDIR)\\a_glbprefsdlg.h \
-	$(HDRDIR)\\spline_props.h \
-	$(HDRDIR)\\globlal_prefs.h \
-	$(HDRDIR)\\bg_image_dlg.h \
-	$(HDRDIR)\\a_bgimg_manager.h \
-	$(HDRDIR)\\wxexio.h
+HDRS = $(HDRDIR)\a_canvas.h $(HDRDIR)\a_frame.h $(HDRDIR)\a_ruler.h \
+	$(HDRDIR)\cfg.h $(HDRDIR)\splines.h \
+	$(HDRDIR)\stdcc.h $(HDRDIR)\util.h $(HDRDIR)\epspline.h \
+	$(HDRDIR)\wxutil.h $(HDRDIR)\a_tabwnd.h $(HDRDIR)\a_tabpage.h \
+	$(HDRDIR)\a_zoomdlg.h $(HDRDIR)\a_spintextdlg.h \
+	$(HDRDIR)\a_textctldlg.h \
+	$(HDRDIR)\a_aboutbox.h \
+	$(HDRDIR)\a_prefs_manager.h \
+	$(HDRDIR)\a_glbprefsdlg.h \
+	$(HDRDIR)\spline_props.h \
+	$(HDRDIR)\globlal_prefs.h \
+	$(HDRDIR)\bg_image_dlg.h \
+	$(HDRDIR)\a_bgimg_manager.h \
+	$(HDRDIR)\wxexio.h
 
-SRCS = $(SRCDIR)\\epspline.cpp $(SRCDIR)\\io.cpp $(SRCDIR)\\a_canvas.cpp \
-	$(SRCDIR)\\splines.cpp $(SRCDIR)\\splineprops.cpp $(SRCDIR)\\util.cpp \
-	$(SRCDIR)\\a_frame.cpp $(SRCDIR)\\a_ruler.cpp $(SRCDIR)\\povdemo.cpp \
-	$(SRCDIR)\\a_tabwnd.cpp $(SRCDIR)\\a_tabpage.cpp \
-	$(SRCDIR)\\a_zoomdlg.cpp $(SRCDIR)\\a_spintextdlg.cpp \
-	$(SRCDIR)\\a_textctldlg.cpp \
-	$(SRCDIR)\\a_aboutbox.cpp \
-	$(SRCDIR)\\a_prefs_manager.cpp \
-	$(SRCDIR)\\a_glbprefsdlg.cpp \
-	$(SRCDIR)\\spline_props.cpp \
-	$(SRCDIR)\\globlal_prefs.cpp \
-	$(SRCDIR)\\bg_image_dlg.cpp \
-	$(SRCDIR)\\a_bgimg_manager.cpp \
-	$(SRCDIR)\\wxexio.cpp
+SRCS = $(SRCDIR)\epspline.cpp $(SRCDIR)\io.cpp $(SRCDIR)\a_canvas.cpp \
+	$(SRCDIR)\splines.cpp $(SRCDIR)\splineprops.cpp $(SRCDIR)\util.cpp \
+	$(SRCDIR)\a_frame.cpp $(SRCDIR)\a_ruler.cpp $(SRCDIR)\povdemo.cpp \
+	$(SRCDIR)\a_tabwnd.cpp $(SRCDIR)\a_tabpage.cpp \
+	$(SRCDIR)\a_zoomdlg.cpp $(SRCDIR)\a_spintextdlg.cpp \
+	$(SRCDIR)\a_textctldlg.cpp \
+	$(SRCDIR)\a_aboutbox.cpp \
+	$(SRCDIR)\a_prefs_manager.cpp \
+	$(SRCDIR)\a_glbprefsdlg.cpp \
+	$(SRCDIR)\spline_props.cpp \
+	$(SRCDIR)\globlal_prefs.cpp \
+	$(SRCDIR)\bg_image_dlg.cpp \
+	$(SRCDIR)\a_bgimg_manager.cpp \
+	$(SRCDIR)\wxexio.cpp
 
-OBJECTS = $(OBJDIR)\\epspline.obj $(OBJDIR)\\io.obj $(OBJDIR)\\a_canvas.obj \
-	$(OBJDIR)\\splines.obj $(OBJDIR)\\splineprops.obj $(OBJDIR)\\util.obj \
-	$(OBJDIR)\\a_frame.obj $(OBJDIR)\\a_ruler.obj $(OBJDIR)\\povdemo.obj \
-	$(OBJDIR)\\a_tabwnd.obj $(OBJDIR)\\a_tabpage.obj $(OBJDIR)\\a_zoomdlg.obj \
-	$(OBJDIR)\\a_textctldlg.obj \
-	$(OBJDIR)\\a_spintextdlg.obj \
-	$(OBJDIR)\\a_aboutbox.obj \
-	$(OBJDIR)\\a_prefs_manager.obj \
-	$(OBJDIR)\\a_glbprefsdlg.obj \
-	$(OBJDIR)\\spline_props.obj \
-	$(OBJDIR)\\globlal_prefs.obj \
-	$(OBJDIR)\\bg_image_dlg.obj \
-	$(OBJDIR)\\a_bgimg_manager.obj \
-	$(OBJDIR)\\wxexio.obj
+OBJECTS = $(OBJDIR)\epspline.obj $(OBJDIR)\io.obj $(OBJDIR)\a_canvas.obj \
+	$(OBJDIR)\splines.obj $(OBJDIR)\splineprops.obj $(OBJDIR)\util.obj \
+	$(OBJDIR)\a_frame.obj $(OBJDIR)\a_ruler.obj $(OBJDIR)\povdemo.obj \
+	$(OBJDIR)\a_tabwnd.obj $(OBJDIR)\a_tabpage.obj $(OBJDIR)\a_zoomdlg.obj \
+	$(OBJDIR)\a_textctldlg.obj \
+	$(OBJDIR)\a_spintextdlg.obj \
+	$(OBJDIR)\a_aboutbox.obj \
+	$(OBJDIR)\a_prefs_manager.obj \
+	$(OBJDIR)\a_glbprefsdlg.obj \
+	$(OBJDIR)\spline_props.obj \
+	$(OBJDIR)\globlal_prefs.obj \
+	$(OBJDIR)\bg_image_dlg.obj \
+	$(OBJDIR)\a_bgimg_manager.obj \
+	$(OBJDIR)\wxexio.obj
 
-PARSER_SRC = $(SRCDIR)\\ms_parse.c
-LEXER_SRC  = $(SRCDIR)\\ms_lexer.c
-PARSER_OBJ = $(OBJDIR)\\parser.obj
+PARSER_SRC = $(SRCDIR)\ms_parse.c
+LEXER_SRC  = $(SRCDIR)\ms_lexer.c
+PARSER_OBJ = $(OBJDIR)\parser.obj
 
 all static : $(OBJDIR) $(OBJECTS) epspline.exe
 
-# Not parser.obj because that alway get built by the .c.obj rule in makesc.env!
-# These args (-cpp) are nec. since parser.c includes C++ headers.
-parser: $(PARSER_SRC) $(LEXER_SRC)
-	$(CC) $(CFLAGS) $(OPTIONS) -Jm -cpp $(INCLUDE) -DUSE_DEFINE -o$(PARSER_OBJ) -c $(PARSER_SRC)
+include depend.msw
+
+$(PARSER_OBJ): $(PARSER_SRC) $(LEXER_SRC)
+	$(CC) $(CCFLAGS) $(OPTIONS) -Jm -cpp $(INCLUDE) -DUSE_DEFINE -o$(PARSER_OBJ) -c $(PARSER_SRC)
 
 epspline.res: epspline.rc
-	$(RC) epspline.rc -o$@ -I$(WXDIR)\\include -r -32
+	$(RC) epspline.rc -o$@ -I$(WXDIR)\include -r -32
 
 
-$(OBJDIR)\\a_aboutbox.obj: $(SRCDIR)\\a_aboutbox.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_aboutbox.obj a_aboutbox.cpp
+$(OBJDIR)\a_aboutbox.obj: $(SRCDIR)\a_aboutbox.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_aboutbox.obj a_aboutbox.cpp
 
-$(OBJDIR)\\a_canvas.obj: $(SRCDIR)\\a_canvas.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_canvas.obj a_canvas.cpp
+$(OBJDIR)\a_canvas.obj: $(SRCDIR)\a_canvas.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_canvas.obj a_canvas.cpp
 
-$(OBJDIR)\\a_frame.obj: $(SRCDIR)\\a_frame.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_frame.obj a_frame.cpp
+$(OBJDIR)\a_frame.obj: $(SRCDIR)\a_frame.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_frame.obj a_frame.cpp
 
-$(OBJDIR)\\a_propsdlg.obj: $(SRCDIR)\\a_propsdlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_propsdlg.obj a_propsdlg.cpp
+$(OBJDIR)\a_propsdlg.obj: $(SRCDIR)\a_propsdlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_propsdlg.obj a_propsdlg.cpp
 
-$(OBJDIR)\\a_ruler.obj: $(SRCDIR)\\a_ruler.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_ruler.obj a_ruler.cpp
+$(OBJDIR)\a_ruler.obj: $(SRCDIR)\a_ruler.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_ruler.obj a_ruler.cpp
 
-$(OBJDIR)\\a_spintextdlg.obj: $(SRCDIR)\\a_spintextdlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_spintextdlg.obj a_spintextdlg.cpp
+$(OBJDIR)\a_spintextdlg.obj: $(SRCDIR)\a_spintextdlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_spintextdlg.obj a_spintextdlg.cpp
 
-$(OBJDIR)\\a_tabpage.obj: $(SRCDIR)\\a_tabpage.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_tabpage.obj a_tabpage.cpp
+$(OBJDIR)\a_tabpage.obj: $(SRCDIR)\a_tabpage.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_tabpage.obj a_tabpage.cpp
 
-$(OBJDIR)\\a_tabwnd.obj: $(SRCDIR)\\a_tabwnd.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_tabwnd.obj a_tabwnd.cpp
+$(OBJDIR)\a_tabwnd.obj: $(SRCDIR)\a_tabwnd.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_tabwnd.obj a_tabwnd.cpp
 
-$(OBJDIR)\\a_textctldlg.obj: $(SRCDIR)\\a_textctldlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_textctldlg.obj a_textctldlg.cpp
+$(OBJDIR)\a_textctldlg.obj: $(SRCDIR)\a_textctldlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_textctldlg.obj a_textctldlg.cpp
 
-$(OBJDIR)\\a_zoomdlg.obj: $(SRCDIR)\\a_zoomdlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_zoomdlg.obj a_zoomdlg.cpp
+$(OBJDIR)\a_zoomdlg.obj: $(SRCDIR)\a_zoomdlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_zoomdlg.obj a_zoomdlg.cpp
 
-$(OBJDIR)\\epspline.obj: $(SRCDIR)\\epspline.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oepspline.obj epspline.cpp
+$(OBJDIR)\epspline.obj: $(SRCDIR)\epspline.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oepspline.obj epspline.cpp
 
-$(OBJDIR)\\io.obj: $(SRCDIR)\\io.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oio.obj io.cpp
+$(OBJDIR)\io.obj: $(SRCDIR)\io.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oio.obj io.cpp
 
-$(OBJDIR)\\povdemo.obj: $(SRCDIR)\\povdemo.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -opovdemo.obj povdemo.cpp
+$(OBJDIR)\povdemo.obj: $(SRCDIR)\povdemo.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -opovdemo.obj povdemo.cpp
 
-$(OBJDIR)\\splineprops.obj: $(SRCDIR)\\splineprops.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -osplineprops.obj splineprops.cpp
+$(OBJDIR)\splineprops.obj: $(SRCDIR)\splineprops.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -osplineprops.obj splineprops.cpp
 
-$(OBJDIR)\\spline_props.obj: $(SRCDIR)\\spline_props.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -ospline_props.obj spline_props.cpp
+$(OBJDIR)\spline_props.obj: $(SRCDIR)\spline_props.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -ospline_props.obj spline_props.cpp
 
-$(OBJDIR)\\splines.obj: $(SRCDIR)\\splines.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -osplines.obj splines.cpp
+$(OBJDIR)\splines.obj: $(SRCDIR)\splines.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -osplines.obj splines.cpp
 
-$(OBJDIR)\\util.obj: $(SRCDIR)\\util.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -outil.obj util.cpp
+$(OBJDIR)\util.obj: $(SRCDIR)\util.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -outil.obj util.cpp
 
-$(OBJDIR)\\wxexio.obj: $(SRCDIR)\\wxexio.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -owxexio.obj wxexio.cpp
+$(OBJDIR)\wxexio.obj: $(SRCDIR)\wxexio.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -owxexio.obj wxexio.cpp
 
-$(OBJDIR)\\a_prefs_manager.obj: $(SRCDIR)\\a_prefs_manager.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_prefs_manager.obj a_prefs_manager.cpp
+$(OBJDIR)\a_prefs_manager.obj: $(SRCDIR)\a_prefs_manager.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_prefs_manager.obj a_prefs_manager.cpp
 
-$(OBJDIR)\\a_glbprefsdlg.obj: $(SRCDIR)\\a_glbprefsdlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_glbprefsdlg.obj a_glbprefsdlg.cpp
+$(OBJDIR)\a_glbprefsdlg.obj: $(SRCDIR)\a_glbprefsdlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_glbprefsdlg.obj a_glbprefsdlg.cpp
 
-$(OBJDIR)\\globlal_prefs.obj: $(SRCDIR)\\globlal_prefs.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -ogloblal_prefs.obj globlal_prefs.cpp
+$(OBJDIR)\globlal_prefs.obj: $(SRCDIR)\globlal_prefs.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -ogloblal_prefs.obj globlal_prefs.cpp
 
-$(OBJDIR)\\bg_image_dlg.obj: $(SRCDIR)\\bg_image_dlg.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -obg_image_dlg.obj bg_image_dlg.cpp
+$(OBJDIR)\bg_image_dlg.obj: $(SRCDIR)\bg_image_dlg.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -obg_image_dlg.obj bg_image_dlg.cpp
 
-$(OBJDIR)\\a_bgimg_manager.obj: $(SRCDIR)\\a_bgimg_manager.cpp
-	$(CC) $(CFLAGS) -mn -cpp -c -oa_bgimg_manager.obj a_bgimg_manager.cpp
+$(OBJDIR)\a_bgimg_manager.obj: $(SRCDIR)\a_bgimg_manager.cpp
+	$(CC) $(CCFLAGS) -mn -cpp -c -oa_bgimg_manager.obj a_bgimg_manager.cpp
 
-epspline.exe : $(OBJECTS) parser epspline.def epspline.res
+epspline.exe : $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res
 	$(CC) $(LDFLAGS) -o$@ $(OBJECTS) $(PARSER_OBJ) epspline.def epspline.res $(LIBS)
 	@echo Done making $@
 
 $(OBJDIR) :
 	-mkdir $@
 
-include depend.msw
-
 # This target does not work.  Use Unix tools.
-dep depend depend.msw :
-	makedep -s -i $(OBJDIR) $(SOURCES) > depend.msw
+#dep depend depend.msw :
+#	makedep -s -i $(OBJDIR) $(SOURCES) > depend.msw
 
 
 clean :

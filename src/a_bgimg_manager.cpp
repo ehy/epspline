@@ -168,10 +168,17 @@ void
 bgimg_manager::get_dimensions_noz(
 	dim_type& width, dim_type& height, off_type& xo, off_type& yo)
 {
-	width  =
-		data_std.modswidth ? data_std.modswidth : data_std.origwidth;
-	height =
-		data_std.modsheight ? data_std.modsheight : data_std.origheight;
+	if ( get_arg_rotate() && get_mod_image() ) {
+		width  = get_mod_image()->GetWidth();
+		height = get_mod_image()->GetHeight();
+	} else {
+		width  = data_std.modswidth ?
+			data_std.modswidth :
+			data_std.origwidth;
+		height = data_std.modsheight ?
+			data_std.modsheight :
+			data_std.origheight;
+	}
 	xo = data_std.off_x;
 	yo = data_std.off_y;
 }
@@ -181,6 +188,15 @@ bgimg_manager::get_dimensions_orig(dim_type& width, dim_type& height)
 {
 	width  = data_std.origwidth;
 	height = data_std.origheight;
+}
+
+void
+bgimg_manager::get_dimensions_rot(dim_type& width, dim_type& height)
+{
+	width  = data_std.rot_width  ?
+		data_std.rot_width  : data_std.modswidth;
+	height = data_std.rot_height ?
+		data_std.rot_height : data_std.modsheight;
 }
 
 void
@@ -384,13 +400,11 @@ bgimg_manager::get_mod_image()
 	}
 
 	delete mods_img;
-	if ( false ) {
-		mods_img = wximg_get_alphaconv(img);
-	} else {
-		mods_img = new wxImage(img->Copy());
-	}
+	mods_img = new wxImage(img->Copy());
 
 	if ( ! has_transform() ) {
+		data_std.rot_width  = 0;
+		data_std.rot_height = 0;
 		return mods_img;
 	}
 
@@ -433,6 +447,12 @@ bgimg_manager::get_mod_image()
 			data_std.degrotate,
 			true, rotbg_r, rotbg_g, rotbg_b
 		);
+
+		data_std.rot_width  = mods_img->GetWidth();
+		data_std.rot_height = mods_img->GetHeight();
+	} else {
+		data_std.rot_width  = 0;
+		data_std.rot_height = 0;
 	}
 
 	if ( get_arg_width() || get_arg_height() ) {
@@ -448,12 +468,12 @@ bgimg_manager::get_mod_image()
 		int w = static_cast<int>(
 			data_std.modswidth ?
 			data_std.modswidth :
-			data_std.origwidth);
+			mods_img->GetWidth());
 		int h = static_cast<int>(
 			data_std.modsheight ?
 			data_std.modsheight :
-			data_std.origheight);
-
+			mods_img->GetHeight());
+		
 		if ( w != mods_img->GetWidth() || h != mods_img->GetHeight() ) {
 			mods_img->Rescale(w, h, qual);
 		}
@@ -842,7 +862,7 @@ bg_img_dlg::on_width(wxCommandEvent& event)
 	if ( ! wh_unlock ) {
 		bgimg_manager::dim_type ow, oh;
 
-		mng->get_dimensions_orig(ow, oh);
+		mng->get_dimensions_rot(ow, oh);
 
 		if ( ow > 0 && oh > 0 ) {
 			float rat = float(ow) / float(oh);
@@ -862,9 +882,10 @@ bg_img_dlg::on_height(wxCommandEvent& event)
 	mng->set_arg_height(i != 0);
 
 	if ( ! wh_unlock ) {
+		bgimg_manager::off_type xo, yo;
 		bgimg_manager::dim_type ow, oh;
 
-		mng->get_dimensions_orig(ow, oh);
+		mng->get_dimensions_rot(ow, oh);
 
 		if ( ow > 0 && oh > 0 ) {
 			float rat = float(ow) / float(oh);

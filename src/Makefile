@@ -295,36 +295,29 @@ mingw_l_y:
 # else fall back to -MM. Setting variable DEPSOPT is the best bet.
 # One more bit of help: CXXDEPS can be overridden on commandline.
 CXXDEPS = $(CXX)
-#depend: $(HDRS) $(SRCS)
-depend:
-	@$(RM) depend
+# depend-raw: $(SRCS) $(HDRS)
+depend-raw:
 	MM="$(DEPSOPT)"; test X = X"$$MM" && \
 	{ CC="$(CXXDEPS)"; CC=$${CC##*/}; CC="$${CC%% *}"; \
 		test XSunOS = X"$$(uname)" && \
 		test X"$$CC" = XCC && MM="-xM1" || MM="-MM"; } ; \
 	$(CXXDEPS) $(CCFLAGS) $$MM $(SRCS) | \
-	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > depend
-
-dep: depend
-	mv depend dep
-	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < dep | \
-	sed -e 's;^\$$;\?\?&;' \
-	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' | tr '?' '\n' \
-	> depend
-	$(RM) dep
-
+	sed 's/^[^:[:space:]]\{1,\}[[:space:]]*:/$$(OBJDIR)\/&/' > $@
 
 # No capable tools on MSW to make dependency file.  Use Unix tools.
 # Actually, GNU tools, grep and sed are used below; word-edge-anchors
 # '\<' and '\>' are used and they are not POSIX -- failure likely
 # except on GNU system or with GNU tools.
-depend.msw dep.msw : dep
+dep depend dep.msw depend.msw: depend-raw
+	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < depend-raw | \
+	sed -e 's;^\$$;\?\?&;' \
+	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' | tr '?' '\n' \
+	> depend && \
 	grep -E '(^\$$.+:| \<[^ /]+\.*(h|xpm|inc)\>)' < depend | \
 	sed -e 's;^\$$;\?\?&;' \
 	-e 's;[ ]/[^ ]\{1,\}\.[^\. /]\{1,\}\>;;g' \
 	-e 's;\.o\>;\.obj;g' -e 's;/;\\;g' | tr '?' '\n' > depend.msw
-	echo "" >> depend.msw
-	echo "" >> depend.msw
+
 
 # This target written for ``Exuberant Ctags.'' [new versions]
 # See http://ctags.sourceforge.net
@@ -395,7 +388,7 @@ clean:
 	*core
 
 cleandepend cleandepends:
-	-$(RM) depend .depend
+	-$(RM) depend .depend depend-raw depend.msw
 
 cleangenerated: clean
 	-$(RM) $(SRCDIR)/lex.yy.c $(SRCDIR)/y.tab.c \

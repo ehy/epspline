@@ -98,6 +98,7 @@ protected:
 		wxString img_fname;
 
 		dim_type origwidth, origheight;
+		dim_type rot_width, rot_height;
 		dim_type modswidth, modsheight;
 		off_type off_x, off_y;
 		hsv_type hsv_h, hsv_s, hsv_v;
@@ -117,6 +118,8 @@ protected:
 			img_fname.Empty();
 			origwidth = 0;
 			origheight = 0;
+			rot_width = 0;
+			rot_height = 0;
 			modswidth = 0;
 			modsheight = 0;
 			off_x = 0;
@@ -133,6 +136,8 @@ protected:
 			img_fname = o.img_fname;
 			origwidth = o.origwidth;
 			origheight = o.origheight;
+			rot_width = o.rot_width;
+			rot_height = o.rot_height;
 			modswidth = o.modswidth;
 			modsheight = o.modsheight;
 			off_x = o.off_x;
@@ -151,6 +156,8 @@ protected:
 				img_fname == o.img_fname &&
 				origwidth == o.origwidth &&
 				origheight == o.origheight &&
+				rot_width == o.rot_width &&
+				rot_height == o.rot_height &&
 				modswidth == o.modswidth &&
 				modsheight == o.modsheight &&
 				off_x == o.off_x &&
@@ -240,6 +247,8 @@ public:
 	void get_dimensions_noz(dim_type& width, dim_type& height,
 		off_type& xo, off_type& yo);
 	void get_dimensions_orig(dim_type& width, dim_type& height);
+	// new dims or image after rotation
+	void get_dimensions_rot(dim_type& width, dim_type& height);
 	void set_hsv_vals(hsv_type hue, hsv_type sat, hsv_type val);
 	void get_hsv_vals(hsv_type& hue, hsv_type& sat, hsv_type& val);
 	void set_compression(cmp_type comp);

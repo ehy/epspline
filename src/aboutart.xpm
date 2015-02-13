@@ -1,5 +1,5 @@
 /* XPM */
-static char *aboutart[] = {
+static const char *aboutart[] = {
 /* columns rows colors chars-per-pixel */
 "500 128 256 2 ",
 "   c #0D0606",

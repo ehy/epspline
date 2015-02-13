@@ -3486,7 +3486,7 @@ A_Canvas::DrawGridOnRast(wxImage& im, const wxRect& r,
 		bg_mng->get_dimensions(bg_wi, bg_hi, bg_ox, bg_oy);
 		bg_wi = bgimg->GetWidth();
 		bg_hi = bgimg->GetHeight();
-		
+	
 		bg_ox -= X;
 		bg_oy -= Y;
 

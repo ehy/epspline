@@ -47,7 +47,7 @@
 #include <io.h>
 #include <fcntl.h>
 #ifdef __SC__ // actually, DMC: proto missing, definition in C lib
-extern "C" int     __CLIB _snprintf(t_ch *,size_t,const t_ch *,...);
+extern "C" int     __CLIB _snprintf(char *,size_t,const char *,...);
 #define snprintf _snprintf
 #endif
 #else
@@ -187,11 +187,7 @@ static inline double adjhsvH(double v, double a)
 }
 static inline double adjhsvS(double v, double a)
 {
-#if 0
-	return std::min(1.0, std::max(0.0, v * (1.0 + a)));
-#else
 	return v + (a > 0.0 ? (a * (1.0 - v)) : (a * v));
-#endif
 }
 static inline double adjhsvV(double v, double a)
 {
@@ -241,8 +237,7 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 				adjhsvH(hsv.hue, h),
 				adjhsvS(hsv.saturation, s),
 				adjhsvV(hsv.value, v)
-			)
-		);
+			));
 
 		p[R] = rgb.red;
 		p[G] = rgb.green;
@@ -260,70 +255,12 @@ wximg_adjhsv(wxImage* img, double h, double s, double v)
 				adjhsvH(hsv.hue, h),
 				adjhsvS(hsv.saturation, s),
 				adjhsvV(hsv.value, v)
-			)
-		);
+			));
 		
 		img->SetMaskColour(rgb.red, rgb.green, rgb.blue);
 	}
 
 	return img;
-}
-
-// wxImage may have distinct mask amd alpha channel;
-// If image has mask and not alpha, make alpha channel
-// from mask color.
-// NOTE: returns operator new'd image (i.e., source not changed)
-wxImage*
-wximg_get_alphaconv(wxImage* src)
-{
-	// has alpha already, or no mask
-	if ( src->HasAlpha() || ! src->HasMask() ) {
-		return new wxImage(src->Copy());
-	}
-
-	const size_t pixlen = 3;
-	int wi = src->GetWidth();
-	int hi = src->GetHeight();
-	size_t alen = size_t(wi) * hi;
-	size_t dlen = alen * pixlen;
-
-	unsigned char* data = (unsigned char*)std::malloc(dlen);
-	if ( ! data ) {
-		return new wxImage(src->Copy()); // use new_handler
-	}
-	unsigned char* alph = (unsigned char*)std::malloc(alen);
-	if ( ! alph ) {
-		std::free(data);
-		return new wxImage(src->Copy()); // use new_handler
-	}
-
-	const int iR = 0, iG = 1, iB = 2;;
-	unsigned char mr = src->GetMaskRed();
-	unsigned char mg = src->GetMaskGreen();
-	unsigned char mb = src->GetMaskBlue();
-
-	unsigned char* sp = src->GetData();
-	unsigned char* dp = data;
-	unsigned char* ap = alph;
-	unsigned char* ep = ap + alen;
-
-	for ( ; ap < ep; ap++ ) {
-		if ( sp[iR] == mr && sp[iG] == mg && sp[iB] == mb ) {
-			*ap = 0;
-		} else {
-			*ap = 255;
-		}
-
-		*dp++ = *sp++;
-		*dp++ = *sp++;
-		*dp++ = *sp++;
-	}
-
-	wxImage* dst = new wxImage(wi, hi, data);
-
-	dst->SetAlpha(alph);
-
-	return dst;
 }
 
 // simple conversion to greyscale -- may be replaced

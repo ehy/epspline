@@ -27,7 +27,7 @@ BIN = $(PRGNM).exe
 OBJ = $(PRGNM).obj
 MAP = $(PRGNM).map
 
-INCLUDES = -IC:\\dm\\stlport\\stlport -I.\include\freetype2 -I.\include
+INCLUDES = -IC:\dm\stlport\stlport -I.\include\freetype2 -I.\include
 
 LIBS = .\lib\freetype-bcc.lib
 

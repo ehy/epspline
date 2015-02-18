@@ -239,7 +239,7 @@ A_Frame::A_Frame(
 	, _("&About"), _("Show about dialog"));
 
 	// now append the freshly created menu to the menu bar...
-	wxMenuBar *menuBar = new wxMenuBar;
+	wxMenuBar *menuBar = new wxMenuBar(wxMB_DOCKABLE);
 	menuBar->Append(menuFile, _("&File"));
 	menuBar->Append(menuEdit, _("&Edit"));
 	menuBar->Append(MenuOpts, _("&Tools"));
@@ -810,17 +810,23 @@ A_Frame::OnOption(wxCommandEvent& event)
 			return;
 	}
 
-	if ( (s = tabwnd->GetSelection()) < 0 )
+	if ( (s = tabwnd->GetSelection()) < 0 ) {
+		event.Skip();
 		return;
+	}
 
 	A_Tabpage* t = GetCurPage();
-	if ( t != 0 )
+	if ( t != 0 ) {
 		canvas = t->GetCanvas();
-	else
+	} else {
+		event.Skip();
 		return;
+	}
 
-	if ( canvas == 0 )
+	if ( canvas == 0 ) {
+		event.Skip();
 		return;
+	}
 
 	switch ( event.GetId() ) {
 		case ExportCurves:
@@ -948,6 +954,7 @@ A_Frame::OnOption(wxCommandEvent& event)
 			}
 			return;
 		default:
+			event.Skip();
 			// skip Refresh()
 			return;
 	}

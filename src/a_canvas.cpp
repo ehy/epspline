@@ -1968,6 +1968,8 @@ A_Canvas::DataState::GotPopup(wxCommandEvent& event)
 			sweept = slinear;
 			UpdateObj(cur);
 			break;
+		default:
+			event.Skip();
 	}
 }
 

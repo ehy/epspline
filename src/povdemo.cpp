@@ -531,8 +531,8 @@ PovDemoProc::SetupTmp()
 
 #else // __UNIX__
 
-	cmd.Printf(wxT("%s %s +FN +I%s +O%s /NR")
-		, fmtcst(pexec), fmtcst(opts), fmtcst(itmp2), fmtcst(outf));
+	cmd.Printf(wxT("%s +FN +I%s +O%s /NR %s")
+		, fmtcst(pexec), fmtcst(itmp2), fmtcst(outf), fmtcst(opts));
 
 #endif // __UNIX__
 

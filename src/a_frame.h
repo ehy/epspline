@@ -69,37 +69,39 @@ enum menu_and_toolbar_IDs {
 
 // stock items:
 // File
-	SaveCurves = wxID_SAVE,
-	SaveAsCurves = wxID_SAVEAS,
-	NewTab = wxID_NEW,
-	NewTabOpenCurves = wxID_OPEN,
-	CloseCurves = wxID_CLOSE,
-	Xit_Quit = wxID_EXIT,
+	SaveCurves        = wxID_SAVE,
+	SaveAsCurves      = wxID_SAVEAS,
+	NewTab            = wxID_NEW,
+	NewTabOpenCurves  = wxID_OPEN,
+	CloseCurves       = wxID_CLOSE,
+	Xit_Quit          = wxID_EXIT,
 // Edit
-	EdUndo = wxID_UNDO,
-	EdRedo = wxID_REDO,
-	EdCopy = wxID_COPY,
-	EdCut = wxID_CUT,
-	EdDel = wxID_DELETE,
-	EdPaste = wxID_PASTE,
-	EdMoveDown = wxID_DOWN,
-	EdMoveUp = wxID_UP,
+	EdUndo            = wxID_UNDO,
+	EdRedo            = wxID_REDO,
+	EdCopy            = wxID_COPY,
+	EdCut             = wxID_CUT,
+	EdDel             = wxID_DELETE,
+	EdPaste           = wxID_PASTE,
+	EdMoveDown        = wxID_DOWN,
+	EdMoveUp          = wxID_UP,
 // Tools
-	ZoomStd = wxID_ZOOM_100,
-	ZoomIn = wxID_ZOOM_IN,
-	ZoomOut = wxID_ZOOM_OUT,
+	ZoomStd           = wxID_ZOOM_100,
+	ZoomIn            = wxID_ZOOM_IN,
+	ZoomOut           = wxID_ZOOM_OUT,
 // Help
-	HelpHelp = wxID_HELP,
-	HelpDemo = wxID_APPLY,
-	HelpAbout = wxID_ABOUT,
+	HelpHelp          = wxID_HELP,
+	HelpDemo          = wxID_APPLY,
+	HelpAbout         = wxID_ABOUT,
 
 // mark end of stock IDs
 	// highest ID used in wx stock menu items
 	menu_tool_stock_end = wxID_HIGHEST,
+// mark start of sequentially enumerated
+	menu_tool_seq_start,
 
 // non-stock items:
 // File
-	OpenCurves,
+	OpenCurves = menu_tool_seq_start,
 	CloseTab,
 	ExportCurves,
 	ExportAsCurves,
@@ -121,7 +123,7 @@ enum menu_and_toolbar_IDs {
 // Help
 	HelpHelpTableOfContents,
 
-	menu_tool_last
+	menu_tool_last = HelpHelpTableOfContents
 };
 
 // TODO
@@ -168,7 +170,6 @@ public:
 	void OnQuit(wxCloseEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnOption(wxCommandEvent& event);
-	void OnMouseLeave(wxMouseEvent& e);
 
 	// this should provide set names of all dialog windows that
 	// are given this as parent -- a hand maintained list of app's

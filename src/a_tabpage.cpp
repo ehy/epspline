@@ -54,8 +54,8 @@ A_Tabpage::A_Tabpage(wxWindow* parent, wxWindowID id
 	, A_Canvas* can, A_Ruler* hr, A_Ruler* vr
 	, const wxPoint& pos, const wxSize& size
 	, long style, const wxString& name)
-       : tabpage_parent_class(parent, id, pos, size, style, name)
-       , canvas(can), hrule(hr), vrule(vr)
+	: tabpage_parent_class(parent, id, pos, size, style, name)
+	, canvas(can), hrule(hr), vrule(vr)
 {
 }
 

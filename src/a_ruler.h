@@ -75,7 +75,7 @@ public:
 	inline   void SetInitOffs(int offs) {initoffs = offs;}
 	inline   void OffsRefresh(int offs) {
 				SetInitOffs(offs); Refresh();
-	         }
+	}
 	inline   void SetScalePercent(unsigned pct) {
 		scalepct = pct;
 		Refresh();

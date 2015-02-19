@@ -259,7 +259,8 @@ AnApp::OnInit()
     wxLanguage src_lang = wxLanguage(app_locale.GetLanguage());
     if ( src_lang == wxLANGUAGE_ENGLISH_US ) {
 #		if DEBUG
-		std::fprintf(stderr,"Got lang int %d -- base == %d, UK == %d, US == %d, default == %d, unknown == %d\n"
+		std::fprintf(stderr
+		,"Got lang int %d -- base == %d, UK == %d, US == %d, default == %d, unknown == %d\n"
 		, int(src_lang)
 		, int(wxLANGUAGE_ENGLISH)
 		, int(wxLANGUAGE_ENGLISH_UK)

@@ -137,6 +137,8 @@ A_Tabwnd::OnPageChanged(TABWND_EVENT_T& e)
 	A_Tabpage* t = 0;
 	int nold = e.GetOldSelection(), nnew = e.GetSelection();
 
+	e.Skip();
+
 	if ( nold >= 0 ) {
 		#if defined(__SC__) && !defined(_CPPRTTI)
 		t = (A_Tabpage*)GetPage(nold);
@@ -158,7 +160,6 @@ A_Tabwnd::OnPageChanged(TABWND_EVENT_T& e)
 		t = dynamic_cast<A_Tabpage*>(GetPage(nnew));
 		#endif
 		if ( t == 0 ) {
-			e.Skip();
 			return;
 		}
 		A_Canvas* canvas = t->GetCanvas();
@@ -173,7 +174,6 @@ A_Tabwnd::OnPageChanged(TABWND_EVENT_T& e)
 			canvas->UpdateStatusBar();
 		}
 	}
-	e.Skip();
 }
 
 #if 0
@@ -194,6 +194,8 @@ A_Tabwnd::OnButton(wxCommandEvent& e)
 {
 	wxAuiNotebookEvent& evt = (wxAuiNotebookEvent&)e;
 #	endif
+
+	evt.Skip();
 
 	int button_id = evt.GetInt();
 	if ( button_id == wxAUI_BUTTON_CLOSE ) {

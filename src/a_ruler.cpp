@@ -85,70 +85,70 @@ A_Ruler::SetDragHandler(DragFptr fptr, wxWindow* wndCB)
 void
 A_Ruler::OnMouseMove(wxMouseEvent& event)
 {
+	event.Skip();
 	if ( DragCallbackFptr && event.Dragging() )
 		DragCallbackFptr(DragCallbackWnd, event, this);
-	event.Skip();
 }
 
 void
 A_Ruler::OnMouseLUp(wxMouseEvent& event)
 {
+	event.Skip();
 	if ( DragCallbackFptr )
 		DragCallbackFptr(DragCallbackWnd, event, this);
 	gotmldown = false;
 	shift_down = false;
-	event.Skip();
 }
 
 void
 A_Ruler::OnMouseLDown(wxMouseEvent& event)
 {
-	gotmldown = true;
 	event.Skip();
+	gotmldown = true;
 }
 
 void
 A_Ruler::OnMouseEnter(wxMouseEvent& event)
 {
+	event.Skip();
 	Refresh(); Update();
 	//linepos = 0;
 	if ( DragCallbackFptr )
 		DragCallbackFptr(DragCallbackWnd, event, this);
-	event.Skip();
 }
 
 void
 A_Ruler::OnMouseLeave(wxMouseEvent& event)
 {
+	event.Skip();
 	Refresh(); Update();
 	//linepos = 0;
 	if ( DragCallbackFptr )
 		DragCallbackFptr(DragCallbackWnd, event, this);
-	event.Skip();
 }
 
 void
 A_Ruler::OnKeyDown(wxKeyEvent& e)
 {
+	e.Skip();
 #if defined(__WXX11__) || defined(__WXMOTIF__)
 	if ( e.GetKeyCode() == WXK_SHIFT && e.GetEventObject() == this ) {
 		shift_down = true;
 		return;
 	}
 #endif
-	e.Skip();
 }
 
 void
 A_Ruler::OnKeyUp(wxKeyEvent& e)
 {
+	e.Skip();
 #if defined(__WXX11__) || defined(__WXMOTIF__)
 	if ( e.GetKeyCode() == WXK_SHIFT && e.GetEventObject() == this ) {
 		shift_down = false;
 		return;
 	}
 #endif
-	e.Skip();
 }
 
 void

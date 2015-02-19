@@ -67,9 +67,53 @@
 
 BEGIN_EVENT_TABLE(A_Frame, wxFrame)
  EVT_CLOSE       (A_Frame::OnQuit)
+// Note on following '#if 0': on an Ubuntu 14.04 system the menus
+// were broken by a system package update (within the week preceeding
+// Feb. 18, 2015).  That update included Unity, Ubuntu's desktop
+// that includes some toolkit hacks to do a silly Apple-wannabe thing
+// with the menu, moving it out of the app frame.  The bug hit this
+// code under KDE on Ubuntu 14.04, and had a different manifestation
+// under XFCE on the same.  Unity itself has not been tried as I write
+// this.
+// On KDE, the menubar items could not be invoked with the primary
+// mouse button, but the middle and right buttons worked.  On XFCE,
+// the menus worked with the left button, but hovering the pointer
+// over *some* toolbar items caused repeated flashing (something
+// confusedly looping).  Might check Unity later.
+// After trying everything but a bottle of whiskey, I took a shot
+// at replacing the nice simple EVT_MENU_RANGE macro with all the
+// individual EVT_MENU macros, as below.  That seems to have done
+// the trick.  The EVT_MENU_RANGE macro had been working from the
+// year 2000 to early 2015, on {Open,Net,Free}BSD and
+// Open{Solaris,Indiana} and
+// {Slackware,Fedora,Debian,older Ubuntu}GNU/Linux and MSWindows.
+// Thanks Ubuntu, you're a real gem.  (This is not a wxWidgets bug.)
+#if 0
  EVT_MENU_RANGE  (menu_tool_first, menu_tool_last, A_Frame::OnOption)
+#else
+ EVT_MENU        (SaveCurves, A_Frame::OnOption)
+ EVT_MENU        (SaveAsCurves, A_Frame::OnOption)
+ EVT_MENU        (NewTab, A_Frame::OnOption)
+ EVT_MENU        (NewTabOpenCurves, A_Frame::OnOption)
+ EVT_MENU        (CloseCurves, A_Frame::OnOption)
+ EVT_MENU        (Xit_Quit, A_Frame::OnOption)
+ EVT_MENU        (EdUndo, A_Frame::OnOption)
+ EVT_MENU        (EdRedo, A_Frame::OnOption)
+ EVT_MENU        (EdCopy, A_Frame::OnOption)
+ EVT_MENU        (EdCut, A_Frame::OnOption)
+ EVT_MENU        (EdDel, A_Frame::OnOption)
+ EVT_MENU        (EdPaste, A_Frame::OnOption)
+ EVT_MENU        (EdMoveDown, A_Frame::OnOption)
+ EVT_MENU        (EdMoveUp, A_Frame::OnOption)
+ EVT_MENU        (ZoomStd, A_Frame::OnOption)
+ EVT_MENU        (ZoomIn, A_Frame::OnOption)
+ EVT_MENU        (ZoomOut, A_Frame::OnOption)
+ EVT_MENU        (HelpHelp, A_Frame::OnOption)
+ EVT_MENU        (HelpDemo, A_Frame::OnOption)
+ EVT_MENU        (HelpAbout, A_Frame::OnOption)
+ EVT_MENU_RANGE  (menu_tool_seq_start,menu_tool_last, A_Frame::OnOption)
+#endif
 END_EVENT_TABLE()
-
 
 A_Frame::A_Frame(
 	const wxString& title, const wxPoint& pos, const wxSize& size)
@@ -78,10 +122,22 @@ A_Frame::A_Frame(
 	// set the frame icon
 	SetIcon(wxICON(epspline));
 
-	menuFile = new wxMenu;
-	menuEdit = new wxMenu;
-	MenuOpts = new wxMenu; // now called "Tools"
-	menuHelp = new wxMenu;
+	menuFile = new wxMenu(wxMENU_TEAROFF);
+	menuEdit = new wxMenu(wxMENU_TEAROFF);
+	MenuOpts = new wxMenu(wxMENU_TEAROFF); // now called "Tools"
+	menuHelp = new wxMenu(wxMENU_TEAROFF);
+
+	// append the freshly created menu to the menu bar ...
+	wxMenuBar *menuBar = new wxMenuBar(wxMB_DOCKABLE);
+	menuBar->Append(menuFile, _("&File"));
+	menuBar->Append(menuEdit, _("&Edit"));
+	menuBar->Append(MenuOpts, _("&Tools"));
+	menuBar->Append(menuHelp, _("&Help"));
+
+	// ... and attach this menu bar to the frame
+	SetMenuBar(menuBar);
+
+	menuBar->SetThemeEnabled(true);
 
 	// stock menu strings are not working in wx 2.6
 #if ! wxCHECK_VERSION(2, 8, 0)
@@ -98,7 +154,9 @@ A_Frame::A_Frame(
 
 	// use a macros to append menu items; done initially
 	// for switching to use of wx stock items , but might also
-	// add flexibility
+	// add flexibility -- for different types set ikind
+	// before for macro, and then reset ikind to wxITEM_NORMAL
+	wxItemKind ikind = wxITEM_NORMAL;
 #	undef  MNADD0   // 0 ARGS *after menu pointer and id args*
 #	undef  MNADD0NS // 0 ARGS *after menu pointer and id args*
 #	undef  MNADD1   // *only* 'tip' arg
@@ -107,26 +165,26 @@ A_Frame::A_Frame(
 #	undef  MNADD2NS // use 'str' and 'tip'
 #	if USE_NONSTOCK_MENU_STRINGS
 #	define MNADD0(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	define MNADD1(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	define MNADD2(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	else
 #	define MNADD0(mp, id, str, tip) \
 		(mp)->Append(id)
 #	define MNADD1(mp, id, str, tip) \
 		(mp)->Append(id, wxEmptyString, tip)
 #	define MNADD2(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	endif
 	// not wx stock item
 #	define MNADD0NS(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	define MNADD1NS(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 #	define MNADD2NS(mp, id, str, tip) \
-		(mp)->Append(id, str, tip)
+		(mp)->Append(id, str, tip, ikind)
 
 // hack macro for wx stock items w/o accelerators when wanted
 #	if wxCHECK_VERSION(2, 8, 0)
@@ -206,9 +264,14 @@ A_Frame::A_Frame(
 	, _("Set &Background Image\tCtrl-B"),
 	_("Set or change a background image on the drawing area"));
 	MNACCHACK(MenuOpts, SetBGImage, _("Ctrl-B"));
+
+	ikind = wxITEM_CHECK;
 	MNADD0NS(MenuOpts, HideBGImage
-	, _("&Hide/Show Background Image"),
+	, _("&Hide Background Image"),
 	_("Toggle visibility of a background image on the drawing area"));
+	MenuOpts->Check(HideBGImage, false);
+
+	ikind = wxITEM_NORMAL;
 	MNADD0NS(MenuOpts, RmBGImage
 	, _("&Remove Background Image"),
 	_("Remove a background image on the drawing area"));
@@ -238,22 +301,13 @@ A_Frame::A_Frame(
 	MNADD0(menuHelp, HelpAbout
 	, _("&About"), _("Show about dialog"));
 
-	// now append the freshly created menu to the menu bar...
-	wxMenuBar *menuBar = new wxMenuBar(wxMB_DOCKABLE);
-	menuBar->Append(menuFile, _("&File"));
-	menuBar->Append(menuEdit, _("&Edit"));
-	menuBar->Append(MenuOpts, _("&Tools"));
-	menuBar->Append(menuHelp, _("&Help"));
-
-	// ... and attach this menu bar to the frame
-	SetMenuBar(menuBar);
-
 	// Set up toolbar
 	CreateToolBar(wxNO_BORDER|wxHORIZONTAL|wxTB_FLAT|wxTB_DOCKABLE, -1);
 	wxToolBar* tb = GetToolBar();
 	tb->SetMargins(2, 2);
 	tb->SetToolPacking(2);
 	tb->SetToolSeparation(5);
+	tb->SetThemeEnabled(true);
 
 	// wx bug (2.8): all of wxMenuItem::Get{Name,Text,Label{.Text}}
 	// are returning an empty string (GetHelp() is working); the
@@ -311,6 +365,8 @@ A_Frame::A_Frame(
 	int swid[3] = {-3, -1 , -1};
 	sb->SetStatusWidths(3, swid);
 #	endif
+
+	sb->SetThemeEnabled(true);
 
 	wxString ts; // temp string
 	ts.Printf(_("Welcome to \"%s\""),
@@ -383,6 +439,8 @@ A_Frame::A_Frame(
 	// put drop target (from our internal class) in place
 	SetDropTarget(new a_frame_filedroptarget(this));
 #	endif // wxUSE_DRAG_AND_DROP
+
+	SetThemeEnabled(true);
 }
 
 A_Frame::~A_Frame()

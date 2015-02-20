@@ -266,7 +266,8 @@ public:
 	void enableRmBGImg(bool b) {
 		MenuOpts->Enable(RmBGImage, b);
 	}
-	void enableHideBGImg(bool b) {
+	void enableHideBGImg(bool b, bool chk = false) {
+		MenuOpts->Check(HideBGImage, chk);
 		MenuOpts->Enable(HideBGImage, b);
 	}
 	void enableViewScale(bool b) {

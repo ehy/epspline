@@ -461,7 +461,7 @@ protected:
 	void enableHelpDemo(bool b);
 	void enableSetBackgroundImage(bool b);
 	void enableRemoveBackgroundImage(bool b);
-	void enableHideBackgroundImage(bool b);
+	void enableHideBackgroundImage(bool b, bool chk = false);
 
 	void enable_set_linear(bool b)
 	{m_pop->Enable(IC_set_linear, b);}

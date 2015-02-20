@@ -399,7 +399,7 @@ A_Canvas::IdleUpdate()
 
 	bool have_bg_img = bg_mng->get_mod_image() != 0;
 	enableRemoveBackgroundImage(have_bg_img);
-	enableHideBackgroundImage(have_bg_img);
+	enableHideBackgroundImage(have_bg_img, bg_hide);
 
 
 	bool dirty = IsDirty();
@@ -4011,10 +4011,10 @@ A_Canvas::enableRemoveBackgroundImage(bool b)
 	a_frame->enableRmBGImg(b);
 }
 void
-A_Canvas::enableHideBackgroundImage(bool b)
+A_Canvas::enableHideBackgroundImage(bool b, bool chk)
 {
 	//m_pop->Enable(IC_hide_bg_img, b);
-	a_frame->enableHideBGImg(b);
+	a_frame->enableHideBGImg(b, chk);
 }
 
 void

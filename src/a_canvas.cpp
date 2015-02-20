@@ -2300,10 +2300,13 @@ A_Canvas::DoRmBGImg()
 }
 
 void
-A_Canvas::DoHideBGImg()
+A_Canvas::DoHideBGImg(bool hide)
 {
-	bg_hide = ! bg_hide;
-	Refresh();
+	bool chng = bg_hide == hide;
+	bg_hide = hide;
+	if ( chng ) {
+		Refresh();
+	}
 }
 
 bool

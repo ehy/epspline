@@ -129,7 +129,7 @@ enum menu_and_toolbar_IDs {
 // TODO
 #if 0
 enum {
-	MapMode_Text = menu_tool_last,
+	MapMode_Text = menu_tool_last + 1,
 	MapMode_Lometric,
 	MapMode_Twips,
 	MapMode_Points,

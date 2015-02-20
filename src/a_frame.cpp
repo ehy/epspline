@@ -73,21 +73,16 @@ BEGIN_EVENT_TABLE(A_Frame, wxFrame)
 // that includes some toolkit hacks to do a silly Apple-wannabe thing
 // with the menu, moving it out of the app frame.  The bug hit this
 // code under KDE on Ubuntu 14.04, and had a different manifestation
-// under XFCE on the same.  Unity itself has not been tried as I write
-// this.
+// under XFCE on the same.
 // On KDE, the menubar items could not be invoked with the primary
 // mouse button, but the middle and right buttons worked.  On XFCE,
 // the menus worked with the left button, but hovering the pointer
 // over *some* toolbar items caused repeated flashing (something
-// confusedly looping).  Might check Unity later.
+// confusedly looping).  Unity was not checked.
 // After trying everything but a bottle of whiskey, I took a shot
 // at replacing the nice simple EVT_MENU_RANGE macro with all the
 // individual EVT_MENU macros, as below.  That seems to have done
-// the trick.  The EVT_MENU_RANGE macro had been working from the
-// year 2000 to early 2015, on {Open,Net,Free}BSD and
-// Open{Solaris,Indiana} and
-// {Slackware,Fedora,Debian,older Ubuntu}GNU/Linux and MSWindows.
-// Thanks Ubuntu, you're a real gem.  (This is not a wxWidgets bug.)
+// the trick.
 #if 0
  EVT_MENU_RANGE  (menu_tool_first, menu_tool_last, A_Frame::OnOption)
 #else
@@ -281,9 +276,13 @@ A_Frame::A_Frame(
 	MNADD0NS(MenuOpts, CycleUserScale
 	, _("&Cycle Scale"),
 	_("Cycle through normal, large, and small scale of view"));
+
+	ikind = wxITEM_CHECK;
 	MNADD0NS(MenuOpts, Toggle_AA_Lines
-	, _("&Toggle Quick Drawing"),
+	, _("Use &Quick Drawing"),
 	_("Toggle drawing type between slow and pretty or fast and ugly"));
+
+	ikind = wxITEM_NORMAL;
 	MNADD0NS(MenuOpts, SaveClientImage
 	, _("Save Visable To File"),
 	_("Save the visible drawing area to a raster image file"));
@@ -297,6 +296,9 @@ A_Frame::A_Frame(
 	MNADD2(menuHelp, HelpDemo
 	, _("&Preview")
 	, _("Run POV-Ray on a test file with the current curves"));
+	// Ubuntu Unity fights: wants label to be stock "Apply"
+	// Sigh, it's still "Apply" -- Ubuntu is soooo *special*
+	menuHelp->SetLabel(Toggle_AA_Lines, _("&Preview"));
 	menuHelp->AppendSeparator();
 	MNADD0(menuHelp, HelpAbout
 	, _("&About"), _("Show about dialog"));
@@ -391,6 +393,8 @@ A_Frame::A_Frame(
 			aadraw = true;
 		}
 	}
+	// (un)check menu item
+	MenuOpts->Check(Toggle_AA_Lines, aadraw);
 
 	tabwnd = new A_Tabwnd(this, TabWindowID
 		, wxDefaultPosition, wxDefaultSize
@@ -972,7 +976,14 @@ A_Frame::OnOption(wxCommandEvent& event)
 			canvas->DoRmBGImg();
 			break;
 		case HideBGImage:
-			canvas->DoHideBGImg();
+			{
+				bool do_hide = false;
+				wxMenuItem* pi;
+				if ( (pi = GetMenuBar()->FindItem(int(HideBGImage))) ) {
+					do_hide = pi->IsChecked();
+				}
+				canvas->DoHideBGImg(do_hide);
+			}
 			break;
 		case SetUserScale:
 			canvas->DoSetScale();
@@ -984,11 +995,17 @@ A_Frame::OnOption(wxCommandEvent& event)
 			break;
 		case Toggle_AA_Lines:
 			{
+				bool do_aa = false;
+				wxMenuItem* pi;
+				if ( (pi =
+					GetMenuBar()->FindItem(int(Toggle_AA_Lines))) ) {
+					do_aa = pi->IsChecked();
+				}
 				std::vector<A_Tabpage*> v;
 				GetAllPagePtrs(v);
 				std::vector<A_Tabpage*>::iterator i = v.begin();
 				while ( i != v.end() ) {
-					(*i++)->GetCanvas()->toggle_AA();
+					(*i++)->GetCanvas()->use_AA(do_aa);
 				}
 			}
 			break;

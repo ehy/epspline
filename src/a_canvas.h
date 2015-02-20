@@ -121,7 +121,7 @@ enum {
 	IC_set_bg_img,
 	IC_rm_bg_img,
 
-	IC_end
+	IC_end = IC_rm_bg_img
 };
 
 
@@ -292,7 +292,7 @@ public:
 	void DoCycleScale();
 	void DoSetBGImg();
 	void DoRmBGImg();
-	void DoHideBGImg();
+	void DoHideBGImg(bool hide = false);
 
 	// For internal clipboard that can hold one object
 	void            clipCopy();

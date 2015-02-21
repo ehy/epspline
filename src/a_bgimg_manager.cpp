@@ -87,6 +87,130 @@ bgimg_manager::parent_wnd()
 }
 
 void
+bgimg_manager::set_infolabel(const wxString& s)
+{
+	dialog_type* p = get_dlg();
+
+	if ( p == 0 ) {
+		return;
+	}
+
+	p->set_infolabel(s);
+}
+
+void
+bgimg_manager::set_infolabel_current()
+{
+	// dialog not used here, but calls depend on
+	// it, so check
+	if ( get_dlg() == 0 ) {
+		return;
+	}
+
+	wxString s, t;
+
+	if ( img ) {
+		t.Printf(
+			_("file dimensions:\n  %d x %d\n"),
+			img->GetWidth(), img->GetHeight()
+		);
+		s += t;
+	}
+
+	if ( get_arg_width() || get_arg_height() ) {
+		dim_type width, height;
+		off_type xo, yo;
+
+		get_dimensions_noz(width, height, xo, yo);
+
+		if ( width == 0 && mods_img ) {
+			width = dim_type(mods_img->GetWidth());
+		}
+		if ( height == 0 && mods_img ) {
+			height = dim_type(mods_img->GetHeight());
+		}
+
+		if ( width || height ) {
+			t.Printf(
+				_("set dimensions:\n  %u x %u\n"),
+				unsigned(width), unsigned(height)
+			);
+			s += t;
+		}
+	} else if ( get_arg_rotate() && mods_img ) {
+		t.Printf(
+			_("rotated W x H:\n  %d x %d\n"),
+			mods_img->GetWidth(), mods_img->GetHeight()
+		);
+		s += t;
+	}
+
+	if ( get_conv_hsvh() || get_conv_hsvs() || get_conv_hsvv() ) {
+		t.Printf(
+			_("HSV adjust:\n  h %d, s %d, v %d\n"),
+			int(data_std.hsv_h),
+			int(data_std.hsv_s),
+			int(data_std.hsv_v)
+		);
+		s += t;
+	}
+
+	if ( get_conv_band_comp() ) {
+		int v(data_std.band_comp);
+		bool lighten = (v > 0);
+		double band = 1.0 - double(std::abs(v)) / 255.0;
+		t.Printf(
+			_("lightness adjust:\n  %s %f\n"),
+			lighten ? _("lighten") : _("darken"),
+			band
+		);
+		s += t;
+	}
+
+	if ( s.IsEmpty() ) {
+		set_infolabel_default();
+	} else {
+		set_infolabel(s);
+	}
+}
+
+void
+bgimg_manager::set_infolabel_default()
+{
+	dialog_type* p = get_dlg();
+
+	if ( p == 0 ) {
+		return;
+	}
+
+	p->set_infolabel_default();
+}
+
+wxString
+bgimg_manager::get_infolabel()
+{
+	dialog_type* p = get_dlg();
+
+	if ( p == 0 ) {
+		return wxString();
+	}
+
+	return p->get_infolabel();
+}
+
+wxString
+bgimg_manager::get_infolabel_default()
+{
+	dialog_type* p = get_dlg();
+
+	if ( p == 0 ) {
+		return wxString();
+	}
+
+	return p->get_infolabel_default();
+}
+
+void
 bgimg_manager::set_default_params()
 {
 	clear_params();
@@ -194,9 +318,9 @@ void
 bgimg_manager::get_dimensions_rot(dim_type& width, dim_type& height)
 {
 	width  = data_std.rot_width  ?
-		data_std.rot_width  : data_std.modswidth;
+		data_std.rot_width  : data_std.origwidth;
 	height = data_std.rot_height ?
-		data_std.rot_height : data_std.modsheight;
+		data_std.rot_height : data_std.origheight;
 }
 
 void
@@ -265,6 +389,7 @@ bgimg_manager::show_dialog(bool show)
 		p->Raise();
 	}
 	
+	set_infolabel_current();
 	p->Show(show);
 }
 
@@ -330,6 +455,7 @@ bgimg_manager::get_mod_image()
 		mods_img = 0;
 		delete img;
 		img = 0;
+		mods_current = true;
 		return 0;
 	}
 
@@ -343,6 +469,8 @@ bgimg_manager::get_mod_image()
 	}
 
 	// transforms are pending
+
+	mods_current = true;
 
 	// orig not present
 	if ( img == 0 ) {
@@ -479,7 +607,6 @@ bgimg_manager::get_mod_image()
 		}
 	}
 
-	mods_current = true;
 	return mods_img;
 }
 
@@ -663,6 +790,7 @@ bg_img_dlg::bg_img_dlg(
 	, new_filename(false)
 	, wh_unlock(false)
 {
+	info_label_default = bg_img_info->GetLabel();
 }
 
 bg_img_dlg::~bg_img_dlg()
@@ -670,56 +798,17 @@ bg_img_dlg::~bg_img_dlg()
 }
 
 void
+bg_img_dlg::change_update()
+{
+	mng->set_current(false);
+	mng->set_infolabel_current();
+	put_preview();
+}
+
+void
 bg_img_dlg::put_preview()
 {
-	wxString s = mng->img_fname();
-
-	if ( s.IsEmpty() ) {
-		set_preview(0);
-		return;
-	}
-
-	wxImage i(s);
-
-	if ( ! i.IsOk() ) {
-		set_preview(0);
-		return;
-	}
-
-	if ( hsv_h->GetValue() || hsv_s->GetValue() || hsv_v->GetValue() ) {
-		wximg_adjhsv(&i,
-			hsv_h->GetValue(), hsv_s->GetValue(), hsv_v->GetValue()
-		);
-	}
-	if ( int v = band_comp->GetValue() ) {
-		bool lighten = (v > 0);
-		double band = 1.0 - double(std::abs(v)) / 255.0;
-		wximg_bandcomp(&i, band, lighten);
-	}
-	if ( chk_greyscale->GetValue() ) {
-		i = i.ConvertToGreyscale();
-	}
-	if ( chk_flhorz->GetValue() ) {
-		i = i.Mirror(true);
-	}
-	if ( chk_flvert->GetValue() ) {
-		i = i.Mirror(false);
-	}
-	if ( int v = spin_ro->GetValue() ) {
-		wximg_rotate(&i, v, true,
-			mng->rotbg_r, mng->rotbg_g, mng->rotbg_b);
-	}
-	if ( spin_wi->GetValue() > 0 || spin_hi->GetValue() > 0 ) {
-		i.Rescale(
-		  spin_wi->GetValue() > 0 ? spin_wi->GetValue() : i.GetWidth(),
-		  spin_hi->GetValue() > 0 ? spin_hi->GetValue() : i.GetHeight()
-		);
-	}
-	// next block moved to set_preview() because
-	// app does not add offset to image
-	//if ( spin_offsx->GetValue() || spin_offsy->GetValue() ) {
-
-	set_preview(&i);
+	set_preview(mng->get_mod_image());
 }
 
 void
@@ -823,7 +912,7 @@ bg_img_dlg::on_flip_horz(wxCommandEvent& event)
 {
 	mng->set_flip_horz(chk_flhorz->GetValue());
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -831,7 +920,7 @@ bg_img_dlg::on_flip_vert(wxCommandEvent& event)
 {
 	mng->set_flip_vert(chk_flvert->GetValue());
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -839,7 +928,7 @@ bg_img_dlg::on_greyscale(wxCommandEvent& event)
 {
 	mng->set_conv_grey(chk_greyscale->GetValue());
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -849,7 +938,7 @@ bg_img_dlg::on_rotate(wxCommandEvent& event)
 	mng->data_std.degrotate = (bgimg_manager::dim_type)i;
 	mng->set_arg_rotate(i != 0);
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -860,18 +949,25 @@ bg_img_dlg::on_width(wxCommandEvent& event)
 	mng->set_arg_width(i != 0);
 
 	if ( ! wh_unlock ) {
+		bgimg_manager::off_type xo, yo;
 		bgimg_manager::dim_type ow, oh;
 
+		//mng->get_dimensions_noz(ow, oh, xo, yo);
 		mng->get_dimensions_rot(ow, oh);
 
 		if ( ow > 0 && oh > 0 ) {
 			float rat = float(ow) / float(oh);
+			int v(float(i) / rat + 0.5);
 			
-			spin_hi->SetValue(int(float(i) / rat + 0.5));
+			wh_unlock = true;
+			mng->set_arg_height(v != 0);
+			spin_hi->SetValue(v);
+			wh_unlock = false;
+			mng->data_std.modsheight = (bgimg_manager::dim_type)v;
 		}
 	}
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -885,16 +981,22 @@ bg_img_dlg::on_height(wxCommandEvent& event)
 		bgimg_manager::off_type xo, yo;
 		bgimg_manager::dim_type ow, oh;
 
+		//mng->get_dimensions_noz(ow, oh, xo, yo);
 		mng->get_dimensions_rot(ow, oh);
 
 		if ( ow > 0 && oh > 0 ) {
 			float rat = float(ow) / float(oh);
+			int v(float(i) * rat + 0.5);
 			
-			spin_wi->SetValue(int(float(i) * rat + 0.5));
+			wh_unlock = true;
+			mng->set_arg_width(v != 0);
+			spin_wi->SetValue(v);
+			wh_unlock = false;
+			mng->data_std.modswidth = (bgimg_manager::dim_type)v;
 		}
 	}
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -924,7 +1026,7 @@ bg_img_dlg::on_hsv_h_scroll(wxScrollEvent& event)
 	mng->data_std.hsv_h = (bgimg_manager::hsv_type)i;
 	mng->set_conv_hsvh(i != 0);
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -934,7 +1036,7 @@ bg_img_dlg::on_hsv_s_scroll(wxScrollEvent& event)
 	mng->data_std.hsv_s = (bgimg_manager::hsv_type)i;
 	mng->set_conv_hsvs(i != 0);
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -944,7 +1046,7 @@ bg_img_dlg::on_hsv_v_scroll(wxScrollEvent& event)
 	mng->data_std.hsv_v = (bgimg_manager::hsv_type)i;
 	mng->set_conv_hsvv(i != 0);
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -954,7 +1056,7 @@ bg_img_dlg::on_band_comp_scroll(wxScrollEvent& event)
 	mng->data_std.band_comp = (bgimg_manager::cmp_type)i;
 	mng->set_conv_band_comp(i != 0);
 
-	put_preview();
+	change_update();
 }
 
 void
@@ -1004,7 +1106,8 @@ bg_img_dlg::on_idle_dlg(wxIdleEvent& event)
 		mng->get_mod_image();
 		mng->img_fname() = selector_file->GetPath();
 	
-		put_preview();
+		change_update();
+
 		new_filename = false;
 	}
 

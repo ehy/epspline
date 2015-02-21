@@ -55,15 +55,37 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	bg_img_label = new wxStaticText( this, wxID_ANY, _("Image Preview"), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE );
+	bSizer13 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxBoxSizer* bSizer151;
+	bSizer151 = new wxBoxSizer( wxVERTICAL );
+	
+	bg_img_label = new wxStaticText( this, wxID_ANY, _("Image Preview"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT );
 	bg_img_label->Wrap( -1 );
 	bg_img_label->SetToolTip( _("Image Preview") );
-	bg_img_label->SetMinSize( wxSize( 200,-1 ) );
 	
-	bSizer1->Add( bg_img_label, 0, wxALL|wxFIXED_MINSIZE, 5 );
+	bSizer151->Add( bg_img_label, 1, wxALIGN_LEFT|wxALIGN_TOP|wxEXPAND|wxLEFT|wxTOP, 5 );
 	
-	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 200,150 ), 0 );
-	bSizer1->Add( bmp_preview, 0, wxALIGN_CENTER, 5 );
+	bSizer13->Add( bSizer151, 1, wxALIGN_LEFT|wxALIGN_TOP|wxEXPAND|wxLEFT, 5 );
+	
+	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 224,168 ), wxSUNKEN_BORDER );
+	bSizer13->Add( bmp_preview, 0, wxALIGN_CENTER|wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer14;
+	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer14->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bg_img_info = new wxStaticText( this, wxID_ANY, _("No Image"), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT|wxST_NO_AUTORESIZE );
+	bg_img_info->Wrap( -1 );
+	bg_img_info->SetToolTip( _("Image Information") );
+	
+	bSizer14->Add( bg_img_info, 8, wxALIGN_RIGHT|wxALIGN_TOP|wxEXPAND|wxRIGHT|wxTOP, 5 );
+	
+	bSizer13->Add( bSizer14, 1, wxALIGN_RIGHT|wxALIGN_TOP|wxEXPAND|wxRIGHT, 5 );
+	
+	bSizer1->Add( bSizer13, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 0 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );

@@ -151,7 +151,7 @@ wximg_bandcomp(wxImage* img, double band, bool lighten)
 	}
 	
 	band = std::min(1.0, band);
-	band = std::max(0.1, band);
+	band = std::max(0.0, band);
 
 	unsigned char add = lighten ?
 		static_cast<unsigned char>(255.0 - band * 255.0) : 0;

@@ -198,6 +198,11 @@ protected:
 	void clear_params() { set_params(0); }
 	void set_default_params();
 	void reset_default_params();
+	// set mods_img is current
+	void set_current(bool current = true) {
+			mods_current = current;
+	}
+
 
 	// tell using code to update
 	void force_updates();
@@ -303,6 +308,13 @@ public:
 		mods_img = 0;
 	}
 
+	void set_infolabel(const wxString& s);
+	void set_infolabel_default();
+	void set_infolabel_current();
+
+	wxString get_infolabel();
+	wxString get_infolabel_default();
+
 	// param access wrappers: isolate effects of scheme changes
 	bool get_copy_none() { return (parms() & copy_bitsmask) == copy_none; }
 	void set_copy_none(bool b = true) {
@@ -384,15 +396,20 @@ public:
 // here lies the subclass of the generated bg_image dialog class,
 // within which virtual methods find their implementation
 namespace ns_bg_img_dlg {
-	class bg_img_dlg : public bg_image {
-	protected:
+	class bg_img_dlg : private bg_image {
+		friend class ::bgimg_manager;
+
 		bgimg_manager*	mng;
 		// set in file picker handler gets name of existing file
 		bool new_filename;
 		// width x height unlock key up/down
 		bool wh_unlock;
+		// save information label original text
+		wxString info_label_default;
 
-	public:
+		// control events call this
+		void change_update();
+
 		bg_img_dlg(
 			bgimg_manager* manager,
 			wxWindowID id = wxID_ANY,
@@ -429,6 +446,21 @@ namespace ns_bg_img_dlg {
 
 		void put_preview();
 		void set_preview(wxImage* i);
+
+		void set_infolabel(const wxString& s) {
+			bg_img_info->SetLabel(s);
+		}
+		void set_infolabel_default() {
+			bg_img_info->SetLabel(info_label_default);
+		}
+
+		wxString get_infolabel() {
+			return bg_img_info->GetLabel();
+		}
+		wxString get_infolabel_default() {
+			return info_label_default;
+		}
+
 	}; // END class bg_img_dlg
 }; // END namespace ns_bg_img_dlg
 

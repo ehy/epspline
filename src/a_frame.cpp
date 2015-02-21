@@ -978,8 +978,9 @@ A_Frame::OnOption(wxCommandEvent& event)
 		case HideBGImage:
 			{
 				bool do_hide = false;
-				wxMenuItem* pi;
-				if ( (pi = GetMenuBar()->FindItem(int(HideBGImage))) ) {
+				wxMenuItem* pi =
+					GetMenuBar()->FindItem(int(HideBGImage));
+				if ( pi ) {
 					do_hide = pi->IsChecked();
 				}
 				canvas->DoHideBGImg(do_hide);
@@ -996,9 +997,9 @@ A_Frame::OnOption(wxCommandEvent& event)
 		case Toggle_AA_Lines:
 			{
 				bool do_aa = false;
-				wxMenuItem* pi;
-				if ( (pi =
-					GetMenuBar()->FindItem(int(Toggle_AA_Lines))) ) {
+				wxMenuItem* pi =
+					GetMenuBar()->FindItem(int(Toggle_AA_Lines));
+				if ( pi ) {
 					do_aa = pi->IsChecked();
 				}
 				std::vector<A_Tabpage*> v;

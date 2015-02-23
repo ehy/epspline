@@ -324,7 +324,7 @@ AnApp::OnInit()
 
 #	if DEBUG
 	std::fprintf(stderr,".GetLocale() == %s\n",
-		  wxs2ch(app_locale.GetLocale()));
+		  wxs2ch(wxString(app_locale.GetLocale())));
 	std::fprintf(stderr,".GetSysName() == %s\n",
 		  wxs2ch(app_locale.GetSysName()));
 	std::fprintf(stderr,".GetCanonicalName() == %s\n",

@@ -176,6 +176,11 @@ public:
 	// dialogs, will not include message dialogs or pickers etc.
 	void GetDialogNames(wxArrayString& out);
 
+	// whether to set canvas to do anit-aliasing
+	bool GetAADraw() const {
+		return aadraw;
+	}
+
 	// for shutdown; close shown dialogs
 	void CloseDialogs();
 

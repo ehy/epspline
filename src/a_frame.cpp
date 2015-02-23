@@ -122,18 +122,6 @@ A_Frame::A_Frame(
 	MenuOpts = new wxMenu(wxMENU_TEAROFF); // now called "Tools"
 	menuHelp = new wxMenu(wxMENU_TEAROFF);
 
-	// append the freshly created menu to the menu bar ...
-	wxMenuBar *menuBar = new wxMenuBar(wxMB_DOCKABLE);
-	menuBar->Append(menuFile, _("&File"));
-	menuBar->Append(menuEdit, _("&Edit"));
-	menuBar->Append(MenuOpts, _("&Tools"));
-	menuBar->Append(menuHelp, _("&Help"));
-
-	// ... and attach this menu bar to the frame
-	SetMenuBar(menuBar);
-
-	menuBar->SetThemeEnabled(true);
-
 	// stock menu strings are not working in wx 2.6
 #if ! wxCHECK_VERSION(2, 8, 0)
 #	define  GetItemLabelText GetLabel
@@ -298,10 +286,22 @@ A_Frame::A_Frame(
 	, _("Run POV-Ray on a test file with the current curves"));
 	// Ubuntu Unity fights: wants label to be stock "Apply"
 	// Sigh, it's still "Apply" -- Ubuntu is soooo *special*
-	menuHelp->SetLabel(Toggle_AA_Lines, _("&Preview"));
+	menuHelp->SetLabel(HelpDemo, _("&Preview"));
 	menuHelp->AppendSeparator();
 	MNADD0(menuHelp, HelpAbout
 	, _("&About"), _("Show about dialog"));
+
+	// append the freshly created menu to the menu bar ...
+	wxMenuBar *menuBar = new wxMenuBar(wxMB_DOCKABLE);
+	menuBar->Append(menuFile, _("&File"));
+	menuBar->Append(menuEdit, _("&Edit"));
+	menuBar->Append(MenuOpts, _("&Tools"));
+	menuBar->Append(menuHelp, _("&Help"));
+
+	// ... and attach this menu bar to the frame
+	SetMenuBar(menuBar);
+
+	menuBar->SetThemeEnabled(true);
 
 	// Set up toolbar
 	CreateToolBar(wxNO_BORDER|wxHORIZONTAL|wxTB_FLAT|wxTB_DOCKABLE, -1);
@@ -394,7 +394,7 @@ A_Frame::A_Frame(
 		}
 	}
 	// (un)check menu item
-	MenuOpts->Check(Toggle_AA_Lines, aadraw);
+	MenuOpts->Check(Toggle_AA_Lines, ! aadraw);
 
 	tabwnd = new A_Tabwnd(this, TabWindowID
 		, wxDefaultPosition, wxDefaultSize
@@ -445,6 +445,7 @@ A_Frame::A_Frame(
 #	endif // wxUSE_DRAG_AND_DROP
 
 	SetThemeEnabled(true);
+	Layout();
 }
 
 A_Frame::~A_Frame()
@@ -454,68 +455,14 @@ A_Frame::~A_Frame()
 A_Tabpage*
 A_Frame::NewPage(wxString title)
 {
-	wxWindowDC dc(this);
-	dc.SetMapMode(wxMM_TEXT);
-	wxFont fnt, of = dc.GetFont();
-	#if defined(__WXMSW__)
-	fnt.SetStyle(wxNORMAL);
-	fnt.SetFamily(wxSWISS);
-	fnt.SetFaceName(wxT("")); // BUG: Always set to MS Sans Serif, a raster.
-	#else
-	fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-	fnt.SetWeight(wxLIGHT);
-	#endif
-	#if !defined(__WXMOTIF__)
-	fnt.SetPointSize(7);
-	#endif
-	dc.SetFont(fnt);
-	wxSize sz;
-	dc.GetTextExtent(wxString(wxT("00000")), &sz.x, &sz.y);
-	dc.SetFont(of);
-	sz.y = sz.x;
+	A_Tabpage_managed* pagewnd =
+		new A_Tabpage_managed(this, tabwnd, -1);
 
-	// . . . for these the GetTextExtent hack is insufficient:
-	#if defined(__WXMSW__) || defined(__WXX11__)
-	sz.x += 6;
-	sz.y += 6;
-	#elif !defined(__WXGTK__)
-	sz.x += 2 * wxSystemSettings::GetMetric(wxSYS_EDGE_Y);
-	sz.y += 2 * wxSystemSettings::GetMetric(wxSYS_EDGE_Y);
-	#endif
-	wxColor fclr(0x00, 0x00, 0x00);
-	wxColor tclr(0x40, 0x40, 0xFF);
+	A_Canvas* canvas = pagewnd->GetCanvas();
 
-	wxBoxSizer* szrTop  = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer* szrBot  = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer* szrMain = new wxBoxSizer(wxVERTICAL);
-
-	A_Tabpage* pagewnd = new A_Tabpage(tabwnd, -1
-		, 0, 0, 0
-		, wxDefaultPosition, wxDefaultSize
-		, 0);
-
-	A_Canvas* canvas;
-	if ( const char* p = std::getenv("EPSPLINE_BUFFER_CANVAS") ) {	
-		if ( ! std::strcmp(p, "1") || ! std::strcmp(p, "true") ) {
-			canvas = new A_BUFDCCanvas(this, pagewnd, aadraw);
-		} else {
-			canvas = new A_Canvas(this, pagewnd, aadraw);
-		}
-	} else {
-		// A platform's own double buffering makes
-		// the buffered canvas redundant and *slow*.
-		// The platform macro tests were found in dcbuffer.h;
-		// so far only GTK2 is tested.
-		// Note GTK2 no longer really needs this test since
-		// finding 'SetDoubleBuffered(bool)', which is used in
-		// buffered canvas ctor; using that, GTK2 performance is
-		// not perceptibly different either way.
-#		if defined(__WXGTK20__) || \
-			defined(__WXMAC__) || defined(__WXDFB__)
-			canvas = new A_Canvas(this, pagewnd, aadraw);
-#		else // defined(__WXGTK__)
-			canvas = new A_BUFDCCanvas(this, pagewnd, aadraw);
-#		endif // defined(__WXGTK__)
+	if ( canvas == 0 ) {
+		pagewnd->Destroy();
+		return 0;
 	}
 
 	const int scrollunit = 15;
@@ -524,70 +471,10 @@ A_Frame::NewPage(wxString title)
 		scrollunit, scrollunit,
 		scrollunit * vitualfactor, scrollunit * vitualfactor);
 
-	// Style used in 'rulers': these were chosen long ago, but have
-	// been producing nice results until wx 2.9.x, when things began
-	// to change: the GTK2 border with wx 3.0.0 is not "raised" but
-	// is just a thick white outline taking too much space.
-	// The MSW build still displays as wanted.
-	#if defined(__WXMSW__)
-	// The MS build seems to need this to get the 3d look . . .
-	int style = wxDOUBLE_BORDER;
-	#elif wxCHECK_VERSION(2, 9, 5) // comment above: 1st seen in 2.9.5
-	// no border looks OK after just a moment getting used to it;
-	// I think the 'flat look' is the current rage in design, too.
-	int style = wxBORDER_NONE; // new names, 'BORDER' comes first
-	#else
-	int style = wxRAISED_BORDER;
-	#endif
-	const int ticks_offs = 2;
-
-	// top-left button
-	wxWindow* tlbut = new ruler_parent_class
-		(pagewnd, -1, wxDefaultPosition, sz, style);
-	szrTop->Add(tlbut
-		, 0, wxALIGN_LEFT|wxALIGN_TOP, 0);
-	// top ruler
-	A_Ruler* hr = new A_Ruler(pagewnd
-		, -1, fnt, fclr, tclr
-		, wxDefaultPosition, sz, style);
-	hr->SetInitOffs(ticks_offs);
-	hr->SetType(rlr_horz);
-	szrTop->Add(hr, 1
-		, wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP|wxGROW
-		, 0);
-	canvas->SetHRule(hr);
-	// side ruler
-	A_Ruler* vr = new A_Ruler(pagewnd
-		, -1, fnt, fclr, tclr
-		, wxDefaultPosition, sz, style);
-	vr->SetInitOffs(ticks_offs);
-	vr->SetType(rlr_vert);
-	szrBot->Add(vr, 0
-		, wxGROW|wxALIGN_LEFT|wxALIGN_TOP|wxALIGN_BOTTOM
-		, 0);
-	canvas->SetVRule(vr);
-	szrBot->Add(canvas, 1, wxGROW|wxALL, 0);
-	// add sub-sizers
-	szrMain->Add(szrTop, 0
-		, wxGROW|wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP);
-	szrMain->Add(szrBot, 1, wxGROW|wxALL);
-#if wxCHECK_VERSION(2, 4, 0)
-	tlbut->SetThemeEnabled(true);
-	hr->SetThemeEnabled(true);
-	vr->SetThemeEnabled(true);
-#endif
-
 	if ( !tabwnd->AddPage(pagewnd, title) ) {
 		pagewnd->Destroy();
 		return 0;
 	}
-
-	// put main sizer
-	pagewnd->SetSizer(szrMain);
-	pagewnd->SetCanvas(canvas);
-	pagewnd->SetHRule(hr);
-	pagewnd->SetVRule(vr);
-	pagewnd->SetAutoLayout(true);
 
 	return pagewnd;
 }
@@ -996,17 +883,16 @@ A_Frame::OnOption(wxCommandEvent& event)
 			break;
 		case Toggle_AA_Lines:
 			{
-				bool do_aa = false;
 				wxMenuItem* pi =
 					GetMenuBar()->FindItem(int(Toggle_AA_Lines));
 				if ( pi ) {
-					do_aa = pi->IsChecked();
+					aadraw = ! pi->IsChecked();
 				}
 				std::vector<A_Tabpage*> v;
 				GetAllPagePtrs(v);
 				std::vector<A_Tabpage*>::iterator i = v.begin();
 				while ( i != v.end() ) {
-					(*i++)->GetCanvas()->use_AA(do_aa);
+					(*i++)->GetCanvas()->use_AA(aadraw);
 				}
 			}
 			break;

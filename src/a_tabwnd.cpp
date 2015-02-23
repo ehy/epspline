@@ -186,28 +186,16 @@ A_Tabwnd::OnPageChanging(TABWND_EVENT_T& e)
 
 #if USE_AUI_NOTEBOOK
 void
-#	if wxCHECK_VERSION(2, 9, 0)
-A_Tabwnd::OnButton(wxAuiNotebookEvent& evt)
+A_Tabwnd::OnButton(TABWND_CMD_EVENT_T& evt)
 {
-#	else
-A_Tabwnd::OnButton(wxCommandEvent& e)
-{
-	wxAuiNotebookEvent& evt = (wxAuiNotebookEvent&)e;
-#	endif
-
-	evt.Skip();
-
 	int button_id = evt.GetInt();
+
 	if ( button_id == wxAUI_BUTTON_CLOSE ) {
 		int npage = evt.GetSelection();
 		owner->CloseTabIffCanvasAllows(npage);
 		return;
 	}
 
-#	if wxCHECK_VERSION(2, 9, 0)
 	wxAuiNotebook::OnTabButton(evt);
-#	else
-	wxAuiNotebook::OnTabButton(e);
-#	endif
 }
 #endif

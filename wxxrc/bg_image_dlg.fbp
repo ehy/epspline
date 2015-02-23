@@ -238,7 +238,7 @@
                                         <property name="validator_variable"></property>
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
-                                        <property name="window_style">wxSUNKEN_BORDER</property>
+                                        <property name="window_style"></property>
                                         <event name="OnChar"></event>
                                         <event name="OnEnterWindow"></event>
                                         <event name="OnEraseBackground"></event>
@@ -402,10 +402,10 @@
                             <object class="wxGridBagSizer" expanded="0">
                                 <property name="empty_cell_size"></property>
                                 <property name="flexible_direction">wxBOTH</property>
-                                <property name="growablecols">3</property>
-                                <property name="growablerows">4</property>
+                                <property name="growablecols"></property>
+                                <property name="growablerows"></property>
                                 <property name="hgap">0</property>
-                                <property name="minimum_size">-1,30</property>
+                                <property name="minimum_size">-1,-1</property>
                                 <property name="name">gbSizer2</property>
                                 <property name="non_flexible_grow_mode">wxFLEX_GROWMODE_ALL</property>
                                 <property name="permission">none</property>
@@ -1010,7 +1010,7 @@
                                 </object>
                                 <object class="gbsizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="colspan">2</property>
+                                    <property name="colspan">1</property>
                                     <property name="column">0</property>
                                     <property name="flag">wxEXPAND | wxALL</property>
                                     <property name="row">3</property>
@@ -1129,8 +1129,8 @@
                             <object class="wxGridBagSizer" expanded="0">
                                 <property name="empty_cell_size"></property>
                                 <property name="flexible_direction">wxBOTH</property>
-                                <property name="growablecols">7</property>
-                                <property name="growablerows">6</property>
+                                <property name="growablecols"></property>
+                                <property name="growablerows"></property>
                                 <property name="hgap">0</property>
                                 <property name="minimum_size"></property>
                                 <property name="name">gbSizer1</property>

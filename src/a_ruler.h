@@ -88,6 +88,7 @@ public:
 
 	typedef void (*DragFptr)(wxWindow* wndCB, wxMouseEvent& e, A_Ruler* r);
 	void     SetDragHandler(DragFptr fptr, wxWindow* wndCB);
+
 protected:
 	ruler_t    type;
 	int        initoffs, linepos;

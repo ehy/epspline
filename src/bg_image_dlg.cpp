@@ -68,7 +68,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer13->Add( bSizer151, 1, wxALIGN_LEFT|wxALIGN_TOP|wxEXPAND|wxLEFT, 5 );
 	
-	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 224,168 ), wxSUNKEN_BORDER );
+	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 224,168 ), 0 );
 	bSizer13->Add( bmp_preview, 0, wxALIGN_CENTER|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer14;
@@ -92,12 +92,9 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	wxGridBagSizer* gbSizer2;
 	gbSizer2 = new wxGridBagSizer( 0, 0 );
-	gbSizer2->AddGrowableCol( 3 );
-	gbSizer2->AddGrowableRow( 4 );
 	gbSizer2->SetFlexibleDirection( wxBOTH );
 	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
-	gbSizer2->SetMinSize( wxSize( -1,30 ) ); 
 	m_staticline13 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	gbSizer2->Add( m_staticline13, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -153,7 +150,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	gbSizer2->Add( bSizer111, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	gbSizer2->Add( m_staticline4, wxGBPosition( 3, 0 ), wxGBSpan( 1, 2 ), wxEXPAND | wxALL, 5 );
+	gbSizer2->Add( m_staticline4, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
 	
 	m_staticline19 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline19, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
@@ -162,8 +159,6 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	wxGridBagSizer* gbSizer1;
 	gbSizer1 = new wxGridBagSizer( 0, 0 );
-	gbSizer1->AddGrowableCol( 7 );
-	gbSizer1->AddGrowableRow( 6 );
 	gbSizer1->SetFlexibleDirection( wxBOTH );
 	gbSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	

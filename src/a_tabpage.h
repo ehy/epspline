@@ -19,7 +19,7 @@
  * MA 02110-1301, USA.
  */
 
-// main wxWindows frame class
+// window type underlying tab page elements canvas and rulers.
 
 #ifndef _A_TABPAGE_H_
 #define _A_TABPAGE_H_
@@ -41,7 +41,29 @@
 //typedef wxNotebookPage tabpage_parent_class;
 typedef wxPanel tabpage_parent_class;
 
-class A_Tabpage : public tabpage_parent_class {
+// base for pages of the tabbed interface
+class A_Tabpage_base : public tabpage_parent_class {
+public:
+	A_Tabpage_base(wxWindow* parent, wxWindowID id
+		, const wxPoint& pos = wxDefaultPosition
+		, const wxSize& size = wxDefaultSize
+		, long style = 0, const wxString& name = wxT("tabpage"));
+	virtual ~A_Tabpage_base();
+
+	inline static unsigned int
+	get_tabpage_count() {
+		return tabpage_count;
+	}
+
+protected:
+	// keep a tab count -- if this code ever uses threads,
+	// wxWidgets GUI code should always execute in main thread only
+	// so a simple static integer type should suffice
+	static unsigned int tabpage_count;
+};
+
+// default tab page with pointers to canvas and rulers
+class A_Tabpage : public A_Tabpage_base {
 public:
 	A_Tabpage(wxWindow* parent, wxWindowID id
 		, A_Canvas* canvas, A_Ruler* hr, A_Ruler* vr
@@ -65,5 +87,18 @@ private:
 	//DECLARE_EVENT_TABLE()
 };
 
-#endif  // _A_TABPAGE_H_
+// tab page that manages (e.g., allocates) canvas and rulers
+class A_Tabpage_managed : public A_Tabpage {
+public:
+	A_Tabpage_managed(A_Frame* topframe, wxWindow* parent, wxWindowID id
+		, const wxPoint& pos = wxDefaultPosition
+		, const wxSize& size = wxDefaultSize
+		, long style = 0, const wxString& name = wxT("tabpage"));
+	~A_Tabpage_managed();
 
+protected:
+	A_Frame* frame;
+};
+
+
+#endif  // _A_TABPAGE_H_

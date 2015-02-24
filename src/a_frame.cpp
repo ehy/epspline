@@ -408,6 +408,7 @@ A_Frame::A_Frame(
 		, wxRAISED_BORDER);
 #	endif
 
+	SetThemeEnabled(true);
 	tabwnd->SetAutoLayout(true);
 	wxBoxSizer* szrMain = new wxBoxSizer(wxVERTICAL);
 #if wxCHECK_VERSION(2, 6, 0)
@@ -418,6 +419,7 @@ A_Frame::A_Frame(
 #endif
 	SetSizer(szrMain);
 	SetAutoLayout(true);
+	Layout();
 
 	unsigned nopen = wxGetApp().GetNumFiles();
 	if ( nopen > 0 ) {
@@ -444,8 +446,6 @@ A_Frame::A_Frame(
 	SetDropTarget(new a_frame_filedroptarget(this));
 #	endif // wxUSE_DRAG_AND_DROP
 
-	SetThemeEnabled(true);
-	Layout();
 }
 
 A_Frame::~A_Frame()
@@ -476,6 +476,7 @@ A_Frame::NewPage(wxString title)
 		return 0;
 	}
 
+	Layout();
 	return pagewnd;
 }
 

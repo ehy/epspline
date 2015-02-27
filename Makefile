@@ -326,7 +326,7 @@ depend.msw dep.msw exuberant-tags tags TAGS ID :
 		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
 	done
 
-clean: clean_po clean_examples clean_doc
+clean: clean_po clean_examples clean_anim-example clean_doc
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXX="$(CXX)" \
@@ -346,7 +346,7 @@ cleandepend cleandepends:
 		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
 	done
 
-cleanall : cleanall_po cleanall_examples cleanall_doc
+cleanall : cleanall_po cleanall_examples cleanall_anim-example cleanall_doc
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXX="$(CXX)" \
@@ -356,7 +356,7 @@ cleanall : cleanall_po cleanall_examples cleanall_doc
 		EXESUFFIX="$(EXESUFFIX)" $@ ) ; \
 	done
 
-distclean: distclean_po distclean_examples distclean_doc
+distclean: distclean_po distclean_examples distclean_anim-example distclean_doc
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXX="$(CXX)" \

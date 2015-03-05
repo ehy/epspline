@@ -149,6 +149,10 @@ NetBSD:
     emitting a runpath argument for the linker, but it's a
     thing to watch for.
 
+	UPDATE: wxGTK30 on NetBSD 7.0 beta, wx-config is no longer
+	emitting a runpath, so add LDFLAGS="-Wl,-rpath=/usr/pkg/lib"
+	to make command line.
+
 OpenBSD:
     With wxWidgets installed from ports, the only additional
     concern is that, as of OpenBSD 4.9, make does not seem to

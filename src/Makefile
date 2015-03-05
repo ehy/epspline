@@ -39,6 +39,7 @@ UNINST_LIST = ../uninstall/src_uninstall-list
 #LEXYACCFAIL = SunOS
 # New try of new flex (flex -l||-X); if n.g. then re-add Linux
 # (Dec 28, 2012) -- N.G. segfault w/ -l, infinite loop w/ -X
+# (Mar 5, 2015) -- N.G. NetBSD 7.0beta (last tried was 5.0): spins
 LEXYACCFAIL = SunOS Linux
 LEXYACCOK   = OpenBSD FreeBSD NetBSD
 

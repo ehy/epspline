@@ -1102,9 +1102,7 @@ void
 bg_img_dlg::on_idle_dlg(wxIdleEvent& event)
 {
 	if ( new_filename ) {
-		mng->img_fname().Empty();
-		mng->get_mod_image();
-		mng->img_fname() = selector_file->GetPath();
+		mng->set_file(selector_file->GetPath());
 	
 		change_update();
 

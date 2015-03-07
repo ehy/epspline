@@ -130,9 +130,7 @@ Unix/POSIX:
 
 	  make CXX=clang++ CXXFLAGS="$CXXFLAGS -std=c++11" <other args>
 
-	which should succeed.  Unfortunately specifying the newer standard
-	raises deprecation warnings from the Epspline code, which had
-	previously compiled without warnings, but they are not critical.
+	which should succeed.
 
 GNU/Linux (probably GNU/*):
     With wxWidgets installed from a package system, a simple

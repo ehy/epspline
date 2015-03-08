@@ -76,7 +76,7 @@ define(appRMajor, `4')dnl
 define(appRMinor, `4')dnl
 dnl comment appPatchLvl macro for version string w/o "pN" appended
 dnl define(appPatchLvl, `1')dnl
-define(appPatchLvl, `3')dnl
+define(appPatchLvl, `4')dnl
 define(appversionI,
 	eval(appVMajor<<24|appVMinor<<16|appRMajor<<8|appRMinor))dnl
 define(appversion,

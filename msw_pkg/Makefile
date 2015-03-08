@@ -7,8 +7,8 @@
 .POSIX:
 
 # catalog name: $(NAME).{pot,po,mo}
-NAME = Epspline-0.0.4.4p3-msw32-install.exe
-NAME64 = Epspline-0.0.4.4p3-msw64-install.exe
+NAME = Epspline-0.0.4.4p4-msw32-install.exe
+NAME64 = Epspline-0.0.4.4p4-msw64-install.exe
 APPNAME = epspline
 SRC = epspline.nsi
 MACS = ../cdata/cdata.m4
@@ -59,7 +59,7 @@ i18n-sect.in:
 			>> $@; \
 		printf \
 		'\n  WriteRegStr $${_HK_} "Software\\%s\\%s\\%s\\i18n" \\\n' \
-			"GPLFreeSoftwareApplications" "epspline" "0.0.4.4p3" \
+			"GPLFreeSoftwareApplications" "epspline" "0.0.4.4p4" \
 			>> $@; \
 		printf \
 		'    "installed %s message catalog" "$$INSTDIR\\%s\\%s"\n' \

@@ -74,7 +74,7 @@ struct tpl_pxl {
 	}
 
 	inline bool operator != (const tpl_pxl<T, TI>& o) {
-		return ! *this == o;
+		return ! (*this == o);
 	}
 
 	inline tpl_pxl<T, TI>& operator = (const tpl_pxl<T, TI>& o) {
@@ -113,7 +113,7 @@ struct tpl_pxl_xor {
 	}
 
 	inline bool operator != (const tpl_pxl_xor<T, TI>& o) {
-		return ! *this == o;
+		return ! (*this == o);
 	}
 
 	inline tpl_pxl_xor<T, TI>&

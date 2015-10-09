@@ -60,10 +60,12 @@ DEBUG = $(NDEBUG)
 #WARN = -Wall -Wno-write-strings -Wno-strict-aliasing
 # -Wunknown-pragmas added for clang++
 # For development, or user may give WARN='$(GCCWARN)'
+# Note these are useful for clang too.
 GCCWARN = -Wall -Wno-write-strings -Wno-strict-aliasing \
 	-Wno-unknown-pragmas -Wnon-virtual-dtor -Wextra \
 	-Wno-deprecated-declarations \
-	-Wno-unused-parameter -Wno-unused-variable
+	-Wno-unused-parameter -Wno-unused-variable \
+	-Wno-potentially-evaluated-expression
 WARN =
 
 #FINAL = 0

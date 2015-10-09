@@ -61,8 +61,8 @@ DEBUG = $(NDEBUG)
 # -Wunknown-pragmas added for clang++
 # For development, -Wnon-virtual-dtor -Wextra are good:
 GCCWARN = -Wall -Wno-write-strings -Wno-strict-aliasing \
-	-Wno-unknown-pragmas \
-	-Wnon-virtual-dtor -Wextra
+	-Wno-unknown-pragmas -Wnon-virtual-dtor -Wextra \
+	-Wno-deprecated-declarations
 WARN =
 
 #FINAL = 0

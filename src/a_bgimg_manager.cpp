@@ -36,7 +36,7 @@
 
 // bg image manager methods
 bgimg_manager::bgimg_manager()
-	: dlg(0), img(0), mods_img(0)
+	: img(0), mods_img(0), dlg(0)
 	, cb_func(0), cb_arg(0)
 	, mods_current(false)
 {
@@ -45,7 +45,7 @@ bgimg_manager::bgimg_manager()
 }
 
 bgimg_manager::bgimg_manager(unsigned long p)
-	: dlg(0), img(0), mods_img(0)
+	: img(0), mods_img(0), dlg(0)
 	, cb_func(0), cb_arg(0)
 	, mods_current(false)
 {

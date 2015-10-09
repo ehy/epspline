@@ -751,6 +751,9 @@ A_Canvas::GuideSnap(wxRect& r)
 	bool    xbnw, xbne, xbsw, xbse;
 	bool    ybnw, ybne, ybsw, ybse;
 
+	xbnw = xbne = xbsw = xbse = false;
+	ybnw = ybne = ybsw = ybse = false;
+
 	pnw.x = r.x; pnw.y = r.y;
 	pne.x = r.x + r.width; pne.y = r.y;
 	psw.x = r.x; psw.y = r.y + r.height;

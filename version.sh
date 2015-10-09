@@ -1,6 +1,6 @@
 #! /bin/sh
 
-V="0.0.4.4p3"
+V="0.0.4.4p4"
 FMT='%s\n'
 test X"$1" = X-s && FMT='"%s"\n'
 test X"$1" = X-i && V="1028"

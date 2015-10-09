@@ -63,7 +63,7 @@ DEBUG = $(NDEBUG)
 GCCWARN = -Wall -Wno-write-strings -Wno-strict-aliasing \
 	-Wno-unknown-pragmas -Wnon-virtual-dtor -Wextra \
 	-Wno-deprecated-declarations \
-	-Wunused-parameter -Wunused-variable
+	-Wno-unused-parameter -Wno-unused-variable
 WARN =
 
 #FINAL = 0

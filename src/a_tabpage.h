@@ -70,7 +70,7 @@ public:
 		, const wxPoint& pos = wxDefaultPosition
 		, const wxSize& size = wxDefaultSize
 		, long style = 0, const wxString& name = wxT("tabpage"));
-	~A_Tabpage();
+	virtual ~A_Tabpage();
 
 	void SetCanvas(A_Canvas* can) { canvas = can; }
 	void SetHRule(A_Ruler* ph) { hrule = ph; }
@@ -94,7 +94,7 @@ public:
 		, const wxPoint& pos = wxDefaultPosition
 		, const wxSize& size = wxDefaultSize
 		, long style = 0, const wxString& name = wxT("tabpage"));
-	~A_Tabpage_managed();
+	virtual ~A_Tabpage_managed();
 
 protected:
 	A_Frame* frame;

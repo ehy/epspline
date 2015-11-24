@@ -677,14 +677,12 @@ A_Frame::OnQuit(wxCloseEvent& e)
 		}
 	}
 
-	// Do not quit help browser window: prevents config data save.
-	// With wx 2.6 it is necessary to quit help or it lingers.
-	// UPDATE 12-04-13: testing EVT_END_SESSION -- seems to need it
-	// on MSW on shutdown/logoff or illegal mem access at 0xFFFFFFFF
-	// or something like that occurs.
-#	if ! wxCHECK_VERSION(2, 8, 0) || defined(__WXMSW__)
+	// UPDATE 11-24-15: this line had been pre-proc-conditional on
+	// ! wxCHECK_VERSION(2, 8, 0) || defined(__WXMSW__)
+	// but after a new segfault with a certain wx 3.0.2 build led me
+	// to try again, the 2,8 problem was gone.  It had seemed to
+	// prevent config data save.
 	wxGetApp().QuitHelp();
-#	endif
 
 	Destroy();
 }

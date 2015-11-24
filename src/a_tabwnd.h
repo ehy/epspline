@@ -70,7 +70,7 @@ public:
 		, const wxPoint& pos = wxDefaultPosition
 		, const wxSize& size = wxDefaultSize
 		, long style = 0);
-	~A_Tabwnd();
+	virtual ~A_Tabwnd();
 
 	void OnPageChanged(TABWND_EVENT_T& e);
 	//void OnPageChanging(TABWND_EVENT_T& e);

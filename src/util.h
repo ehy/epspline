@@ -237,8 +237,10 @@ public:
 template<class C> inline void
 delete_contained(C& c)
 {
-for_each(c.begin(), c.end(), delete_pointer<typename C::value_type>());
+	std::for_each(c.begin(), c.end(),
+		delete_pointer<typename C::value_type>());
 }
+
 template<class C> inline void
 delete_clear_contained(C& c)
 {
@@ -251,7 +253,7 @@ template<class C, class D> inline void
 delete_clear_copy(C& dest, const D& source)
 {
 	delete_clear_contained(dest);
-	copy(source.begin(), source.end(), back_inserter(dest));
+	std::copy(source.begin(), source.end(), std::back_inserter(dest));
 }
 
 // How does point relate to line?

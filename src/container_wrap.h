@@ -237,7 +237,7 @@ public:
 
 template<typename _CtrValT>
 inline std::back_insert_iterator<_CtrValT>
-back_inserter(ContainerWrap<_CtrValT>& _ctr)
+std::back_inserter(ContainerWrap<_CtrValT>& _ctr)
 { return _ctr.get_bk_ins_itr(); }
 
 #endif // _CONTAINER_WRAP_H_

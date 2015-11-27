@@ -2417,16 +2417,14 @@ A_Canvas::Open(wxString filename)
 			DataState* t2 = D;
 			D = tmp;
 			tmp = t2;
+
 			D->sSdir = td;
 			D->sSname = tn;
+
 			wxGetApp().SetLastDlgDir(td);
 			ustack.flush();
 			rstack.flush();
-#			if 0 // moved into DataState
-			clear(hguides); clear(vguides);
-			copy(th.begin(), th.end(), back_inserter(hguides));
-			copy(tv.begin(), tv.end(), back_inserter(vguides));
-#			endif
+
 			a_frame->SetTitlePrefix(tn);
 
 			if ( addl.init ) {
@@ -3885,8 +3883,8 @@ A_Canvas::DataState::UpdateObj(SplineBase*& o)
 
 	if ( o->Getsplinet() != spt ) {
 		SplineBase* t = NewObj();
-		replace(lst.begin(), lst.end(), o, t);
-		copy(o->begin(), o->end(), back_inserter(*t));
+		std::replace(lst.begin(), lst.end(), o, t);
+		std::copy(o->begin(), o->end(), std::back_inserter(*t));
 		delete o;
 		o = t;
 	} else {

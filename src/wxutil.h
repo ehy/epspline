@@ -190,7 +190,7 @@ public:
 // Draw spline list
 inline void draw_spline_list(std::list<SplineBase*>& l, wxDC& dc)
 {
-	for_each(l.begin(), l.end(), draw_spline(dc));
+	std::for_each(l.begin(), l.end(), draw_spline(dc));
 }
 
 // If a wxRect is to be used for Refresh(), then its x or y

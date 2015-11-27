@@ -283,9 +283,10 @@ public:
 		bbox(o.bbox), cboxL(o.cboxL), cboxM(o.cboxM)
 		, tol(o.tol), tolbk(o.tolbk), doclose(o.doclose), dirty(o.dirty)
 	{
-		copy(o.begin(), o.end(), back_inserter(*this));
+		std::copy(o.begin(), o.end(), std::back_inserter(*this));
 		ccache.reserve(o.ccache.capacity());
-		copy(o.ccache.begin(), o.ccache.end(), back_inserter(ccache));
+		std::copy(o.ccache.begin(), o.ccache.end(),
+			std::back_inserter(ccache));
 	}
 	virtual ~SplineBase();
 
@@ -295,10 +296,11 @@ protected:
 	wxString ObNam, Transform, Texture, Interior, UserStr;
 	obj_t			objt;
 	spline_t		splinet;
-	sweep_t		sweept;
+	sweep_t			sweept;
 	double			sweep_min, sweep_max;
 	bool			use_sturm, use_open;
 	bool			dotlock;
+
 	// cache storage for calculated curve points
 	//typedef		std::vector<CurvePt> curve_cache; made public
 	curve_cache	ccache;
@@ -336,7 +338,7 @@ public:
 
 	obj_t		Getobjt() const { return objt; }
 	spline_t	Getsplinet() const { return splinet; }
-	sweep_t	Getsweept() const { return sweept; }
+	sweep_t		Getsweept() const { return sweept; }
 	double		Getsweepmin() const { return sweep_min; }
 	double		Getsweepmax() const { return sweep_max; }
 	bool		Getusesturm() const { return use_sturm; }
@@ -353,8 +355,8 @@ public:
 	obj_t&		Getobjt() { return objt; }
 	spline_t&	Getsplinet() { return splinet; }
 	sweep_t&	Getsweept() { return sweept; }
-	double&	Getsweepmin() { return sweep_min; }
-	double&	Getsweepmax() { return sweep_max; }
+	double&		Getsweepmin() { return sweep_min; }
+	double&		Getsweepmax() { return sweep_max; }
 	bool&		Getusesturm() { return use_sturm; }
 	bool&		Getuseopen() { return use_open; }
 
@@ -366,7 +368,7 @@ public:
 		return o;
 	}
 
-    void         SetDirty(bool isdirty = true) { dirty = isdirty; }
+    void 	SetDirty(bool isdirty = true) { dirty = isdirty; }
 
 protected:
 	wxRect			bbox;
@@ -376,28 +378,27 @@ protected:
 	// changes; remake cache
 	bool			dirty;
 
-	void         InitBbox();
-    void         InitCbox();
-	void         UpdateBbox(const wxPoint& p);
-	void         UpdateBbox(int x, int y)
+	void	InitBbox();
+    void	InitCbox();
+	void	UpdateBbox(const wxPoint& p);
+	void	UpdateBbox(int x, int y)
 	{
         wxPoint p(x, y); UpdateBbox(p);
 	}
-	void         UpdateBbox(const wxRealPoint& p);
-	void         UpdateBbox(double x, double y)
+	void 	UpdateBbox(const wxRealPoint& p);
+	void 	UpdateBbox(double x, double y)
 	{
         wxRealPoint p(x, y); UpdateBbox(p);
 	}
-    void         UpdateCbox(double x, double y);
-    inline void UpdateCbox(const wxRealPoint& P)
+    void	UpdateCbox(double x, double y);
+    inline
+    void	UpdateCbox(const wxRealPoint& P)
     {
         UpdateCbox(P.x, P.y);
     }
 
-    void         DrawCache(
-					wxDC* dc,
-					const curve_cache& L,
-					const wxRect* bound = 0);
+    void	DrawCache(wxDC* dc, const curve_cache& L,
+				const wxRect* bound = 0);
 };
 
 class LinearSpline : public SplineBase {
@@ -415,9 +416,11 @@ public:
 	virtual SplineBase* CopySelf() const;
 
 	LinearSpline(int close_tolerance = sptol)
-		: SplineBase(close_tolerance) {SetType(objt); splinet = linear;}
+		: SplineBase(close_tolerance)
+		{SetType(objt); splinet = linear;}
 	LinearSpline(const wxString& name, int close_tolerance = sptol)
-		: SplineBase(name, close_tolerance) {SetType(objt); splinet = linear;}
+		: SplineBase(name, close_tolerance)
+		{SetType(objt); splinet = linear;}
 	LinearSpline(const LinearSpline& o)
 		: SplineBase(o) {SetType(objt);}
 protected:
@@ -438,9 +441,11 @@ public:
 	virtual SplineBase* CopySelf() const;
 
 	QuadraticSpline(int close_tolerance = sptol)
-		: SplineBase(close_tolerance) {SetType(objt); splinet = quadratic;}
+		: SplineBase(close_tolerance)
+		{SetType(objt); splinet = quadratic;}
 	QuadraticSpline(const wxString& name, int close_tolerance = sptol)
-		: SplineBase(name, close_tolerance) {SetType(objt); splinet = quadratic;}
+		: SplineBase(name, close_tolerance)
+		{SetType(objt); splinet = quadratic;}
 	QuadraticSpline(const QuadraticSpline& o)
 		: SplineBase(o) {SetType(objt);}
 protected:
@@ -463,7 +468,8 @@ public:
 	CubicSpline(int close_tolerance = sptol)
 		: SplineBase(close_tolerance) {SetType(objt); splinet = cubic;}
 	CubicSpline(const wxString& name, int close_tolerance = sptol)
-		: SplineBase(name, close_tolerance) {SetType(objt); splinet = cubic;}
+		: SplineBase(name, close_tolerance)
+		{SetType(objt); splinet = cubic;}
 	CubicSpline(const CubicSpline& o)
 		: SplineBase(o) {SetType(objt);}
 protected:
@@ -475,12 +481,14 @@ public:
 	virtual void Draw(wxDC* dc, const wxRect* bound = 0);
 	virtual void DrawDots(wxDC& dc,wxBrush br,unsigned size = dotsz);
 	virtual void DrawDots(wxDC& dc,unsigned size = dotsz);
-	virtual void DrawSelectedDot(wxDC& dc,wxBrush br,const SplinePoint& pt
-		,unsigned size = sdotsz);
-	virtual void DrawSelectedDot(wxDC& dc,const SplinePoint& pt
-		,unsigned size = sdotsz);
-	virtual void DrawDotsSelectedDot(wxDC& dc,const SplinePoint& pt
-		,wxBrush selectedbr,unsigned size = dotsz,unsigned selsize = sdotsz);
+	virtual void DrawSelectedDot(wxDC& dc,wxBrush br,
+		const SplinePoint& pt,
+		unsigned size = sdotsz);
+	virtual void DrawSelectedDot(wxDC& dc,const SplinePoint& pt,
+		unsigned size = sdotsz);
+	virtual void DrawDotsSelectedDot(wxDC& dc,const SplinePoint& pt,
+		wxBrush selectedbr,
+		unsigned size = dotsz,unsigned selsize = sdotsz);
 	virtual bool Okay() const;
 	// Okay for POV-Ray export; if ps then [begin,end[ of subs are
 	// collected (the code in this procedure is natural for that)
@@ -494,7 +502,8 @@ public:
 	BezierSpline(int close_tolerance = sptol)
 		: SplineBase(close_tolerance) {SetType(objt); splinet = bezier;}
 	BezierSpline(const wxString& name, int close_tolerance = sptol)
-		: SplineBase(name, close_tolerance) {SetType(objt); splinet = bezier;}
+		: SplineBase(name, close_tolerance)
+		{SetType(objt); splinet = bezier;}
 	BezierSpline(const BezierSpline& o)
 		: SplineBase(o) {SetType(objt);}
 protected:

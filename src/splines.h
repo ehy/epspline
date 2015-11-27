@@ -68,15 +68,25 @@ class CurvePt;
 typedef wxRealPoint     SplinePoint;
 
 #if 0
-typedef std::vector<SplinePoint> SplineBaseBase;
-#else
+// this derivation works, but it really contradicts
+// the std container's design and intent -- they are
+// not meant to be base classes
 typedef std::vector<SplinePoint> SplinePointDataStruct;
 struct SplineBaseBase : public SplinePointDataStruct {
 	SplineBaseBase() {}
 	SplineBaseBase(unsigned size) : SplinePointDataStruct(size) {}
 	virtual ~SplineBaseBase() {}
 };
+
+#else
+// this defines some wrappers that use a container as a member
+// and define much of the container interface, and provides
+// a virtual d'tor -- so using it as a base class is not contrary
+// to std containers design or intent
+#include "container_wrap.h"
+typedef VectorWrap<std::vector<SplinePoint> > SplineBaseBase;
 #endif
+
 
 #ifndef SPLINEPOINT_TOLERANCE
 #define SPLINEPOINT_TOLERANCE 4

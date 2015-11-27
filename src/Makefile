@@ -63,7 +63,7 @@ OKLEXER = $(SRCDIR)/ms_lexer.c
 OKPARSE = $(SRCDIR)/ms_parse.c
 
 HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
-	$(HDRDIR)/cfg.h $(HDRDIR)/splines.h \
+	$(HDRDIR)/cfg.h $(HDRDIR)/splines.h $(HDRDIR)/io.h \
 	$(HDRDIR)/stdcc.h $(HDRDIR)/util.h $(HDRDIR)/epspline.h \
 	$(HDRDIR)/wxutil.h $(HDRDIR)/a_tabwnd.h $(HDRDIR)/a_tabpage.h \
 	$(HDRDIR)/a_zoomdlg.h $(HDRDIR)/a_spintextdlg.h \

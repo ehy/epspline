@@ -38,12 +38,13 @@
 #include "wxutil.h"
 
 // forward declarations
-class A_Tabwnd;
-class A_Tabpage;
-class A_Frame;
-class A_Ruler;
-class A_Canvas;
-class bgimg_manager;
+class  A_Tabwnd;
+class  A_Tabpage;
+class  A_Frame;
+class  A_Ruler;
+class  A_Canvas;
+class  bgimg_manager;
+struct IO_AddlData;
 
 
 // Buffered DCs not working as hoped, but maybe try again later.

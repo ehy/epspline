@@ -19,14 +19,6 @@
  * MA 02110-1301, USA.
  */
 
-
-
-#include <wx/wx.h>
-#include <wx/filename.h>
-#include "wxexio.h"
-#include "wxutil.h"
-#include "a_bgimg_manager.h"
-
 #include <string>
 #include <sstream>
 #include <vector>
@@ -39,6 +31,14 @@
 #else
 #include <cfloat>
 #endif
+
+#include <wx/wx.h>
+#include <wx/filename.h>
+
+#include "wxexio.h"
+#include "wxutil.h"
+#include "io.h"
+#include "a_bgimg_manager.h"
 
 // for setting "C" locale in a block
 #include "clocnumeric.h"

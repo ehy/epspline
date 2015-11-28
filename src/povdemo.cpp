@@ -66,7 +66,7 @@
 #include <fcntl.h>
 #include <io.h>
 #endif
-#ifdef wx_x
+#ifdef __UNIX__
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>

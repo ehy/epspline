@@ -47,9 +47,6 @@ DEFINES = $(L10_INSTALL_DEF) -DINSTALL_PREFIX=\\\"$(DATAPREFIX)\\\"
 YDEBUG = -g -DDEBUG=1
 NDEBUG = -DNDEBUG=1
 DEBUG = $(NDEBUG)
-# wx_x is an ancient relic; this Makefile should be useful for
-# MSW build w/, e.g., Mingw, MSYS, depending mostly on usable wx-config.
-#GUI = -Dwx_x=1
 
 # Feb  7 2009: -Wno-write-strings
 # GCC g++ only (maybe also clang++):
@@ -377,7 +374,7 @@ distclean: distclean_po distclean_examples distclean_anim-example distclean_doc
 # "$(MKZIP)" is not empty.
 MKZIP = itydoodah
 EXCLFILES = epspline.geany helpview 3rd_pty oldstuff .git .gitignore \
-	examples-working tmp bak
+	examples-working tmp bak excluded
 dist archive distarchive: distclean
 	V=$$(/bin/sh ./version.sh) || { \
 		echo FAILED to get version from ./version.sh; exit 1; } ; \

@@ -24,22 +24,6 @@
 
 #include "stdcc.h"
 
-typedef wxChar t_ch;
-
-// leave _T alone, do not use, collides on some platforms:
-// w/ std templates on OpenSolaris (stlport?), has odd
-// error w/ wx 2.6 on Ubuntu 12.04 (2.6 is broken there
-// anyway
-#if 0
-#ifndef _T
-#error "_T(str) not defined"
-#endif
-#endif
-
-#ifndef wxT
-#error "wxT(str) not defined"
-#endif
-
 #if ! defined(__UNIX__)  // is this a Unix-like system?
 #if defined(__unix__) || defined(__unix) || defined(sun) || \
 	defined(__sun) || defined(__LINUX__) || defined(__linux__) || \
@@ -50,13 +34,10 @@ typedef wxChar t_ch;
 #endif
 #endif // __UNIX__
 
-#if defined(__UNIX__)
-// This, wx_x, is from *old* wx samples, in code, def'd in makefiles.
-// It must be removed from POSIX Makefiles, so put it here, until this:
-// TODO: remove wx_x macro from code.
-#define wx_x	1
-#endif // __UNIX__
-
+// This would detect old Symantec C++, distinct from more
+// recent Digital Mars C++ -- surely the code as it stands
+// cannot compile with old SC, but I'll leave this for
+// (my own) historical interest.
 #if defined(__WXMSW__) && __SC__ && !__DMC__
 #define HAVE_OLD_HEADERS 1
 #endif
@@ -66,10 +47,10 @@ typedef wxChar t_ch;
 #define SEPS wxString(SEPC, size_t(1))
 #else
 #if defined(__WXMSW__)
-const t_ch SEPC = wxT('\\');
+const wxChar SEPC = wxT('\\');
 #define    SEPS wxT("\\")
 #else
-const t_ch SEPC = wxT('/');
+const wxChar SEPC = wxT('/');
 #define    SEPS wxT("/")
 #endif
 #endif // 1
@@ -84,7 +65,7 @@ const t_ch SEPC = wxT('/');
 // increment constants below are used only if
 // macro above is non-zero
 #ifndef DEFAULT_SPLINE_INCREMENT
-#define DEFAULT_SPLINE_INCREMENT   64
+#define DEFAULT_SPLINE_INCREMENT		64
 #endif
 #ifndef LINEAR_SPLINE_INCREMENT
 #define LINEAR_SPLINE_INCREMENT			16

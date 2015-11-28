@@ -77,7 +77,7 @@
 #if defined(__SC__) || defined(__DMC__)
 #include <dos.h> /*For find{first|next}()*/
 #endif
-static void findwild(int ac, t_ch** av, wxArrayString& dest);
+static void findwild(int ac, wxChar** av, wxArrayString& dest);
 #endif
 
 #if defined(__SC__) || defined(__DMC__) && defined(__WXMSW__)
@@ -487,7 +487,7 @@ AnApp::OnExit()
 
 #if defined(__WXMSW__)
 static void
-findwild(int ac, t_ch** av, wxArrayString& dest)
+findwild(int ac, wxChar** av, wxArrayString& dest)
 {
 	for ( int i = 1; i < ac; i++ ) {
 #	if defined(__DMC__) || defined(__SC__)

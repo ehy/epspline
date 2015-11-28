@@ -168,9 +168,9 @@ SplineBase::DrawCache(
 	eps_funcs::SplineBaseDrawCache(dc, cc, bound);
 }
 
-const t_ch  SplineBase::DefaultName [] = wxT("SplineObject");
+const wxChar  SplineBase::DefaultName [] = wxT("SplineObject");
 
-const t_ch* SplineBase::PropNames [] = {
+const wxChar* SplineBase::PropNames [] = {
 	wxT("Name"),
 	wxT("Transform"),
 	wxT("Texture"),

@@ -274,16 +274,15 @@ public:
 		, tolbk(0), doclose(true), dirty(true)
 		{ InitBbox(); InitCbox(); }
 	SplineBase(const SplineBase& o)
-		: SplineBaseBase()
+		: SplineBaseBase(o)
 		, ObNam(o.ObNam), Transform(o.Transform)
 		, Texture(o.Texture), Interior(o.Interior), UserStr(o.UserStr)
 		, objt(o.objt), splinet(o.splinet), sweept(o.sweept)
 		, sweep_min(o.sweep_min), sweep_max(o.sweep_max)
-		, use_sturm(o.use_sturm), use_open(o.use_open), dotlock(false), 
-		bbox(o.bbox), cboxL(o.cboxL), cboxM(o.cboxM)
+		, use_sturm(o.use_sturm), use_open(o.use_open), dotlock(false)
+		, bbox(o.bbox), cboxL(o.cboxL), cboxM(o.cboxM)
 		, tol(o.tol), tolbk(o.tolbk), doclose(o.doclose), dirty(o.dirty)
 	{
-		std::copy(o.begin(), o.end(), std::back_inserter(*this));
 		ccache.reserve(o.ccache.capacity());
 		std::copy(o.ccache.begin(), o.ccache.end(),
 			std::back_inserter(ccache));
@@ -306,9 +305,9 @@ protected:
 	curve_cache	ccache;
 
 public:
-	static const t_ch		DefaultName [];
+	static const wxChar		DefaultName [];
 
-	static const t_ch*		PropNames [];
+	static const wxChar*		PropNames [];
 	static const size_t	PropCount;
 	enum properties {
 		name = 0,

@@ -1,5 +1,5 @@
 /*
- * io.h
+ * file_io.h
  * 
  * Copyright 2015 Ed Hynan <edhynan@gmail.com>
  * 
@@ -20,11 +20,15 @@
  */
 
 // types and procs for read/write I/O
+//
+// This is the header associated with io.cpp -- the name
+// io.h might conflict with DOS dev tools, hence the name file_io.h
 
-#ifndef _IO_H_
-#define _IO_H_
+#ifndef _FILE_IO_H_
+#define _FILE_IO_H_
 
 #include "splines.h"
+#include "wxutil.h"
 #include "util.h"
 
 // TODO: move these into header "io.h"
@@ -71,4 +75,4 @@ int  ReadData(const wxString& fname, std::list<SplineBase*>& lst
 extern int (*io_sanitise_spline_point)(void*, SplinePoint*);
 extern void* io_sanitise_spline_point_data;
 
-#endif // _IO_H_
+#endif // _FILE_IO_H_

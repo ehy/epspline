@@ -22,7 +22,10 @@ SETUPHDIR = $(LIBDIRNAME)\mswd
 LOCAL_CXXFLAGS = -D__SC__ -D_WIN32_WINNT=0x0400 -D__WXMSW__ \
 	-DLROUND_UNAVAILABLE=1 \
         -I$(SETUPHDIR) -I$(WXDIR)\include -w- -I. -WA \
-	-I$(WXDIR)\samples -DNOPCH -Ar -Ae
+	-DNOPCH -Ar -Ae
+
+#  was in above macro -- -I$(WXDIR)\samples ??
+#	-I$(WXDIR)\samples -DNOPCH -Ar -Ae
 
 CCFLAGS=$(CFLAGS) $(CXXFLAGS) $(DBGF) $(OPTF) $(CPPFLAGS) $(DEFS) $(INCLUDES) $(LOCAL_CXXFLAGS)
 
@@ -45,7 +48,7 @@ SRCDIR = .
 HDRDIR = .
 
 HDRS = $(HDRDIR)\a_canvas.h $(HDRDIR)\a_frame.h $(HDRDIR)\a_ruler.h \
-	$(HDRDIR)\cfg.h $(HDRDIR)\splines.h  $(HDRDIR)\io.h \
+	$(HDRDIR)\cfg.h $(HDRDIR)\splines.h  $(HDRDIR)\file_io.h \
 	$(HDRDIR)\container_wrap.h \
 	$(HDRDIR)\stdcc.h $(HDRDIR)\util.h $(HDRDIR)\epspline.h \
 	$(HDRDIR)\wxutil.h $(HDRDIR)\a_tabwnd.h $(HDRDIR)\a_tabpage.h \

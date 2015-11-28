@@ -37,7 +37,7 @@
 
 #include "wxexio.h"
 #include "wxutil.h"
-#include "io.h"
+#include "file_io.h"
 #include "a_bgimg_manager.h"
 
 // for setting "C" locale in a block

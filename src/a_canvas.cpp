@@ -72,7 +72,7 @@
 #include "a_zoomdlg.h"
 #include "a_prefs_manager.h"
 #include "a_bgimg_manager.h"
-#include "io.h"
+#include "file_io.h"
  
 #include "swap_vals.h"
 #include "drawlines.h"

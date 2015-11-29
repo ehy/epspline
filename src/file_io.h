@@ -31,7 +31,6 @@
 #include "wxutil.h"
 #include "util.h"
 
-// TODO: move these into header "io.h"
 // The .PSE file Write/Read routines + struct for additional
 // data for per-file section (used by canvas)
 class bgimg_manager;

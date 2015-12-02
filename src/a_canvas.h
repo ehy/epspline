@@ -125,9 +125,17 @@ enum {
 	IC_end = IC_rm_bg_img
 };
 
+// As of 2.9 (3.0 dev) wxScrolledWindow is no longer a class,
+// but a typedef for wxScrolled<wxPanel> -- the new wxScrolled
+// template raises possibilities -- try wxScrolled<wxWindow>
+#if wxCHECK_VERSION(2, 9, 0)
+typedef wxScrolled<wxWindow> A_Canvas_base;
+#else
+typedef wxScrolledWindow A_Canvas_base;
+#endif
 
 // base for drawing: most all code should be here
-class A_Canvas: public wxScrolledWindow {
+class A_Canvas: public A_Canvas_base {
 protected:
 	A_Frame*     a_frame;
 	A_Tabpage*   a_tabpg;

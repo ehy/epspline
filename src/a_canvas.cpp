@@ -127,7 +127,7 @@ inline wxImage* alloc_image(size_t w, size_t h, bool clear = false)
 }
 
 // WX Event Tables
-BEGIN_EVENT_TABLE(A_Canvas, wxScrolledWindow)
+BEGIN_EVENT_TABLE(A_Canvas, A_Canvas_base)
 	EVT_IDLE         		(A_Canvas::OnIdle)
 	EVT_PAINT        		(A_Canvas::OnPaint)
 	EVT_ERASE_BACKGROUND	(A_Canvas::OnEraseBG)
@@ -181,7 +181,7 @@ A_BUFDCCanvas::~A_BUFDCCanvas()
 }
 
 A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
-	: wxScrolledWindow(realparent)
+	: A_Canvas_base(realparent)
 	, a_frame(parent), a_tabpg(realparent)
 	, bg_mng(new bgimg_manager()), aa_draw(aa), bg_hide(false)
 	, hrule(0), vrule(0)
@@ -3412,7 +3412,7 @@ A_Canvas::DCPaint(wxDC& dc, wxRegion& re)
 void
 A_Canvas::PrepareDC(wxDC& dc)
 {
-	wxScrolledWindow::PrepareDC(dc);
+	A_Canvas_base::PrepareDC(dc);
 	//a_frame->PrepareDC(dc);
 
 #if ! wxCHECK_VERSION(2, 6, 0)

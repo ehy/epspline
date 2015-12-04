@@ -791,6 +791,10 @@ bg_img_dlg::bg_img_dlg(
 	, wh_unlock(false)
 {
 	info_label_default = bg_img_info->GetLabel();
+#ifdef wxFD_PREVIEW
+	long sel_style = selector_file->GetWindowStyleFlag();
+	selector_file->SetWindowStyleFlag(sel_style | wxFD_PREVIEW);
+#endif
 }
 
 bg_img_dlg::~bg_img_dlg()

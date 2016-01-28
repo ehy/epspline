@@ -399,8 +399,7 @@ A_Frame::A_Frame(
 	tabwnd = new A_Tabwnd(this, TabWindowID
 		, wxDefaultPosition, wxDefaultSize
 #	if USE_AUI_NOTEBOOK
-		, wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS
-		| wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_WINDOWLIST_BUTTON);
+		, wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_WINDOWLIST_BUTTON);
 	// TODO, SOMEDAY MAYBE: write art provider for AUI notebook;
 	// derives from wxAuiTabArt; see wx/aui/auibook.h
 	//tabwnd->SetArtProvider(new wxAuiSimpleTabArt); // prefer default

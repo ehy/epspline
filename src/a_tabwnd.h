@@ -38,6 +38,7 @@
 	typedef	wxAuiNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxAuiNotebookEvent
 #	define	TABWND_PAGE_T	wxWindow
+#	define	TABWND_STYLE	wxAUI_NB_DEFAULT_STYLE
 #		if wxCHECK_VERSION(2, 9, 0)
 #	define	TABWND_CMD_EVENT_T	wxAuiNotebookEvent
 #		else
@@ -49,6 +50,7 @@
 	typedef	wxNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxNotebookEvent
 #	define	TABWND_PAGE_T	wxNotebookPage
+#	define	TABWND_STYLE	0
 #endif
 
 #include "a_ruler.h"
@@ -69,7 +71,7 @@ public:
 	A_Tabwnd(A_Frame* parent, wxWindowID id
 		, const wxPoint& pos = wxDefaultPosition
 		, const wxSize& size = wxDefaultSize
-		, long style = 0);
+		, long style = TABWND_STYLE);
 	virtual ~A_Tabwnd();
 
 	void OnPageChanged(TABWND_EVENT_T& e);

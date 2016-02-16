@@ -96,6 +96,11 @@ dnl## macros not included here so they can be given on m4 command
   !include "file_association.nsh"
 
 ;--------------------------------
+;Addl. file procs, for at least "EstimatedSize"
+
+  !include "FileFunc.nsh"
+
+;--------------------------------
 ;General
 
   ;Name and file
@@ -228,6 +233,15 @@ Section "appclass program" SecExe
   WriteRegStr ${_HK_} \
 	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
     "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+  ; QuietUninstallString and EstimatedSize added with version 0.0.4.5
+  WriteRegStr ${_HK_} \
+	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
+    "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+  ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+  IntFmt $0 "0x%08X" $0
+  WriteRegDWORD ${_HK_} \
+	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
+    "EstimatedSize" "$0"
 
 SectionEnd
 

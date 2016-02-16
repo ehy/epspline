@@ -70,9 +70,9 @@ dnl## macros not included here so they can be given on m4 command
   # Lifted from http://nsis.sourceforge.net/FileAssoc
   # 1) make file extension association
   !macro mk_file_association EXT FILECLASS DESCRIPTION ICON COMMANDTEXT COMMAND
-  ;${registerExtension} "$INSTDIR\appname.exe" \
   ; Backup the previously associated file class
   ReadRegStr $R0 ${_HK_} ".${EXT}" ""
+  ;${registerExtension} "$INSTDIR\appname.exe" ".${EXT}" ".${EXT}"
   WriteRegStr ${_HK_} ".${EXT}" "${FILECLASS}_backup" "$R0"
   WriteRegStr ${_HK_} ".${EXT}" "" "${FILECLASS}"
   WriteRegStr ${_HK_} "${FILECLASS}" "" '${DESCRIPTION}'
@@ -84,9 +84,9 @@ dnl## macros not included here so they can be given on m4 command
 
   # 2) remove file extension association
   !macro rm_file_association EXT FILECLASS
-  ;${unregisterExtension} genFileExtS genFileDescS
   ; Backup the previously associated file class
   ReadRegStr $R0 ${_HK_} ".${EXT}" '${FILECLASS}_backup'
+  ;${unregisterExtension}  ".${EXT}" ".${EXT}"
   WriteRegStr    ${_HK_} ".${EXT}" "" "$R0"
   DeleteRegKey   ${_HK_} '${FILECLASS}'
   !macroend
@@ -241,7 +241,7 @@ Section "appclass program" SecExe
   # as of 0.0.4.5 use macros {mk,rm}_file_association
   ;${registerExtension} "$INSTDIR\appname.exe" \
   ; genFileExtS genFileDescS
-  !insertmacro mk_file_association genFileExtS \
+  !insertmacro mk_file_association genFileExtNDS \
       "${FILECLASS}" "${FILEDESC}" "$INSTDIR\${APP_ICO}" \
       "Open with appName" "$INSTDIR\appname.exe $\"%1$\""
  
@@ -400,7 +400,7 @@ Section "Uninstall"
   # ASSOC.: from FAQ, to make MS style file associations
   # As of 0.0.4.5 use macro rm_file_association
   ;${unregisterExtension} genFileExtS genFileDescS
-  !insertmacro rm_file_association genFileExtS "${FILECLASS}"
+  !insertmacro rm_file_association genFileExtNDS "${FILECLASS}"
 
   Delete "$INSTDIR\mswhelpdir\help.zip"
   Delete "$INSTDIR\mswhelpdir\appname.pdf"

@@ -65,6 +65,7 @@ define(mswxmpldir, `Examples')dnl				examples dir on MSW
 define(mswxmpldirS, "mswxmpldir")dnl
 define(genFileExtND, `pse')dnl					prog's data file extens.
 define(genFileExt, `.genFileExtND')dnl			prog's data file extens.
+define(genFileExtNDS, "genFileExtND")dnl					prog's data file extens.
 define(genFileExtS, "genFileExt")dnl
 define(genFileDesc, `progprettyname')dnl		prog's data file descr.
 define(genFileDescS, "genFileDesc")dnl

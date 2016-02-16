@@ -247,7 +247,7 @@ uninstall_xdg:
 		I="art/epspline_$${s}x$${s}.png"; \
 		$$XII uninstall --context mimetypes --size $$s \
 			application-x-epspline || \
-			{ echo failed to install xdg mime context $$s; true; } ; \
+			{ echo failed to uninstall xdg mime context $$s; true; } ; \
 		$$XII $$ARGS $$s epspline || \
 			{ echo failed uninstalling icon size $$s; true; } ; \
 	done; \

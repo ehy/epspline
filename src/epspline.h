@@ -60,6 +60,9 @@
 #	endif
 #endif
 
+// window icons
+extern wxIconBundle iconBundle;
+
 #ifdef __GNUG__
     #pragma interface
 #endif

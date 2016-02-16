@@ -51,38 +51,11 @@
 #include "a_aboutbox.h"
 #include "a_prefs_manager.h"
 
-// resources
-//
-
-// the application icon
-#if !defined(__WXMSW__)
-#include "art/epspline.xpm"
-#endif
-#ifndef APP_ICON_NAME
-#define APP_ICON_NAME "epspline"
-#endif
-
 // A_Frame
 //
 
 BEGIN_EVENT_TABLE(A_Frame, wxFrame)
  EVT_CLOSE       (A_Frame::OnQuit)
-// Note on following '#if 0': on an Ubuntu 14.04 system the menus
-// were broken by a system package update (within the week preceeding
-// Feb. 18, 2015).  That update included Unity, Ubuntu's desktop
-// that includes some toolkit hacks to do a silly Apple-wannabe thing
-// with the menu, moving it out of the app frame.  The bug hit this
-// code under KDE on Ubuntu 14.04, and had a different manifestation
-// under XFCE on the same.
-// On KDE, the menubar items could not be invoked with the primary
-// mouse button, but the middle and right buttons worked.  On XFCE,
-// the menus worked with the left button, but hovering the pointer
-// over *some* toolbar items caused repeated flashing (something
-// confusedly looping).  Unity was not checked.
-// After trying everything but a bottle of whiskey, I took a shot
-// at replacing the nice simple EVT_MENU_RANGE macro with all the
-// individual EVT_MENU macros, as below.  That seems to have done
-// the trick.
 #if 0
  EVT_MENU_RANGE  (menu_tool_first, menu_tool_last, A_Frame::OnOption)
 #else
@@ -114,8 +87,8 @@ A_Frame::A_Frame(
 	const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame((wxFrame*)NULL, -1, title, pos, size)
 {
-	// set the frame icon
-	SetIcon(wxICON(epspline));
+	// set the frame icons
+	SetIcons(iconBundle);
 
 	menuFile = new wxMenu(wxMENU_TEAROFF);
 	menuEdit = new wxMenu(wxMENU_TEAROFF);

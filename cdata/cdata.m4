@@ -73,10 +73,10 @@ dnl app version piece by piece
 define(appVMajor, `0')dnl
 define(appVMinor, `0')dnl
 define(appRMajor, `4')dnl
-define(appRMinor, `4')dnl
+define(appRMinor, `5')dnl
 dnl comment appPatchLvl macro for version string w/o "pN" appended
 dnl define(appPatchLvl, `1')dnl
-define(appPatchLvl, `5')dnl
+dnl define(appPatchLvl, `5')dnl
 define(appversionI,
 	eval(appVMajor<<24|appVMinor<<16|appRMajor<<8|appRMinor))dnl
 define(appversion,

@@ -99,6 +99,21 @@ extern "C" {
 // directly, and get some slack.
 wxMBConv* app_global_mbconv;
 
+// the application icons
+#include "art/epspline_16x16.xpm"
+#include "art/epspline_24x24.xpm"
+#include "art/epspline_32x32.xpm"
+#include "art/epspline_48x48.xpm"
+#include "art/epspline_64x64.xpm"
+const char** icon_bundle_items[] = {
+	epspline_16x16,
+	epspline_24x24,
+	epspline_32x32,
+	epspline_48x48,
+	epspline_64x64
+};
+wxIconBundle iconBundle;
+
 // the application class
 //
 
@@ -154,6 +169,11 @@ AnApp::OnInit()
 	// n.g. unless using wx commandline parser, else fails on args!
 	if ( false && !wxApp::OnInit() ) {
 		return false;
+	}
+
+	// set the frame icons
+	for ( size_t i = 0; i < A_SIZE(icon_bundle_items); i++ ) {
+		iconBundle.AddIcon(wxIcon(icon_bundle_items[i]));
 	}
 
 	// will need to control some C-library functions,

@@ -230,13 +230,14 @@ Section "appclass program" SecExe
   WriteRegDWORD ${_HK_} \
 	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
      "NoRepair" 1
+  ; missing before 0.0.4.5: switch /$MultiUser.InstallMode
   WriteRegStr ${_HK_} \
 	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
-    "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+    "UninstallString" "$\"$INSTDIR\uninstall.exe$\" /$MultiUser.InstallMode"
   ; QuietUninstallString and EstimatedSize added with version 0.0.4.5
   WriteRegStr ${_HK_} \
 	"Software\Microsoft\Windows\CurrentVersion\Uninstall\${ADDREMNAME}" \
-    "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+    "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /$MultiUser.InstallMode /S"
   ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
   IntFmt $0 "0x%08X" $0
   WriteRegDWORD ${_HK_} \

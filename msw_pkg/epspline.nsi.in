@@ -49,6 +49,8 @@ dnl## macros not included here so they can be given on m4 command
   # EXEC_LVL: 'highest', 'admin', 'user'
   !define EXEC_LVL     highest
   !define SRC_ZIP      "appname-appversion.zip"
+  !define FILECLASS    "appName.Document"
+  !define FILEDESC     "appName Document"
   !define APP_SICO     "appname.ico"
   !define APP_VICO     "appname-varsz.ico"
   !define PATH_APP_SICO     "../art/appname.ico"
@@ -63,6 +65,32 @@ dnl## macros not included here so they can be given on m4 command
   # MSW registry H-key, e.g. HKCU or HKLM or multiuser SHCTX
   # (What's the "H" in HKLM, etc.? 'Hierarchy'?)
   !define _HK_         SHCTX
+
+  # macros to set-up/tear-down file extension -> icon/action association
+  # Lifted from http://nsis.sourceforge.net/FileAssoc
+  # 1) make file extension association
+  !macro mk_file_association EXT FILECLASS DESCRIPTION ICON COMMANDTEXT COMMAND
+  ;${registerExtension} "$INSTDIR\appname.exe" \
+  ; Backup the previously associated file class
+  ReadRegStr $R0 ${_HK_} ".${EXT}" ""
+  WriteRegStr ${_HK_} ".${EXT}" "${FILECLASS}_backup" "$R0"
+  WriteRegStr ${_HK_} ".${EXT}" "" "${FILECLASS}"
+  WriteRegStr ${_HK_} "${FILECLASS}" "" '${DESCRIPTION}'
+  WriteRegStr ${_HK_} "${FILECLASS}\DefaultIcon" "" '${ICON}'
+  WriteRegStr ${_HK_} "${FILECLASS}\shell" "" "open"
+  WriteRegStr ${_HK_} "${FILECLASS}\shell\open" "" '${COMMANDTEXT}'
+  WriteRegStr ${_HK_} "${FILECLASS}\shell\open\command" "" '${COMMAND}'
+  !macroend
+
+  # 2) remove file extension association
+  !macro rm_file_association EXT FILECLASS
+  ;${unregisterExtension} genFileExtS genFileDescS
+  ; Backup the previously associated file class
+  ReadRegStr $R0 ${_HK_} ".${EXT}" '${FILECLASS}_backup'
+  WriteRegStr    ${_HK_} ".${EXT}" "" "$R0"
+  DeleteRegKey   ${_HK_} '${FILECLASS}'
+  !macroend
+
 # MACROS end
 
   CRCCheck on
@@ -209,8 +237,13 @@ Section "appclass program" SecExe
   # End orig. from example "StartMenu.nsi"
 
   # ASSOC.: from FAQ, to make MS style file associations
-  ${registerExtension} "$INSTDIR\appname.exe" \
-	 genFileExtS genFileDescS
+  # ${registerExtension} and ${unregisterExtension} worked poorly;
+  # as of 0.0.4.5 use macros {mk,rm}_file_association
+  ;${registerExtension} "$INSTDIR\appname.exe" \
+  ; genFileExtS genFileDescS
+  !insertmacro mk_file_association genFileExtS \
+      "${FILECLASS}" "${FILEDESC}" "$INSTDIR\${APP_ICO}" \
+      "Open with appName" "$INSTDIR\appname.exe $\"%1$\""
  
   # This should make an entry in MSW control panel "Add/Remove Software"
   # from example at:
@@ -308,6 +341,7 @@ SectionEnd
 ;Installer Functions
  
 Function .onInit
+  SetRegView 64
   !insertmacro MULTIUSER_INIT
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
@@ -319,7 +353,7 @@ Function .onInstSuccess
   # from discussion at:
   # http://forums.winamp.com/showthread.php?s=&threadid=140254
   System::Call \
-	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
+	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0x1000, 0, 0)'
   # query user w/ offer to start
   MessageBox MB_YESNO \
 	"Would you like to start appclass now?" \
@@ -364,7 +398,9 @@ FunctionEnd
 Section "Uninstall"
 
   # ASSOC.: from FAQ, to make MS style file associations
-  ${unregisterExtension} genFileExtS genFileDescS
+  # As of 0.0.4.5 use macro rm_file_association
+  ;${unregisterExtension} genFileExtS genFileDescS
+  !insertmacro rm_file_association genFileExtS "${FILECLASS}"
 
   Delete "$INSTDIR\mswhelpdir\help.zip"
   Delete "$INSTDIR\mswhelpdir\appname.pdf"
@@ -420,7 +456,7 @@ Function un.onUninstSuccess
   # from discussion at:
   # http://forums.winamp.com/showthread.php?s=&threadid=140254
   System::Call \
-	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
+	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0x1000, 0, 0)'
 FunctionEnd
 # end func
 

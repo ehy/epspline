@@ -72,25 +72,23 @@ dnl## macros not included here so they can be given on m4 command
   # Note key HKCR -- SHCTX apparently N.G.
   # 1) make file extension association
   !macro mk_file_association EXT FILECLASS DESCRIPTION ICON COMMANDTEXT COMMAND
-  ; Backup the previously associated file class
-  ;${registerExtension} "$INSTDIR\appname.exe" ".${EXT}" ".${EXT}"
-  ReadRegStr $R0 HKCR ".${EXT}" ""
-  WriteRegStr    HKCR ".${EXT}" "${FILECLASS}_backup" "$R0"
-  WriteRegStr    HKCR ".${EXT}" "" "${FILECLASS}"
-  WriteRegStr    HKCR "${FILECLASS}" "" '${DESCRIPTION}'
-  WriteRegStr    HKCR "${FILECLASS}\DefaultIcon" "" '${ICON}'
-  WriteRegStr    HKCR "${FILECLASS}\shell" "" "open"
-  WriteRegStr    HKCR "${FILECLASS}\shell\open" "" '${COMMANDTEXT}'
-  WriteRegStr    HKCR "${FILECLASS}\shell\open\command" "" '${COMMAND}'
+   ; Backup the previously associated file class
+   ReadRegStr $R0 HKCR ".${EXT}" ""
+   WriteRegStr    HKCR ".${EXT}" "${FILECLASS}_backup" "$R0"
+   WriteRegStr    HKCR ".${EXT}" "" "${FILECLASS}"
+   WriteRegStr    HKCR "${FILECLASS}" "" '${DESCRIPTION}'
+   WriteRegStr    HKCR "${FILECLASS}\DefaultIcon" "" '${ICON}'
+   WriteRegStr    HKCR "${FILECLASS}\shell" "" "open"
+   WriteRegStr    HKCR "${FILECLASS}\shell\open" "" '${COMMANDTEXT}'
+   WriteRegStr    HKCR "${FILECLASS}\shell\open\command" "" '${COMMAND}'
   !macroend
 
   # 2) remove file extension association
   !macro rm_file_association EXT FILECLASS
-  ; Backup the previously associated file class
-  ;${unregisterExtension}  ".${EXT}" ".${EXT}"
-  ReadRegStr $R0 HKCR ".${EXT}" '${FILECLASS}_backup'
-  WriteRegStr    HKCR ".${EXT}" "" "$R0"
-  DeleteRegKey   HKCR '${FILECLASS}'
+   ; Backup the previously associated file class
+   ReadRegStr $R0 HKCR ".${EXT}" '${FILECLASS}_backup'
+   WriteRegStr    HKCR ".${EXT}" "" "$R0"
+   DeleteRegKey   HKCR '${FILECLASS}'
   !macroend
 
 # MACROS end
@@ -116,15 +114,6 @@ dnl## macros not included here so they can be given on m4 command
 ;Include Modern UI
 
   !include "MUI2.nsh"
-
-# ASSOC.: from FAQ, to make MS style file associations
-# SEE: http://nsis.sourceforge.net/File_Association
-# THE RIGHTS TO THE CODE IN THE FOLLOWING INCLUDED FILE
-# ARE THOSE OF THE RIGHTS HOLDER(S) AND SHALL NOT BE DEEMED
-# TO BE HELD BY THOSE THAT DO NOT HOLD THEM.
-#!include "FileAssociation.nsh" ; renamed
-  ; As of 0.0.4.5 use {mk,rm}_file_association macros def'd herein
-  ;!include "file_association.nsh"
 
 ;--------------------------------
 ;Addl. file procs, for at least "EstimatedSize"
@@ -240,8 +229,6 @@ Section "appclass program" SecExe
   # End orig. from example "StartMenu.nsi"
 
   # as of 0.0.4.5 use macros {mk,rm}_file_association
-  ;${registerExtension} "$INSTDIR\appname.exe" \
-  ; genFileExtS genFileDescS
   !insertmacro mk_file_association genFileExtNDS \
       "${FILECLASS}" "${FILEDESC}" "$INSTDIR\${APP_ICO}" \
       "Open with appName" "$INSTDIR\appname.exe $\"%1$\""
@@ -400,7 +387,6 @@ Section "Uninstall"
 
   # ASSOC.: from FAQ, to make MS style file associations
   # As of 0.0.4.5 use macro rm_file_association
-  ;${unregisterExtension} genFileExtS genFileDescS
   !insertmacro rm_file_association genFileExtNDS "${FILECLASS}"
 
   Delete "$INSTDIR\mswhelpdir\help.zip"

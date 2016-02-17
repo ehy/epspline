@@ -51,21 +51,22 @@ make64 $(NAME64) : i18n-sect.in
 #	"installed en message catalog" "$INSTDIR\en\appname.mo"
 i18n-sect.in:
 	:> $@; mo="$(APPNAME).mo"; \
+	TR='tr / \\' ; \
 	for f in ../po/*/$$mo ; do \
 		td=$${f%/*}; d=$${td##*/}; \
 		printf '\n  SetOutPath "$$INSTDIR\\%s"\n' "$$d" \
-			>> $@; \
+			| $$TR >> $@; \
 		printf '\n  File "%s"\n' "$$f" \
-			>> $@; \
+			| $$TR >> $@; \
 		printf \
 		'\n  WriteRegStr $${_HK_} "Software\\%s\\%s\\%s\\i18n" \\\n' \
 			vendornameS appnameS appversionS \
-			>> $@; \
+			| $$TR >> $@; \
 		printf \
 		'    "installed %s message catalog" "$$INSTDIR\\%s\\%s"\n' \
 			"$$d" "$$d" "$$mo" \
-			>> $@; \
-		printf '\n' >> $@; \
+			| $$TR >> $@; \
+		printf '\n' | $$TR >> $@; \
 	done; ls -l $@
 
 install: $(NAME)

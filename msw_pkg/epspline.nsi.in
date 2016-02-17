@@ -49,15 +49,15 @@ dnl## macros not included here so they can be given on m4 command
   # EXEC_LVL: 'highest', 'admin', 'user'
   !define EXEC_LVL     highest
   !define SRC_ZIP      "appname-appversion.zip"
-  !define FILECLASS    "appName.Document"
-  !define FILEDESC     "appName Document"
+  !define FILECLASS    "appName.File"
+  !define FILEDESC     "appName POV-Ray Spline Object Document"
   !define APP_SICO     "appname.ico"
   !define APP_VICO     "appname-varsz.ico"
-  !define PATH_APP_SICO     "../art/appname.ico"
-  !define PATH_APP_VICO     "../art/appname-varsz.ico"
-  !define APP_ICO            "${APP_VICO}"
-  !define PATH_APP_ICO       "${PATH_APP_VICO}"
-  !define APP_BANNER     "../art/banner-375x96.bmp"
+  !define PATH_APP_SICO     "..\art\appname.ico"
+  !define PATH_APP_VICO     "..\art\appname-varsz.ico"
+  !define APP_ICO           "${APP_VICO}"
+  !define PATH_APP_ICO      "${PATH_APP_VICO}"
+  !define APP_BANNER     	"..\art\banner-375x96.bmp"
   !define APP_BANNER_WI		375
   !define APP_BANNER_HI		96
   # name used in control panel add/remove reg key
@@ -65,30 +65,32 @@ dnl## macros not included here so they can be given on m4 command
   # MSW registry H-key, e.g. HKCU or HKLM or multiuser SHCTX
   # (What's the "H" in HKLM, etc.? 'Hierarchy'?)
   !define _HK_         SHCTX
+  ;!define _HK_         HKLM
 
   # macros to set-up/tear-down file extension -> icon/action association
   # Lifted from http://nsis.sourceforge.net/FileAssoc
+  # Note key HKCR -- SHCTX apparently N.G.
   # 1) make file extension association
   !macro mk_file_association EXT FILECLASS DESCRIPTION ICON COMMANDTEXT COMMAND
   ; Backup the previously associated file class
-  ReadRegStr $R0 ${_HK_} ".${EXT}" ""
   ;${registerExtension} "$INSTDIR\appname.exe" ".${EXT}" ".${EXT}"
-  WriteRegStr ${_HK_} ".${EXT}" "${FILECLASS}_backup" "$R0"
-  WriteRegStr ${_HK_} ".${EXT}" "" "${FILECLASS}"
-  WriteRegStr ${_HK_} "${FILECLASS}" "" '${DESCRIPTION}'
-  WriteRegStr ${_HK_} "${FILECLASS}\DefaultIcon" "" '${ICON}'
-  WriteRegStr ${_HK_} "${FILECLASS}\shell" "" "open"
-  WriteRegStr ${_HK_} "${FILECLASS}\shell\open" "" '${COMMANDTEXT}'
-  WriteRegStr ${_HK_} "${FILECLASS}\shell\open\command" "" '${COMMAND}'
+  ReadRegStr $R0 HKCR ".${EXT}" ""
+  WriteRegStr    HKCR ".${EXT}" "${FILECLASS}_backup" "$R0"
+  WriteRegStr    HKCR ".${EXT}" "" "${FILECLASS}"
+  WriteRegStr    HKCR "${FILECLASS}" "" '${DESCRIPTION}'
+  WriteRegStr    HKCR "${FILECLASS}\DefaultIcon" "" '${ICON}'
+  WriteRegStr    HKCR "${FILECLASS}\shell" "" "open"
+  WriteRegStr    HKCR "${FILECLASS}\shell\open" "" '${COMMANDTEXT}'
+  WriteRegStr    HKCR "${FILECLASS}\shell\open\command" "" '${COMMAND}'
   !macroend
 
   # 2) remove file extension association
   !macro rm_file_association EXT FILECLASS
   ; Backup the previously associated file class
-  ReadRegStr $R0 ${_HK_} ".${EXT}" '${FILECLASS}_backup'
   ;${unregisterExtension}  ".${EXT}" ".${EXT}"
-  WriteRegStr    ${_HK_} ".${EXT}" "" "$R0"
-  DeleteRegKey   ${_HK_} '${FILECLASS}'
+  ReadRegStr $R0 HKCR ".${EXT}" '${FILECLASS}_backup'
+  WriteRegStr    HKCR ".${EXT}" "" "$R0"
+  DeleteRegKey   HKCR '${FILECLASS}'
   !macroend
 
 # MACROS end
@@ -121,7 +123,8 @@ dnl## macros not included here so they can be given on m4 command
 # ARE THOSE OF THE RIGHTS HOLDER(S) AND SHALL NOT BE DEEMED
 # TO BE HELD BY THOSE THAT DO NOT HOLD THEM.
 #!include "FileAssociation.nsh" ; renamed
-  !include "file_association.nsh"
+  ; As of 0.0.4.5 use {mk,rm}_file_association macros def'd herein
+  ;!include "file_association.nsh"
 
 ;--------------------------------
 ;Addl. file procs, for at least "EstimatedSize"
@@ -158,7 +161,7 @@ dnl## macros not included here so they can be given on m4 command
 ;Pages
 
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE "../licenseFile"
+  !insertmacro MUI_PAGE_LICENSE "..\licenseFile"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MULTIUSER_PAGE_INSTALLMODE
   !insertmacro MUI_PAGE_DIRECTORY
@@ -200,7 +203,7 @@ Section "appclass program" SecExe
   
   ;ADD YOUR OWN FILES HERE...
   # Added EH:
-  File "../src/appname.exe"
+  File "..\src\appname.exe"
   # Added EH 0.0.4.4:
   File "${PATH_APP_ICO}"
   
@@ -236,8 +239,6 @@ Section "appclass program" SecExe
   !insertmacro MUI_STARTMENU_WRITE_END
   # End orig. from example "StartMenu.nsi"
 
-  # ASSOC.: from FAQ, to make MS style file associations
-  # ${registerExtension} and ${unregisterExtension} worked poorly;
   # as of 0.0.4.5 use macros {mk,rm}_file_association
   ;${registerExtension} "$INSTDIR\appname.exe" \
   ; genFileExtS genFileDescS
@@ -283,8 +284,8 @@ Section "appclass help documents" SecDoc
 
   SetOutPath "$INSTDIR\mswhelpdir"
   
-  File "../doc/help.zip"
-  File "../doc/appname.pdf"
+  File "..\doc\help.zip"
+  File "..\doc\appname.pdf"
 
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -304,7 +305,7 @@ Section "appclass source archive" SecSrc
 
   SetOutPath "$INSTDIR\mswsrc_dir"
   
-  File "../../${SRC_ZIP}"
+  File "..\..\${SRC_ZIP}"
 
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -322,13 +323,13 @@ Section "appclass examples" SecExa
   # token equivalent to '*', because it is including "Makefile".
   # So, will have to give extensions individually (still better
   # than each file individually).
-  #File /a "../examples/*.*"
-  File  "../examples/*.pse"
-  File  "../examples/*.inc"
-  File  "../examples/*.pov"
-  File  "../examples/*.jpeg"
+  #File /a "..\examples\*.*"
+  File  "..\examples\*.pse"
+  File  "..\examples\*.inc"
+  File  "..\examples\*.pov"
+  File  "..\examples\*.jpeg"
   SetOutPath "$INSTDIR\mswxmpldir\anim-example"
-  File  "../anim-example/*"
+  File  "..\anim-example\*"
 
   ;Store installation folder
   WriteRegStr ${_HK_} "Software\vendorname\appname\appversion" \
@@ -341,7 +342,7 @@ SectionEnd
 ;Installer Functions
  
 Function .onInit
-  SetRegView 64
+  ;SetRegView 64
   !insertmacro MULTIUSER_INIT
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
@@ -353,7 +354,7 @@ Function .onInstSuccess
   # from discussion at:
   # http://forums.winamp.com/showthread.php?s=&threadid=140254
   System::Call \
-	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0x1000, 0, 0)'
+	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
   # query user w/ offer to start
   MessageBox MB_YESNO \
 	"Would you like to start appclass now?" \
@@ -431,9 +432,10 @@ Section "Uninstall"
   
   # Note next unconditional (no /ifempty) removal at version -- things
   # like window placement will be lost -- maybe revisit this in future
+  DeleteRegKey          ${_HK_} "Software\vendorname\appname\appversion\MainWindow"
   DeleteRegKey          ${_HK_} "Software\vendorname\appname\appversion"
-  #DeleteRegKey /ifempty ${_HK_} "Software\vendorname\appname"
-  DeleteRegKey          ${_HK_} "Software\vendorname\appname"
+  DeleteRegKey /ifempty ${_HK_} "Software\vendorname\appname"
+  #DeleteRegKey          ${_HK_} "Software\vendorname\appname"
   DeleteRegKey /ifempty ${_HK_} "Software\vendorname"
   # this removes the control panel "Add/Remove" entry
   DeleteRegKey          ${_HK_} \
@@ -456,7 +458,7 @@ Function un.onUninstSuccess
   # from discussion at:
   # http://forums.winamp.com/showthread.php?s=&threadid=140254
   System::Call \
-	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0x1000, 0, 0)'
+	'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)'
 FunctionEnd
 # end func
 

@@ -35,6 +35,7 @@
 #include <wx/config.h>
 #include <wx/filename.h>
 #include <wx/html/helpctrl.h>
+#include <wx/snglinst.h>
 #endif // WX_PRECOMP
 
 // common data, e.g. version
@@ -203,6 +204,14 @@ protected:
 	// see wx sample app "helpview"
 	wxHtmlHelpController*	help;
 	bool		help_ok;	// help docs added successfully or not
+
+	// Added v 0.0.4.5: MSW will open an instance per file selected
+	// in explorer shell (selecting open from right-click menu); it
+	// seems that only way to get multiple args passed to one instance
+	// is to set up a DropTarget, with UUID and all registry entries,
+	// etc., which must wait for the future.
+	// For now refuse 2nd instance using wxSingleInstanceChecker
+	wxSingleInstanceChecker* single_instance_check;
 
 	// setup the the Display data commented above
 	void GetDisplayData();

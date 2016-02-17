@@ -171,6 +171,27 @@ AnApp::OnInit()
 		return false;
 	}
 
+	// Added v 0.0.4.5: MSW will open an instance per file selected
+	// in explorer shell (selecting open from right-click menu); it
+	// seems that only way to get multiple args passed to one instance
+	// is to set up a DropTarget, with UUID and all registry entries,
+	// etc., which must wait for the future.
+	// For now refuse 2nd instance using wxSingleInstanceChecker --
+	// code lifted from wx docs.
+#	if wxCHECK_VERSION(2, 9, 0)
+	single_instance_check = new wxSingleInstanceChecker();
+#	else
+	wxString nchk;
+	nchk.Format("Epspline-%s", wxGetUserId().c_str());
+	single_instance_check = new wxSingleInstanceChecker(nchk);
+#endif
+	if ( single_instance_check->IsAnotherRunning() ) {
+		wxLogError(_("Epspline is already running, aborting."));
+		delete single_instance_check;
+		single_instance_check = 0;
+		return false;
+	}
+
 	// set the frame icons
 	for ( size_t i = 0; i < A_SIZE(icon_bundle_items); i++ ) {
 		iconBundle.AddIcon(wxIcon(icon_bundle_items[i]));
@@ -502,6 +523,7 @@ AnApp::OnExit()
 {
 	delete pprefsmng;
 	delete wxConfigBase::Set(0);
+	delete single_instance_check;
 	return 0;
 }
 

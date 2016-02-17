@@ -184,7 +184,7 @@ AnApp::OnInit()
 	wxString nchk;
 	nchk.Format("Epspline-%s", wxGetUserId().c_str());
 	single_instance_check = new wxSingleInstanceChecker(nchk);
-#endif
+#	endif
 	if ( single_instance_check->IsAnotherRunning() ) {
 		wxLogError(_("Epspline is already running, aborting."));
 		delete single_instance_check;

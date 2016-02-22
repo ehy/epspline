@@ -10,6 +10,23 @@
 #	*Note on F3: IDs incr from low numbers, so make explicit #s high
 #
 
+# export some environment to make GNU tools behave; esp. GNU grep,
+# which on new Ubuntu 15.10, suddenly decides that many HTML files
+# are binary and prints matches as:
+#   Binary file doc/TEMP_HELP/epsplinese5.html matches
+# LANG|LC_ALL=C seems to fix that (probably until next grep release);
+# and add POSIXLY_CORRECT to get more POSIX behavior.
+# To be complete clear some other LC_*
+LC_COLLATE=""
+LC_CTYPE=""
+LC_MESSAGES=""
+LANG=C
+export LANG
+LC_ALL=C
+export LC_ALL
+POSIXLY_CORRECT=1
+export POSIXLY_CORRECT
+
 PROG=${0##*/}
 GPAT="%WX%"
 : ${DBG:="no"}
@@ -155,12 +172,19 @@ mk_fmap () {
 
 # The pattern matching here depends completely on tool output:
 # htlatex followed by tidy. If something changes, this breaks.
+# Update: ... case in point: running on a new Ubuntu 15.10 system there
+# are suddenly line breaks where previously expacted patterns occured on
+# a single line -- even using the same TeXLive installation!  Hence the
+# two regex patterns in __PO and __PN -- __PO is old, and is left
+# in place for reference
 mk_fmap_2nd () {
 	for HTF2 in *.html ; do
 		OIFS="$IFS"; IFS="" 
-		grep -E '<h[0-9][[:space:]]+.*<a[[:space:]]name=' "$HTF2" | \
+		#__PO='<h[0-9][[:space:]]+.*<a[[:space:]]name='
+		__PN='name="[^"]*".*</h[0-9]>'
+		grep -E "$__PN" "$HTF2" | \
 			while read -r MTCH ; do
-				PHRZ="${MTCH#*<a name=\"}"
+				PHRZ="${MTCH#*name=\"}"
 				MTCH="${PHRZ%%\"*}"
 				test X = X"$MTCH" && continue
 				PHRZ="${PHRZ#*</a>}"; PHRZ="${PHRZ%%</h*}"

@@ -38,8 +38,11 @@
 
 // NOTE using wxWindow as parent (wxNotebookPage is typedef of wxWindow)
 // does *not* automatically size the page; wxPanel works
-//typedef wxNotebookPage tabpage_parent_class;
+#if wxCHECK_VERSION(2, 9, 4)
+typedef wxNotebookPage tabpage_parent_class;
+#else
 typedef wxPanel tabpage_parent_class;
+#endif
 
 // base for pages of the tabbed interface
 class A_Tabpage_base : public tabpage_parent_class {

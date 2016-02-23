@@ -176,7 +176,14 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 	#elif wxCHECK_VERSION(2, 9, 5) // comment above: 1st seen in 2.9.5
 	// no border looks OK after just a moment getting used to it;
 	// I think the 'flat look' is the current rage in design, too.
-	int rstyle = wxBORDER_NONE; // new names, 'BORDER' comes first
+	// Update in 0.0.4.5: change default to wxBORDER_THEME and
+	// allow change via macro:
+	#	if defined(GRADUATED_RULE_BORDER)
+	int rstyle = GRADUATED_RULE_BORDER;
+	#	else
+	//int rstyle = wxBORDER_NONE; // new names, 'BORDER' comes first
+	int rstyle = wxBORDER_THEME;
+	#	endif // defined(GRADUATED_RULE_BORDER)
 	#else
 	int rstyle = wxRAISED_BORDER;
 	#endif
@@ -219,12 +226,14 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 
 	// add sub-sizers
 	szrMain->Add(szrTop, 0
-		, wxGROW|wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP);
-	szrMain->Add(szrBot, 1, wxGROW|wxALL);
+		, wxGROW|wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP, 0);
+	szrMain->Add(szrBot, 1, wxGROW|wxALL, 0);
+
 #if wxCHECK_VERSION(2, 4, 0)
-	tlbut->SetThemeEnabled(true);
-	hr->SetThemeEnabled(true);
-	vr->SetThemeEnabled(true);
+	bool theme_enab = parent->GetThemeEnabled();
+	tlbut->SetThemeEnabled(theme_enab);
+	hr->SetThemeEnabled(theme_enab);
+	vr->SetThemeEnabled(theme_enab);
 #endif
 
 	SetHRule(hr);

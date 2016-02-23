@@ -85,7 +85,7 @@ END_EVENT_TABLE()
 
 A_Frame::A_Frame(
 	const wxString& title, const wxPoint& pos, const wxSize& size)
-	: wxFrame((wxFrame*)NULL, -1, title, pos, size)
+	: wxFrame(0, -1, title, pos, size)
 {
 	// set the frame icons
 	SetIcons(iconBundle);

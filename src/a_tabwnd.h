@@ -37,7 +37,11 @@
 #	include <wx/aui/auibook.h>
 	typedef	wxAuiNotebook	NoteBook_type;
 #	define	TABWND_EVENT_T	wxAuiNotebookEvent
-#	define	TABWND_PAGE_T	wxWindow
+#	if wxCHECK_VERSION(2, 9, 4)
+#		define	TABWND_PAGE_T	wxNotebookPage
+#	else
+#		define	TABWND_PAGE_T	wxWindow
+#	endif // wxCHECK_VERSION(2, 9, 4)
 #	define	TABWND_STYLE	wxAUI_NB_DEFAULT_STYLE
 #		if wxCHECK_VERSION(2, 9, 0)
 #	define	TABWND_CMD_EVENT_T	wxAuiNotebookEvent

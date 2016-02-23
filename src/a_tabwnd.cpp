@@ -74,6 +74,7 @@ A_Tabwnd::A_Tabwnd(A_Frame* parent, wxWindowID id
        : NoteBook_type(parent, id, pos, size, style)
        , owner(parent)
 {
+	SetThemeEnabled(false);
 }
 
 A_Tabwnd::~A_Tabwnd()

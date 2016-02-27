@@ -181,9 +181,10 @@ AnApp::OnInit()
 #	if wxCHECK_VERSION(2, 9, 0)
 	single_instance_check = new wxSingleInstanceChecker();
 #	else
-	wxString nchk;
-	nchk.Format("Epspline-%s", wxGetUserId().c_str());
-	single_instance_check = new wxSingleInstanceChecker(nchk);
+	{
+		wxString nchk(wxString(_T("Epspline-")) + wxGetUserId());
+		single_instance_check = new wxSingleInstanceChecker(nchk);
+	}
 #	endif
 	if ( single_instance_check->IsAnotherRunning() ) {
 		wxLogError(_("Epspline is already running, aborting."));

@@ -166,6 +166,9 @@ AnApp::OnEndSession(wxCloseEvent& e)
 bool
 AnApp::OnInit()
 {
+	pprefsmng = 0;
+	single_instance_check = 0;
+
 	// n.g. unless using wx commandline parser, else fails on args!
 	if ( false && !wxApp::OnInit() ) {
 		return false;

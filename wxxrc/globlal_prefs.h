@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 21 2009)
+// C++ code generated with wxFormBuilder (version Mar  7 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __globlal_prefs__
-#define __globlal_prefs__
+#ifndef __GLOBLAL_PREFS_H__
+#define __GLOBLAL_PREFS_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -42,53 +43,24 @@ class global_pref_dialog : public wxDialog
 	
 	protected:
 		wxFlexGridSizer* dlg_base_sizer;
-		
 		wxNotebook* dlg_notebook;
 		wxPanel* tab_global_prefs;
-		
-		
-		
-		
-		
 		wxStaticText* m_staticText9;
 		wxTextCtrl* glb_def_suffix;
-		
-		
 		wxStaticText* m_staticText4;
 		wxCheckBox* glb_draw_grid;
-		
 		wxStaticLine* m_staticline1;
-		
-		
-		
-		
-		
 		wxStaticText* m_staticText2;
 		wxColourPickerCtrl* glb_gridcolor_picker;
-		
-		
 		wxStaticText* m_staticText21;
 		wxColourPickerCtrl* glb_guidescolor_picker;
-		
-		
 		wxStaticText* m_staticText22;
 		wxColourPickerCtrl* glb_backgroundcolor_picker;
-		
 		wxPanel* tab_pov_prefs;
-		
-		
-		
-		
-		
 		wxStaticText* m_staticText3;
 		wxFilePickerCtrl* glb_pov_picker;
-		
-		
 		wxStaticText* m_staticText31;
 		wxTextCtrl* glb_pov_opts;
-		
-		
-		
 		wxButton* glb_restore_defs;
 		wxButton* glb_restore_conf;
 		wxStdDialogButtonSizer* dlg_button_sizer;
@@ -96,10 +68,6 @@ class global_pref_dialog : public wxDialog
 		wxButton* dlg_button_sizerApply;
 		wxButton* dlg_button_sizerCancel;
 		wxButton* dlg_button_sizerHelp;
-		
-		
-		
-		
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
@@ -119,9 +87,9 @@ class global_pref_dialog : public wxDialog
 	public:
 		wxString glb_def_suffix_validator; 
 		
-		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX, const wxString& name = wxT("global_pref_dialog") );
+		global_pref_dialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Epspline Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,605 ), long style = wxCAPTION|wxCLOSE_BOX, const wxString& name = wxT("global_pref_dialog") ); 
 		~global_pref_dialog();
 	
 };
 
-#endif //__globlal_prefs__
+#endif //__GLOBLAL_PREFS_H__

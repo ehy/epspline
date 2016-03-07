@@ -20,7 +20,7 @@
  */
 
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Dec 21 2009)
+// C++ code generated with wxFormBuilder (version Mar  7 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -75,8 +75,9 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	glb_def_suffix = new wxTextCtrl( tab_global_prefs, wxID_ANY, _(".inc"), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
 	glb_def_suffix->SetMaxLength( 64 ); 
-	glb_def_suffix->SetValidator( wxTextValidator( wxFILTER_NONE, &glb_def_suffix_validator ) );
 	glb_def_suffix->SetToolTip( _("Default extension/suffix used when choosing a filename for export to POV-Ray SDL; note that a leading '.' is not added automatically") );
+	
+	glb_def_suffix->SetValidator( wxTextValidator( wxFILTER_NONE, &glb_def_suffix_validator ) );
 	
 	fgSizer3->Add( glb_def_suffix, 0, wxEXPAND, 5 );
 	
@@ -96,6 +97,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	
 	fgSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
+	
 	
 	bSizer5->Add( fgSizer3, 1, wxEXPAND, 5 );
 	
@@ -165,7 +167,9 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	fgSizer5->Add( 8, 16, 1, wxEXPAND, 5 );
 	
+	
 	bSizer5->Add( fgSizer5, 1, wxEXPAND, 5 );
+	
 	
 	tab_global_prefs->SetSizer( bSizer5 );
 	tab_global_prefs->Layout();
@@ -203,7 +207,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	glb_pov_picker = new wxFilePickerCtrl( tab_pov_prefs, wxID_ANY, wxT("povray"), _("Select a POV-Ray executable file"), wxT("*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_USE_TEXTCTRL );
 	glb_pov_picker->SetToolTip( _("Enter the file name of a POV-Ray executable, with a path if necessary, or select a full path to POV-Ray from a file selection dialog window.") );
 	
-	fgSizer2->Add( glb_pov_picker, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	fgSizer2->Add( glb_pov_picker, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 	
 	
 	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );
@@ -216,6 +220,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	fgSizer2->Add( m_staticText31, 0, wxALL, 5 );
 	
 	glb_pov_opts = new wxTextCtrl( tab_pov_prefs, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB );
+	glb_pov_opts->SetMaxLength( 0 ); 
 	glb_pov_opts->SetToolTip( _("Modify the default POV-Ray options here: for example, if you are using POV-Ray with an X Window System desktop environment and the POV-Ray preview has unwanted transparency, try -visual DirectColor; or add +W<integer> +H<integer> to set preview dimensions.") );
 	
 	fgSizer2->Add( glb_pov_opts, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
@@ -223,7 +228,9 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	fgSizer2->Add( 8, 16, 1, wxEXPAND, 5 );
 	
+	
 	bSizer2->Add( fgSizer2, 1, wxEXPAND, 5 );
+	
 	
 	tab_pov_prefs->SetSizer( bSizer2 );
 	tab_pov_prefs->Layout();
@@ -257,6 +264,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	bSizer3->Add( glb_restore_conf, 0, wxALL, 5 );
 	
+	
 	fgSizer51->Add( bSizer3, 1, wxALL|wxEXPAND, 5 );
 	
 	dlg_button_sizer = new wxStdDialogButtonSizer();
@@ -269,7 +277,9 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	dlg_button_sizerHelp = new wxButton( this, wxID_HELP );
 	dlg_button_sizer->AddButton( dlg_button_sizerHelp );
 	dlg_button_sizer->Realize();
+	
 	fgSizer51->Add( dlg_button_sizer, 1, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+	
 	
 	dlg_base_sizer->Add( fgSizer51, 1, wxALL|wxEXPAND, 5 );
 	
@@ -284,6 +294,7 @@ global_pref_dialog::global_pref_dialog( wxWindow* parent, wxWindowID id, const w
 	
 	
 	dlg_base_sizer->Add( 0, 0, 1, 0, 5 );
+	
 	
 	this->SetSizer( dlg_base_sizer );
 	this->Layout();
@@ -324,4 +335,5 @@ global_pref_dialog::~global_pref_dialog()
 	dlg_button_sizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_cancel ), NULL, this );
 	dlg_button_sizerHelp->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_help ), NULL, this );
 	dlg_button_sizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( global_pref_dialog::on_OK ), NULL, this );
+	
 }

@@ -211,8 +211,7 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 	// top-left button
 	wxWindow* tlbut = new ruler_parent_class
 		(this, -1, wxDefaultPosition, sz, rstyle);
-	szrTop->Add(tlbut
-		, 0, wxALIGN_LEFT|wxALIGN_TOP, 0);
+	szrTop->Add(tlbut, 0, wxALIGN_TOP, 0);
 
 	// top ruler
 	A_Ruler* hr = new A_Ruler(this
@@ -220,9 +219,7 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 		, wxDefaultPosition, sz, rstyle);
 	hr->SetInitOffs(ticks_offs);
 	hr->SetType(rlr_horz);
-	szrTop->Add(hr, 1
-		, wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP|wxGROW
-		, 0);
+	szrTop->Add(hr, 1, wxGROW, 0);
 	canvas->SetHRule(hr);
 
 	// side ruler
@@ -231,16 +228,13 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 		, wxDefaultPosition, sz, rstyle);
 	vr->SetInitOffs(ticks_offs);
 	vr->SetType(rlr_vert);
-	szrBot->Add(vr, 0
-		, wxGROW|wxALIGN_LEFT|wxALIGN_TOP|wxALIGN_BOTTOM
-		, 0);
+	szrBot->Add(vr, 0, wxGROW, 0);
 	canvas->SetVRule(vr);
 
 	szrBot->Add(canvas, 1, wxGROW|wxALL, 0);
 
 	// add sub-sizers
-	szrMain->Add(szrTop, 0
-		, wxGROW|wxALIGN_RIGHT|wxALIGN_LEFT|wxALIGN_TOP, 0);
+	szrMain->Add(szrTop, 0, wxGROW, 0);
 	szrMain->Add(szrBot, 1, wxGROW|wxALL, 0);
 
 #if wxCHECK_VERSION(2, 4, 0)

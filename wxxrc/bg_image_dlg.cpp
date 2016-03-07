@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jan 29 2014)
+// C++ code generated with wxFormBuilder (version Mar  7 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -43,12 +43,13 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bg_img_label->Wrap( -1 );
 	bg_img_label->SetToolTip( _("Image Preview") );
 	
-	bSizer151->Add( bg_img_label, 1, wxALIGN_LEFT|wxALIGN_TOP|wxEXPAND|wxLEFT|wxTOP, 5 );
+	bSizer151->Add( bg_img_label, 1, wxALIGN_LEFT|wxALIGN_TOP|wxLEFT|wxTOP, 5 );
 	
-	bSizer13->Add( bSizer151, 1, wxALIGN_LEFT|wxALIGN_TOP|wxEXPAND|wxLEFT, 5 );
+	
+	bSizer13->Add( bSizer151, 1, wxEXPAND, 5 );
 	
 	bmp_preview = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 224,168 ), 0 );
-	bSizer13->Add( bmp_preview, 0, wxALIGN_CENTER|wxEXPAND, 5 );
+	bSizer13->Add( bmp_preview, 0, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer14;
 	bSizer14 = new wxBoxSizer( wxHORIZONTAL );
@@ -60,11 +61,13 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bg_img_info->Wrap( -1 );
 	bg_img_info->SetToolTip( _("Image Information") );
 	
-	bSizer14->Add( bg_img_info, 8, wxALIGN_RIGHT|wxALIGN_TOP|wxEXPAND|wxRIGHT|wxTOP, 5 );
+	bSizer14->Add( bg_img_info, 8, wxEXPAND, 5 );
 	
-	bSizer13->Add( bSizer14, 1, wxALIGN_RIGHT|wxALIGN_TOP|wxEXPAND|wxRIGHT, 5 );
 	
-	bSizer1->Add( bSizer13, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 0 );
+	bSizer13->Add( bSizer14, 1, wxEXPAND, 5 );
+	
+	
+	bSizer1->Add( bSizer13, 0, wxEXPAND, 0 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer1->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
@@ -109,6 +112,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer15->Add( chk_flvert, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT, 5 );
 	
+	
 	gbSizer2->Add( bSizer15, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxTOP, 5 );
 	
 	m_staticline8 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
@@ -126,13 +130,15 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	bSizer111->Add( spin_ro, 0, wxALIGN_CENTER, 5 );
 	
-	gbSizer2->Add( bSizer111, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	
+	gbSizer2->Add( bSizer111, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline4, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
 	
 	m_staticline19 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer2->Add( m_staticline19, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxEXPAND | wxALL, 5 );
+	
 	
 	bSizer1->Add( gbSizer2, 0, wxALL|wxEXPAND, 5 );
 	
@@ -156,6 +162,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticline5 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( 120,-1 ), wxLI_HORIZONTAL );
 	sizer_dimsw->Add( m_staticline5, 0, wxEXPAND | wxALL, 5 );
 	
+	
 	gbSizer1->Add( sizer_dimsw, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
 	wxBoxSizer* sizer_dimsh;
@@ -172,6 +179,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	m_staticline6 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( 120,-1 ), wxLI_HORIZONTAL );
 	sizer_dimsh->Add( m_staticline6, 0, wxEXPAND | wxALL, 5 );
+	
 	
 	gbSizer1->Add( sizer_dimsh, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
@@ -194,6 +202,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticline51 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( 120,-1 ), wxLI_HORIZONTAL );
 	sizer_offsx->Add( m_staticline51, 0, wxEXPAND | wxALL, 5 );
 	
+	
 	gbSizer1->Add( sizer_offsx, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
 	wxBoxSizer* sizer_offsx1;
@@ -210,6 +219,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	m_staticline511 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( 120,-1 ), wxLI_HORIZONTAL );
 	sizer_offsx1->Add( m_staticline511, 0, wxEXPAND | wxALL, 5 );
+	
 	
 	gbSizer1->Add( sizer_offsx1, wxGBPosition( 1, 2 ), wxGBSpan( 1, 1 ), wxEXPAND, 5 );
 	
@@ -229,24 +239,26 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	hsv_h = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_h->SetToolTip( _("Adjust HSV (Hue Saturation Value) hue.") );
 	
-	bSizer11->Add( hsv_h, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	bSizer11->Add( hsv_h, 1, wxEXPAND, 5 );
 	
 	hsv_s = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_s->SetToolTip( _("Adjust HSV (Hue Saturation Value) saturation.") );
 	
-	bSizer11->Add( hsv_s, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALIGN_TOP|wxEXPAND, 5 );
+	bSizer11->Add( hsv_s, 1, wxEXPAND, 5 );
 	
 	hsv_v = new wxSlider( this, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	hsv_v->SetToolTip( _("Adjust HSV (Hue Saturation Value) value.") );
 	
-	bSizer11->Add( hsv_v, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	bSizer11->Add( hsv_v, 1, wxEXPAND, 5 );
 	
-	bSizer9->Add( bSizer11, 1, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	bSizer9->Add( bSizer11, 1, wxEXPAND, 5 );
 	
 	m_staticline12 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLI_HORIZONTAL );
-	bSizer9->Add( m_staticline12, 0, wxEXPAND | wxALL, 5 );
+	bSizer9->Add( m_staticline12, 0, wxALL|wxEXPAND, 5 );
 	
-	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 2, 1 ), wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 3, 1 ), wxEXPAND, 5 );
 	
 	m_staticline111 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	gbSizer1->Add( m_staticline111, wxGBPosition( 0, 5 ), wxGBSpan( 3, 1 ), wxEXPAND | wxALL, 5 );
@@ -267,17 +279,19 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	band_comp = new wxSlider( this, wxID_ANY, 0, -255, 255, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
 	band_comp->SetToolTip( _("Lighten or darken image.") );
 	
-	bSizer12->Add( band_comp, 0, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	bSizer12->Add( band_comp, 1, wxEXPAND, 5 );
 	
 	
 	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	bSizer91->Add( bSizer12, 1, wxALIGN_CENTER|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	bSizer91->Add( bSizer12, 1, wxEXPAND, 5 );
 	
 	m_staticline121 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxLI_HORIZONTAL );
 	bSizer91->Add( m_staticline121, 0, wxALL|wxEXPAND, 5 );
 	
-	gbSizer1->Add( bSizer91, wxGBPosition( 0, 6 ), wxGBSpan( 2, 1 ), wxALIGN_CENTER|wxALIGN_TOP|wxEXPAND|wxLEFT|wxRIGHT, 5 );
+	
+	gbSizer1->Add( bSizer91, wxGBPosition( 0, 6 ), wxGBSpan( 3, 1 ), wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -289,9 +303,10 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	selector_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Choose an image file"), wxT("(*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm)|*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	selector_file->SetToolTip( _("Choose a background image file.") );
 	
-	bSizer8->Add( selector_file, 0, wxALIGN_CENTER|wxALL|wxBOTTOM|wxEXPAND|wxTOP, 5 );
+	bSizer8->Add( selector_file, 0, wxEXPAND, 5 );
 	
-	gbSizer1->Add( bSizer8, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	
+	gbSizer1->Add( bSizer8, wxGBPosition( 3, 0 ), wxGBSpan( 1, 7 ), wxEXPAND, 5 );
 	
 	m_staticline7 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	gbSizer1->Add( m_staticline7, wxGBPosition( 4, 0 ), wxGBSpan( 1, 7 ), wxEXPAND | wxALL, 5 );
@@ -306,11 +321,14 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	button_sizer1Help = new wxButton( this, wxID_HELP );
 	button_sizer1->AddButton( button_sizer1Help );
 	button_sizer1->Realize();
-	gbSizer1->Add( button_sizer1, wxGBPosition( 5, 0 ), wxGBSpan( 1, 7 ), wxALIGN_CENTER|wxALIGN_TOP|wxALL|wxEXPAND|wxTOP, 5 );
+	
+	gbSizer1->Add( button_sizer1, wxGBPosition( 5, 0 ), wxGBSpan( 1, 7 ), wxALL|wxEXPAND, 5 );
+	
 	
 	bSizer1->Add( gbSizer1, 1, wxALL|wxEXPAND, 5 );
 	
-	fgSizer2->Add( bSizer1, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	
+	fgSizer2->Add( bSizer1, 1, wxEXPAND, 5 );
 	
 	
 	fgSizer2->Add( 16, 1, 1, wxEXPAND, 5 );
@@ -323,6 +341,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	
 	fgSizer2->Add( 16, 16, 1, wxEXPAND, 5 );
+	
 	
 	this->SetSizer( fgSizer2 );
 	this->Layout();
@@ -452,4 +471,5 @@ bg_image::~bg_image()
 	button_sizer1Cancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_cancel ), NULL, this );
 	button_sizer1Help->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_help ), NULL, this );
 	button_sizer1OK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( bg_image::on_ok ), NULL, this );
+	
 }

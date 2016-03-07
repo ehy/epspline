@@ -384,7 +384,7 @@ A_Frame::A_Frame(
 	tabwnd->SetAutoLayout(true);
 	wxBoxSizer* szrMain = new wxBoxSizer(wxVERTICAL);
 #if wxCHECK_VERSION(2, 6, 0)
-	szrMain->Add(tabwnd, 1, wxGROW|wxALIGN_CENTER, 0);
+	szrMain->Add(tabwnd, 1, wxGROW, 0);
 #else
 	wxNotebookSizer* nbs = new wxNotebookSizer(tabwnd);
 	szrMain->Add(nbs, 1, wxGROW|wxALIGN_CENTER, 0);

@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jan 29 2014)
+// C++ code generated with wxFormBuilder (version Mar  7 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __bg_image_dlg__
-#define __bg_image_dlg__
+#ifndef __BG_IMAGE_DLG_H__
+#define __BG_IMAGE_DLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -43,14 +44,9 @@ namespace ns_bg_img_dlg
 		private:
 		
 		protected:
-			
-			
-			
-			
 			wxBoxSizer* bSizer13;
 			wxStaticText* bg_img_label;
 			wxStaticBitmap* bmp_preview;
-			
 			wxStaticText* bg_img_info;
 			wxStaticLine* m_staticline1;
 			wxStaticLine* m_staticline13;
@@ -86,9 +82,7 @@ namespace ns_bg_img_dlg
 			wxStaticLine* m_staticline12;
 			wxStaticLine* m_staticline111;
 			wxStaticText* m_staticText71;
-			
 			wxSlider* band_comp;
-			
 			wxStaticLine* m_staticline121;
 			wxStaticText* m_staticText9;
 			wxFilePickerCtrl* selector_file;
@@ -98,10 +92,6 @@ namespace ns_bg_img_dlg
 			wxButton* button_sizer1Apply;
 			wxButton* button_sizer1Cancel;
 			wxButton* button_sizer1Help;
-			
-			
-			
-			
 			
 			// Virtual event handlers, overide them in your derived class
 			virtual void on_close_event( wxCloseEvent& event ) { event.Skip(); }
@@ -131,11 +121,11 @@ namespace ns_bg_img_dlg
 		
 		public:
 			
-			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE|wxSYSTEM_MENU );
+			bg_image( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Background Image"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE|wxSYSTEM_MENU ); 
 			~bg_image();
 		
 	};
 	
 } // namespace ns_bg_img_dlg
 
-#endif //__bg_image_dlg__
+#endif //__BG_IMAGE_DLG_H__

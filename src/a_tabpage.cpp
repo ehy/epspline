@@ -40,6 +40,20 @@
 #include "a_tabpage.h"
 #include "a_frame.h"
 
+// wx 3.1.0 introduces more name changes for constants, as 2.9.x did.
+#undef FONTFAMILY_MAIN
+#undef FONTSTYLE_MAIN
+#undef FONTWEIGHT_MAIN
+#if wxCHECK_VERSION(3, 1, 0)
+#define FONTFAMILY_MAIN wxFONTFAMILY_SWISS
+#define FONTSTYLE_MAIN  wxFONTSTYLE_NORMAL
+#define FONTWEIGHT_MAIN wxFONTWEIGHT_LIGHT
+#else
+#define FONTFAMILY_MAIN wxSWISS
+#define FONTSTYLE_MAIN  wxNORMAL
+#define FONTWEIGHT_MAIN wxLIGHT
+#endif
+
 // A_Tabpage
 //
 
@@ -132,12 +146,12 @@ A_Tabpage_managed::A_Tabpage_managed(A_Frame* topframe
 		dc.SetMapMode(wxMM_TEXT);
 		wxFont of = dc.GetFont();
 		#if defined(__WXMSW__)
-		fnt.SetStyle(wxNORMAL);
-		fnt.SetFamily(wxSWISS);
+		fnt.SetStyle(FONTSTYLE_MAIN);
+		fnt.SetFamily(FONTFAMILY_MAIN);
 		fnt.SetFaceName(wxT("")); // BUG: Always set to MS Sans Serif, a raster.
 		#else
 		fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-		fnt.SetWeight(wxLIGHT);
+		fnt.SetWeight(FONTWEIGHT_MAIN);
 		#endif
 		#if !defined(__WXMOTIF__)
 		fnt.SetPointSize(7);

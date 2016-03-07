@@ -42,6 +42,14 @@
 #include "a_ruler.h"
 #include "util.h"
 
+// wx 3.1.0 introduces more name changes for constants, as 2.9.x did.
+#undef PENSTYLE_SOLID
+#if wxCHECK_VERSION(3, 1, 0)
+#define PENSTYLE_SOLID wxPENSTYLE_SOLID
+#else
+#define PENSTYLE_SOLID wxSOLID
+#endif
+
 // A_Ruler
 //
 
@@ -349,7 +357,7 @@ A_Ruler::DrawRules(wxDC& dc, const wxRect& R)
 	wxFont of = dc.GetFont();
 	wxColour otfg = dc.GetTextForeground();
 
-	wxPen np(clr, 1, wxSOLID);
+	wxPen np(clr, 1, PENSTYLE_SOLID);
 	dc.SetPen(np);
 	dc.SetFont(fnt);
 	dc.SetTextForeground(fclr);

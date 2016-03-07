@@ -92,8 +92,13 @@ A_Aboutbox::A_Aboutbox(wxWindow* parent, int id, const wxString& title)
 		// Just hoping it's suitable
 		fea.GetCount() > 0 ? fea[0] : wxFONTENCODING_DEFAULT
 		);
-#else  // if ! wxCHECK_VERSION(2, 6, 0)
+#elif ! wxCHECK_VERSION(3, 1, 0)
 	wxFont font(10, wxMODERN, wxNORMAL, wxNORMAL);
+#else  // if ! wxCHECK_VERSION(2, 6, 0)
+	wxFont font(10,
+		wxFONTFAMILY_MODERN,
+		wxFONTSTYLE_NORMAL,
+		wxFONTWEIGHT_NORMAL);
 #endif // if ! wxCHECK_VERSION(2, 6, 0)
 	wxTextAttr tatt(*wxBLACK, *wxWHITE, font);
 	wxString textwx, text;

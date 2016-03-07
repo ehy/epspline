@@ -59,6 +59,42 @@
 #include "wxutil.h"
 
 
+// wx 3.1.0 introduces more name changes for constants, as 2.9.x did.
+#undef PENSTYLE_SOLID
+#undef PENSTYLE_DASH
+#undef PENSTYLE_SEL_BOX
+#undef BRUSHSTYLE_SOLID
+#undef BRUSHSTYLE_TRANSPARENT
+#if wxCHECK_VERSION(3, 1, 0)
+#	define BRUSHSTYLE_SOLID       wxBRUSHSTYLE_SOLID
+#	define BRUSHSTYLE_TRANSPARENT wxBRUSHSTYLE_TRANSPARENT
+#else
+#	define BRUSHSTYLE_SOLID       wxSOLID
+#	define BRUSHSTYLE_TRANSPARENT wxTRANSPARENT
+#endif
+#if defined(__WXMSW__)
+#	if wxCHECK_VERSION(3, 1, 0)
+#		define PENSTYLE_SOLID wxPENSTYLE_SOLID
+#		define PENSTYLE_DASH  wxPENSTYLE_DOT
+#		define PENSTYLE_SEL_BOX  wxPENSTYLE_SHORT_DASH
+#	else
+#		define PENSTYLE_SOLID wxSOLID
+#		define PENSTYLE_DASH  wxDOT
+#		define PENSTYLE_SEL_BOX  wxSHORT_DASH
+#	endif
+#else
+#	if wxCHECK_VERSION(3, 1, 0)
+#		define PENSTYLE_SOLID wxPENSTYLE_SOLID
+#		define PENSTYLE_DASH  wxPENSTYLE_SHORT_DASH
+#		define PENSTYLE_SEL_BOX  wxPENSTYLE_SHORT_DASH
+#	else
+#		define PENSTYLE_SOLID wxSOLID
+#		define PENSTYLE_DASH  wxSHORT_DASH
+#		define PENSTYLE_SEL_BOX  wxSHORT_DASH
+#	endif
+#endif
+
+
 // namespace for functor classes, as necessary
 namespace eps_funcs {
 
@@ -2765,11 +2801,9 @@ BezierSpline::DrawSelectedDot(wxDC& dc, const SplinePoint& pt, unsigned dsize)
 
 	wxPen orig = dc.GetPen();
 	wxPen npen(*wxGREY_PEN);
-	#if defined(__WXMSW__)
-	npen.SetStyle(wxDOT);
-	#else
-	npen.SetStyle(wxSHORT_DASH);
-	#endif
+
+	npen.SetStyle(PENSTYLE_DASH);
+
 	dc.SetPen(npen);
 
 	dc.DrawLine(IRINT(C0.x), IRINT(C0.y), IRINT(E0.x), IRINT(E0.y));

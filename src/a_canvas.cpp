@@ -88,6 +88,42 @@ namespace aap = ANTI_ALIAS_LINE_NAMESPACE_NAME;
 #define wxOVERWRITE_PROMPT wxFD_OVERWRITE_PROMPT
 #endif
 
+// wx 3.1.0 introduces more name changes for constants, as 2.9.x did.
+#undef PENSTYLE_SOLID
+#undef PENSTYLE_DASH
+#undef PENSTYLE_SEL_BOX
+#undef BRUSHSTYLE_SOLID
+#undef BRUSHSTYLE_TRANSPARENT
+#if wxCHECK_VERSION(3, 1, 0)
+#	define BRUSHSTYLE_SOLID       wxBRUSHSTYLE_SOLID
+#	define BRUSHSTYLE_TRANSPARENT wxBRUSHSTYLE_TRANSPARENT
+#else
+#	define BRUSHSTYLE_SOLID       wxSOLID
+#	define BRUSHSTYLE_TRANSPARENT wxTRANSPARENT
+#endif
+#if defined(__WXMSW__)
+#	if wxCHECK_VERSION(3, 1, 0)
+#		define PENSTYLE_SOLID wxPENSTYLE_SOLID
+#		define PENSTYLE_DASH  wxPENSTYLE_DOT
+#		define PENSTYLE_SEL_BOX  wxPENSTYLE_SHORT_DASH
+#	else
+#		define PENSTYLE_SOLID wxSOLID
+#		define PENSTYLE_DASH  wxDOT
+#		define PENSTYLE_SEL_BOX  wxSHORT_DASH
+#	endif
+#else
+#	if wxCHECK_VERSION(3, 1, 0)
+#		define PENSTYLE_SOLID wxPENSTYLE_SOLID
+#		define PENSTYLE_DASH  wxPENSTYLE_SHORT_DASH
+#		define PENSTYLE_SEL_BOX  wxPENSTYLE_SHORT_DASH
+#	else
+#		define PENSTYLE_SOLID wxSOLID
+#		define PENSTYLE_DASH  wxSHORT_DASH
+#		define PENSTYLE_SEL_BOX  wxSHORT_DASH
+#	endif
+#endif
+
+
 // A_Canvas
 
 int    A_Canvas::szhandles          = TRANSFORM_HANDLE_SIZE;
@@ -197,7 +233,8 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 	, transtype(or_not)
 	, scaleconstrain(0), shearconstrain(0), rotateconstrain(0.0)
 	, im_main(0) // allocated just before use
-	, guidecolor(0xFF, 0, 0x40), guidepen(guidecolor, 1, wxSOLID)
+	, guidecolor(0xFF, 0, 0x40)
+	, guidepen(guidecolor, 1, PENSTYLE_SOLID)
 	, guidetol(5), guidesnap(true)
 	, xscale(100), yscale(100)
 {
@@ -217,7 +254,7 @@ A_Canvas::A_Canvas(A_Frame* parent, A_Tabpage* realparent, bool aa)
 
 	if ( pfs ) {
 		wxColour tclr(pfs->canvas_guides_color);
-		guidepen = wxPen(tclr, 1, wxSOLID);
+		guidepen = wxPen(tclr, 1, PENSTYLE_SOLID);
 	}
 
 	m_pop = new wxMenu(_("Curves"), wxMENU_TEAROFF);
@@ -290,7 +327,7 @@ A_Canvas::PreferenceChanged()
 	bg_mng->set_rotbg(clr.Red(), clr.Green(), clr.Blue());
 	
 	clr = wxColour(pfs->canvas_guides_color);
-	guidepen = wxPen(clr, 1, wxSOLID);
+	guidepen = wxPen(clr, 1, PENSTYLE_SOLID);
 	
 	Refresh();
 }
@@ -1801,7 +1838,7 @@ A_Canvas::DrawTransCtr(wxDC& dc, bool clear, bool draw, wxPoint pt)
 		of = dc.GetLogicalFunction();
 	wxPen op = dc.GetPen();
 	wxBrush ob = dc.GetBrush();
-	wxBrush br(wxColour(0,0,0), wxTRANSPARENT);
+ 	wxBrush br(wxColour(0,0,0), BRUSHSTYLE_TRANSPARENT);
 
 	dc.SetLogicalFunction(wxINVERT);
 	dc.SetPen(*wxGREY_PEN);
@@ -1841,7 +1878,7 @@ A_Canvas::DrawTransCtr(wxDC& dc, bool clear, bool draw, wxPoint pt)
 		wxRasterOperationMode of = dc.GetLogicalFunction();
 		wxPen op = dc.GetPen();
 		wxBrush ob = dc.GetBrush();
-		wxBrush br(wxColour(0,0,0), wxTRANSPARENT);
+		wxBrush br(wxColour(0,0,0), BRUSHSTYLE_TRANSPARENT);
 	
 		dc.SetLogicalFunction(wxCOPY);
 		dc.SetPen(*wxBLACK_PEN);
@@ -2912,7 +2949,8 @@ A_Canvas::DrawCur(wxDC& dc)
 {
 	if ( D->cur ) {
 		D->cur->Draw(dc);
-		D->cur->DrawDots(dc, wxBrush(wxColour(255,0,0), wxSOLID));
+		D->cur->DrawDots(
+			dc, wxBrush(wxColour(255,0,0), BRUSHSTYLE_SOLID));
 	}
 }
 
@@ -2959,8 +2997,9 @@ A_Canvas::DrawSelPt(wxDC& dc)
 	}
 	if ( sb == 0 )
 		return;
-	sb->DrawSelectedDot(dc, wxBrush(wxColour(0,255,255), wxSOLID)
-		, *D->selpt, selsize);
+	sb->DrawSelectedDot(
+		dc, wxBrush(wxColour(0,255,255), BRUSHSTYLE_SOLID),
+		*D->selpt, selsize);
 }
 
 void
@@ -2990,7 +3029,7 @@ A_Canvas::DrawTransformHandles(wxDC& dc, datatype s)
 	const wxRect& r = *s->BBox();
 	wxCoord x, y, w, h;
 	wxBrush ob = dc.GetBrush();
-	dc.SetBrush(wxBrush(wxColour(192,192,192), wxSOLID));
+	dc.SetBrush(wxBrush(wxColour(192,192,192), BRUSHSTYLE_SOLID));
 
 	x = r.x; y = r.y; w = sz; h = sz;
 	dc.DrawRectangle(x, y, w, h);
@@ -3069,17 +3108,9 @@ A_Canvas::DrawSelBox(wxDC& dc, SplineBase* s)
 {
 	wxPen op = dc.GetPen();
 	wxPen np(*wxGREY_PEN);
-	np.SetStyle(wxSHORT_DASH);
+	np.SetStyle(PENSTYLE_SEL_BOX);
 	dc.SetPen(np);
-#if 0
-	wxBrush ob = dc.GetBrush();
-	wxBrush nb(wxNullBrush);
-	nb.SetStyle(wxTRANSPARENT);
-	dc.SetBrush(nb);
-	wxRect r(*s->BBox());
-	dc.DrawRectangle(r.x, r.y, r.width, r.height);
-	dc.SetBrush(ob);
-#else
+
 	wxPoint p [5];
 	s->BBox(p[0], p[2]);
 	p[1].x = p[2].x;
@@ -3088,10 +3119,10 @@ A_Canvas::DrawSelBox(wxDC& dc, SplineBase* s)
 	p[3].y = p[2].y;
 	p[4] = p[0];
 	dc.DrawLines(A_SIZE(p), p);
-#endif
+
 	dc.SetPen(op);
 
-	s->DrawDots(dc, wxBrush(wxColour(255,0,0), wxSOLID));
+	s->DrawDots(dc, wxBrush(wxColour(255,0,0), BRUSHSTYLE_SOLID));
 	DrawCur(dc);
 	DrawSelPt(dc);
 
@@ -3129,7 +3160,8 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	const prefs_set* pfs = A_Prefs_Manager::get_prefs_set();
 	wxColour grclr(pfs ? pfs->canvas_grid_color : ch2wxs("#E0E0FF"));
 	wxColour guclr(pfs ? pfs->canvas_guides_color : ch2wxs("#FF0000"));
-	wxColour bgclr(pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
+	wxColour bgclr(
+		pfs ? pfs->canvas_background_color : ch2wxs("#FFFFFF"));
 	bool drawgrid = pfs ? pfs->canvas_grid_show : true;
 
 	wxPen op = dc.GetPen();
@@ -3139,9 +3171,9 @@ A_Canvas::DrawGridLogical(wxDC& dc, const wxRect& r, int wid)
 	dc.DrawRectangle(r.x, r.y, r.width, r.height);
 
 	#if defined(__WXGTK__) && 0
-	wxPen    np(grclr, 1, wxSHORT_DASH);
+	wxPen    np(grclr, 1, PENSTYLE_DASH);
 	#else
-	wxPen    np(grclr, 1, wxSOLID);
+	wxPen    np(grclr, 1, PENSTYLE_SOLID);
 	#endif
 	dc.SetPen(np);
 

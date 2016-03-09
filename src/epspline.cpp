@@ -525,14 +525,38 @@ AnApp::OnInit()
 	return TRUE;
 }
 
+#ifndef USE_HELP_DISPLAY_HACK
+#define USE_HELP_DISPLAY_HACK 1
+#endif
+
+#if USE_HELP_DISPLAY_HACK
 void
 AnApp::help_display_hack()
 {
-	//if ( wxConfigBase* pConfig = GetCfgPtr() ) {
-	//	help->WriteCustomization(pConfig);
-	//	help->ReadCustomization(pConfig);
-	//}
+	if ( help_ok ) {
+		wxHtmlWindow* hw = help->GetHelpWindow()->GetHtmlWindow();
+		if ( hw ) {
+			// Problem: frequent failure to scroll anchor link
+			// ("foo.html#bar") into view in the html window.
+			// Clearly a bug in (re)size handling, but I haven't
+			// found where; IAC, size event handler results in
+			// call to wxHtmlWindow::CreateLayout() (which is
+			// protected, so can't be called directly here),
+			// which is where html 'cells' have display size
+			// calculated. A fresh wxHtmlWindow::CreateLayout()
+			// call fixes the anchor display problem at least
+			// until window resize or splitter sash move, when
+			// the symptom might reappear -- EH 2016/03/09 09:15:40
+			if ( wxEvtHandler* hdlr = hw->GetEventHandler() ) {
+				wxSizeEvent ev(wxSize(hw->GetSize()));
+				hdlr->ProcessEvent(ev);
+			}
+		}
+	}
 }
+#else  // USE_HELP_DISPLAY_HACK
+void AnApp::help_display_hack() {}
+#endif // USE_HELP_DISPLAY_HACK
 
 int
 AnApp::OnExit()

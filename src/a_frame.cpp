@@ -654,7 +654,9 @@ A_Frame::OnQuit(wxCloseEvent& e)
 	// but after a new segfault with a certain wx 3.0.2 build led me
 	// to try again, the 2,8 problem was gone.  It had seemed to
 	// prevent config data save.
-	wxGetApp().QuitHelp();
+	// UPDATE 03.08.2016: once again, explicit quit prevents
+	// config data save; re-commented.
+	//wxGetApp().QuitHelp();
 
 	Destroy();
 }

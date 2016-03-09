@@ -176,7 +176,7 @@ dep: src/dep
 
 Release: all
 
-Debug: depend
+Debug DEBUG debug: depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
 		CXX="$(CXX)" \
@@ -187,7 +187,7 @@ Debug: depend
 	@echo "Succeeded making in $(DIRS)"
 
 junko:
-	@echo loaded
+	@echo loaded, partner
 
 # one-time make uninstall data containers: see
 # comment by UNINSTALLER_ROOT assignment

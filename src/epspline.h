@@ -26,6 +26,7 @@
 
 #include "cfg.h"
 #include "stdcc.h"
+#include "util.h"
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -122,6 +123,7 @@ public:
 	bool ShowHelp() {
 		if ( help_ok ) {
 			help->DisplayContents();
+			help_display_hack();
 		}
 		return help_ok;
 	}
@@ -129,6 +131,7 @@ public:
 	bool ShowHelp(int id) {
 		if ( help_ok ) {
 			help->Display(id);
+			help_display_hack();
 		}
 		return help_ok;
 	}
@@ -136,6 +139,7 @@ public:
 	bool ShowHelp(const wxString& s) {
 		if ( help_ok ) {
 			help->Display(s);
+			help_display_hack();
 		}
 		return help_ok;
 	}
@@ -147,7 +151,14 @@ public:
 		return help_ok;
 	}
 
-	void QuitHelp() { help->Quit(); }
+	void QuitHelp() {
+		if ( help_ok ) {
+			if ( wxConfigBase* pConfig = GetCfgPtr() ) {
+				help->WriteCustomization(pConfig);
+			}
+			help->Quit();
+		}
+	}
 
 	// Try to determine if the display/user IO server is on
 	// a remote host or the same machine as this process.
@@ -204,6 +215,12 @@ protected:
 	// see wx sample app "helpview"
 	wxHtmlHelpController*	help;
 	bool		help_ok;	// help docs added successfully or not
+	// Help viewer bug: on link#anchor click, viewer often fails
+	// to scroll view to #anchor, and will continue to fail to
+	// do so until frame/sash resize, after which it will find
+	// anchors (at least for a while).
+	// This proc is the place to seek work-around solutions.
+	void		help_display_hack();
 
 	// Added v 0.0.4.5: MSW will open an instance per file selected
 	// in explorer shell (selecting open from right-click menu); it

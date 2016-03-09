@@ -494,12 +494,12 @@ AnApp::OnInit()
 	// make the help controller
 	help = new wxHtmlHelpController(
 #	if wxCHECK_VERSION(2, 8, 0)
-		wxHF_DEFAULT_STYLE|wxHF_OPEN_FILES, frame);
+	wxHF_DEFAULT_STYLE, frame);
 #	else  // wxCHECK_VERSION(2, 8, 0)
-		wxHF_DEFAULT_STYLE|wxHF_OPEN_FILES);
+	wxHF_DEFAULT_STYLE|wxHF_OPEN_FILES);
 #	endif // wxCHECK_VERSION(2, 8, 0)
+
 	// add help book(s) (zip file[s])
-	help->UseConfig(pConfig);
 	wxFileName helpbook(resourcedir, wxT(HELP_BOOK_NAME));
 	helpbook.AppendDir(wxT(HELP_DOC_SUBDIR));
 	help_ok = help->AddBook(helpbook);
@@ -513,13 +513,25 @@ AnApp::OnInit()
 			h = helpbook.GetFullPath();
 			std::fprintf(stderr, "%s: failed loading help \"%s\"\n",
 				wxs2ch(fn), wxs2ch(h));
+			delete help;
+			help = 0;
 		}
 	}
-	if ( false && help_ok ) {
-		help->ReadCustomization(pConfig);
+	
+	if ( help_ok ) {
+		help->UseConfig(pConfig);
 	}
 
 	return TRUE;
+}
+
+void
+AnApp::help_display_hack()
+{
+	//if ( wxConfigBase* pConfig = GetCfgPtr() ) {
+	//	help->WriteCustomization(pConfig);
+	//	help->ReadCustomization(pConfig);
+	//}
 }
 
 int
@@ -528,6 +540,7 @@ AnApp::OnExit()
 	delete pprefsmng;
 	delete wxConfigBase::Set(0);
 	delete single_instance_check;
+	//delete help;
 	return 0;
 }
 

@@ -279,7 +279,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer9->Add( m_staticline12, 0, wxALL|wxEXPAND, 5 );
 	
 	
-	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 3, 1 ), wxEXPAND, 5 );
+	gbSizer1->Add( bSizer9, wxGBPosition( 0, 4 ), wxGBSpan( 3, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticline111 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_VERTICAL );
 	gbSizer1->Add( m_staticline111, wxGBPosition( 0, 5 ), wxGBSpan( 3, 1 ), wxEXPAND | wxALL, 5 );
@@ -312,7 +312,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer91->Add( m_staticline121, 0, wxALL|wxEXPAND, 5 );
 	
 	
-	gbSizer1->Add( bSizer91, wxGBPosition( 0, 6 ), wxGBSpan( 3, 1 ), wxEXPAND, 5 );
+	gbSizer1->Add( bSizer91, wxGBPosition( 0, 6 ), wxGBSpan( 3, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );

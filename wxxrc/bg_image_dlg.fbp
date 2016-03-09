@@ -2851,7 +2851,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">4</property>
-                                    <property name="flag">wxEXPAND</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="row">0</property>
                                     <property name="rowspan">3</property>
                                     <object class="wxBoxSizer" expanded="0">
@@ -3448,7 +3448,7 @@
                                     <property name="border">5</property>
                                     <property name="colspan">1</property>
                                     <property name="column">6</property>
-                                    <property name="flag">wxEXPAND</property>
+                                    <property name="flag">wxALL|wxEXPAND</property>
                                     <property name="row">0</property>
                                     <property name="rowspan">3</property>
                                     <object class="wxBoxSizer" expanded="0">

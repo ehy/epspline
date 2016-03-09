@@ -43,7 +43,8 @@ MKIDXSTY=	$(NAME).ist
 MKIDXARG=	-s $(MKIDXSTY) -o $(NAME).ind
 MKIDX	=	$(MKIDXCMD) $(MKIDXARG)
 MK_ADDL =	./mk_wxHT.sh
-HCHK	=	tidy
+#HCHK	=	tidy
+HCHK	=	true
 HCHKARGS=	-c -i -w 0 -latin1 -m
 
 NCOMP	=	3

@@ -237,7 +237,12 @@ public:
 
 template<typename _CtrValT>
 inline std::back_insert_iterator<_CtrValT>
+#if defined(__SUNPRO_CC) && OSOL_QUIRKS
+// OpenSolaris w/ Sun CC balks at specialization placed in std::
+back_inserter(ContainerWrap<_CtrValT>& _ctr)
+#else
 std::back_inserter(ContainerWrap<_CtrValT>& _ctr)
+#endif
 { return _ctr.get_bk_ins_itr(); }
 
 #endif // _CONTAINER_WRAP_H_

@@ -223,6 +223,10 @@ OpenIndiana:
     which has LANG=en_US.UTF-8. Setting LANG=C make lets compilation
     succeed.
     
+    Update: as of epspline 0.0.4.5p1 -DOSOL_QUIRKS=1 must be present
+    on the command line if building with Sunware CC on OpenSolaris;
+    if build fails with CC on OpenIndiana, try it.
+
     The native ``install'' command does not like the BSDish arguments
     used in the Makefile, but OpenIndiana, and OpenSolaris, have a
     ``ginstall'' command that works.
@@ -265,11 +269,15 @@ OpenSolaris:
     It does not seem necessary to use LANG=C, as in OpenIndiana,
     even though the author's system assigns LANG the same value.
 
+    Update: as of epspline 0.0.4.5p1 -DOSOL_QUIRKS=1 must be present
+    on the command line if building with Sunware CC.
+
     So, ensuring $PATH leads to POSIX commands, a successful build
     with pkg://wxwidgets should result from something like:
     
         % make CXX=CC \
-        CXXFLAGS="-fast -xO3 -include vector -include algorithm" \
+        CXXFLAGS="-fast -xO3 -DOSOL_QUIRKS=1 \
+        -include vector -include algorithm" \
         && sudo make INSTALLCMD=ginstall install
 
     To build with GCC, assuming a wxWidgets built with GCC and

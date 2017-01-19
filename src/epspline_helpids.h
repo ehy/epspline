@@ -90,6 +90,10 @@
 #define IDS_CreatingNewObjects		"Creating New Objects"
 #define IDF_CreatingNewObjects		"epsplinese4.html#x12-200002.2.1"
 
+#define IDI_NewObjectSummary		240
+#define IDS_NewObjectSummary		"New Object Summary"
+#define IDF_NewObjectSummary		"epsplinese4.html#x12-220002.2.1"
+
 #define IDI_ContinuedEditing		256
 #define IDS_ContinuedEditing		"Continued Editing"
 #define IDF_ContinuedEditing		"epsplinese5.html"

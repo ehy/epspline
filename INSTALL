@@ -131,6 +131,12 @@ Unix/POSIX:
 	  make CXX=clang++ CXXFLAGS="$CXXFLAGS -std=c++11" <other args>
 
 	which should succeed.
+	
+	UPDATE(1) NOTE: the above is no longer sufficient for clang++ --
+	now -Wno-potentially-evaluated-expression will be needed too --
+	and if warnings from the parser code annoy you, then use
+	-Wno-writable-strings and -Wno-deprecated-register as well.
+	Others might be necessary; this is obviously a moving target.
 
 GNU/Linux (probably GNU/*):
     With wxWidgets installed from a package system, a simple

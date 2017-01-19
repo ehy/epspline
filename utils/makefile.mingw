@@ -25,22 +25,27 @@ RC  = $(PRGNM).rc
 RES = $(PRGNM).res
 BIN = $(PRGNM).exe
 
-INCLUDES = -I./include/freetype2 -I./include
+#BITS=64
+BITS=32
+MGPFX=i686
+#MGPFX=x86_64
 
-#LIBS = ./freetype6.dll
-#LIBS = ./lib/freetype.lib
-LIBS = ./lib/libfreetype.dll.a
+FTPATH=/home/evh/build-local/freetype/MSW/install-$(BITS)
 
-CXX = i686-w64-mingw32-c++
-#CXX = x86_64-w64-mingw32-c++
+INCLUDES = -I$(FTPATH)/include/freetype2 -I./include
+
+LDFLAGS = -L$(FTPATH)/lib
+LIBS = -lfreetype
+
+CXX = $(MGPFX)-w64-mingw32-c++
 
 CXXFLAGS = -Os -static -mconsole $(INCLUDES)
-#CXXFLAGS = -Os -mconsole $(INCLUDES)
+#CXXFLAGS = -Os -static -mconsole $(INCLUDES) -DFMT_HIGHPREC=13
 
 all: $(BIN)
 
-$(BIN): $(SRC) $(RES)
-	$(CXX) $(CXXFLAGS) -o $@ $(SRC) $(LIBS) $(RES)
+$(BIN): $(PRGNM).o $(RES)
+	$(CXX) $(CXXFLAGS) -o $@ $(PRGNM).o $(LDFLAGS) $(LIBS) $(RES)
 
 # make MSW resource binary -- note the attempt to find the resource
 # compiler if $(MSWRCC) is empty assumes tool name pattern of
@@ -60,5 +65,5 @@ $(RES): $(RC)
 	@echo Succeeded compiling MSW binary resource $@
 
 clean:
-	rm -f core *.core $(BIN) $(RES)
+	rm -f core *.core *.o $(BIN) $(RES)
 

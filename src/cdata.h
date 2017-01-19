@@ -20,7 +20,7 @@
 \**********************************************************************/
 
 #ifndef	_CDATA_H_
-#define	_CDATA_H_		1029
+#define	_CDATA_H_		327680
 
 
 #ifndef	APPNAME_IN_ASCII
@@ -36,11 +36,11 @@
 #endif	/* #ifndef VENDORNAME */
 
 #ifndef	APPVERSIONSTR
-#define	APPVERSIONSTR		"0.0.4.5p1"	/* application version as string */
+#define	APPVERSIONSTR		"0.5.0.0"	/* application version as string */
 #endif	/* #ifndef APPVERSIONSTR */
 
 #ifndef	APPVERSION
-#define	APPVERSION		1029	/* numeric version: major<<24|minor<<16|revisionmajor<<8|revisionminor */
+#define	APPVERSION		327680	/* numeric version: major<<24|minor<<16|revisionmajor<<8|revisionminor */
 #endif	/* #ifndef APPVERSION */
 
 #if defined(__WXMSW__)

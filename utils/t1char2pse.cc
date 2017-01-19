@@ -71,6 +71,7 @@
 // the DMC C-library (at least that has been my experience).
 //
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -112,14 +113,44 @@ extern "C" {
 #endif
 } // extern "C"
 
+// for -x high precision format option
+#ifndef FMT_HIGHPREC
+#	define FMT_HIGHPREC 8 // lucky number
+#endif // FMT_HIGHPREC
+
+// use mbrtowc, or mbtowc?
+#ifndef USE_MBRTOWC
+#	define USE_MBRTOWC 1
+#endif // USE_MBRTOWC
+
+// Unix vs. DOS, sigh
+#if _MSSYS_
+#	include <windows.h>
+#	ifndef CP_SYMBOL // e.g., dmc
+#		define CP_SYMBOL 42
+#	endif
+const char dirsep = '\\';
+typedef UINT cpagetype;
+cpagetype cur_cpage = CP_ACP;
+#else // _MSSYS_
+const char dirsep = '/';
+typedef const char* cpagetype;
+cpagetype cur_cpage = 0;
+#endif // _MSSYS_
+
+// class to be instantiated on stack in blocks that need
+// a temporary change of a locale category so that dtor
+// will automatically restore the original when block is
+// left -- used herein for LC_NUMERIC to ensure portable
+// "C" locale printf formatting of real numbers
 template<int C> class C_loc_Temp {
 protected:
         std::string orig;
 public:
-        C_loc_Temp() {
+        C_loc_Temp(const char* loc = "C") {
                 const char* p = std::setlocale(C, NULL);
                 orig = p ? p : "";
-                std::setlocale(C, "C");
+                std::setlocale(C, loc);
         }
         ~C_loc_Temp() {
                 std::setlocale(C, orig.c_str());
@@ -127,6 +158,7 @@ public:
 };
 
 typedef C_loc_Temp<LC_NUMERIC> cnumtmp;
+typedef C_loc_Temp<LC_ALL>     cloctmp;
 
 
 typedef double flt_t;
@@ -179,6 +211,33 @@ get_envvars();
 void
 get_options(int ac, char* av[], std::vector<iarg>& ia);
 
+// utility for common bits; as a template so that
+// args may be PtCoord type herein, or FreeType's
+// FT_Vector, both of which have members x and y
+// -- types T and U are the points from which
+// midpoint is taken, and R& pR is assigned result
+template<class T, class U, class R> inline void
+midpoint_assign(const T& p1, const U& p2, R& pR)
+{
+	pR.x = (p1.x + p2.x) / 2.0;
+	pR.y = (p1.y + p2.y) / 2.0;
+}
+
+// similar args to template midpoint_assign(),
+// this is to calculate cubic bezier control
+// points from 'conic' (quadratic) bezier data
+// -- pC is the quadratic control point, and
+// pE is an end point -- invoke this once for
+// *each* quadratic end point to get two cubic
+// control points (end points do not change in
+// the conversion)
+template<class T, class U, class R> inline void
+conic_to_cubic_cpts(const T& pC, const U& pE, R& pR)
+{
+	pR.x = (2.0 * pC.x + pE.x) / 3.0;
+	pR.y = (2.0 * pC.y + pE.y) / 3.0;
+}
+
 std::vector<FT_Library> ftlib_vec;
 extern "C" {
 static void f_atexit(void)
@@ -193,7 +252,7 @@ static void f_atexit(void)
 }
 } // extern "C"
 
-const char default_prog[] = "t1char2pse";
+const char default_prog[] = "ttchar2pse";
 const char* prog = default_prog;
 const char* lc_all_found = 0; // for a locale check
 // typeface file
@@ -223,7 +282,7 @@ main(int argc, char* argv[])
 {
 	if ( argv[0] && *argv[0] ) {
 		std::string s(argv[0]);
-		std::string::size_type p = s.rfind('/');
+		std::string::size_type p = s.rfind(dirsep);
 		if ( p != std::string::npos && (p+1) < s.length() ) {
 			prog = &argv[0][++p];
 		} else {
@@ -253,19 +312,20 @@ main(int argc, char* argv[])
 	out_fp = stdout;
 #endif
 
-	std::vector<iarg> iargs;
-
 	get_envvars();
 
-	if ( lc_all_found ) {
-		std::cerr << "Found LC_ALL == \""
-			<< lc_all_found << "\"" << std::endl;
-		std::setlocale(LC_ALL, "");
-	} else {
-		std::setlocale(LC_ALL, "C");
-	}
+	std::setlocale(LC_ALL, "");
+
+	std::vector<iarg> iargs;
 
 	get_options(argc, argv, iargs);
+
+	if ( very_verbose && lc_all_found ) {
+		std::cerr << "Found LC_ALL||LANG" << " == \""
+			<< lc_all_found << "\"" << std::endl;
+	} else if ( very_verbose ) {
+		std::cerr << "Found LC_ALL||LANG" << " not set" << std::endl;
+	}
 
 	FT_Library library;
 	int error = FT_Init_FreeType(&library);
@@ -352,8 +412,7 @@ main(int argc, char* argv[])
 				pt1.x = mnX; pt1.y = mnY;
 				pt2.x = mnX; pt2.y = mxY;
 				ccr.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt2);
@@ -361,8 +420,7 @@ main(int argc, char* argv[])
 				pt1.x = mnX; pt1.y = mxY;
 				pt2.x = mxX; pt2.y = mxY;
 				ccr.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt2);
@@ -370,8 +428,7 @@ main(int argc, char* argv[])
 				pt1.x = mxX; pt1.y = mxY;
 				pt2.x = mxX; pt2.y = mnY;
 				ccr.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt2);
@@ -379,8 +436,7 @@ main(int argc, char* argv[])
 				pt1.x = mxX; pt1.y = mnY;
 				pt2.x = mnX; pt2.y = mnY;
 				ccr.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt1);
 				ccr.v.push_back(pt2);
@@ -436,7 +492,14 @@ main(int argc, char* argv[])
 	}
 
 	prn_openf(one_object ? 1u : c_all.size());
+
 	flt_t scl = Xmax / xshift;
+	if ( very_verbose ) {
+		std::cerr << "Using scale factor " <<
+			Xmax << "/" << xshift << " (" <<
+			scl << ")" << std::endl;
+	}
+
 	if ( scl > 1.0 ) { // temporary: check for Y later
 		scl = 1.0;
 	}
@@ -466,8 +529,7 @@ main(int argc, char* argv[])
 				pt1.x = mnX; pt1.y = mnY;
 				pt2.x = mnX; pt2.y = mxY;
 				oneobj.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt2);
@@ -475,8 +537,7 @@ main(int argc, char* argv[])
 				pt1.x = mnX; pt1.y = mxY;
 				pt2.x = mxX; pt2.y = mxY;
 				oneobj.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt2);
@@ -484,8 +545,7 @@ main(int argc, char* argv[])
 				pt1.x = mxX; pt1.y = mxY;
 				pt2.x = mxX; pt2.y = mnY;
 				oneobj.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt2);
@@ -493,8 +553,7 @@ main(int argc, char* argv[])
 				pt1.x = mxX; pt1.y = mnY;
 				pt2.x = mnX; pt2.y = mnY;
 				oneobj.v.push_back(pt1);
-				pt1.x = (pt1.x + pt2.x) / 2.0;
-				pt1.y = (pt1.y + pt2.y) / 2.0;
+				midpoint_assign(pt1, pt2, pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt1);
 				oneobj.v.push_back(pt2);
@@ -517,6 +576,7 @@ main(int argc, char* argv[])
 	if ( face->style_name && *face->style_name ) {
 		so << "Typeface style name: " << face->style_name << '\n';
 	}
+
 	{
 		PS_FontInfoRec fir;
 		if ( FT_Get_PS_Font_Info(face, &fir) == 0 ) {
@@ -535,6 +595,7 @@ main(int argc, char* argv[])
 				fir.underline_thickness << '\n';
 		}
 	}
+
 	so << "Data conversion scaling factor: " << scl << '\n';
 	so << "Baseline, scaled and translated for epspline: " <<
 		double(scl * yshift) << '\n';
@@ -588,29 +649,121 @@ get_envvars()
 	// local env check
 	if ( const char* p = std::getenv("LC_ALL") ) {
 		lc_all_found = p;
+	} else if ( const char* p = std::getenv("LANG") ) {
+		lc_all_found = p;
 	}
 }
 
+#if _MSSYS_
+template <typename C> struct temp_buff {
+	C* ptr;
+	temp_buff<C>(size_t sz) : ptr(new C[sz]) {}
+	~temp_buff<C>() { delete[] ptr; }
+private:
+	temp_buff<C>() {}
+};
+
+// get char string for _one_ wide char
+bool
+wchar2mbs(wchar_t c, std::string& outstr, cpagetype cp)
+{
+	char    ncbuf[12];
+	wchar_t wcbuf[2];
+	int len;
+
+	wcbuf[0] = c;
+	wcbuf[1] = L'\0';
+	len = WideCharToMultiByte(cp, 0, wcbuf, 1,
+				  ncbuf, sizeof(ncbuf), 0, 0);
+
+	if ( len < 1 ) {
+		return false;
+	}
+
+	ncbuf[len] = '\0';
+	outstr = ncbuf;
+
+	return true;
+}
+
 int
-handle_string_arg(const char* s, std::vector<iarg>& ia)
+handle_string_arg(const char* s, std::vector<iarg>& ia,
+	cpagetype cp)
 {
 	if ( ! s ) {
 		return -1;
 	}
 	
+	int lenmb = MultiByteToWideChar(cp, 0, s, -1, NULL,  0);
+
+	// returned count includes null terminator
+	if ( lenmb < 2 ) {
+		return -1;
+	}
+
+	temp_buff<wchar_t> wcbuf(lenmb);
+	int lenmbb = MultiByteToWideChar(cp, 0, s, -1, wcbuf.ptr, lenmb);
+
+	if ( lenmb != lenmbb ) {
+		return -1;
+	}
+
+	int num = 0;
+
+	// exclude null terminator
+	lenmbb--;
+
+	for ( int i = 0; i < lenmbb; i++, num++ ) {
+		iarg t;
+		wchar_t c = wcbuf.ptr[i];
+
+		t.v = FT_ULong(c);
+		ia.push_back(t);
+
+		std::string cs;
+		if ( ! wchar2mbs(c, cs, cp) ) {
+			cs = "?";
+		}
+		ia.back().s.append(cs);
+	}
+
+	return num;
+}
+#else
+int
+handle_string_arg(const char* s, std::vector<iarg>& ia,
+	cpagetype cp)
+{
+	if ( ! s ) {
+		return -1;
+	}
+	
+	cloctmp loctmp(cp ? cp : "");
 	int num = 0;
 	size_t slen = std::strlen(s) + 1;
 	
+	int wr;
+
+#if USE_MBRTOWC // || defined(__MINGW32__) || defined(__MINGW64__)
+	// e.g., bug in MinGW: mbtowc fails, mbrtowc works
+	std::mbstate_t state;
+	std::memset(&state, 0, sizeof(state));
+#else
 	// init state
-	int wr = std::mbtowc(0, 0, slen);
+	wr = std::mbtowc(0, 0, slen);
 	if ( wr ) {
 		std::cerr << prog << ": found state-dependent mb chars\n";
 	}
+#endif
 	
 	while ( slen > 0 ) {
 		wchar_t c;
 
+#if USE_MBRTOWC
+		wr = std::mbrtowc(&c, s, slen, &state);
+#else
 		wr = std::mbtowc(&c, s, slen);
+#endif
 		// returns 0 at '\0'
 		if ( wr == 0 ) {
 			break;
@@ -644,38 +797,87 @@ handle_string_arg(const char* s, std::vector<iarg>& ia)
 	
 	return num;
 }
+#endif
+
+int
+handle_file_arg(const char* s, std::vector<iarg>& ia,
+	cpagetype cp)
+{
+	std::ifstream f(s);
+
+	if ( ! f.good() ) {
+		std::cerr << "Bad file argument: " <<
+			s << std::endl;
+		return -1;
+	}
+
+	std::string t;
+	int cnt = 0;
+
+	while ( std::getline(f, t) ) {
+		if ( t.length() < 1 ) {
+			continue;
+		}
+
+		int cur = handle_string_arg(t.c_str(), ia, cp);
+
+		if ( cur < 0 ) {
+			return -1;
+		} else if ( cur == 0 ) {
+			continue;
+		}
+
+		cnt += cur;
+	}
+
+	return cnt;
+}
 
 void
 usage(int status)
 {
 	std::cerr << "Usage: " << prog
 	<<
-	" -f file [-1xbBvh -mM number -s string] [unicode indices]\n"
+	" -f file [-o file] [-1xbBvh -mM number -Carg -s string]"
+	    " [unicode indices]\n"
 	"\n"
-	"Get curves from a type-1 font file and convert for epspline.\n"
+	"Get curves from a type-1 or TrueType font file and convert for epspline.\n"
 	"\n"
-	"-f file    the type-1 font (typeface) file: required\n"
+	"-f file    the font (typeface) file: required\n"
+	"-o file    the output file: optional, else stdout\n"
 	"-1         ('one') make all characters be one object\n"
-	"-x         use extra precision reals ('%.8f vs. %g')\n"
+	"-x         use extra precision reals ('%."
+		    << FMT_HIGHPREC << "f' vs. '%g')\n"
 	"-b         include character bounds boxes\n"
 	"-B         with option -1, add box around whole object\n"
 	"-v         very verbose; will obscure warnings and errors\n"
 	"-m real    set minimum sweep of the prism objects\n"
 	"-M real    set maximum sweep of the prism objects\n"
-	"-s string  use characters from UTF-8 (or ASCII) string\n"
+	"-s string  use characters from string argument\n"
+	"-F file    use characters from file argument\n"
+	"-C <a|m|o|s|7|8>(MSWindows) or <locale>(elsewhere)\n"
+	"           set character set used for following arguments\n"
 	"-h         print this usage help and succeed\n"
 	"\n"
 	"Arguments that are not introduced by option switches are\n"
 	"taken to be unicode charmap indices and will be converted\n"
 	"with strtoul(3), so a base prefix may be present.\n"
 	"\n"
+	"The -C option, except on MSWindows, sets the current locale\n"
+	"to the given sub-argument which must be a string naming\n"
+	"a valid locale or charset installed on the system; the empty\n"
+	"string \"\" will reset the environmental LANG or LC_ALL.\n"
+	"On MSWindows a \"codepage\" is selected per sub-argument\n"
+	"a|m|o|s|7|8 (a, 'ANSI' is the default):\n"
+	"a, ANSI; m, MAC; o, OEM; s, SYMBOL; 7, UTF-7; 8, UTF-8.\n"
+	"The option may be repeated and applies to all following\n"
+	"arguments.\n"
+	"\n"
 	"Arguments may appear in any order, and may be repeated;\n"
 	"so, the following example works as expected:\n"
 	"\n"
 	"% " << prog <<
 	" -f foo.pfb -s single 32 0x2018 -s\"quotes\" 0x2019 > foo-q.pse\n"
-	"\n"
-	"Output is always printed on the standard output: redirect!\n"
 	"\n"
 	;
 
@@ -685,6 +887,7 @@ usage(int status)
 void
 get_options(int ac, char* av[], std::vector<iarg>& ia)
 {	
+	const char* outname = 0;
 	int nargs = 0;
 
 	for ( int i = 1; i < ac; i++ ) {
@@ -705,6 +908,16 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 							usage(1);
 						} else {
 							fontfile = av[i];
+						}
+						p2 = ""; // stop while()
+						break;
+					case 'o':
+						if ( *p2 != '\0' ) {
+							outname = p2;
+						} else if ( ++i == ac ) {
+							usage(1);
+						} else {
+							outname = av[i];
 						}
 						p2 = ""; // stop while()
 						break;
@@ -756,7 +969,51 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 					case '1':
 						one_object = true;
 						break;
-					case 's': {
+					case 'C': {
+							const char* a;
+							if ( *p2 != '\0' ) {
+								a = p2;
+							} else if ( ++i == ac ) {
+								usage(1);
+							} else {
+								a = av[i];
+							}
+
+						#if ! _MSSYS_
+							cur_cpage = a;
+						#else // ! _MSSYS_
+							switch ( *a ) {
+							case 'a':
+								cur_cpage = CP_ACP;
+								break;
+							case 'm':
+								cur_cpage = CP_MACCP;
+								break;
+							case 'o':
+								cur_cpage = CP_OEMCP;
+								break;
+							case 's':
+								cur_cpage = CP_SYMBOL;
+								break;
+							case '7':
+								cur_cpage = CP_UTF7;
+								break;
+							case '8':
+								cur_cpage = CP_UTF8;
+								break;
+							default:
+								std::cerr << prog
+								<< ": bad sub-argument to -C: "
+								<< a << std::endl;
+								usage(1);
+								break;
+							}
+						#endif // ! _MSSYS_
+						}
+						p2 = ""; // stop while()
+						break;
+					case 's':
+					case 'F': {
 							const char* s;
 							int n;
 							if ( *p2 != '\0' ) {
@@ -766,9 +1023,22 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 							} else {
 								s = av[i];
 							}
-							if ( (n = handle_string_arg(s, ia)) < 1 ) {
+
+							int (*hf)(const char*,
+								  std::vector<iarg>&,
+								  cpagetype);
+							if ( cur == 'F' ) {
+								hf = handle_file_arg;
+							} else {
+								hf = handle_string_arg;
+							}
+							if ( (n = hf(s, ia, cur_cpage)) < 1 ) {
+								std::cerr << prog
+								<< ": bad string argument to -s: '"
+								<< s << "'" << std::endl;
 								usage(1);
 							}
+
 							nargs += n;
 						}
 						p2 = ""; // stop while()
@@ -806,6 +1076,19 @@ get_options(int ac, char* av[], std::vector<iarg>& ia)
 
 	if ( fontfile == 0 || nargs == 0 ) {
 		usage(1);
+	}
+
+	if ( outname ) {
+		std::fclose(out_fp);
+		out_fp = std::fopen(outname, "wb");
+		if ( out_fp == NULL ) {
+			std::cerr << prog << ":  failed opening '"
+				<< outname << "' for output, error \""
+				<< ::strerror(errno) << "\""
+				<< std::endl;
+
+			usage(1);
+		}
 	}
 }
 
@@ -909,36 +1192,95 @@ get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
 		char fl = FT_CURVE_TAG(outline.tags[i]);
 
 		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
-			if ( fl0 == FT_CURVE_TAG_ON ) {
-				// 2 endpoints in seq. means straight line segment
-				const FT_Vector& v2 = outline.points[i - 1];
+			// 2 endpoints in seq. means straight line segment
+			short ix0 = i - 1;
+			int tag0 = FT_CURVE_TAG(outline.tags[ix0]);
+
+			if ( tag0 == FT_CURVE_TAG_ON ) {
+				const FT_Vector& v2 = outline.points[ix0];
 				PtCoord pc2;
-				pc2.x = v2.x; pc2.y = v2.y;
-				pc2.x += pc.x; pc2.y += pc.y;
-				pc2.x /= 2.0; pc2.y /= 2.0;
+
+				midpoint_assign(v2, pc, pc2);
+
 				o.v.push_back(pc2);
 				o.v.push_back(pc2);
 			}
+
 			// end last seg.; POV-Ray does not do so implicitely
 			o.v.push_back(pc);
+		} else if ( fl == FT_CURVE_TAG_CONIC ) {
+			short ix0 = i > p0 ? i - 1 : pN;
+			short ix3 = i < pN ? i + 1 : p0;
+			int tag0 = FT_CURVE_TAG(outline.tags[ix0]);
+			int tag3 = FT_CURVE_TAG(outline.tags[ix3]);
+			const FT_Vector& v0 = outline.points[ix0];
+			const FT_Vector& v3 = outline.points[ix3];
+			PtCoord pc0, pc1, pc2, pc3;
+
+			fl0 = fl;
+
+			if ( tag3 == FT_CURVE_TAG_CONIC ) {
+				midpoint_assign(v3, pc, pc3);
+			} else {
+				pc3.x = v3.x; pc3.y = v3.y;
+			}
+
+			if ( tag0 == FT_CURVE_TAG_CONIC ) {
+				midpoint_assign(v0, pc, pc0);
+
+				conic_to_cubic_cpts(pc, pc0, pc1);
+
+				conic_to_cubic_cpts(pc, pc3, pc2);
+
+				o.v.push_back(pc0);
+				o.v.push_back(pc1);
+				o.v.push_back(pc2);
+
+				continue;
+			} else {
+				pc0.x = v0.x; pc0.y = v0.y;
+			}
+
+			if ( tag3 == FT_CURVE_TAG_CONIC ) {
+				conic_to_cubic_cpts(pc, pc0, pc1);
+
+				conic_to_cubic_cpts(pc, pc3, pc2);
+
+				o.v.push_back(pc1);
+				o.v.push_back(pc2);
+				o.v.push_back(pc3);
+
+				continue;
+			}
+
+			conic_to_cubic_cpts(pc, pc0, pc1);
+
+			conic_to_cubic_cpts(pc, pc3, pc2);
+
+			o.v.push_back(pc1);
+			o.v.push_back(pc2);
+
+			continue;
 		}
 
 		o.v.push_back(pc);
 		fl0 = fl;
-	}
+	} // end for loop
 
 	if ( fl0 == FT_CURVE_TAG_ON ) {
+		int tag0 = FT_CURVE_TAG(outline.tags[p0]);
+
 		// last was endpoint; make straight seg to 1st
-		const FT_Vector& v = outline.points[pN];
-		PtCoord pc;
-		pc.x = v.x; pc.y = v.y;
-		const FT_Vector& v2 = outline.points[p0];
-		PtCoord pc2;
-		pc2.x = v2.x; pc2.y = v2.y;
-		pc2.x += pc.x; pc2.y += pc.y;
-		pc2.x /= 2.0; pc2.y /= 2.0;
-		o.v.push_back(pc2);
-		o.v.push_back(pc2);
+		if ( tag0 == FT_CURVE_TAG_ON ) {
+			const FT_Vector& v  = outline.points[pN];
+			const FT_Vector& v2 = outline.points[p0];
+			PtCoord pc;
+
+			midpoint_assign(v, v2, pc);
+
+			o.v.push_back(pc);
+			o.v.push_back(pc);
+		}
 	}
 
 	// POV wants first point repeated to close curve
@@ -969,7 +1311,7 @@ prn_contour(short p0, short pN, const FT_Outline& outline,
 
 		// this tag is 0; cannot bit test
 		if ( fl == FT_CURVE_TAG_CONIC ) {
-			pc = "/* error: got conic segment point FT_CURVE_TAG_CONIC follows */\n";
+			pc = "/* got quadratic/conic segment point FT_CURVE_TAG_CONIC */\n";
 		}
 		// using eq. rather than bit tests: the constants are 1 and 2
 		if ( fl == FT_CURVE_TAG_ON ) {
@@ -1036,11 +1378,15 @@ prn_prnobj(ccont& c, unsigned obj_num)
 
 	unsigned nuv = 0;
 	if ( extra_prec ) {
+		const int prec = FMT_HIGHPREC;
+
 		for ( ; nuv < c.v.size(); nuv++ ) {
 			std::fprintf(out_fp,
-				"  'U%u' = \"%.8f\",\n", nuv, double(c.v[nuv].x));
+				"  'U%u' = \"%.*f\",\n",
+				nuv, prec, double(c.v[nuv].x));
 			std::fprintf(out_fp,
-				"  'V%u' = \"%.8f\",\n", nuv, double(c.v[nuv].y));
+				"  'V%u' = \"%.*f\",\n",
+				nuv, prec, double(c.v[nuv].y));
 		}
 	} else {
 		for ( ; nuv < c.v.size(); nuv++ ) {

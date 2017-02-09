@@ -164,6 +164,14 @@ typedef C_loc_Temp<LC_ALL>     cloctmp;
 typedef double flt_t;
 template <typename T> struct TplPtCoord {
 	T x, y;
+
+	bool operator == (const TplPtCoord<T>& o) {
+		return x == o.x && y == o.y;
+	}
+
+	bool operator != (const TplPtCoord<T>& o) {
+		return ! (*this == o);
+	}
 };
 
 typedef TplPtCoord<flt_t> PtCoord;
@@ -188,10 +196,10 @@ struct iarg {
 };
 
 std::ostream&
-prn_contour(short p0, short pN, const FT_Outline& outline,
+prn_contour(int p0, int pN, const FT_Outline& outline,
 			std::ostream& o, bool& result);
 bool
-get_contour(short p0, short pN, const FT_Outline& outline, ccont& o);
+get_contour(int p0, int pN, const FT_Outline& outline, ccont& o);
 void
 scale_pts(ccont& c, flt_t scale);
 bool
@@ -214,6 +222,13 @@ get_options(int ac, char* av[], std::vector<iarg>& ia);
 // utility for common bits; as a template so that
 // args may be PtCoord type herein, or FreeType's
 // FT_Vector, both of which have members x and y
+template<class T, class U> inline void
+point_assign(const T& src, U& dest)
+{
+	dest.x = src.x;
+	dest.y = src.y;
+}
+
 // -- types T and U are the points from which
 // midpoint is taken, and R& pR is assigned result
 template<class T, class U, class R> inline void
@@ -1150,150 +1165,159 @@ scale_pts(ccont& c, flt_t scale)
 
 // Freetype docs at
 // http://www.freetype.org/freetype2/docs/glyphs/glyphs-6.html
-// describes its 2nd-order, or "conic" arcs with considerable
-// difference from POV-Ray's quadratic prisms or lathes.
-// Conversion is for another day, and so too are TrueType fonts,
-// which use the "conic" type.
-// The cubic bezier curves used in Type 1 fonts should translate
-// to POV-Ray beziers with little work -- in fact no mathematical
-// work, just handling differing storage and other mechanics.
+// describe the manner in which interpolated curve points
+// are presented by FreeType.  Unsurprisingly, points do not
+// occur in the precise manner that POV-Ray (or Epspline)
+// expects.
+//
+// Here, points for a single continuous contour -- which might
+// only be a sub-contour of a whole glyph -- are collected
+// with adjustment to POV-Ray suitable sequences and placed
+// in a standard vector.
+//
+// Note that the conic (quadratic) type from TTF faces, as
+// presented by FreeType, do not correspond directly to the
+// quadratic interpolation performed by POV-Ray.  Therefore,
+// the single conic control point is converted to two
+// cubic points making the equivalent bezier cubic segment.
+//
+// Implicit straight lines are also converted to bezier cubics.
+// Bottom line: all output of this procedure is in bezier
+// cubic form, with points that are implicit in the source
+// made explicit in the result, as required by POV-Ray.
+//
 // Freetype docs also say cubic and conic could even be mixed,
-// but that presently no font types do so.
-// /* From Freetype header:
-//    typedef struct  FT_Outline_
-//    {
-//      short       n_contours;      /* number of contours in glyph        */
-//      short       n_points;        /* number of points in the glyph      */
-// 
-//      FT_Vector*  points;          /* the outline's points               */
-//      char*       tags;            /* the points flags                   */
-//      short*      contours;        /* the contour end points             */
-// 
-//      int         flags; /* outline masks */
-// 
-//    }
-// FT_Outline;
-// */
+// but that presently no font types do so.  This code *should*
+// handle that, but has not been tested for that.
 bool
-get_contour(short p0, short pN, const FT_Outline& outline, ccont& o)
+get_contour(int p0, int pN, const FT_Outline& outline, ccont& o)
 {
+	if ( very_verbose ) {
+		std::cerr << "NEW CONTOUR with "
+			<< (pN - p0 + 1) << " points" << std::endl;
+	}
+
 	if ( (pN - p0 + 1) < 3 ) {
-		std::cerr << "CONTOUR with " << (pN - p0 + 1)
-			<< " points\n";
+		std::cerr << "CONTOUR with only "
+			<< (pN - p0 + 1) << " points" << std::endl;
 		return false;
 	}
 
-	char fl0 = FT_CURVE_TAG(outline.tags[p0]);
+	ccont::ptvec::size_type ovb, ove;
 
-	for ( short i = p0; i <= pN; i++ ) {
-		const FT_Vector& v = outline.points[i];
-		PtCoord pc;
-		pc.x = v.x; pc.y = v.y;
-		char fl = FT_CURVE_TAG(outline.tags[i]);
+	ovb = o.v.size();
 
-		if ( fl == FT_CURVE_TAG_ON && i > p0 ) {
+	for ( int i = p0; i <= pN; i++ ) {
+		int ix0 = i > p0 ? i - 1 : pN;
+		int ix3 = i < pN ? i + 1 : p0;
+		int tag  = FT_CURVE_TAG(outline.tags[i]);
+		int tag0 = FT_CURVE_TAG(outline.tags[ix0]);
+		int tag3 = FT_CURVE_TAG(outline.tags[ix3]);
+		const FT_Vector& v  = outline.points[i];
+		const FT_Vector& v0 = outline.points[ix0];
+		const FT_Vector& v3 = outline.points[ix3];
+		PtCoord pc, pc0, pc1, pc2, pc3;
+
+		point_assign(v, pc);
+
+		if ( tag == FT_CURVE_TAG_ON ) {
+			// implicit straight line?
 			// 2 endpoints in seq. means straight line segment
-			short ix0 = i - 1;
-			int tag0 = FT_CURVE_TAG(outline.tags[ix0]);
+			if ( tag3 == FT_CURVE_TAG_ON ) {
+				point_assign(pc, pc0);
+				midpoint_assign(v3, pc, pc1);
+				midpoint_assign(v3, pc, pc2);
+				point_assign(v3, pc3);
 
-			if ( tag0 == FT_CURVE_TAG_ON ) {
-				const FT_Vector& v2 = outline.points[ix0];
-				PtCoord pc2;
-
-				midpoint_assign(v2, pc, pc2);
-
+				// pushd controls for line
+				o.v.push_back(pc0);
+				o.v.push_back(pc1);
 				o.v.push_back(pc2);
-				o.v.push_back(pc2);
+				o.v.push_back(pc3);
 			}
+		} else if ( tag == FT_CURVE_TAG_CUBIC ) {
+			// if next is tag cubic, then previous,
+			// current, next, and next plus 1 make
+			// a cubic segment
+			if ( tag3 == FT_CURVE_TAG_CUBIC ) {
+				point_assign(v0, pc0);
+				point_assign(pc, pc1);
+				point_assign(v3, pc2);
 
-			// end last seg.; POV-Ray does not do so implicitely
-			o.v.push_back(pc);
-		} else if ( fl == FT_CURVE_TAG_CONIC ) {
-			short ix0 = i > p0 ? i - 1 : pN;
-			short ix3 = i < pN ? i + 1 : p0;
-			int tag0 = FT_CURVE_TAG(outline.tags[ix0]);
-			int tag3 = FT_CURVE_TAG(outline.tags[ix3]);
-			const FT_Vector& v0 = outline.points[ix0];
-			const FT_Vector& v3 = outline.points[ix3];
-			PtCoord pc0, pc1, pc2, pc3;
+				int ix = ix3 == pN ? p0 : ix3 + 1;
 
-			fl0 = fl;
-
-			if ( tag3 == FT_CURVE_TAG_CONIC ) {
-				midpoint_assign(v3, pc, pc3);
-			} else {
-				pc3.x = v3.x; pc3.y = v3.y;
-			}
-
-			if ( tag0 == FT_CURVE_TAG_CONIC ) {
-				midpoint_assign(v0, pc, pc0);
-
-				conic_to_cubic_cpts(pc, pc0, pc1);
-
-				conic_to_cubic_cpts(pc, pc3, pc2);
+				const FT_Vector& vt = outline.points[ix];
+				point_assign(vt, pc3);
 
 				o.v.push_back(pc0);
 				o.v.push_back(pc1);
 				o.v.push_back(pc2);
-
-				continue;
+				o.v.push_back(pc3);
+			}
+		} else if ( tag == FT_CURVE_TAG_CONIC ) {
+			if ( tag0 == FT_CURVE_TAG_CONIC ) {
+				midpoint_assign(v0, pc, pc0);
 			} else {
-				pc0.x = v0.x; pc0.y = v0.y;
+				point_assign(v0, pc0);
 			}
 
 			if ( tag3 == FT_CURVE_TAG_CONIC ) {
-				conic_to_cubic_cpts(pc, pc0, pc1);
-
-				conic_to_cubic_cpts(pc, pc3, pc2);
-
-				o.v.push_back(pc1);
-				o.v.push_back(pc2);
-				o.v.push_back(pc3);
-
-				continue;
+				midpoint_assign(v3, pc, pc3);
+			} else {
+				point_assign(v3, pc3);
 			}
 
 			conic_to_cubic_cpts(pc, pc0, pc1);
 
 			conic_to_cubic_cpts(pc, pc3, pc2);
 
+			o.v.push_back(pc0);
 			o.v.push_back(pc1);
 			o.v.push_back(pc2);
-
-			continue;
+			o.v.push_back(pc3);
+		} else { // WTF
+			std::cerr << "Error: point indexed at " << i
+					  << " has unexpected curve tag "
+					  << tag << std::endl;
+			return false;
 		}
-
-		o.v.push_back(pc);
-		fl0 = fl;
 	} // end for loop
 
-	if ( fl0 == FT_CURVE_TAG_ON ) {
-		int tag0 = FT_CURVE_TAG(outline.tags[p0]);
+	ove = o.v.size();
 
-		// last was endpoint; make straight seg to 1st
-		if ( tag0 == FT_CURVE_TAG_ON ) {
-			const FT_Vector& v  = outline.points[pN];
-			const FT_Vector& v2 = outline.points[p0];
-			PtCoord pc;
-
-			midpoint_assign(v, v2, pc);
-
-			o.v.push_back(pc);
-			o.v.push_back(pc);
-		}
+	// should never happen -- need at least
+	// 4 points, one cubic segment, for contour
+	if ( (ove - ovb) < 4 ) {
+		return false;
 	}
 
-	// POV wants first point repeated to close curve
-	const FT_Vector& v = outline.points[p0];
-	PtCoord pc;
-	pc.x = v.x; pc.y = v.y;
-	o.v.push_back(pc);
+	// fixup: add closing line, as needed --
+	// should not happen
+	if ( o.v[--ove] != o.v[ovb] ) {
+		PtCoord pc0, pc1, pc2, pc3;
+
+		if ( very_verbose ) {
+			std::cerr << "Fixing contour with closing segment ("
+					  << ove << " -> " << ovb << ")"
+					  << std::endl;
+		}
+
+		point_assign(o.v[ove], pc0);
+		point_assign(o.v[ovb], pc3);
+		midpoint_assign(pc0, pc3, pc1);
+		midpoint_assign(pc3, pc0, pc2);
+
+		o.v.push_back(pc0);
+		o.v.push_back(pc1);
+		o.v.push_back(pc2);
+		o.v.push_back(pc3);
+	}
 
 	return true;
 }
 
 std::ostream&
-prn_contour(short p0, short pN, const FT_Outline& outline,
+prn_contour(int p0, int pN, const FT_Outline& outline,
 			std::ostream& o, bool& result)
 {
 	if ( (pN - p0) < 3 ) {
@@ -1302,32 +1326,25 @@ prn_contour(short p0, short pN, const FT_Outline& outline,
 		return o;
 	}
 
-	char fl0 = FT_CURVE_TAG(outline.tags[p0]);
-
-	for ( short i = p0; i <= pN; i++ ) {
+	for ( int i = p0; i <= pN; i++ ) {
 		const FT_Vector& v = outline.points[i];
-		char fl = FT_CURVE_TAG(outline.tags[i]);
-		const char* pc = 0;
+		int tag = FT_CURVE_TAG(outline.tags[i]);
+		std::ostringstream s;
 
 		// this tag is 0; cannot bit test
-		if ( fl == FT_CURVE_TAG_CONIC ) {
-			pc = "/* got quadratic/conic segment point FT_CURVE_TAG_CONIC */\n";
-		}
-		// using eq. rather than bit tests: the constants are 1 and 2
-		if ( fl == FT_CURVE_TAG_ON ) {
-			pc = "/* on end-point FT_CURVE_TAG_ON follows */\n";
-		}
-		if ( fl == FT_CURVE_TAG_CUBIC ) {
-			pc = "/* off control point FT_CURVE_TAG_CUBIC follows */\n";
-		}
-		// should not have both bits
-		if ( fl == (FT_CURVE_TAG_ON | FT_CURVE_TAG_CUBIC) ) {
-			pc = "/* error, got both FT_CURVE_TAG_ON | FT_CURVE_TAG_CUBIC */\n";
+		if ( tag == FT_CURVE_TAG_CONIC ) {
+			s << "/* off control point FT_CURVE_TAG_CONIC follows */\n";
+		} else if ( tag == FT_CURVE_TAG_ON ) {
+			s << "/* on end-point FT_CURVE_TAG_ON follows */\n";
+		} else if ( tag == FT_CURVE_TAG_CUBIC ) {
+			s << "/* off control point FT_CURVE_TAG_CUBIC follows */\n";
+		} else {
+			// unexpected (newer version of freetype?)
+			s << "/* ERROR: got unexpected curve tag == "
+			  << tag << " */\n";
 		}
 
-		o << pc << "<" << v.x << ", " << v.y << ">\n";
-
-		fl0 = fl;
+		o << s.str() << "<" << v.x << ", " << v.y << ">\n";
 	}
 
 	result = true;
@@ -1414,9 +1431,9 @@ collect_pts(flt_t xshift, flt_t yshift, ccont& ccr,
 
 	ccr.v.reserve(2u * outline.n_points);
 
-	short p0 = 0;
-	for ( short c0 = 0; c0 < outline.n_contours; c0++ ) {
-		short pN = outline.contours[c0];
+	int p0 = 0;
+	for ( int c0 = 0; c0 < outline.n_contours; c0++ ) {
+		int pN = outline.contours[c0];
 
 		bool tbool = get_contour(p0, pN, outline, ccr);
 		if ( tbool == false ) {

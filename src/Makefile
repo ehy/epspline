@@ -66,7 +66,7 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/cfg.h $(HDRDIR)/splines.h $(HDRDIR)/file_io.h \
 	$(HDRDIR)/container_wrap.h \
 	$(HDRDIR)/stdcc.h $(HDRDIR)/util.h $(HDRDIR)/epspline.h \
-	$(HDRDIR)/wxutil.h $(HDRDIR)/a_tabwnd.h $(HDRDIR)/a_tabpage.h \
+	$(HDRDIR)/a_tabwnd.h $(HDRDIR)/a_tabpage.h \
 	$(HDRDIR)/a_zoomdlg.h $(HDRDIR)/a_spintextdlg.h \
 	$(HDRDIR)/a_textctldlg.h \
 	$(HDRDIR)/a_aboutbox.h \
@@ -76,7 +76,8 @@ HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/globlal_prefs.h \
 	$(HDRDIR)/bg_image_dlg.h \
 	$(HDRDIR)/a_bgimg_manager.h \
-	$(HDRDIR)/wxexio.h
+	$(HDRDIR)/wxexio.h \
+	$(HDRDIR)/wxutil.h $(HDRDIR)/wxstrutil.h 
 
 SRCS = $(SRCDIR)/epspline.cpp $(SRCDIR)/io.cpp $(SRCDIR)/a_canvas.cpp \
 	$(SRCDIR)/splines.cpp $(SRCDIR)/splineprops.cpp $(SRCDIR)/util.cpp \

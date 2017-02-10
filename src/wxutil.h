@@ -27,6 +27,7 @@
 #include <wx/image.h>
 #include "splines.h"
 #include "util.h"
+#include "wxstrutil.h"
 
 inline bool InRect(const wxRect& r, const wxPoint& p) {
 return(p.x>=r.x && p.y>=r.y && (p.x-r.x)<r.width && (p.y-r.y)<r.height);
@@ -200,38 +201,20 @@ inline void FixupRect(wxRect& r) {
 	if ( r.y < 0 ) { r.height += r.y; r.y = 0; }
 }
 
-// For unicode builds: (NOTE 18.10.2012: had used wxConvLibc, which uses
-// C library conversion if locale in environment is set well -- and
-// they do indeed work, verified elsewhere -- but for some reason 
-// wxConvLibc causes null pointers to be returned when wxString
-// has non-ascii content [originally from utf-8 input] -- the converter
-// wxConvUTF8 is working, but I am not sure it is entirely correct;
-// so use wxConvCurrent which is a pointer to wx's decision on what is
-// suitable, but at a point long ago I had some problem with it, cannot
-// recall what that was.)
-// Update: use wxMBConv* app_global_mbconv; declared in epspline.cpp,
-// to maintain more control in app::OnInit()
+/* NOTE 2017/02/10: moved to wxstrutil.h:
 extern wxMBConv* app_global_mbconv;
 #define wxs2ch(wxs) ((const char*)(wxs).mb_str(*app_global_mbconv))
-// do not use wxString::fn_str(), as it might yield wchar_t strings,
-// I think for MSW's UNICODE API, but this program is using C library
-// f*() functions, so it needs char*, even if multi-byte
-//#define wxs2fn(wxs) ((const char*)(wxs).fn_str())
 #define wxs2fn(wxs) wxs2ch(wxs)
-
 inline wxString ch2wxs(const char* str)
 {
 	return app_global_mbconv->cMB2WX(str);
 }
-
-// wx version > 2.8: lots of incompatible wxString changes --
-// macro for 'cast' of wxString arg to variadic wxString::Format
-// of wxString::Printf
 #if wxCHECK_VERSION(2, 9, 0)
 #define fmtcst(wxs) (wxs)
 #else
 #define fmtcst(wxs) (const wxChar*)(wxs)
 #endif
+ */
 
 // This checks its argument against the set of POV-Ray reserved words,
 // as found in the v. 3.6 html documentation.  Those words are all

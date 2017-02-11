@@ -269,8 +269,7 @@ midpoint_factor_assign(const T& p1, const U& p2, R& pR, double f)
     double dy = double(p2.y) - p1.y;
     double ho = std::sqrt(dx * dx + dy * dy);
     double hn = ho * f;
-    double an = std::acos(std::abs(dx)/ho);
-    //double an = std::asin(std::abs(dy)/ho);
+    double an = ho == 0.0 ? 0.0 : std::acos(std::abs(dx) / ho);
     double xn = hn * std::cos(an);
     double yn = hn * std::sin(an);
 

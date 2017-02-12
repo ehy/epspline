@@ -1010,13 +1010,14 @@ do_padding_arg(const char* arg, pad_opts& o)
                 // had one, repeat last
                 v = last;
             } else {
-                float d;
+                float f;
+                char c;
                 
-                if ( std::sscanf(s.c_str(), "%f", &d) != 1 ) {
+                if ( std::sscanf(s.c_str(), "%f%c", &f, &c) != 1 ) {
                     return false;
                 }
 
-                v = pad_opts::dtype(d);
+                v = pad_opts::dtype(f);
                 last = v; // record last
                 s = ""; // lose old value
             }
@@ -1029,13 +1030,14 @@ do_padding_arg(const char* arg, pad_opts& o)
                 return false;
             }
             
-            float d;
+            float f;
+            char c;
             
-            if ( std::sscanf(cur.c_str(), "%f", &d) != 1 ) {
+            if ( std::sscanf(cur.c_str(), "%f%c", &f, &c) != 1 ) {
                 return false;
             }
                 
-            v = pad_opts::dtype(d);
+            v = pad_opts::dtype(f);
             last = v;
         }
         

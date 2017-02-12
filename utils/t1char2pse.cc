@@ -1054,6 +1054,11 @@ do_padding_arg(const char* arg, pad_opts& o)
             return false;
         }
     }
+
+    // after loop string should be empty, or there had been extras
+    if ( ! s.empty() ) {
+        return false;
+    }
     
     return true;
 }

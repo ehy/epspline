@@ -164,6 +164,7 @@ typedef C_loc_Temp<LC_ALL>     cloctmp;
 // what to use as floating point reals
 typedef double flt_t;
 
+// for pairs name x and y
 template <typename T> struct TplPtCoord {
     T x, y;
 
@@ -180,6 +181,19 @@ template <typename T> struct TplPtCoord {
 
 // x,y pair
 typedef TplPtCoord<flt_t> pair_xy;
+
+// args -p, -P: left, right, top, bottom
+template <typename T> struct TplPadOpts {
+    T l, r, t, b;
+
+    typedef T dtype;
+
+    TplPadOpts() : l(0), r(0), t(0), b(0) {}
+};
+
+// type for args -p, -P: left, right, top, bottom
+typedef TplPadOpts<flt_t> pad_opts;
+const char pad_opts_sep = ':';
 
 // curve container
 struct ccont {
@@ -344,6 +358,10 @@ bool very_verbose = false;
 bool box_chars = false;
 // if option -1, then box the whole
 bool box_allchars = false;
+// padding, option -p
+pad_opts padding_chars;
+// padding, option -P
+pad_opts padding_all;
 
 // although using std::cerr for messages,
 // C streams are used for data output
@@ -439,7 +457,8 @@ main(int argc, char* argv[])
         FT_UInt glyph_index = FT_Get_Char_Index(face, ftul);
         if ( glyph_index == 0 ) {
             errstream << "Found no glyph for \"" << as
-                << "\" 0x" << std::hex << ftul << std::endl;
+                << "\" 0x" << std::hex << ftul
+                           << std::dec << std::endl;
             continue;
         }
     
@@ -482,6 +501,11 @@ main(int argc, char* argv[])
                 flt_t mxX = mnX + gm.width;
                 flt_t mxY = yshift - gm.horiBearingY + gm.height;
                 flt_t mnY = mxY - gm.height;
+                
+                mnX -= padding_chars.l;
+                mxX += padding_chars.r;
+                mxY += padding_chars.b;
+                mnY -= padding_chars.t;
                 
                 add_bezier_box(mnX, mxX, mnY, mxY, ccr.v);
             }
@@ -549,6 +573,7 @@ main(int argc, char* argv[])
     }
     {
         ccont oneobj;
+
         for ( unsigned  i = 0; i < c_all.size(); i++ ) {
             if ( ! one_object ) {
                 scale_pts(c_all[i], scl);
@@ -561,12 +586,35 @@ main(int argc, char* argv[])
                 oneobj.comment += tcc.comment;
             }
         }
+
         if ( one_object ) {
             if ( box_allchars ) {
                 flt_t mnX = face->bbox.xMin;
                 flt_t mxX = 0.0 + xshift + xshift_1st;
-                flt_t mnY = yshift - face->bbox.yMin;
-                flt_t mxY = yshift - face->bbox.yMax;
+                // note we draw chars inverted, hence y min/max swapped
+                flt_t mnY = yshift - face->bbox.yMax;
+                flt_t mxY = yshift - face->bbox.yMin;
+                
+                if ( very_verbose ) {
+                    errstream << "Box all defaults:\n    "
+                              << "minX == " << mnX
+                              << ", maxX == " << mxX
+                              << ", minY == " << mnY
+                              << ", maxX == " << mxY << std::endl;
+                }
+
+                mnX -= padding_all.l;
+                mxX += padding_all.r;
+                mnY -= padding_all.t;
+                mxY += padding_all.b;
+
+                if ( very_verbose ) {
+                    errstream << "Box all with user padding:\n    "
+                              << "minX == " << mnX
+                              << ", maxX == " << mxX
+                              << ", minY == " << mnY
+                              << ", maxX == " << mxY << std::endl;
+                }
 
                 add_bezier_box(mnX, mxX, mnY, mxY, oneobj.v);
             }
@@ -676,6 +724,7 @@ add_bezier_line(const pair_xy& pt0,
 
     midpoint_1_3rd_assign(pt0, pt3, pt1);
     midpoint_2_3rd_assign(pt0, pt3, pt2);
+
     v.push_back(pt0);
     v.push_back(pt1);
     v.push_back(pt2);
@@ -893,10 +942,9 @@ usage(std::ostream& errstream, int status)
 {
     errstream << "Usage: " << prog
     <<
-    " -f file [-o file] [-1xbBvh -mM number -Carg -s string]"
-        " [unicode indices]\n"
+    " -f file [options] [unicode indices]\n"
     "\n"
-    "Get curves from a type-1 or TrueType font file and convert for epspline.\n"
+    "Get curves from an outline font file and convert for epspline.\n"
     "\n"
     "-f file    the font (typeface) file: required\n"
     "-o file    the output file: optional, else stdout\n"
@@ -905,6 +953,8 @@ usage(std::ostream& errstream, int status)
             << FMT_HIGHPREC << "f' vs. '%g')\n"
     "-b         include character bounds boxes\n"
     "-B         with option -1, add box around whole object\n"
+    "-p l:r:t:b with option -b, padding inside character boxes\n"
+    "-P l:r:t:b with options -1B, padding inside whole object box\n"
     "-v         very verbose; will obscure warnings and errors\n"
     "-m real    set minimum sweep of the prism objects\n"
     "-M real    set maximum sweep of the prism objects\n"
@@ -937,6 +987,67 @@ usage(std::ostream& errstream, int status)
     ;
 
     std::exit(status);
+}
+
+bool
+do_padding_arg(const char* arg, pad_opts& o)
+{
+    pad_opts::dtype last;
+    std::string s(arg);
+
+    for ( unsigned i = 0; i < 4; i++ ) {
+        std::string::size_type pos = s.find(pad_opts_sep);
+        std::string cur(s.substr(0, pos));
+        pad_opts::dtype v;
+        
+        // last sub-arg given
+        if ( pos == std::string::npos ) {
+            if ( s.empty() ) {
+                if ( i == 0 ) {
+                    // did not get one!
+                    return false;
+                }
+                // had one, repeat last
+                v = last;
+            } else {
+                try { std::istringstream(s) >> v; } catch ( ... ) {
+                    return false;
+                }
+                
+                s = ""; // lose old value
+                last = v; // record last
+            }
+       } else {
+        // sep found, must be twixt sub-args
+            s = s.substr(pos + 1);
+            
+            // empty part is error
+            if ( cur.empty() || s.empty() ) {
+                return false;
+            }
+            
+            try { std::istringstream(cur) >> v; } catch ( ... ) {
+                return false;
+            }
+            
+            last = v;
+        }
+        
+        if ( i == 0 ) {
+            o.l = v;
+        } else if ( i == 1 ) {
+            o.r = v;
+        } else if ( i == 2 ) {
+            o.t = v;
+        } else if ( i == 3 ) {
+            o.b = v;
+        } else {
+            // WTF
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 void
@@ -974,6 +1085,26 @@ get_options(int ac, char* av[], std::vector<iarg>& ia,
                             usage(errstream, 1);
                         } else {
                             outname = av[i];
+                        }
+                        p2 = ""; // stop while()
+                        break;
+                    case 'P':
+                    case 'p': {
+                            const char* s;
+                            if ( *p2 != '\0' ) {
+                                s = p2;
+                            } else if ( ++i == ac ) {
+                                usage(errstream, 1);
+                            } else {
+                                s = av[i];
+                            }
+                            bool ret;
+                            ret = do_padding_arg(s, cur == 'P'
+                                                    ? padding_all
+                                                    : padding_chars);
+                            if ( ! ret ) {
+                                usage(errstream, 1);
+                            }
                         }
                         p2 = ""; // stop while()
                         break;

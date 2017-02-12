@@ -1010,12 +1010,15 @@ do_padding_arg(const char* arg, pad_opts& o)
                 // had one, repeat last
                 v = last;
             } else {
-                try { std::istringstream(s) >> v; } catch ( ... ) {
+                float d;
+                
+                if ( std::sscanf(s.c_str(), "%f", &d) != 1 ) {
                     return false;
                 }
-                
-                s = ""; // lose old value
+
+                v = pad_opts::dtype(d);
                 last = v; // record last
+                s = ""; // lose old value
             }
        } else {
         // sep found, must be twixt sub-args
@@ -1026,10 +1029,13 @@ do_padding_arg(const char* arg, pad_opts& o)
                 return false;
             }
             
-            try { std::istringstream(cur) >> v; } catch ( ... ) {
+            float d;
+            
+            if ( std::sscanf(cur.c_str(), "%f", &d) != 1 ) {
                 return false;
             }
-            
+                
+            v = pad_opts::dtype(d);
             last = v;
         }
         

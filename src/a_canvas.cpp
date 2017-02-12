@@ -43,6 +43,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/bitmap.h>
 #include <wx/rawbmp.h>
+#include <wx/wxcrt.h>
 #endif // WX_PRECOMP
 
 #ifdef __GNUG__
@@ -2808,7 +2809,7 @@ A_Canvas::Export()
 		(sFdir == wxT("")) ? sFname : (sFdir + SEPC + sFname);
 #endif
 
-	auto_std_FILE f(wxs2ch(t), "wt");
+	auto_std_FILE f(wxFopen(t, _T("wt")));
 	if ( !f ) {
 		int e = errno;
 		wxString msg;

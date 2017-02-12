@@ -193,6 +193,9 @@ public:
 	auto_std_FILE(std::FILE* already_open) { fp = already_open; }
 	auto_std_FILE(const char* n, const char* m = "w+b")
 	{ fp = std::fopen(n, m); }
+	// wxFopen in <wx/wxcrt.h>
+	//auto_std_FILE(const wxString& n, const wxString& m = _T("w+b"))
+	//{ fp = wxFopen(n, m); }
 	auto_std_FILE(int fd, const char* m = "w+b")
 	{ fp = /* not in std */ ::fdopen(fd, m); }
 	~auto_std_FILE() { if ( fp ) std::fclose(fp); }

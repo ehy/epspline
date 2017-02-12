@@ -34,6 +34,7 @@
 
 #include <wx/wx.h>
 #include <wx/filename.h>
+#include <wx/wxcrt.h>
 
 #include "wxexio.h"
 #include "wxutil.h"
@@ -114,7 +115,7 @@ WriteData(const wxString& fname, const std::list<SplineBase*>& lst
 	cnumtmp c_tmp;
 	int real_fmt_precision = default_real_fmt_precision;
 	wxString real_fmt;
-	auto_std_FILE o(wxs2fn(fname), "wb"); // MS reads fail w/ "wt"
+	auto_std_FILE o(wxFopen(fname, _T("wb"))); // MS reads fail w/ "wt"
 
 	if ( ! o ) {
 		int e = errno;

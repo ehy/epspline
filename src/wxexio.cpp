@@ -65,6 +65,7 @@
 #include <string.h>
 
 #include <wx/utils.h>
+#include <wx/wxcrt.h>
 
 #include "wxutil.h"
 #include "wxexio.h"
@@ -1258,16 +1259,13 @@ bool wxExioDatabase::Read(const wxString& filename)
 {
   noErrors = 0;
 
-  //FILE *f = wxFopen(filename, wxT("r"));
-  auto_std_FILE f(wxs2ch(filename), "r");
+  auto_std_FILE f(wxFopen(filename, wxT("r")));
   if (f)
   {
     thewxExioDatabase = this;
 
     LIOFromFile(f);
     hack_yyparse(0);
-
-    //fclose(f);
 
     wxExioCleanUp();
     return (noErrors == 0);
@@ -1292,14 +1290,13 @@ bool wxExioDatabase::ReadFromString(const wxString& buffer)
 
 bool wxExioDatabase::Write(const wxString& fileName)
 {
-  //FILE *stream = wxFopen( fileName, wxT("w+"));
-  auto_std_FILE stream(wxs2ch(fileName), "w+");
+  auto_std_FILE stream(wxFopen(fileName, wxT("w+")));
   
   if (!stream)
     return FALSE;
     
   bool success = Write(stream);
-  //fclose(stream);
+
   return success;
 }
 

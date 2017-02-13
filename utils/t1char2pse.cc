@@ -1404,15 +1404,13 @@ get_contour(int p0, int pN, const FT_Outline& outline,
         const FT_Vector& v  = outline.points[i];
         const FT_Vector& v0 = outline.points[ix0];
         const FT_Vector& v3 = outline.points[ix3];
-        pair_xy pc, pc0, pc1, pc2, pc3;
-
-        point_assign(v, pc);
+        pair_xy pc0, pc1, pc2, pc3;
 
         if ( tag == FT_CURVE_TAG_ON ) {
             // implicit straight line?
             // 2 endpoints in seq. means straight line segment
             if ( tag3 == FT_CURVE_TAG_ON ) {
-                point_assign(pc, pc0);
+                point_assign(v, pc0);
                 point_assign(v3, pc3);
                 add_bezier_line(pc0, pc3, o.v);
            }
@@ -1422,7 +1420,7 @@ get_contour(int p0, int pN, const FT_Outline& outline,
             // a cubic segment
             if ( tag3 == FT_CURVE_TAG_CUBIC ) {
                 point_assign(v0, pc0);
-                point_assign(pc, pc1);
+                point_assign(v, pc1);
                 point_assign(v3, pc2);
 
                 int ix = ix3 == pN ? p0 : ix3 + 1;
@@ -1437,20 +1435,20 @@ get_contour(int p0, int pN, const FT_Outline& outline,
             }
         } else if ( tag == FT_CURVE_TAG_CONIC ) {
             if ( tag0 == FT_CURVE_TAG_CONIC ) {
-                midpoint_assign(v0, pc, pc0);
+                midpoint_assign(v0, v, pc0);
             } else {
                 point_assign(v0, pc0);
             }
 
             if ( tag3 == FT_CURVE_TAG_CONIC ) {
-                midpoint_assign(v3, pc, pc3);
+                midpoint_assign(v3, v, pc3);
             } else {
                 point_assign(v3, pc3);
             }
 
-            conic_to_cubic_cpts(pc, pc0, pc1);
+            conic_to_cubic_cpts(v, pc0, pc1);
 
-            conic_to_cubic_cpts(pc, pc3, pc2);
+            conic_to_cubic_cpts(v, pc3, pc2);
 
             o.v.push_back(pc0);
             o.v.push_back(pc1);

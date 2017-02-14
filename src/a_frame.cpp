@@ -463,7 +463,7 @@ const
 	// TRANSLATORS: %1$s is application binary name ("epspline")
 	// and %2$s is an additional message suitable for an error
 	// messsage box
-	ttl.Printf(_("%1$s: %2$s"), tit.c_str(), titletail.c_str());
+	ttl.Printf(_("%1$s: %2$s"), fmtcst(tit), fmtcst(titletail));
 
 	wxMessageBox(msg, ttl
 		, wxCENTRE | wxICON_ERROR | wxOK

@@ -1458,11 +1458,14 @@ void process_eps_cmd(char * cexpr)
   add_expr(expr);
 }
 
-void error_syntax(char *WXUNUSED(s))
+void error_syntax(char* s)
+//void error_syntax(char *WXUNUSED(s))
 {
   if (currentwxExioErrorHandler)
     (void)(*(currentwxExioErrorHandler))(WXEXPR_ERROR_SYNTAX, (char *)"syntax error");
   if (thewxExioDatabase) thewxExioDatabase->noErrors += 1;
+
+  fprintf(stderr, "Syntax error on read '%s'\n", s);
 }
 
 #if 0

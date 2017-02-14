@@ -345,7 +345,7 @@ A_Frame::A_Frame(
 
 	wxString ts; // temp string
 	ts.Printf(_("Welcome to \"%s\""),
-		(const wxChar*)wxGetApp().GetAppTitle().c_str());
+		fmtcst(wxGetApp().GetAppTitle()));
 	SetStatusText(ts);
 
 	// TODO (since originally copying from example app)

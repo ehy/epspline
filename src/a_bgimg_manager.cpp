@@ -493,7 +493,7 @@ bgimg_manager::get_mod_image()
 			// at system level, like does not exist, or permissions.
 			err.Printf(
 				_("Cannot open backgroung image file \"%s\""),
-				img_fname().c_str());
+				fmtcst(img_fname()));
 
 			// don't fail to empty file string: else inf recurse!
 			img_fname().Empty();
@@ -514,7 +514,7 @@ bgimg_manager::get_mod_image()
 			// unsupported type.
 			err.Printf(
 				_("Failure opening backgroung image file \"%s\""),
-				img_fname().c_str());
+				fmtcst(img_fname()));
 
 			// don't fail to empty file string: else inf recurse!
 			img_fname().Empty();

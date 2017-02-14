@@ -2814,8 +2814,8 @@ A_Canvas::Export()
 		int e = errno;
 		wxString msg;
 
-		msg.Printf(_("Failed to open %s for exporting : %s"), t.c_str()
-			, strerror(e));
+		msg.Printf(_("Failed to open %s for exporting : %s"), fmtcst(t)
+			, fmtcst(ch2wxs(strerror(e))));
 		ErrorBox(msg);
 		sFname = wxT("");
 		return;
@@ -2829,8 +2829,8 @@ A_Canvas::Export()
 		int e = errno;
 		wxString msg;
 
-		msg.Printf(_("Failed exporting to %s : %s"), t.c_str()
-			, strerror(e));
+		msg.Printf(_("Failed exporting to %s : %s"), fmtcst(t)
+			, fmtcst(ch2wxs(strerror(e))));
 		ErrorBox(msg);
 	}
 }

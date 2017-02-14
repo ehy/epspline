@@ -992,7 +992,7 @@ usage(std::ostream& errstream, int status)
 bool
 do_padding_arg(const char* arg, pad_opts& o)
 {
-    pad_opts::dtype last;
+    pad_opts::dtype last = 0; // Init for SunCC warning
     std::string s(arg);
 
     for ( unsigned i = 0; i < 4; i++ ) {

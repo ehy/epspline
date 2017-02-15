@@ -59,8 +59,10 @@ CDATADIR  = $(SRCDIR)/../cdata
 LICENSEHEAD = $(CDATADIR)/license.c.head
 
 # prebuilt files
-OKLEXER = $(SRCDIR)/ms_lexer.c
-OKPARSE = $(SRCDIR)/ms_parse.c
+#OKLEXER = $(SRCDIR)/ms_lexer.c
+#OKPARSE = $(SRCDIR)/ms_parse.c
+OKLEXER = $(SRCDIR)/bsdlexer.c
+OKPARSE = $(SRCDIR)/bsdparser.c
 
 HDRS = $(HDRDIR)/a_canvas.h $(HDRDIR)/a_frame.h $(HDRDIR)/a_ruler.h \
 	$(HDRDIR)/cfg.h $(HDRDIR)/splines.h $(HDRDIR)/file_io.h \

@@ -171,6 +171,7 @@ void LIOFromString(const char *buf);
 #define yytext EPSIO_yytext
 #endif
 
+#if USING_OLD_MS_PARSE
 #if !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__FreeBSD__)
 extern "C" {
 #endif
@@ -179,6 +180,11 @@ int yyparse(void);
 #if !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__FreeBSD__)
 }
 #endif
+#else // USING_OLD_MS_PARSE
+extern FILE* yyin;
+int yyparse(void);
+#endif // USING_OLD_MS_PARSE
+
 inline int hack_yyparse(void*) { return yyparse(); }
 
 

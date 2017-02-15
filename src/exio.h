@@ -42,29 +42,29 @@
 
 #ifdef __cplusplus
 extern "C" {
-char *epsio_cons(char *, char *);
-char * iomake_integer(char *);
-char * iomake_word(char *);
-char * iomake_string(char *);
-char * iomake_real(char *, char *);
-char * iomake_exp(char *, char *);
-char * iomake_exp2(char *, char *, char*);
-void add_expr(char *);
-void process_eps_cmd(char *);
-void error_syntax(char *);
+const char *epsio_cons(const char *, const char *);
+const char * iomake_integer(const char *);
+const char * iomake_word(const char *);
+const char * iomake_string(const char *);
+const char * iomake_real(const char *, const char *);
+const char * iomake_exp(const char *, const char *);
+const char * iomake_exp2(const char *, const char *, const char*);
+void add_expr(const char *);
+void process_eps_cmd(const char *);
+void error_syntax(const char *);
 }
 #else
 #if defined(__BORLANDC__) || defined(__VISAGECPP__)
-char *epsio_cons(char *, char *);
-char * iomake_integer(char *);
-char * iomake_word(char *);
-char * iomake_string(char *);
-char * iomake_real(char *, char *);
-char * iomake_exp(char *, char *);
-char * iomake_exp2(char *, char *, char*);
-void add_expr(char *);
-void process_eps_cmd(char *);
-void error_syntax(char *);
+const char *epsio_cons(const char *, const char *);
+const char * iomake_integer(const char *);
+const char * iomake_word(const char *);
+const char * iomake_string(const char *);
+const char * iomake_real(const char *, const char *);
+const char * iomake_exp(const char *, const char *);
+const char * iomake_exp2(const char *, const char *, const char*);
+void add_expr(const char *);
+void process_eps_cmd(const char *);
+void error_syntax(const char *);
 int  lex_input(void);
 #else
 char *epsio_cons();

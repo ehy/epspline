@@ -46,8 +46,8 @@ static int my_input(void);
 			int c = my_input(); \
 			result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); \
 		} else { \
-			if ( ((result = fread(buf, 1, max_size, EPSIO_yyin)) == 0) \
-				   && ferror(EPSIO_yyin) ) { \
+			if ( ((result = fread(buf, 1, max_size, yyin)) == 0) \
+				   && ferror(yyin) ) { \
 				YY_FATAL_ERROR("get input in lexical scanner failed"); \
 			} \
 		} \

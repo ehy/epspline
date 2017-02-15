@@ -40,6 +40,10 @@ int yywrap(void);
 int yyback(int *, int);
 void yyerror(const char *);
 
+/* help for adding const */
+#undef _free
+#define _free(a) free((void*)(a))
+
 /* You may need to put /DLEX_SCANNER in your makefile
  * if you're using LEX!
  */
@@ -79,7 +83,7 @@ commands :	/* empty */
 	;
 
 command	:       WORD PERIOD
-			{process_eps_cmd(epsio_cons(iomake_word($1), NULL)); free($1);}
+			{process_eps_cmd(epsio_cons(iomake_word($1), NULL)); _free($1);}
         |       expr PERIOD
 			{process_eps_cmd($1);}
 	|	error PERIOD
@@ -87,7 +91,7 @@ command	:       WORD PERIOD
 	;
 
 expr	:	WORD OPEN arglist CLOSE 
-			{$$ = epsio_cons(iomake_word($1), $3); free($1);}
+			{$$ = epsio_cons(iomake_word($1), $3); _free($1);}
 	|	OPEN_SQUARE arglist CLOSE_SQUARE
 			{$$ = $2; }
 	;
@@ -103,25 +107,25 @@ arglist	:
 
 arg	:	WORD EQUALS arg1
 			{$$ = epsio_cons(iomake_word("="), epsio_cons(iomake_word($1), epsio_cons($3, NULL)));
-                         free($1); }
+                         _free($1); }
 	|	arg1
 			{$$ = $1; }
 	;
 
 arg1	:	WORD
-			{$$ = iomake_word($1); free($1);}
+			{$$ = iomake_word($1); _free($1);}
 	|	STRING
-			{$$ = iomake_string($1); free($1);}
+			{$$ = iomake_string($1); _free($1);}
 	|	INTEGER
-			{$$ = iomake_integer($1); free($1);}
+			{$$ = iomake_integer($1); _free($1);}
 	|	INTEGER PERIOD INTEGER
-			{$$ = iomake_real($1, $3); free($1); free($3); }
+			{$$ = iomake_real($1, $3); _free($1); _free($3); }
         |       INTEGER EXP INTEGER
-                         {$$ = iomake_exp($1, $3); free($1); free($3); }
+                         {$$ = iomake_exp($1, $3); _free($1); _free($3); }
         |
               INTEGER PERIOD INTEGER EXP INTEGER
-                         {$$ = iomake_exp2($1, $3, $5); free($1); free($3);
-                                                                  free($5); }
+                         {$$ = iomake_exp2($1, $3, $5); _free($1); _free($3);
+                                                                  _free($5); }
 
 	|	expr
 			{$$ = $1;}

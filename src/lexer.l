@@ -41,16 +41,29 @@ static int my_input(void);
 #ifdef FLEX_SCANNER
 # undef YY_INPUT
 # define YY_INPUT(buf,result,max_size) \
-   if (lex_read_from_string) \
-   {  int c = my_input(); result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); } \
-   else \
-	if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \
-	    YY_FATAL_ERROR( "read() in flex scanner failed" );
+	do { \
+		if ( lex_read_from_string ) { \
+			int c = my_input(); \
+			result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); \
+		} else { \
+			if ( ((result = fread(buf, 1, max_size, EPSIO_yyin)) == 0) \
+				   && ferror(EPSIO_yyin) ) { \
+				YY_FATAL_ERROR("get input in lexical scanner failed"); \
+			} \
+		} \
+	} while ( 0 );
 #else
 # undef unput
 # define unput(_c) my_unput(_c)
   static int my_unput(char);
 #endif
+/** old contents of YY_INPUT defined above:
+   if (lex_read_from_string) \
+   {  int c = my_input(); result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); } \
+   else \
+	if ( (result = read( fileno(yyin), (char *) buf, max_size )) < 0 ) \
+	    YY_FATAL_ERROR( "read() in flex scanner failed" );
+*/
 
 %}
 

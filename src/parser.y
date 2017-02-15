@@ -133,6 +133,17 @@ arg1	:	WORD
 
 %%
 
+/*
+ * Always include lexer; see comment below for historical
+ * interest.  Note that with Epspline prebuilt lexer and parser
+ * are included and used everywhere but {Free,Net,Open}BSD.
+ * (flex invoked as lex, at least on OpenBSD, does not make
+ * width based typedefs that might fail in prebuilt code
+ * compiled elsewhere)
+ */
+#if 1 /* EH, include lexer */
+#include "lexer.c"
+#else /* EH, include lexer */
 /* We include lexer.c if we are building for gtk, wine or motif
  * and also whenever we are using configure (marked by __WX_SETUP_H__) for,
  * for example, cross compilation. */
@@ -147,6 +158,7 @@ arg1	:	WORD
 #else
 #include "../common/lex_yy.c"
 #endif
+#endif /* EH, include lexer */
 
 /*
 void yyerror(s)

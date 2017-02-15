@@ -43,7 +43,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/bitmap.h>
 #include <wx/rawbmp.h>
-if wxCHECK_VERSION(2, 9, 0)
+#if wxCHECK_VERSION(2, 9, 0)
 #include <wx/wxcrt.h>
 #endif
 #endif // WX_PRECOMP

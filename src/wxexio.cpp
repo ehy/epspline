@@ -65,7 +65,9 @@
 #include <string.h>
 
 #include <wx/utils.h>
+if wxCHECK_VERSION(2, 9, 0)
 #include <wx/wxcrt.h>
+#endif
 
 #include "wxutil.h"
 #include "wxexio.h"

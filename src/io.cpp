@@ -34,7 +34,9 @@
 
 #include <wx/wx.h>
 #include <wx/filename.h>
+if wxCHECK_VERSION(2, 9, 0)
 #include <wx/wxcrt.h>
+#endif
 
 #include "wxexio.h"
 #include "wxutil.h"

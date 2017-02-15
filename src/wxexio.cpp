@@ -1384,9 +1384,16 @@ const char *iomake_integer(const char *str)
 
 const char *iomake_real(const char *str1, const char *str2)
 {
-  char buf[50];
+  // EH: s/50/128/
+  char buf[128];
 
-  sprintf(buf, "%s.%s", str1, str2);
+  // EH: new:
+  if ( snprintf(buf, sizeof(buf), "%s.%s", str1, str2) >= sizeof(buf) ) {
+	  buf[sizeof(buf) - 1] = '\0';
+	  std::fprintf(stderr, "Epspline: huge float truncated: '%s'\n", buf);
+  }
+  // EH: old:
+  // sprintf(buf, "%s.%s", str1, str2);
   double f = (double)atof(buf);
   wxExio *x = new wxExio(f);
 

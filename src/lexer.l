@@ -152,7 +152,7 @@ void LIOFromFile(FILE *fd)
 #endif
 }
 
-void LIOFromString(char *buffer)
+void LIOFromString(const char *buffer)
 {
   lex_read_from_string = 1;
   lex_buffer = buffer;

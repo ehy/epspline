@@ -87,9 +87,9 @@
 #if !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__FreeBSD__)
 extern "C" {
 #endif
-void add_expr(char *);
+void add_expr(const char *);
 void LIOFromFile(FILE *fd);
-void LIOFromString(char *buf);
+void LIOFromString(const char *buf);
 #if !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__FreeBSD__)
 }
 #endif
@@ -1477,10 +1477,9 @@ void process_eps_cmd(const char * cexpr)
 }
 
 void error_syntax(const char* s)
-//void error_syntax(char *WXUNUSED(s))
 {
 	// Added EH
-	const char* p = s ? s : "syntax error";
+	const char* p = (s && *s) ? s : "syntax error";
 
   if (currentwxExioErrorHandler)
     (void)(*(currentwxExioErrorHandler))(WXEXPR_ERROR_SYNTAX, p);

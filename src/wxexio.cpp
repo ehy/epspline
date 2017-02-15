@@ -1415,7 +1415,7 @@ const char *iomake_exp2(const char *str1, const char *str2, const char *str3)
   // EH: new:
   if ( snprintf(buf, sizeof(buf), "%s.%s", str1, str2) >= sizeof(buf) ) {
 	  buf[sizeof(buf) - 1] = '\0';
-	  std::fprintf("Epspline: huge float truncated: '%s'\n", buf);
+	  std::fprintf(stderr, "Epspline: huge float truncated: '%s'\n", buf);
   }
   // EH: old:
   // sprintf(buf, "%s.%s", str1, str2);

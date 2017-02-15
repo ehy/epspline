@@ -239,6 +239,17 @@ YYSTYPE *EPSIO_yyvs;
 unsigned int EPSIO_yystacksize;
 #line 135 "./parser.y"
 
+/*
+ * Always include lexer; see comment below for historical
+ * interest.  Note that with Epspline prebuilt lexer and parser
+ * are included and used everywhere but {Free,Net,Open}BSD.
+ * (flex invoked as lex, at least on OpenBSD, does not make
+ * width based typedefs that might fail in prebuilt code
+ * compiled elsewhere)
+ */
+#if 1 /* EH, include lexer */
+#include "lexer.c"
+#else /* EH, include lexer */
 /* We include lexer.c if we are building for gtk, wine or motif
  * and also whenever we are using configure (marked by __WX_SETUP_H__) for,
  * for example, cross compilation. */
@@ -253,6 +264,7 @@ unsigned int EPSIO_yystacksize;
 #else
 #include "../common/lex_EPSIO_yy.c"
 #endif
+#endif /* EH, include lexer */
 
 /*
 void EPSIO_yyerror(s)
@@ -308,7 +320,7 @@ int EPSIO_yywrap() { return 1; }
 }
 #endif
 #endif
-#line 304 "y.tab.c"
+#line 316 "y.tab.c"
 /* allocate initial stack or double stack size, up to YYMAXDEPTH */
 static int EPSIO_yygrowstack(void)
 {
@@ -572,7 +584,7 @@ case 19:
 #line 131 "./parser.y"
 {EPSIO_yyval.s = EPSIO_yyvsp[0].s;}
 break;
-#line 568 "y.tab.c"
+#line 580 "y.tab.c"
     }
     EPSIO_yyssp -= EPSIO_yym;
     EPSIO_yystate = *EPSIO_yyssp;

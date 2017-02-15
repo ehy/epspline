@@ -422,18 +422,31 @@ static int my_EPSIO_input(void);
 #ifdef FLEX_SCANNER
 # undef YY_INPUT
 # define YY_INPUT(buf,result,max_size) \
-   if (lex_read_from_string) \
-   {  int c = my_EPSIO_input(); result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); } \
-   else \
-	if ( (result = read( fileno(EPSIO_yyin), (char *) buf, max_size )) < 0 ) \
-	    YY_FATAL_ERROR( "read() in flex scanner failed" );
+	do { \
+		if ( lex_read_from_string ) { \
+			int c = my_EPSIO_input(); \
+			result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); \
+		} else { \
+			if ( ((result = fread(buf, 1, max_size, EPSIO_yyin)) == 0) \
+				   && ferror(EPSIO_yyin) ) { \
+				YY_FATAL_ERROR("get EPSIO_input in lexical scanner failed"); \
+			} \
+		} \
+	} while ( 0 );
 #else
 # undef EPSIO_unput
 # define EPSIO_unput(_c) my_EPSIO_unput(_c)
   static int my_EPSIO_unput(char);
 #endif
+/** old contents of YY_INPUT defined above:
+   if (lex_read_from_string) \
+   {  int c = my_EPSIO_input(); result = (c == 0) ? YY_NULL : ((buf)[0]=(c), 1); } \
+   else \
+	if ( (result = read( fileno(EPSIO_yyin), (char *) buf, max_size )) < 0 ) \
+	    YY_FATAL_ERROR( "read() in flex scanner failed" );
+*/
 
-#line 437 "lex.EPSIO_yy.c"
+#line 450 "lex.EPSIO_yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -584,10 +597,10 @@ YY_DECL
 	register char *EPSIO_yy_cp, *EPSIO_yy_bp;
 	register int EPSIO_yy_act;
 
-#line 57 "./lexer.l"
+#line 70 "./lexer.l"
 
 
-#line 591 "lex.EPSIO_yy.c"
+#line 604 "lex.EPSIO_yy.c"
 
 	if ( EPSIO_yy_init )
 		{
@@ -672,22 +685,22 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 59 "./lexer.l"
+#line 72 "./lexer.l"
 {EPSIO_yylval.s = strdup(EPSIO_yytext); Return(INTEGER);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 61 "./lexer.l"
+#line 74 "./lexer.l"
 Return(EXP);
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 63 "./lexer.l"
+#line 76 "./lexer.l"
 {EPSIO_yylval.s = strdup(EPSIO_yytext); Return(WORD);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 65 "./lexer.l"
+#line 78 "./lexer.l"
 {int len = strlen(EPSIO_yytext);
                                    EPSIO_yytext[len-1] = 0;
                                    EPSIO_yylval.s = strdup(EPSIO_yytext+1);
@@ -695,57 +708,57 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 70 "./lexer.l"
+#line 83 "./lexer.l"
 {EPSIO_yylval.s = strdup(EPSIO_yytext); Return(STRING);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 72 "./lexer.l"
+#line 85 "./lexer.l"
 Return(OPEN);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 74 "./lexer.l"
+#line 87 "./lexer.l"
 Return(CLOSE);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 76 "./lexer.l"
+#line 89 "./lexer.l"
 Return(COMMA);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 78 "./lexer.l"
+#line 91 "./lexer.l"
 Return(OPEN_SQUARE);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 80 "./lexer.l"
+#line 93 "./lexer.l"
 Return(CLOSE_SQUARE);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 82 "./lexer.l"
+#line 95 "./lexer.l"
 Return(EQUALS);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 84 "./lexer.l"
+#line 97 "./lexer.l"
 Return(PERIOD);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 86 "./lexer.l"
+#line 99 "./lexer.l"
 ;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 88 "./lexer.l"
+#line 101 "./lexer.l"
 ;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 90 "./lexer.l"
+#line 103 "./lexer.l"
 {       loop:
 #ifdef __cplusplus
                           while (EPSIO_yyEPSIO_input() != '*');
@@ -763,15 +776,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 105 "./lexer.l"
+#line 118 "./lexer.l"
 Return(ERROR);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 107 "./lexer.l"
+#line 120 "./lexer.l"
 ECHO;
 	YY_BREAK
-#line 775 "lex.EPSIO_yy.c"
+#line 788 "lex.EPSIO_yy.c"
 case YY_STATE_EOF(INITIAL):
 	EPSIO_yyterminate();
 
@@ -1662,7 +1675,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 107 "./lexer.l"
+#line 120 "./lexer.l"
 
 
 

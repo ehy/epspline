@@ -91,6 +91,11 @@ LIBS = `$(CF) --libs $(LIBSARG)`
 # mingw only: MSW binary resource compiler
 MSWRCC = `$(CF) --rescomp`
 
+# The parser will need more stack for large single objects
+# (revealed by testing with font based output) -- here
+# is a macro for YACC definitions as needed
+YACCDEFINES = -DYYMAXDEPTH=30000
+
 # For each Makefile that installs something, uninstall
 # data is saved in dir $(UNINSTALLER_ROOT), in file
 # $${dir}$(UNINSTALLER_BASE); it's desirable that these
@@ -113,9 +118,10 @@ all: doc prog po examples
 prog: uninst_setup depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
-		CXX="$(CXX)" \
-		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
+		CC="$(CC)" CFLAGS="$(CFLAGS)" \
+		CXX="$(CXX)" CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		YACCDEFINES="$(YACCDEFINES)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" all ) || \
 		{ echo IF build failed with complaints about unknown options; \
 		echo such as -Wfoo, then edit the Makefile and comment the; \
@@ -127,9 +133,11 @@ prog: uninst_setup depend
 mingw exe msw epspline.exe: depend
 	@for d in $(DIRS) ; do \
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
-		CXX="$(CXX)" MSWRCC="$(MSWRCC)" \
-		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
+		CC="$(CC)" CFLAGS="$(CFLAGS)" \
+		CXX="$(CXX)" CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
+		MSWRCC="$(MSWRCC)" \
+		YACCDEFINES="$(YACCDEFINES)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" mingw ) || \
 		{ echo IF build failed with complaints about unknown options; \
 		echo such as -Wfoo, then edit the Makefile and comment the; \
@@ -153,6 +161,7 @@ src/depend:
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXXDEPS="$(CXXDEPS)" DEPSOPT="$(DEPSOPT)" \
 		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
+		YACCDEFINES="$(YACCDEFINES)" \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" depend ) ; \
 	done
@@ -163,6 +172,7 @@ src/dep:
 		(cd $$d ; $(MAKE) -f $(MKFILE) \
 		CXXDEPS="$(CXXDEPS)" DEPSOPT="$(DEPSOPT)" \
 		CCFLAGS="$(CCFLAGS) $(DEBUG)"  \
+		YACCDEFINES="$(YACCDEFINES)" \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIX)" LIBS="$(LIBS)" dep ) ; \
 	done
@@ -181,6 +191,7 @@ Debug DEBUG debug: depend
 		(cd $$d ; $(MAKE) -f $(MKFILE) -f depend \
 		CXX="$(CXX)" \
 		CCFLAGS="$(CCFLAGS) $(YDEBUG)"  \
+		YACCDEFINES="$(YACCDEFINES)" \
 		LDFLAGS="$(LDFLAGS)" FINAL="$(FINAL)" CF="$(CF)" \
 		EXESUFFIX="$(EXESUFFIXDBG)" LIBS="$(LIBS)" all ) ; \
 	done

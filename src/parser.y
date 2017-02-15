@@ -38,7 +38,7 @@ int yylex(void);
 int yylook(void);
 int yywrap(void);
 int yyback(int *, int);
-void yyerror(char *);
+void yyerror(const char *);
 
 /* You may need to put /DLEX_SCANNER in your makefile
  * if you're using LEX!
@@ -48,7 +48,7 @@ void yyoutput(int);
 %}
 
 %union {
-    char *s;
+    const char *s;
 /*    struct pexpr *expr; */
 }
 
@@ -156,7 +156,7 @@ char *s;
    the above instead.
  */
 
-void yyerror(char *s)
+void yyerror(const char *s)
 {
   error_syntax(s);
 }

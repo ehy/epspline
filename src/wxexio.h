@@ -85,7 +85,7 @@
 
 // Error handler function definition. If app returns TRUE,
 // carry on processing.
-typedef bool (*wxExioErrorHandler) (int errorType, char *msg);
+typedef bool (*wxExioErrorHandler) (int errorType, const char *msg);
 
 WXDLLEXPORT_DATA(extern wxExioErrorHandler) currentwxExioErrorHandler;
 
@@ -211,13 +211,13 @@ class WXDLLEXPORT wxExio
   bool GetAttributeValue(const wxString& att, wxString& var) const;  // Word OR string -> string
   bool GetAttributeValue(const wxString& att, wxExio **var) const;
 
-  // Compatibility with old PrologIO
-  inline void AssignAttributeValue(wxChar *att, int *var) const { GetAttributeValue(att, *var); }
-  inline void AssignAttributeValue(wxChar *att, long *var) const { GetAttributeValue(att, *var); }
-  inline void AssignAttributeValue(wxChar *att, float *var) const { GetAttributeValue(att, *var); }
-  inline void AssignAttributeValue(wxChar *att, double *var) const { GetAttributeValue(att, *var); }
-  inline void AssignAttributeValue(wxChar *att, wxExio **var) const { GetAttributeValue(att, var); }
-  void AssignAttributeValue(wxChar *att, wxChar **var) const ;  // Word OR string -> string
+//  // Compatibility with old PrologIO
+//  inline void AssignAttributeValue(wxChar *att, int *var) const { GetAttributeValue(att, *var); }
+//  inline void AssignAttributeValue(wxChar *att, long *var) const { GetAttributeValue(att, *var); }
+//  inline void AssignAttributeValue(wxChar *att, float *var) const { GetAttributeValue(att, *var); }
+//  inline void AssignAttributeValue(wxChar *att, double *var) const { GetAttributeValue(att, *var); }
+//  inline void AssignAttributeValue(wxChar *att, wxExio **var) const { GetAttributeValue(att, var); }
+//  void AssignAttributeValue(wxChar *att, wxChar **var) const ;  // Word OR string -> string
 
   // Add string items to list if the list attribute exists
   bool GetAttributeValueStringList(const wxString& att, wxList *var) const;
@@ -301,14 +301,14 @@ public:
     bool Write(const wxString& fileName);
     bool Write(FILE* stream);
 
-    // Compatibility
-    inline bool ReadProlog(wxChar *filename) { return Read(wxString(filename)); }
-#   if wxCHECK_VERSION(2, 9, 0)
-    inline bool ReadPrologFromString(char *buffer) { return ReadFromString(wxString(buffer, *wxConvCurrent)); }
-#   else
-    inline bool ReadPrologFromString(char *buffer) { return ReadFromString(wxString(buffer, wxConvCurrent)); }
-#   endif
-    inline void WriteProlog(FILE* stream) { Write(stream); }
+//    // Compatibility
+//    inline bool ReadProlog(wxChar *filename) { return Read(wxString(filename)); }
+//#   if wxCHECK_VERSION(2, 9, 0)
+//    inline bool ReadPrologFromString(char *buffer) { return ReadFromString(wxString(buffer, *wxConvCurrent)); }
+//#   else
+//    inline bool ReadPrologFromString(char *buffer) { return ReadFromString(wxString(buffer, wxConvCurrent)); }
+//#   endif
+//    inline void WriteProlog(FILE* stream) { Write(stream); }
 
 private:
     DECLARE_DYNAMIC_CLASS(wxExioDatabase)

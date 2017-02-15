@@ -47,7 +47,7 @@ LEXYACCOK   = OpenBSD FreeBSD NetBSD
 # compile; the _LINUX def is inherited with the lexer and parser
 # and wxExio code pulled from an old version of wxWindows --
 # it's not actually only used on GNU/Linux here.
-PARSERCFLAGS = $(CCFLAGS) -D_LINUX=1
+PARSERCFLAGS = $(CCFLAGS) $(YACCDEFINES) -D_LINUX=1
 
 OBJDIR = .
 SRCDIR = .

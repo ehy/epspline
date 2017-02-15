@@ -1351,14 +1351,30 @@ bool wxExioIsFunctor(wxExio *expr, const wxString& functor)
  *
  */
 
-char *iomake_integer(char *str)
+// EH: utility:
+namespace {
+inline wxExio*
+cast_cchar(const char* p)
+{
+	return reinterpret_cast<wxExio*>(
+				const_cast<char*>(p));
+}
+
+inline const char*
+cast_exio(const wxExio* p)
+{
+	return reinterpret_cast<const char*>(p);
+}
+}; // namespace
+
+const char *iomake_integer(const char *str)
 {
   wxExio *x = new wxExio(atol(str));
 
-  return (char *)x;
+  return cast_exio(x);
 }
 
-char *iomake_real(char *str1, char *str2)
+const char *iomake_real(const char *str1, const char *str2)
 {
   char buf[50];
 
@@ -1366,12 +1382,12 @@ char *iomake_real(char *str1, char *str2)
   double f = (double)atof(buf);
   wxExio *x = new wxExio(f);
 
-  return (char *)x;
+  return cast_exio(x);
 }
 
 // extern "C" double exp10(double);
 
-char *iomake_exp(char *str1, char *str2)
+const char *iomake_exp(const char *str1, const char *str2)
 {
   double mantissa = (double)atoi(str1);
   double exponent = (double)atoi(str2);
@@ -1380,10 +1396,10 @@ char *iomake_exp(char *str1, char *str2)
 
   wxExio *x = new wxExio(d);
 
-  return (char *)x;
+  return cast_exio(x);
 }
 
-char *iomake_exp2(char *str1, char *str2, char *str3)
+const char *iomake_exp2(const char *str1, const char *str2, const char *str3)
 {
   char buf[50];
 
@@ -1395,16 +1411,16 @@ char *iomake_exp2(char *str1, char *str2, char *str3)
 
   wxExio *x = new wxExio(d);
 
-  return (char *)x;
+  return cast_exio(x);
 }
 
-char *iomake_word(char *str)
+const char *iomake_word(const char *str)
 {
   wxExio *x = new wxExio(wxExioWord, wxConvLibc.cMB2WX(str));
-  return (char *)x;
+  return cast_exio(x);
 }
 
-char *iomake_string(char *str)
+const char *iomake_string(const char *str)
 {
   wxChar *s, *t;
   size_t len, i;
@@ -1435,10 +1451,10 @@ char *iomake_string(char *str)
   *t = wxT('\0');
 
   wxExio *x = new wxExio(wxExioString, s, FALSE);
-  return (char *)x;
+  return cast_exio(x);
 }
 
-char *epsio_cons(char * ccar, char * ccdr)
+const char *epsio_cons(const char * ccar, const char * ccdr)
 {
   wxExio *car = (wxExio *)ccar;
   wxExio *cdr = (wxExio *)ccdr;
@@ -1449,23 +1465,26 @@ char *epsio_cons(char * ccar, char * ccdr)
   }
   if (car)
     cdr->Insert(car);
-  return (char *)cdr;
+  return cast_exio(cdr);
 }
 
-void process_eps_cmd(char * cexpr)
+void process_eps_cmd(const char * cexpr)
 {
-  wxExio *expr = (wxExio *)cexpr;
+  wxExio *expr = cast_cchar(cexpr);
   add_expr(expr);
 }
 
-void error_syntax(char* s)
+void error_syntax(const char* s)
 //void error_syntax(char *WXUNUSED(s))
 {
+	// Added EH
+	const char* p = s ? s : "syntax error";
+
   if (currentwxExioErrorHandler)
-    (void)(*(currentwxExioErrorHandler))(WXEXPR_ERROR_SYNTAX, (char *)"syntax error");
+    (void)(*(currentwxExioErrorHandler))(WXEXPR_ERROR_SYNTAX, p);
   if (thewxExioDatabase) thewxExioDatabase->noErrors += 1;
 
-  fprintf(stderr, "Syntax error on read '%s'\n", s);
+  fprintf(stderr, "Syntax error on read '%s'\n", p);
 }
 
 #if 0

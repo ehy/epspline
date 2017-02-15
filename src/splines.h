@@ -261,7 +261,7 @@ public:
 		, sweep_min(-1.0), sweep_max(1.0)
 		, use_sturm(false), use_open(false), dotlock(false)
 		, tol(close_tolerance)
-		, tolbk(0), doclose(true), dirty(true)
+		, tolbk(0), doclose(false), dirty(true)
 		{ InitBbox(); InitCbox(); }
 	SplineBase(const wxString& name, int close_tolerance = sptol)
 		: ObNam(name)
@@ -271,7 +271,7 @@ public:
 		, sweep_min(-1.0), sweep_max(1.0)
 		, use_sturm(false), use_open(false), dotlock(false)
 		, tol(close_tolerance)
-		, tolbk(0), doclose(true), dirty(true)
+		, tolbk(0), doclose(false), dirty(true)
 		{ InitBbox(); InitCbox(); }
 	SplineBase(const SplineBase& o)
 		: SplineBaseBase(o)

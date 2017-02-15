@@ -810,16 +810,16 @@ bool wxExio::GetAttributeValueStringList(const wxString& att, wxList *var) const
 }
 
 // Compatibility
-void wxExio::AssignAttributeValue(wxChar *att, wxChar **var) const
-{
-  wxString str;
-  if (GetAttributeValue(att, str))
-  {
-    if (*var)
-      delete[] *var;
-    *var = copystring((const wxChar *) str.C_STR);
-  }
-}
+//void wxExio::AssignAttributeValue(wxChar *att, wxChar **var) const
+//{
+//  wxString str;
+//  if (GetAttributeValue(att, str))
+//  {
+//    if (*var)
+//      delete[] *var;
+//    *var = copystring((const wxChar *) str.C_STR);
+//  }
+//}
 
 void wxExio::WriteClause(FILE* stream)  // Write this expression as a top-level clause
 {

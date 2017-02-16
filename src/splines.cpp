@@ -1350,10 +1350,6 @@ LinearSpline::CalcCurveCache()
 
 		// Condition for closure of current sub-curve.
 		if ( (std::abs(p1.x-b.x) < tol) && (std::abs(p1.y-b.y) < tol) ) {
-			if ( doclose ) {
-				iterator t = it;
-				*--t = p1 = b;
-			}
 			close = true;
 		}
 		UpdateBbox(p1);
@@ -1715,10 +1711,6 @@ QuadraticSpline::CalcCurveCache()
 
 		// Condition for closure of current sub-curve.
 		if ( (std::abs(p2.x-b.x) < tol) && (std::abs(p2.y-b.y) < tol) ) {
-			if ( doclose ) {
-				iterator t = it;
-				*--t = p2 = b;
-			}
 			close = true;
 		}
 		UpdateBbox(p2);
@@ -2088,10 +2080,6 @@ CubicSpline::CalcCurveCache()
 
 		// Condition for closure of current sub-curve.
 		if ( (std::abs(e.x-b.x) < tol) && (std::abs(e.y-b.y) < tol) ) {
-			if ( doclose ) {
-				iterator t = it;
-				*--t = p2 = b;
-			}
 			close = true;
 		}
 
@@ -2620,19 +2608,9 @@ BezierSpline::CalcCurveCache()
 		// Condition for closure of current sub-curve.
 		if ( (std::abs(p3.x-b.x) < tol)
 			&& (std::abs(p3.y-b.y) < tol) ) {
-			if ( doclose ) {
-				iterator t = it;
-				*--t = p3 = b;
-			}
 			close = true;
 		}
 
-		// Also close at last segment endpoint
-		if ( doclose && c
-			&& (std::abs(p.x-last.x) < tol)
-			&& (std::abs(p.y-last.y) < tol) ) {
-			*l3 = p;
-		}
 		++c;
 		l3 = it;
 		--l3;

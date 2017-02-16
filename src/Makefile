@@ -40,8 +40,18 @@ UNINST_LIST = ../uninstall/src_uninstall-list
 # New try of new flex (flex -l||-X); if n.g. then re-add Linux
 # (Dec 28, 2012) -- N.G. segfault w/ -l, infinite loop w/ -X
 # (Mar 5, 2015) -- N.G. NetBSD 7.0beta (last tried was 5.0): spins
-LEXYACCFAIL = SunOS Linux
-LEXYACCOK   = OpenBSD FreeBSD NetBSD
+# UPDATE (Feb 16 2017): Too much chance of failure, so disable
+# generation by default on all systems and rely on prebuilt code.
+# As of this writing the prebuilt lexer and parser have been made
+# on OpenBSD 5.5 and the flex version macros state 2.5 with no fine
+# revisions, while the NetBSD 7.0 {f,}lex says 2.5.35 and produces
+# the faulty infinite loop code*.  It is not worth the risk that
+# newer FreeBSD or OpenBSD systems will update to the broken flex,
+# so there you have it.
+# ([*] Actually, the infinite loop code is not faulty: it loops
+# infinitely just fine.)
+LEXYACCFAIL = SunOS Linux NetBSD FreeBSD OpenBSD
+LEXYACCOK   = MATCH-ME-NOT
 
 # PARSERCFLAGS are used in the parser.o
 # compile; the _LINUX def is inherited with the lexer and parser

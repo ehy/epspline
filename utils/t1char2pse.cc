@@ -107,7 +107,7 @@
 extern "C" {
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#if defined(__OpenBSD__) // OBSD 'xenocara' has all in one dir
+#if defined(__OpenBSD__) || defined(__NetBSD__)
 #   include <t1tables.h>
 #else
 #   include <freetype/t1tables.h>

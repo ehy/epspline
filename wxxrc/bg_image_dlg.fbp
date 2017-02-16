@@ -3914,8 +3914,8 @@
                                                 <property name="validator_style">wxFILTER_NONE</property>
                                                 <property name="validator_type">wxDefaultValidator</property>
                                                 <property name="validator_variable"></property>
-                                                <property name="value"></property>
-                                                <property name="wildcard">(*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm)|*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm</property>
+                                                <property name="value">/home/evh/qdhack/freetype-examples/foo.tga</property>
+                                                <property name="wildcard">MSW Bitmap Files (*.bmp)|*.bmp|Portable Network Graphics (*.png)|*.png|Photo Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|Tagged Image Format (*.tif;*.tiff)|*.tif;*.tiff|Graphics Interchange (*.gif;*.gif89)|*.gif;*.gif89|Poskanzer&apos;s Portables (*.pbm;*.pgm;*.ppm;*.pnm)|*.pbm;*.pgm;*.ppm;*.pnm|PCX Files (*.pcx)|*.pcx|IFF Files (*.iff)|*.iff|MSW GUI Formats (*.ico;*.cur;*.ani)|*.ico;*.cur;*.ani|Targa Image Files (*.tga)|*.tga|TPIC Files (*.tpic)|*.tpic|X Window System Pixmaps (*.xbm;*.xpm)|*.xbm;*.xpm|All Files (*)|*;*.*</property>
                                                 <property name="window_extra_style"></property>
                                                 <property name="window_name"></property>
                                                 <property name="window_style"></property>

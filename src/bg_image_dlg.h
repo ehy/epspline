@@ -20,7 +20,7 @@
  */
 
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar  7 2016)
+// C++ code generated with wxFormBuilder (version Feb 16 2017)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!

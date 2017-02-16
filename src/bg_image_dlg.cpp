@@ -20,7 +20,7 @@
  */
 
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Mar  7 2016)
+// C++ code generated with wxFormBuilder (version Feb 16 2017)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -321,7 +321,7 @@ bg_image::bg_image( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_staticText9->Wrap( -1 );
 	bSizer8->Add( m_staticText9, 0, wxALL, 5 );
 	
-	selector_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Choose an image file"), wxT("(*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm)|*.bmp;*.png;*.jpg;*.jpeg;*.jpe;*.tif;*.tiff;*.gif;*.pnm;*.ppm;*.pgm;*.pbm;*.pcx;*.iff;*.ico;*.cur;*.ani;*.tga;*.tpic;*.xpm"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
+	selector_file = new wxFilePickerCtrl( this, wxID_ANY, wxT("/home/evh/qdhack/freetype-examples/foo.tga"), _("Choose an image file"), wxT("MSW Bitmap Files (*.bmp)|*.bmp|Portable Network Graphics (*.png)|*.png|Photo Experts Group (*.jpg;*.jpeg)|*.jpg;*.jpeg|Tagged Image Format (*.tif;*.tiff)|*.tif;*.tiff|Graphics Interchange (*.gif;*.gif89)|*.gif;*.gif89|Poskanzer's Portables (*.pbm;*.pgm;*.ppm;*.pnm)|*.pbm;*.pgm;*.ppm;*.pnm|PCX Files (*.pcx)|*.pcx|IFF Files (*.iff)|*.iff|MSW GUI Formats (*.ico;*.cur;*.ani)|*.ico;*.cur;*.ani|Targa Image Files (*.tga)|*.tga|TPIC Files (*.tpic)|*.tpic|X Window System Pixmaps (*.xbm;*.xpm)|*.xbm;*.xpm|All Files (*)|*;*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	selector_file->SetToolTip( _("Choose a background image file.") );
 	
 	bSizer8->Add( selector_file, 0, wxEXPAND, 5 );

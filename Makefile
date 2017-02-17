@@ -62,8 +62,9 @@ GCCWARN = -Wall -Wno-write-strings -Wno-strict-aliasing \
 	-Wno-unknown-pragmas -Wnon-virtual-dtor -Wextra \
 	-Wno-deprecated-declarations \
 	-Wno-unused-parameter -Wno-unused-variable \
-	-Wno-potentially-evaluated-expression
-WARN =
+# clang++ && wx3.0 -- super spam!:
+GCCWARN2 = -Wno-potentially-evaluated-expression
+WARN = $(GCCWARN2)
 
 #FINAL = 0
 FINAL = 1
